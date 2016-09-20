@@ -188,10 +188,10 @@ angular.module('ui.grid')
        * @name flatEntityAccess
        * @propertyOf ui.grid.class:GridOptions
        * @description Set to true if your columns are all related directly to fields in a flat object structure - i.e.
-       * each of your columns associate directly with a propery one each of the entities in your data array.
+       * each of your columns associate directly with a property on each of the entities in your data array.
        *
        * In that situation we can avoid all the logic associated with complex binding to functions or to properties of sub-objects,
-       * which can provide a significant speed improvement with large data sets, with filtering and with sorting.
+       * which can provide a significant speed improvement with large data sets when filtering or sorting.
        *
        * By default false
        */
@@ -383,7 +383,8 @@ angular.module('ui.grid')
        * @ngdoc boolean
        * @name enableVerticalScrollbar
        * @propertyOf ui.grid.class:GridOptions
-       * @description uiGridConstants.scrollbars.ALWAYS by default. This settings controls the vertical scrollbar for the grid.
+       * @description {@link ui.grid.service:uiGridConstants#properties_scrollbars uiGridConstants.scrollbars.ALWAYS} by default.
+       * This settings controls the vertical scrollbar for the grid.
        * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableVerticalScrollbar = typeof(baseOptions.enableVerticalScrollbar) !== "undefined" ? baseOptions.enableVerticalScrollbar : uiGridConstants.scrollbars.ALWAYS;
@@ -392,7 +393,8 @@ angular.module('ui.grid')
        * @ngdoc boolean
        * @name enableHorizontalScrollbar
        * @propertyOf ui.grid.class:GridOptions
-       * @description uiGridConstants.scrollbars.ALWAYS by default. This settings controls the horizontal scrollbar for the grid.
+       * @description {@link ui.grid.service:uiGridConstants#properties_scrollbars uiGridConstants.scrollbars.ALWAYS} by default.
+       * This settings controls the horizontal scrollbar for the grid.
        * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
        */
       baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;

@@ -6,10 +6,11 @@
    * @name ui.grid.pinning
    * @description
    *
-   *  # ui.grid.pinning
+   * # ui.grid.pinning
+   *
+   * <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
+   *
    * This module provides column pinning to the end user via menu options in the column header
-   * <br/>
-   * <br/>
    *
    * <div doc-module-components="ui.grid.pinning"></div>
    */
@@ -88,7 +89,7 @@
          *  @ngdoc object
          *  @name ui.grid.pinning.api:GridOptions
          *
-         *  @description GridOptions for pinning feature, these are available to be  
+         *  @description GridOptions for pinning feature, these are available to be
            *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
          */
 
@@ -96,7 +97,7 @@
          *  @ngdoc object
          *  @name enablePinning
          *  @propertyOf  ui.grid.pinning.api:GridOptions
-         *  @description Enable pinning for the entire grid.  
+         *  @description Enable pinning for the entire grid.
          *  <br/>Defaults to true
          */
         gridOptions.enablePinning = gridOptions.enablePinning !== false;
@@ -110,7 +111,7 @@
          *  @ngdoc object
          *  @name ui.grid.pinning.api:ColumnDef
          *
-         *  @description ColumnDef for pinning feature, these are available to be 
+         *  @description ColumnDef for pinning feature, these are available to be
          *  set using the ui-grid {@link ui.grid.class:GridOptions.columnDef gridOptions.columnDefs}
          */
 
@@ -118,7 +119,7 @@
          *  @ngdoc object
          *  @name enablePinning
          *  @propertyOf  ui.grid.pinning.api:ColumnDef
-         *  @description Enable pinning for the individual column.  
+         *  @description Enable pinning for the individual column.
          *  <br/>Defaults to true
          */
         colDef.enablePinning = colDef.enablePinning === undefined ? gridOptions.enablePinning : colDef.enablePinning;
@@ -184,7 +185,7 @@
             return typeof(this.context.col.renderContainer) !== 'undefined' && this.context.col.renderContainer !== null && this.context.col.renderContainer !== 'body';
           },
           action: function () {
-            service.pinColumn(this.context.col.grid, this.context.col, uiGridPinningConstants.container.UNPIN);
+            service.pinColumn(this.context.col.grid, this.context.col, uiGridPinningConstants.container.NONE);
           }
         };
 
@@ -202,6 +203,7 @@
       pinColumn: function(grid, col, container) {
         if (container === uiGridPinningConstants.container.NONE) {
           col.renderContainer = null;
+          col.colDef.pinnedLeft = col.colDef.pinnedRight = false;
         }
         else {
           col.renderContainer = container;

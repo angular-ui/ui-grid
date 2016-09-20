@@ -5,27 +5,64 @@ var app = angular.module('customizer', ['ui.grid']);
 app.run(function($log, $rootScope, $http) {
 });
 
-app.controller('Main', function($log, $http, $scope, less, Theme) {
+app.constant('FILES',{
+  DATA_100: '/data/100.json',
+  LESS_MAIN: '/less/main.less',
+  LESS_VARIABLES: '/less/variables.less',
+  JSON_THEMES: '/customizer/themes/themes.json',
+});
+
+app.constant('DIRECTORIES', {
+  BOOTSTRAP: './../../bootstrap'
+});
+
+app.controller('Main', function($log, $http, $scope, less, Theme, FILES) {
   // Create grid
+
+  function updateCSS(compress) {
+    $scope.compress = compress;
+    var fullSrc = $scope.source + ' ' + $scope.customLess;
+    var src = fullSrc;
+    less.process(src, $scope.compress, $scope.variables)
+      .then(
+        function(css) {
+          $scope.css = css;
+          $scope.cssErr = null;
+          //Apply is needed because this is in a promise
+          $scope.$apply();
+        },
+        function(err) {
+          $scope.cssErr = err;
+          //Apply is needed because this is in a promise
+          $scope.$apply();
+        }
+      );
+  }
+
   $scope.gridOptions = {};
-  $http.get('/data/100.json')
+  $http.get(FILES.DATA_100)
     .success(function(data) {
       $scope.gridOptions.data = data;
     });
 
-  // Fetch initial less file
-  $http.get('/less/ui-grid.less')
+  //Fetch initial less file
+  $http.get(FILES.LESS_MAIN)
     .success(function (data) {
       $scope.source = data;
+    });
+
+  $http.get(FILES.LESS_VARIABLES)
+    .success(function (data) {
       $scope.variables = less.parseVariables(data);
       $scope.trueDefaultVariables = angular.copy($scope.variables);
       $scope.defaultVariables = angular.copy($scope.trueDefaultVariables);
+      console.log($scope.variables);
     });
 
   // function() { return { a: $scope.source, b: $scope.compress }; }
   $scope.$watch('source', function(n, o) {
     if (n) {
-      $scope.updateCSS();
+      updateCSS();
     }
   });
 
@@ -43,24 +80,10 @@ app.controller('Main', function($log, $http, $scope, less, Theme) {
     }
 
     $scope.variables = angular.copy($scope.defaultVariables);
-    $scope.updateCSS();
+    updateCSS();
   };
 
-  $scope.updateCSS = function(compress) {
-    $scope.compress = compress;
-    var fullSrc = $scope.source + ' ' + $scope.customLess;
-    var src = less.replaceVariables(fullSrc, $scope.variables);
-    less.process(src, $scope.compress)
-      .then(
-        function(css) {
-          $scope.css = css;
-          $scope.cssErr = null;
-        },
-        function(err) {
-          $scope.cssErr = err;
-        }
-      );
-  };
+  $scope.updateCSS = _.debounce(updateCSS, 750);
 
   $scope.cssSize = function() {
     return (unescape(encodeURIComponent( $scope.css )).length / 1000).toFixed(2) + 'kB';
@@ -71,10 +94,9 @@ app.controller('Main', function($log, $http, $scope, less, Theme) {
     if (theme) {
       var themeData = $scope.themeHash[theme];
 
-      angular.forEach(themeData.variables, function (val, name) {
+      _.forEach(themeData.variables, function (val, name) {
         var matches = _.where($scope.defaultVariables, { name: name });
-        matches[0].value = val
-        // $scope.defaultVariables[name] = val;
+        matches[0].value = val;
       });
 
       if (themeData.customLess) {
@@ -97,12 +119,12 @@ app.controller('Main', function($log, $http, $scope, less, Theme) {
   // };
 });
 
-app.service('Theme', function($q, $http) {
+app.service('Theme', function($q, $http, FILES) {
   return {
     getThemes: function() {
       var p = $q.defer();
 
-      $http.get('/customizer/themes/themes.json')
+      $http.get(FILES.JSON_THEMES)
         .success(function (themeList) {
           var promises = [];
           var themes = {};
@@ -128,7 +150,10 @@ app.service('Theme', function($q, $http) {
   };
 });
 
-app.service('less', function($log, $q) {
+app.service('less', function($log, $q, FILES, DIRECTORIES) {
+  var blackListVariables = [
+    '@bootstrapDirectory'
+  ];
   var variableBlockRe = /\/\*-- VARIABLES.+?--\*\/([\s\S]+?)\/\*-- END VARIABLES.+?--\*\//m;
 
   var sectionRe = /\/\*\*([\s\S])*?\*\//mg;
@@ -140,62 +165,52 @@ app.service('less', function($log, $q) {
       var groups = src.match(variableBlockRe);
       var variableText = groups[1];
 
-      // var sections = [];
       var variables = [];
 
-      // var sectionMatch;
-      // while (sectionMatch = sectionRe.exec(variableText) {
-      //   var sectionName = 
-
-        var varMatch;
-        while (varMatch = variableRe.exec(variableText)) {
-          variables.push({ name: varMatch[1], value: varMatch[2] });
+      var varMatch;
+      while ((varMatch = variableRe.exec(variableText))) {
+        //If the var is in the list of blacklist variables then don't add it
+        if(_.includes(blackListVariables, varMatch[1])) {
+          continue;
         }
-      // });
-
+        variables.push({ name: varMatch[1], cleanName: varMatch[1].replace('@',''), value: varMatch[2] });
+      }
       return variables;
     },
 
-    replaceVariableBlock: function(src, replacement) {
-      return src.replace(variableBlockRe, replacement);
-    },
 
-    replaceVariables: function(src, vars) {
-      angular.forEach(vars, function (variable) {
-        var re = new RegExp('(' + variable.name + ')\: (.+?);', 'g');
-        src = src.replace(re, '$1: ' + variable.value + ';');
-      });
+    // replaceVariables: function(src, vars) {
+    //   angular.forEach(vars, function (variable) {
+    //     var re = new RegExp('(' + variable.name + ')\: (.+?);', 'g');
+    //     src = src.replace(re, '$1: ' + variable.value + ';');
+    //   });
+    //
+    //   return src;
+    // },
 
-      return src;
-    },
-
-    process: function (src, compress) {
-      var comp;
-      if (compress) {
-        comp = true;
-      }
-
-      var parser = new less.Parser();
-
-      var p = $q.defer();
-      try {
-        parser.parse(src, function(err, tree) {
-          if (err) {
-            p.reject(err.message);
-          }
-          else {
-            // $log.debug('tree', tree);
-            var css = tree.toCSS({ compress: comp });
-            p.resolve(css);
-          }
+    process: function (src, compress, variables) {
+      var comp = !!compress;
+      var modifyVars = {
+        bootstrapDirectory: "'" + DIRECTORIES.BOOTSTRAP + "'"
+      };
+      if(variables){
+        _.forEach(variables, function(variable){
+          modifyVars[variable.cleanName] = variable.value;
         });
       }
-      catch (e) {
-        // $log.debug('catch e', e);
-        p.reject(e.message);
-      }
-
-      return p.promise;
+      return less.render(src, {
+         paths: ['.' ,'./less/'],  // Specify search paths for @import directives
+         filename: './..' + FILES.LESS_MAIN, // Specify a filename to know what the source directory was.
+         compress: comp,          // Minify CSS output
+         modifyVars: modifyVars
+       })
+        .then(function( output) {
+          console.log(output);
+          return output.css;
+        })
+        .catch(function(error){
+          console.error(error);
+        });
     }
   };
 
@@ -203,7 +218,7 @@ app.service('less', function($log, $q) {
 });
 
 app.directive('hoverSelect', function() {
-  
+
   return {
     link: function(scope, elm, attrs) {
       elm.on('mouseover', function() {

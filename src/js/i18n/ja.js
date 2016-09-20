@@ -50,7 +50,8 @@
           exporterSelectedAsCsv: '選択したデータをCSV形式でエクスポート',
           exporterAllAsPdf: 'すべてのデータをPDF形式でエクスポート',
           exporterVisibleAsPdf: '表示中のデータをPDF形式でエクスポート',
-          exporterSelectedAsPdf: '選択したデータをPDF形式でエクスポート'
+          exporterSelectedAsPdf: '選択したデータをPDF形式でエクスポート',
+          clearAllFilters: 'すべてのフィルタを清掃してください'
         },
         importer: {
           noHeaders: '列名を取得できません。ファイルにヘッダが含まれていることを確認してください。',
@@ -60,8 +61,17 @@
           jsonNotArray: 'インポートしたJSONファイルには配列が含まれている必要があります。処理を中止します。'
         },
         pagination: {
+          aria: {
+            pageToFirst: '最初のページ',
+            pageBack: '前のページ',
+            pageSelected: '現在のページ',
+            pageForward: '次のページ',
+            pageToLast: '最後のページ'
+          },
           sizes: '項目/ページ',
-          totalItems: '項目'
+          totalItems: '項目',
+          through: 'から',
+          of: '項目/全'
         }
       });
       return $delegate;

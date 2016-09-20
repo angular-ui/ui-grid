@@ -38,7 +38,7 @@ describe('ui.grid.resizeColumns', function () {
     $scope.gridOpts.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
     };
-    
+
     recompile = function () {
       gridUtil.resetUids();
 
@@ -62,7 +62,7 @@ describe('ui.grid.resizeColumns', function () {
       expect($scope.gridApi.colResizable.on.columnSizeChanged).toBeDefined();
     });
   });
-  
+
   describe('setting enableColumnResizing', function () {
     it('should by default cause resizer to be attached to the header elements', function () {
       var resizers = $(grid).find('[ui-grid-column-resizer]');
@@ -134,7 +134,7 @@ describe('ui.grid.resizeColumns', function () {
 
       var colWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
 
-      expect(colWidth === 166 || colWidth === 167).toBe(true); // allow for column widths that don't equally divide 
+      expect(colWidth === 166 || colWidth === 167).toBe(true); // allow for column widths that don't equally divide
 
       firstResizer.trigger('dblclick');
 
@@ -173,7 +173,7 @@ describe('ui.grid.resizeColumns', function () {
         initialWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + firstColumnUid).first().width();
 
         initialX = firstResizer.position().left;
-        
+
         $(firstResizer).simulate(downEvent, { clientX: initialX });
         $scope.$digest();
 
@@ -203,7 +203,7 @@ describe('ui.grid.resizeColumns', function () {
       });
 
       describe('then releasing the mouse', function () {
-        beforeEach(function () {       
+        beforeEach(function () {
           $(document).simulate(upEvent, { clientX: initialX + xDiff });
           $scope.$digest();
         });
@@ -234,7 +234,7 @@ describe('ui.grid.resizeColumns', function () {
         { field: 'gender' },
         { field: 'company' }
       ];
-      
+
       recompile();
     });
 
@@ -276,7 +276,7 @@ describe('ui.grid.resizeColumns', function () {
       });
     });
   });
-  
+
   // Don't run this on IE9. The behavior looks correct when testing interactively but these tests fail
   if (!navigator.userAgent.match(/MSIE\s+9\.0/)) {
     describe('when a column has a maxWidth', function () {

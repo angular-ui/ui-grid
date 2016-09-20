@@ -50,7 +50,8 @@
           exporterSelectedAsCsv: 'csv로 선택된 데이터 내보내기',
           exporterAllAsPdf: 'pdf로 모든 데이터 내보내기',
           exporterVisibleAsPdf: 'pdf로 보이는 데이터 내보내기',
-          exporterSelectedAsPdf: 'pdf로 선택 데이터 내보내기'
+          exporterSelectedAsPdf: 'pdf로 선택 데이터 내보내기',
+          clearAllFilters: '모든 필터를 청소'
         },
         importer: {
           noHeaders: '컬럼명이 지정되어 있지 않습니다. 파일에 헤더가 명시되어 있는지 확인해 주세요.',

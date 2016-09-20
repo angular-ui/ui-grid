@@ -73,23 +73,25 @@ describe('uiGridRow', function () {
       expect(thirdRow.text()).toEqual('The name is: Sam');
     });
 
-    it('should change templates properly after a sort', function () {
+    describe('should change templates properly after a sort', function () {
       var refreshed = false;
-      runs(function () {
+      beforeEach(function(done) {
         $scope.gridApi.grid.sortColumn($scope.gridApi.grid.columns[0], uiGridConstants.ASC)
           .then(function () {
-            $scope.gridApi.grid.refresh();
-            refreshed = true;
-          });
+            $scope.gridApi.grid.refresh().then(function(){
+              refreshed = true;
+              setTimeout(function() {
+                done();
+              }, 750);
 
+            });
+          });
         $scope.$digest();
       });
 
-      waitsFor(function () { return refreshed; }, 10000);
-
-      runs(function () {
+      it("should have the forth row with text", function() {
+        expect(refreshed).toBeTruthy();
         var fourthRow = $(grid).find('.ui-grid-row:nth-child(4)');
-
         expect(fourthRow.text()).toEqual('The name is: Sam');
       });
     });

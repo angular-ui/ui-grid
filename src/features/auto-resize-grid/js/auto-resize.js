@@ -4,14 +4,16 @@
    *  @ngdoc overview
    *  @name ui.grid.autoResize
    *
-   *  @description 
+   *  @description
    *
    *  #ui.grid.autoResize
-   *  This module provides auto-resizing functionality to ui-grid
    *
+   *  <div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+   *
+   *  This module provides auto-resizing functionality to UI-Grid.
    */
   var module = angular.module('ui.grid.autoResize', ['ui.grid']);
-  
+
 
   module.directive('uiGridAutoResize', ['$timeout', 'gridUtil', function ($timeout, gridUtil) {
     return {
@@ -39,6 +41,7 @@
             if (newGridHeight !== prevGridHeight || newGridWidth !== prevGridWidth) {
               uiGridCtrl.grid.gridHeight = newGridHeight;
               uiGridCtrl.grid.gridWidth = newGridWidth;
+              uiGridCtrl.grid.api.core.raise.gridDimensionChanged(prevGridHeight, prevGridWidth, newGridHeight, newGridWidth);
 
               $scope.$apply(function () {
                 uiGridCtrl.grid.refresh()

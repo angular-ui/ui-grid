@@ -21,7 +21,7 @@ if (typeof Function.prototype.bind !== "function") {
   };
 }
 
-function getStyles (elem) {
+function  getStyles (elem) {
   var e = elem;
   if (typeof(e.length) !== 'undefined' && e.length) {
     e = elem[0];
@@ -160,7 +160,7 @@ function getLineHeight(elm) {
   return parseInt( getStyles(parent).fontSize ) || parseInt( getStyles(elm).fontSize ) || 16;
 }
 
-var uid = ['0', '0', '0'];
+var uid = ['0', '0', '0', '0'];
 var uidPrefix = 'uiGrid-';
 
 /**
@@ -351,7 +351,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // See if the template is itself a promise
-      if (template.hasOwnProperty('then')) {
+      if (angular.isFunction(template.then)) {
         return template.then(s.postProcessTemplate);
       }
 
@@ -661,7 +661,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var $animate;
       try {
         $animate = $injector.get('$animate');
-        $animate.enabled(false, element);
+        // See: http://brianhann.com/angular-1-4-breaking-changes-to-be-aware-of/#animate
+        if (angular.version.major > 1 || (angular.version.major === 1 && angular.version.minor >= 4)) {
+          $animate.enabled(element, false);
+        } else {
+          $animate.enabled(false, element);
+        }
       }
       catch (e) {}
     },
@@ -670,7 +675,12 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var $animate;
       try {
         $animate = $injector.get('$animate');
-        $animate.enabled(true, element);
+        // See: http://brianhann.com/angular-1-4-breaking-changes-to-be-aware-of/#animate
+        if (angular.version.major > 1 || (angular.version.major === 1 && angular.version.minor >= 4)) {
+          $animate.enabled(element, true);
+        } else {
+          $animate.enabled(true, element);
+        }
         return $animate;
       }
       catch (e) {}
@@ -776,6 +786,121 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
 
   };
+
+  /**
+   * @ngdoc object
+   * @name focus
+   * @propertyOf ui.grid.service:GridUtil
+   * @description Provies a set of methods to set the document focus inside the grid.
+   * See {@link ui.grid.service:GridUtil.focus} for more information.
+   */
+
+  /**
+   * @ngdoc object
+   * @name ui.grid.service:GridUtil.focus
+   * @description Provies a set of methods to set the document focus inside the grid.
+   * Timeouts are utilized to ensure that the focus is invoked after any other event has been triggered.
+   * e.g. click events that need to run before the focus or
+   * inputs elements that are in a disabled state but are enabled when those events
+   * are triggered.
+   */
+  s.focus = {
+    queue: [],
+    //http://stackoverflow.com/questions/25596399/set-element-focus-in-angular-way
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name byId
+     * @description Sets the focus of the document to the given id value.
+     * If provided with the grid object it will automatically append the grid id.
+     * This is done to encourage unique dom id's as it allows for multiple grids on a
+     * page.
+     * @param {String} id the id of the dom element to set the focus on
+     * @param {Object=} Grid the grid object for this grid instance. See: {@link ui.grid.class:Grid}
+     * @param {Number} Grid.id the unique id for this grid. Already set on an initialized grid object.
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    byId: function (id, Grid) {
+      this._purgeQueue();
+      var promise = $timeout(function() {
+        var elementID = (Grid && Grid.id ? Grid.id + '-' : '') + id;
+        var element = $window.document.getElementById(elementID);
+        if (element) {
+          element.focus();
+        } else {
+          s.logWarn('[focus.byId] Element id ' + elementID + ' was not found.');
+        }
+      });
+      this.queue.push(promise);
+      return promise;
+    },
+
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name byElement
+     * @description Sets the focus of the document to the given dom element.
+     * @param {(element|angular.element)} element the DOM element to set the focus on
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    byElement: function(element){
+      if (!angular.isElement(element)){
+        s.logWarn("Trying to focus on an element that isn\'t an element.");
+        return $q.reject('not-element');
+      }
+      element = angular.element(element);
+      this._purgeQueue();
+      var promise = $timeout(function(){
+        if (element){
+          element[0].focus();
+        }
+      });
+      this.queue.push(promise);
+      return promise;
+    },
+    /**
+     * @ngdoc method
+     * @methodOf ui.grid.service:GridUtil.focus
+     * @name bySelector
+     * @description Sets the focus of the document to the given dom element.
+     * @param {(element|angular.element)} parentElement the parent/ancestor of the dom element that you are selecting using the query selector
+     * @param {String} querySelector finds the dom element using the {@link http://www.w3schools.com/jsref/met_document_queryselector.asp querySelector}
+     * @param {boolean} [aSync=false] If true then the selector will be querried inside of a timeout. Otherwise the selector will be querried imidately
+     * then the focus will be called.
+     * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
+     * then the promise will fail with the `'canceled'` reason.
+     */
+    bySelector: function(parentElement, querySelector, aSync){
+      var self = this;
+      if (!angular.isElement(parentElement)){
+        throw new Error("The parent element is not an element.");
+      }
+      // Ensure that this is an angular element.
+      // It is fine if this is already an angular element.
+      parentElement = angular.element(parentElement);
+      var focusBySelector = function(){
+        var element = parentElement[0].querySelector(querySelector);
+        return self.byElement(element);
+      };
+      this._purgeQueue();
+      if (aSync){ //Do this asynchronysly
+        var promise = $timeout(focusBySelector);
+        this.queue.push($timeout(focusBySelector));
+        return promise;
+      } else {
+        return focusBySelector();
+      }
+    },
+    _purgeQueue: function(){
+      this.queue.forEach(function(element){
+        $timeout.cancel(element);
+      });
+      this.queue = [];
+    }
+  };
+
 
   ['width', 'height'].forEach(function (name) {
     var capsName = angular.uppercase(name.charAt(0)) + name.substr(1);
@@ -1050,7 +1175,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (timeout) {
         $timeout.cancel(timeout);
       }
-      timeout = $timeout(later, wait);
+      timeout = $timeout(later, wait, false);
       if (callNow) {
         result = func.apply(context, args);
       }
@@ -1100,7 +1225,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){ queued = null; }, 0, 1);
+      $interval(function(){queued = null; }, 0, 1, false);
     }
 
     return function(){
@@ -1113,7 +1238,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $interval(runFunc, wait - sinceLast, 1);
+          queued = $interval(runFunc, wait - sinceLast, 1, false);
         }
       }
     };
@@ -1155,7 +1280,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     }
   };
   s.off.mousewheel = function (elm, fn) {
-    var $elm = angular.element(this);
+    var $elm = angular.element(elm);
 
     var cbs = $elm.data('mousewheel-callbacks');
     var handler = cbs[fn];
@@ -1250,8 +1375,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
 
-    event.deltaMode = 0;
-
     // Normalise offsetX and offsetY properties
     // if ($elm[0].getBoundingClientRect ) {
     //   var boundingRect = $(elm)[0].getBoundingClientRect();
@@ -1268,7 +1391,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       deltaX: deltaX,
       deltaY: deltaY,
       deltaFactor: lowestDelta,
-      preventDefault: function () { event.preventDefault(); }
+      preventDefault: function () { event.preventDefault(); },
+      stopPropagation: function () { event.stopPropagation(); }
     };
 
     // Clearout lowestDelta after sometime to better

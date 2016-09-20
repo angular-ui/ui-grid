@@ -148,7 +148,7 @@ describe('ui-grid-one-bind-class', function() {
         $compile = _$compile_;
 
         //Initialize the value
-        $scope.valNull = startingValue;
+        $scope.val = startingValue;
 
         recompile = function () {
           directiveElt = angular.element("<div ui-grid-one-bind-class='{customClass: val}'></div>");

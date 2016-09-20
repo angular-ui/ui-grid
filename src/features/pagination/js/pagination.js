@@ -7,7 +7,10 @@
    *
    * @description
    *
-   * #ui.grid.pagination
+   * # ui.grid.pagination
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+   *
    * This module provides pagination support to ui-grid
    */
   var module = angular.module('ui.grid.pagination', ['ng', 'ui.grid']);
@@ -167,14 +170,14 @@
            * @ngdoc property
            * @name enablePagination
            * @propertyOf ui.grid.pagination.api:GridOptions
-           * @description Enables pagination, defaults to true
+           * @description Enables pagination.  Defaults to true.
            */
           gridOptions.enablePagination = gridOptions.enablePagination !== false;
           /**
            * @ngdoc property
            * @name enablePaginationControls
            * @propertyOf ui.grid.pagination.api:GridOptions
-           * @description Enables the paginator at the bottom of the grid. Turn this off, if you want to implement your
+           * @description Enables the paginator at the bottom of the grid. Turn this off if you want to implement your
            *              own controls outside the grid.
            */
           gridOptions.enablePaginationControls = gridOptions.enablePaginationControls !== false;
@@ -183,14 +186,14 @@
            * @name useExternalPagination
            * @propertyOf ui.grid.pagination.api:GridOptions
            * @description Disables client side pagination. When true, handle the paginationChanged event and set data
-           *              and totalItems, defaults to `false`
+           *              and totalItems.  Defaults to `false`
            */
           gridOptions.useExternalPagination = gridOptions.useExternalPagination === true;
           /**
            * @ngdoc property
            * @name totalItems
            * @propertyOf ui.grid.pagination.api:GridOptions
-           * @description Total number of items, set automatically when client side pagination, needs set by user
+           * @description Total number of items, set automatically when using client side pagination, but needs set by user
            *              for server side pagination
            */
           if (gridUtil.isNullOrUndefined(gridOptions.totalItems)) {
@@ -340,15 +343,19 @@
         scope: true,
         require: '^uiGrid',
         link: function ($scope, $elm, $attr, uiGridCtrl) {
+          var defaultFocusElementSelector = '.ui-grid-pager-control-input';
+          $scope.aria = i18nService.getSafeText('pagination.aria'); //Returns an object with all of the aria labels
+
           $scope.paginationApi = uiGridCtrl.grid.api.pagination;
           $scope.sizesLabel = i18nService.getSafeText('pagination.sizes');
           $scope.totalItemsLabel = i18nService.getSafeText('pagination.totalItems');
           $scope.paginationOf = i18nService.getSafeText('pagination.of');
+          $scope.paginationThrough = i18nService.getSafeText('pagination.through');
 
           var options = uiGridCtrl.grid.options;
 
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - gridUtil.elementHeight($elm);
+            adjustment.height = adjustment.height - gridUtil.elementHeight($elm, "padding");
             return adjustment;
           });
 
@@ -368,7 +375,7 @@
           var deregT = $scope.$watch('grid.options.totalItems + grid.options.paginationPageSize', setShowing);
 
           var deregP = $scope.$watch('grid.options.paginationCurrentPage + grid.options.paginationPageSize', function (newValues, oldValues) {
-              if (newValues === oldValues) {
+              if (newValues === oldValues || oldValues === undefined) {
                 return;
               }
 
@@ -411,6 +418,34 @@
           $scope.cantPageBackward = function () {
             return options.paginationCurrentPage <= 1;
           };
+
+          var focusToInputIf = function(condition){
+            if (condition){
+              gridUtil.focus.bySelector($elm, defaultFocusElementSelector);
+            }
+          };
+
+          //Takes care of setting focus to the middle element when focus is lost
+          $scope.pageFirstPageClick = function () {
+            $scope.paginationApi.seek(1);
+            focusToInputIf($scope.cantPageBackward());
+          };
+
+          $scope.pagePreviousPageClick = function () {
+            $scope.paginationApi.previousPage();
+            focusToInputIf($scope.cantPageBackward());
+          };
+
+          $scope.pageNextPageClick = function () {
+            $scope.paginationApi.nextPage();
+            focusToInputIf($scope.cantPageForward());
+          };
+
+          $scope.pageLastPageClick = function () {
+            $scope.paginationApi.seek($scope.paginationApi.getTotalPages());
+            focusToInputIf($scope.cantPageToLast());
+          };
+
         }
       };
     }

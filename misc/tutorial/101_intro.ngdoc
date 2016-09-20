@@ -23,9 +23,9 @@ Steps:
 <ul>
  <li>Include uiGrid in your script and css
   <pre>
-      <link rel="styleSheet" href="release/ui-grid-unstable.css"/>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
-      <script src="/release/ui-grid-unstable.js"></script>
+      <link rel="styleSheet" href="release/ui-grid.min.css"/>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+      <script src="/release/ui-grid.min.js"></script>
   </pre>
  </li>
  <li>Include ui.grid module as a dependency in your app

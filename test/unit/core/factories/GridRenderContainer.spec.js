@@ -102,18 +102,18 @@ describe('GridRenderContainer factory', function () {
     beforeEach(function() {
       grid.buildColumns();
       grid.setVisibleColumns(grid.columns);
-      spyOn(grid, 'getViewportWidth').andCallFake(function() { return 415;});  // actual width 400 after scrollbar
+      spyOn(grid, 'getViewportWidth').and.callFake(function(){return 415;});  // actual width 400 after scrollbar
       grid.scrollbarWidth = 15;
     });
-    
+
     it('all percentages', function() {
       grid.columns[0].width = '25%';
       grid.columns[1].width = '25%';
       grid.columns[2].width = '25%';
       grid.columns[3].width = '25%';
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(100);
       expect( grid.columns[1].drawnWidth ).toEqual(100);
       expect( grid.columns[2].drawnWidth ).toEqual(100);
@@ -125,9 +125,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[1].width = '15%';
       grid.columns[2].width = '20%';
       grid.columns[3].width = '15%';
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(80);
       expect( grid.columns[1].drawnWidth ).toEqual(60);
       expect( grid.columns[2].drawnWidth ).toEqual(80);
@@ -139,9 +139,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[1].width = '30%';
       grid.columns[2].width = '40%';
       grid.columns[3].width = '30%';
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(160);
       expect( grid.columns[1].drawnWidth ).toEqual(120);
       expect( grid.columns[2].drawnWidth ).toEqual(160);
@@ -153,9 +153,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[1].width = 150;
       grid.columns[2].width = 50;
       grid.columns[3].width = 150;
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(50);
       expect( grid.columns[1].drawnWidth ).toEqual(150);
       expect( grid.columns[2].drawnWidth ).toEqual(50);
@@ -167,9 +167,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[1].width = '*';
       grid.columns[2].width = '*';
       grid.columns[3].width = '*';
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(100);
       expect( grid.columns[1].drawnWidth ).toEqual(100);
       expect( grid.columns[2].drawnWidth ).toEqual(100);
@@ -181,9 +181,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[1].width = '*';
       grid.columns[2].width = '***';
       grid.columns[3].width = '*';
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(150);
       expect( grid.columns[1].drawnWidth ).toEqual(50);
       expect( grid.columns[2].drawnWidth ).toEqual(150);
@@ -196,9 +196,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[2].width = '*';
       grid.columns[3].width = '*';
       grid.columns[0].minWidth = 130;
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(130);
       expect( grid.columns[1].drawnWidth ).toEqual(90);
       expect( grid.columns[2].drawnWidth ).toEqual(90);
@@ -211,9 +211,9 @@ describe('GridRenderContainer factory', function () {
       grid.columns[2].width = '*';
       grid.columns[3].width = '*';
       grid.columns[0].maxWidth = 70;
-      
+
       grid.renderContainers.body.updateColumnWidths();
-      
+
       expect( grid.columns[0].drawnWidth ).toEqual(70);
       expect( grid.columns[1].drawnWidth ).toEqual(110);
       expect( grid.columns[2].drawnWidth ).toEqual(110);

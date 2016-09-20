@@ -6,7 +6,10 @@
    * @name ui.grid.expandable
    * @description
    *
-   *  # ui.grid.expandable
+   * # ui.grid.expandable
+   *
+   * <div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+   *
    * This module provides the ability to create subgrids with the ability to expand a row
    * to show the subgrid.
    *
@@ -23,7 +26,7 @@
   module.service('uiGridExpandableService', ['gridUtil', '$compile', function (gridUtil, $compile) {
     var service = {
       initializeGrid: function (grid) {
-        
+
         grid.expandable = {};
         grid.expandable.expandedAll = false;
 
@@ -32,16 +35,16 @@
          *  @name enableExpandable
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Whether or not to use expandable feature, allows you to turn off expandable on specific grids
-         *  within your application, or in specific modes on _this_ grid. Defaults to true.  
+         *  within your application, or in specific modes on _this_ grid. Defaults to true.
          *  @example
          *  <pre>
          *    $scope.gridOptions = {
          *      enableExpandable: false
          *    }
-         *  </pre>  
+         *  </pre>
          */
         grid.options.enableExpandable = grid.options.enableExpandable !== false;
-        
+
         /**
          *  @ngdoc object
          *  @name expandableRowHeight
@@ -53,13 +56,13 @@
          *    $scope.gridOptions = {
          *      expandableRowHeight: 150
          *    }
-         *  </pre>  
+         *  </pre>
          */
         grid.options.expandableRowHeight = grid.options.expandableRowHeight || 150;
 
         /**
          *  @ngdoc object
-         *  @name 
+         *  @name
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Width in pixels of the expandable column. Defaults to 40
          *  @example
@@ -67,7 +70,7 @@
          *    $scope.gridOptions = {
          *      expandableRowHeaderWidth: 40
          *    }
-         *  </pre>  
+         *  </pre>
          */
         grid.options.expandableRowHeaderWidth = grid.options.expandableRowHeaderWidth || 40;
 
@@ -81,7 +84,7 @@
          *    $scope.gridOptions = {
          *      expandableRowTemplate: 'expandableRowTemplate.html'
          *    }
-         *  </pre>  
+         *  </pre>
          */
         if ( grid.options.enableExpandable && !grid.options.expandableRowTemplate ){
           gridUtil.logError( 'You have not set the expandableRowTemplate, disabling expandable module' );
@@ -96,9 +99,15 @@
          */
         /**
          *  @ngdoc object
+         *  @name ui.grid.expandable.api:GridRow
+         *
+         *  @description Additional properties added to GridRow when using the expandable module
+         */
+        /**
+         *  @ngdoc object
          *  @name ui.grid.expandable.api:GridOptions
          *
-         *  @description Options for configuring the expandable feature, these are available to be  
+         *  @description Options for configuring the expandable feature, these are available to be
          *  set using the ui-grid {@link ui.grid.class:GridOptions gridOptions}
          */
         var publicApi = {
@@ -114,11 +123,13 @@
                * </pre>
                * @param {GridRow} row the row that was expanded
                */
+              rowExpandedBeforeStateChanged: function(scope,row){
+              },
               rowExpandedStateChanged: function (scope, row) {
               }
             }
           },
-          
+
           methods: {
             expandable: {
               /**
@@ -130,7 +141,7 @@
                *      gridApi.expandable.toggleRowExpansion(rowEntity);
                * </pre>
                * @param {object} rowEntity the data entity for the row you want to expand
-               */              
+               */
               toggleRowExpansion: function (rowEntity) {
                 var row = grid.getRow(rowEntity);
                 if (row !== null) {
@@ -146,7 +157,7 @@
                * <pre>
                *      gridApi.expandable.expandAllRows();
                * </pre>
-               */              
+               */
               expandAllRows: function() {
                 service.expandAllRows(grid);
               },
@@ -159,7 +170,7 @@
                * <pre>
                *      gridApi.expandable.collapseAllRows();
                * </pre>
-               */              
+               */
               collapseAllRows: function() {
                 service.collapseAllRows(grid);
               },
@@ -172,9 +183,46 @@
                * <pre>
                *      gridApi.expandable.toggleAllRows();
                * </pre>
-               */              
+               */
               toggleAllRows: function() {
                 service.toggleAllRows(grid);
+              },
+              /**
+               * @ngdoc function
+               * @name expandRow
+               * @methodOf  ui.grid.expandable.api:PublicApi
+               * @description Expand the data row
+               * @param {object} rowEntity gridOptions.data[] array instance
+               */
+              expandRow: function (rowEntity) {
+                var row = grid.getRow(rowEntity);
+                if (row !== null && !row.isExpanded) {
+                  service.toggleRowExpansion(grid, row);
+                }
+              },
+              /**
+               * @ngdoc function
+               * @name collapseRow
+               * @methodOf  ui.grid.expandable.api:PublicApi
+               * @description Collapse the data row
+               * @param {object} rowEntity gridOptions.data[] array instance
+               */
+              collapseRow: function (rowEntity) {
+                var row = grid.getRow(rowEntity);
+                if (row !== null && row.isExpanded) {
+                  service.toggleRowExpansion(grid, row);
+                }
+              },
+              /**
+               * @ngdoc function
+               * @name getExpandedRows
+               * @methodOf  ui.grid.expandable.api:PublicApi
+               * @description returns all expandedRow's entity references
+               */
+              getExpandedRows: function () {
+                return service.getExpandedRows(grid).map(function (gridRow) {
+                  return gridRow.entity;
+                });
               }
             }
           }
@@ -182,11 +230,31 @@
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
       },
-      
+
       toggleRowExpansion: function (grid, row) {
+        // trigger the "before change" event. Can change row height dynamically this way.
+        grid.api.expandable.raise.rowExpandedBeforeStateChanged(row);
+        /**
+         *  @ngdoc object
+         *  @name isExpanded
+         *  @propertyOf  ui.grid.expandable.api:GridRow
+         *  @description Whether or not the row is currently expanded.
+         *  @example
+         *  <pre>
+         *    $scope.api.expandable.on.rowExpandedStateChanged($scope, function (row) {
+         *      if (row.isExpanded) {
+         *        //...
+         *      }
+         *    });
+         *  </pre>
+         */
         row.isExpanded = !row.isExpanded;
+        if (angular.isUndefined(row.expandedRowHeight)){
+          row.expandedRowHeight = grid.options.expandableRowHeight;
+        }
+
         if (row.isExpanded) {
-          row.height = row.grid.options.rowHeight + grid.options.expandableRowHeight;
+          row.height = row.grid.options.rowHeight + row.expandedRowHeight;
         }
         else {
           row.height = row.grid.options.rowHeight;
@@ -194,7 +262,7 @@
         }
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
-      
+
       expandAllRows: function(grid, $scope) {
         grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (!row.isExpanded) {
@@ -204,7 +272,7 @@
         grid.expandable.expandedAll = true;
         grid.queueGridRefresh();
       },
-      
+
       collapseAllRows: function(grid) {
         grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (row.isExpanded) {
@@ -222,6 +290,12 @@
         else {
           service.expandAllRows(grid);
         }
+      },
+
+      getExpandedRows: function (grid) {
+        return grid.rows.filter(function (row) {
+          return row.isExpanded;
+        });
       }
     };
     return service;
@@ -238,7 +312,7 @@
    *    $scope.gridOptions = {
    *      enableExpandableRowHeader: false
    *    }
-   *  </pre>  
+   *  </pre>
    */
   module.directive('uiGridExpandable', ['uiGridExpandableService', '$templateCache',
     function (uiGridExpandableService, $templateCache) {
@@ -250,20 +324,26 @@
         compile: function () {
           return {
             pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-              if ( uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
+              uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+
+              if (!uiGridCtrl.grid.options.enableExpandable) {
+                return;
+              }
+
+              if (uiGridCtrl.grid.options.enableExpandableRowHeader !== false ) {
                 var expandableRowHeaderColDef = {
-                  name: 'expandableButtons', 
-                  displayName: '', 
-                  exporterSuppressExport: true, 
-                  enableColumnResizing: false, 
+                  name: 'expandableButtons',
+                  displayName: '',
+                  exporterSuppressExport: true,
+                  enableColumnResizing: false,
                   enableColumnMenu: false,
                   width: uiGridCtrl.grid.options.expandableRowHeaderWidth || 40
                 };
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
                 expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
-                uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef);
+                uiGridCtrl.grid.addRowHeaderColumn(expandableRowHeaderColDef, -90);
               }
-              uiGridExpandableService.initializeGrid(uiGridCtrl.grid);
+
             },
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
             }
@@ -342,6 +422,18 @@
               gridUtil.getTemplate($scope.grid.options.expandableRowTemplate).then(
                 function (template) {
                   if ($scope.grid.options.expandableRowScope) {
+                    /**
+                     *  @ngdoc object
+                     *  @name expandableRowScope
+                     *  @propertyOf  ui.grid.expandable.api:GridOptions
+                     *  @description  Variables of object expandableScope will be available in the scope of the expanded subgrid
+                     *  @example
+                     *  <pre>
+                     *    $scope.gridOptions = {
+                     *      expandableRowScope: expandableScope
+                     *    }
+                     *  </pre>
+                     */
                     var expandableRowScope = $scope.grid.options.expandableRowScope;
                     for (var property in expandableRowScope) {
                       if (expandableRowScope.hasOwnProperty(property)) {
@@ -349,8 +441,9 @@
                       }
                     }
                   }
-                  var expandedRowElement = $compile(template)($scope);
+                  var expandedRowElement = angular.element(template);
                   $elm.append(expandedRowElement);
+                  expandedRowElement = $compile(expandedRowElement)($scope);
                   $scope.row.expandedRendered = true;
               });
             },
@@ -380,6 +473,10 @@
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
 
+                if (!$scope.grid.options.enableExpandable) {
+                  return;
+                }
+
                 $scope.expandableRow = {};
 
                 $scope.expandableRow.shouldRenderExpand = function () {
@@ -395,7 +492,7 @@
  /*
   * Commented out @PaulL1.  This has no purpose that I can see, and causes #2964.  If this code needs to be reinstated for some
   * reason it needs to use drawnWidth, not width, and needs to check column visibility.  It should really use render container
-  * visible column cache also instead of checking column.renderContainer. 
+  * visible column cache also instead of checking column.renderContainer.
                   function updateRowContainerWidth() {
                       var grid = $scope.grid;
                       var colWidth = 0;
@@ -438,6 +535,11 @@
           priority: -200,
           scope: false,
           compile: function ($elm, $attrs) {
+
+             //todo: this adds ng-if watchers to each row even if the grid is not using expandable directive
+             //      or options.enableExpandable == false
+             //      The alternative is to compile the template and append to each row in a uiGridRow directive
+
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
             var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
             var expandedRowElement = $templateCache.get('ui-grid/expandableRow');

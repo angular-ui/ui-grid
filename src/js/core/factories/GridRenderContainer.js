@@ -55,7 +55,7 @@ angular.module('ui.grid')
 
     /**
      *  @ngdoc boolean
-     *  @name hasHScrollbar
+     *  @name hasVScrollbar
      *  @propertyOf  ui.grid.class:GridRenderContainer
      *  @description flag to signal that container has a vertical scrollbar
      */
@@ -174,10 +174,10 @@ angular.module('ui.grid')
    * @description Removes an adjuster, should be used when your element is destroyed
    * @param {function} func the adjuster function we want to remove
    */
-  GridRenderContainer.prototype.removeViewportAdjuster = function registerViewportAdjuster(func) {
+  GridRenderContainer.prototype.removeViewportAdjuster = function removeViewportAdjuster(func) {
     var idx = this.viewportAdjusters.indexOf(func);
 
-    if (typeof(idx) !== 'undefined' && idx !== undefined) {
+    if (idx > -1) {
       this.viewportAdjusters.splice(idx, 1);
     }
   };
@@ -303,6 +303,10 @@ angular.module('ui.grid')
     return this.getCanvasHeight() - this.getViewportHeight() + this.grid.scrollbarHeight;
   };
 
+  GridRenderContainer.prototype.getHorizontalScrollLength = function getHorizontalScrollLength() {
+    return this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth;
+  };
+
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
     var self = this;
 
@@ -375,7 +379,7 @@ angular.module('ui.grid')
       if (xDiff > 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.RIGHT; }
       if (xDiff < 0) { this.grid.scrollDirection = uiGridConstants.scrollDirection.LEFT; }
 
-      var horizScrollLength = (this.canvasWidth - this.getViewportWidth());
+      var horizScrollLength = this.getHorizontalScrollLength();
       if (horizScrollLength !== 0) {
         horizScrollPercentage = newScrollLeft / horizScrollLength;
       }
@@ -485,9 +489,9 @@ angular.module('ui.grid')
     var columnCache = self.visibleColumnCache;
     var maxColumnIndex = columnCache.length - minCols;
 
-    // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
+    // Calculate the scroll percentage according to the scrollLeft location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollLeft) {
-      scrollPercentage = scrollLeft / self.getCanvasWidth();
+      scrollPercentage = scrollLeft / self.getHorizontalScrollLength();
     }
 
     var colIndex = Math.ceil(Math.min(maxColumnIndex, maxColumnIndex * scrollPercentage));
@@ -738,7 +742,7 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.needsHScrollbarPlaceholder = function () {
-    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar;
+    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
   };
 
   GridRenderContainer.prototype.getViewportStyle = function () {

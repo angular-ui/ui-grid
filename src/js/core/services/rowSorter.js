@@ -4,15 +4,15 @@ var module = angular.module('ui.grid');
 
 /**
  * @ngdoc object
- * @name ui.grid.class:RowSorter
- * @description RowSorter provides the default sorting mechanisms, 
- * including guessing column types and applying appropriate sort 
+ * @name ui.grid.class:rowSorter
+ * @description rowSorter provides the default sorting mechanisms,
+ * including guessing column types and applying appropriate sort
  * algorithms
- * 
- */ 
+ *
+ */
 
 module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGridConstants) {
-  var currencyRegexStr = 
+  var currencyRegexStr =
     '(' +
     uiGridConstants.CURRENCY_SYMBOLS
       .map(function (a) { return '\\' + a; }) // Escape all the currency symbols ($ at least will jack up this regex)
@@ -32,7 +32,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name guessSortFn
    * @description Assigns a sort function to use based on the itemType in the column
    * @param {string} itemType one of 'number', 'boolean', 'string', 'date', 'object'.  And
@@ -61,7 +61,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name handleNulls
    * @description Sorts nulls and undefined to the bottom (top when
    * descending).  Called by each of the internal sorters before
@@ -92,10 +92,10 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name basicSort
    * @description Sorts any values that provide the < method, including strings
-   * or numbers.  Handles nulls and undefined through calling handleNulls 
+   * or numbers.  Handles nulls and undefined through calling handleNulls
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -118,9 +118,9 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sortNumber
-   * @description Sorts numerical values.  Handles nulls and undefined through calling handleNulls 
+   * @description Sorts numerical values.  Handles nulls and undefined through calling handleNulls
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -137,10 +137,10 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sortNumberStr
-   * @description Sorts numerical values that are stored in a string (i.e. parses them to numbers first).  
-   * Handles nulls and undefined through calling handleNulls 
+   * @description Sorts numerical values that are stored in a string (i.e. parses them to numbers first).
+   * Handles nulls and undefined through calling handleNulls
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -154,36 +154,36 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
           numB, // The parsed number form of 'b'
           badA = false,
           badB = false;
-  
+
       // Try to parse 'a' to a float
       numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
-  
+
       // If 'a' couldn't be parsed to float, flag it as bad
       if (isNaN(numA)) {
           badA = true;
       }
-  
+
       // Try to parse 'b' to a float
       numB = parseFloat(b.replace(/[^0-9.-]/g, ''));
-  
+
       // If 'b' couldn't be parsed to float, flag it as bad
       if (isNaN(numB)) {
           badB = true;
       }
-  
+
       // We want bad ones to get pushed to the bottom... which effectively is "greater than"
       if (badA && badB) {
           return 0;
       }
-  
+
       if (badA) {
           return 1;
       }
-  
+
       if (badB) {
           return -1;
       }
-  
+
       return numA - numB;
     }
   };
@@ -191,9 +191,9 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sortAlpha
-   * @description Sorts string values. Handles nulls and undefined through calling handleNulls 
+   * @description Sorts string values. Handles nulls and undefined through calling handleNulls
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -205,15 +205,15 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     } else {
       var strA = a.toString().toLowerCase(),
           strB = b.toString().toLowerCase();
-  
-      return strA === strB ? 0 : (strA < strB ? -1 : 1);
+
+      return strA === strB ? 0 : strA.localeCompare(strB);
     }
   };
 
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sortDate
    * @description Sorts date values. Handles nulls and undefined through calling handleNulls.
    * Handles date strings by converting to Date object if not already an instance of Date
@@ -234,7 +234,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
       var timeA = a.getTime(),
           timeB = b.getTime();
-  
+
       return timeA === timeB ? 0 : (timeA < timeB ? -1 : 1);
     }
   };
@@ -242,10 +242,10 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sortBool
-   * @description Sorts boolean values, true is considered larger than false. 
-   * Handles nulls and undefined through calling handleNulls 
+   * @description Sorts boolean values, true is considered larger than false.
+   * Handles nulls and undefined through calling handleNulls
    * @param {object} a sort value a
    * @param {object} b sort value b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -258,7 +258,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       if (a && b) {
         return 0;
       }
-  
+
       if (!a && !b) {
         return 0;
       }
@@ -271,19 +271,19 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name getSortFn
-   * @description Get the sort function for the column.  Looks first in 
+   * @description Get the sort function for the column.  Looks first in
    * rowSorter.colSortFnCache using the column name, failing that it
    * looks at col.sortingAlgorithm (and puts it in the cache), failing that
    * it guesses the sort algorithm based on the data type.
-   * 
+   *
    * The cache currently seems a bit pointless, as none of the work we do is
    * processor intensive enough to need caching.  Presumably in future we might
    * inspect the row data itself to guess the sort function, and in that case
    * it would make sense to have a cache, the infrastructure is in place to allow
    * that.
-   * 
+   *
    * @param {Grid} grid the grid to consider
    * @param {GridCol} col the column to find a function for
    * @param {array} rows an array of grid rows.  Currently unused, but presumably in future
@@ -331,12 +331,12 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name prioritySort
    * @description Used where multiple columns are present in the sort criteria,
    * we determine which column should take precedence in the sort by sorting
    * the columns based on their sort.priority
-   * 
+   *
    * @param {gridColumn} a column a
    * @param {gridColumn} b column b
    * @returns {number} normal sort function, returns -ve, 0, +ve
@@ -358,11 +358,11 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
     }
     // Only A has a priority
-    else if (a.sort.priority || a.sort.priority === 0) {
+    else if (a.sort.priority || a.sort.priority === undefined) {
       return -1;
     }
     // Only B has a priority
-    else if (b.sort.priority || b.sort.priority === 0) {
+    else if (b.sort.priority || b.sort.priority === undefined) {
       return 1;
     }
     // Neither has a priority
@@ -379,14 +379,14 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * @description Prevents the internal sorting from executing.  Events will
    * still be fired when the sort changes, and the sort information on
    * the columns will be updated, allowing an external sorter (for example,
-   * server sorting) to be implemented.  Defaults to false. 
-   * 
+   * server sorting) to be implemented.  Defaults to false.
+   *
    */
   /**
    * @ngdoc method
-   * @methodOf ui.grid.class:RowSorter
+   * @methodOf ui.grid.class:rowSorter
    * @name sort
-   * @description sorts the grid 
+   * @description sorts the grid
    * @param {Object} grid the grid itself
    * @param {array} rows the rows to be sorted
    * @param {array} columns the columns in which to look
@@ -398,7 +398,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     if (!rows) {
       return;
     }
-    
+
     if (grid.options.useExternalSorting){
       return rows;
     }
@@ -418,7 +418,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     if (sortCols.length === 0) {
       return rows;
     }
-    
+
     // Re-usable variables
     var col, direction;
 
@@ -444,7 +444,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
         direction = sortCols[idx].sort.direction;
 
         sortFn = rowSorter.getSortFn(grid, col, r);
-        
+
         var propA, propB;
 
         if ( col.sortCellFiltered ){
@@ -455,19 +455,19 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
           propB = grid.getCellValue(rowB, col);
         }
 
-        tem = sortFn(propA, propB);
+        tem = sortFn(propA, propB, rowA, rowB, direction);
 
         idx++;
       }
 
-      // Chrome doesn't implement a stable sort function.  If our sort returns 0 
+      // Chrome doesn't implement a stable sort function.  If our sort returns 0
       // (i.e. the items are equal), and we're at the last sort column in the list,
       // then return the previous order using our custom
       // index variable
       if (tem === 0 ) {
         return rowA.entity.$$uiGridIndex - rowB.entity.$$uiGridIndex;
       }
-      
+
       // Made it this far, we don't have to worry about null & undefined
       if (direction === uiGridConstants.ASC) {
         return tem;
@@ -477,13 +477,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     };
 
     var newRows = rows.sort(rowSortFn);
-    
+
     // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
     var clearIndex = function( row, idx ){
        delete row.entity.$$uiGridIndex;
     };
     rows.forEach(clearIndex);
-    
+
     return newRows;
   };
 
