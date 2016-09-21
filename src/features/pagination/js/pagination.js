@@ -77,7 +77,7 @@
                       return index < grid.options.paginationCurrentPage - 1 ? result + size : result;
                     }, 0);
                   }
-                  return ((grid.options.paginationCurrentPage - 1) * grid.options.paginationPageSize) + 1;
+                  return ((grid.options.paginationCurrentPage - 1) * grid.options.paginationPageSize);
                 },
                 /**
                  * @ngdoc method
