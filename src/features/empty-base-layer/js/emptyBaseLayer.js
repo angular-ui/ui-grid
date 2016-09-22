@@ -113,13 +113,11 @@
               }
 
               function getEmptyBaseLayerCss(viewportHeight) {
-                var ret = '';
                 // Set ui-grid-empty-base-layer height
-                ret += '\n .grid' + uiGridCtrl.grid.id +
+                return '.grid' + uiGridCtrl.grid.id +
                   ' .ui-grid-render-container ' +
                   '.ui-grid-empty-base-layer-container.ui-grid-canvas ' +
                   '{ height: ' + viewportHeight + 'px; }';
-                return ret;
               }
 
               uiGridCtrl.grid.registerStyleComputation({
