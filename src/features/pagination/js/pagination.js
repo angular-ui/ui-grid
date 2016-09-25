@@ -409,11 +409,6 @@
 
           $scope.$on('$destroy', dataChangeDereg);
 
-          var setShowing = function () {
-          };
-
-          var deregT = $scope.$watch('grid.options.totalItems + grid.options.paginationPageSize', setShowing);
-
           var deregP = $scope.$watch('grid.options.paginationCurrentPage + grid.options.paginationPageSize', function (newValues, oldValues) {
               if (newValues === oldValues || oldValues === undefined) {
                 return;
@@ -429,13 +424,11 @@
                 return;
               }
 
-              setShowing();
               uiGridPaginationService.onPaginationChanged($scope.grid, options.paginationCurrentPage, options.paginationPageSize);
             }
           );
 
           $scope.$on('$destroy', function() {
-            deregT();
             deregP();
           });
 
