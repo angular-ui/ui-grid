@@ -455,7 +455,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
           propB = grid.getCellValue(rowB, col);
         }
 
-        tem = sortFn(propA, propB, rowA, rowB, direction);
+        tem = sortFn(propA, propB, rowA, rowB, direction, col);
 
         idx++;
       }
