@@ -2159,8 +2159,8 @@ angular.module('ui.grid')
         }
 
         if (container.header || container.headerCanvas) {
-          container.explicitHeaderHeight = null;
-          container.explicitHeaderCanvasHeight = null;
+          container.explicitHeaderHeight = container.explicitHeaderHeight || null;
+          container.explicitHeaderCanvasHeight = container.explicitHeaderCanvasHeight || null;
 
           containerHeadersToRecalc.push(container);
         }
