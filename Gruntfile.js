@@ -27,7 +27,8 @@ module.exports = function(grunt) {
         protractor: 'grunt-protractor-runner',
         'stable-version': './lib/grunt/plugins.js',
         'current-version': './lib/grunt/plugins.js',
-        'update-bower-json': './lib/grunt/plugins.js'
+        'update-bower-json': './lib/grunt/plugins.js',
+        fontello: './lib/grunt-fontello/tasks/fontello.js'
       }
     },
 
