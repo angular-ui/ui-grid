@@ -160,9 +160,8 @@
 
               if (renderContainer.explicitHeaderCanvasHeight) {
                 // get height from body container
-                renderContainer.explicitHeaderCanvasHeight
-                  = $.find('.grid'+uiGridCtrl.grid.id+' .ui-grid-render-container-body .ui-grid-header-canvas')[0]
-                  .offsetHeight;
+                var reHCHeight = document.querySelector('.grid'+uiGridCtrl.grid.id+' .ui-grid-render-container-body .ui-grid-header-canvas');
+                if(reHCHeight) renderContainer.explicitHeaderCanvasHeight = reHCHeight.offsetHeight;
                 ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
                   + ' .ui-grid-header-canvas { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
               }
