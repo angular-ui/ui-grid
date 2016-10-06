@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log',
-    function(gridUtil, ScrollEvent, uiGridConstants, $log) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent',
+    function(gridUtil, ScrollEvent) {
       return {
         replace: true,
         scope: {},
@@ -31,8 +31,12 @@
           // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
-
-          $elm.on('scroll', scrollHandler);
+          // Checks for the presence of a custom scroller function and uses that if it is available
+          if (grid && grid.options && grid.options.customScroller) {
+            grid.options.customScroller($elm, scrollHandler);
+          } else {
+            $elm.on('scroll', scrollHandler);
+          }
 
           var ignoreScroll = false;
 
@@ -114,12 +118,12 @@
 
             var styles = {};
 
-            if (index === 0 && rowContainer.currentTopRow !== 0) {
-              // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-              var hiddenRowWidth = (rowContainer.currentTopRow) * rowContainer.grid.options.rowHeight;
-
-              // return { 'margin-top': hiddenRowWidth + 'px' };
-              styles['margin-top'] = hiddenRowWidth + 'px';
+            if (rowContainer.currentTopRow !== 0){
+              //top offset based on hidden rows count
+              var translateY = "translateY("+ (rowContainer.currentTopRow * rowContainer.grid.options.rowHeight)  +"px)";
+              styles['transform'] = translateY;
+              styles['-webkit-transform'] = translateY;
+              styles['-ms-transform'] = translateY;
             }
 
             if (colContainer.currentFirstColumn !== 0) {
