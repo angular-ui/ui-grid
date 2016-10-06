@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('ui.grid')
-    .factory('GridScrolling', function($window, gridUtil) {
+    .factory('scrolling', function($window, gridUtil) {
       var isAnimating;
 
       myScrolling.initiated = 0;
@@ -12,24 +12,22 @@
       function myScrolling(elm, scrollHandler) {
         var wrapper = elm, pointX, pointY, startTime, startX, startY,
           scroller = wrapper[0].children[0],
+          TOUCHABLE = 1,
+          MOUSE = 2,
+          POINTER = 3,
           maxScroll,
-          stateObj = {
-            TOUCHABLE: 1,
-            MOUSE: 2,
-            POINTER: 3
-          },
           initType = {
-            touchstart: stateObj.TOUCHABLE,
-            touchmove: stateObj.TOUCHABLE,
-            touchend: stateObj.TOUCHABLE,
+            touchstart: TOUCHABLE,
+            touchmove: TOUCHABLE,
+            touchend: TOUCHABLE,
 
-            mousedown: stateObj.MOUSE,
-            mousemove: stateObj.MOUSE,
-            mouseup: stateObj.MOUSE,
+            mousedown: MOUSE,
+            mousemove: MOUSE,
+            mouseup: MOUSE,
 
-            pointerdown: stateObj.POINTER,
-            pointermove: stateObj.POINTER,
-            pointerup: stateObj.POINTER
+            pointerdown: POINTER,
+            pointermove: POINTER,
+            pointerup: POINTER
           };
 
         if('onmousedown' in $window) {
@@ -141,8 +139,6 @@
           }
           return maxScroll;
         }
-
-        return stateObj;
       }
 
       function translate(x, y, wrapper) {
