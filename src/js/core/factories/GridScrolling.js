@@ -30,11 +30,11 @@
             pointerup: POINTER
           };
 
-        if('onmousedown' in $window) {
+        if ('onmousedown' in $window) {
           wrapper.on('scroll', scrollHandler);
         }
 
-        if(gridUtil.isTouchEnabled()) {
+        if (gridUtil.isTouchEnabled()) {
           wrapper.on('touchstart', start);
           wrapper.on('touchmove', move);
           wrapper.on('touchcancel', end);
@@ -83,7 +83,7 @@
             newY = newY < 0 ? 0 : getMaxScroll().y;
           }
 
-          if(timestamp - startTime > 300) {
+          if (timestamp - startTime > 300) {
             startTime = (new Date()).getTime();
             startX = newX;
             startY = newY;
@@ -106,9 +106,9 @@
           var momentumY = momentum(wrapper[0].scrollTop, startY, duration);
           var newX = momentumX.destination;
           var newY = momentumY.destination;
-          var duration = Math.max(momentumX.duration, momentumY.duration);
+          var time = Math.max(momentumX.duration, momentumY.duration);
 
-          animate(newX, newY, duration, wrapper, scrollHandler.bind(null, e));
+          animate(newX, newY, time, wrapper, scrollHandler.bind(null, e));
 
           myScrolling.initiated = 0;
         }
@@ -131,11 +131,11 @@
         }
 
         function getMaxScroll() {
-          if(!maxScroll) {
+          if (!maxScroll) {
             maxScroll = {
               x: scroller.offsetWidth - wrapper[0].clientWidth,
               y: scroller.offsetHeight - wrapper[0].clientHeight
-            }
+            };
           }
           return maxScroll;
         }
@@ -166,7 +166,7 @@
 
 
 
-          if(now >= destTime) {
+          if (now >= destTime) {
             isAnimating = false;
             translate(destX, destY, wrapper);
             wrapper.on('scroll', clbck);
@@ -184,7 +184,7 @@
 
           clbck.call();
 
-          if(isAnimating) {
+          if (isAnimating) {
             window.requestAnimationFrame(next);
           } else {
             wrapper.on('scroll', clbck);
