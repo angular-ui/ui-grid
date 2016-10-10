@@ -154,7 +154,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     // *** Auto hide when click elsewhere ******
       var applyHideMenu = function(){
         if ($scope.shown) {
-          $scope.$apply(function () {
+          $scope.$evalAsync(function () {
             $scope.hideMenu();
           });
         }
