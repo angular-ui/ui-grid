@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('ui.grid')
-    .factory('scrolling', function($window, gridUtil) {
+    .factory('GridScrolling', function($window, gridUtil) {
       var isAnimating;
 
       myScrolling.initiated = 0;
