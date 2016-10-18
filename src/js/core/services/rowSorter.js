@@ -479,10 +479,12 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     var newRows = rows.sort(rowSortFn);
 
     // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
-    var clearIndex = function( row, idx ){
-       delete row.entity.$$uiGridIndex;
+    var resetIndex = function(row, index) {
+      delete row.entity.$$uiGridIndex;
+      row.index = index;
     };
-    rows.forEach(clearIndex);
+
+    rows.forEach(resetIndex);
 
     return newRows;
   };

@@ -40,6 +40,14 @@ angular.module('ui.grid')
 
      /**
       *  @ngdoc object
+      *  @name index
+      *  @propertyOf  ui.grid.class:GridRow
+      *  @description Index the current position of the row in the array
+      */
+     this.index = index;
+
+     /**
+      *  @ngdoc object
       *  @name visible
       *  @propertyOf  ui.grid.class:GridRow
       *  @description If true, the row will be rendered
