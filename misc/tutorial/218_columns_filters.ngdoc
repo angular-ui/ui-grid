@@ -1,0 +1,236 @@
+@ngdoc overview
+@name Tutorial: 218 Columns Filters
+@description
+<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
+
+Feature ui.grid.columnsFilters allows to add a filter button to the column header, which opens a filter form popup.  In addition, it adds an "OR" filtering capacity to the grid.
+
+Documentation for the columnsFilters feature is provided in the api documentation, in particular:
+
+- {@link api/ui.grid.columnsFilters.api:ColumnDef columnDef}
+
+In order to enable the columnsFilters in a column, you can either declare "enableFiltering" in the `columnDef`, or leave it blank and set the global `enableFiltering` to `true`.
+There are 2 ways to setup the columnsFilters.  The first is to use the `filter` property inside the `columnDef`.  The second is the use the {@link api/ui.grid.columnsFilters.api:ColumnDef columnFilter} property, which has some extra options in store.
+
+There are 4 types of filters: string (default), number, date and select.  If no type is mentioned, then "string" is used.
+The "select" has 2 ways to setup:
+1) Setup a 'selectOptions' in the filter or the {@link api/ui.grid.columnsFilters.api:ColumnDef columnFilter}.
+2) Don't set the `selectOptions` and the options will be set dynamically from the available data (and will also be updated anytime the `notifyDataChange` event is triggered).   
+
+In below exaple you can see the usage in action.
+
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.columnsFilters']);
+
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
+      var today = new Date();
+      var nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      
+      $scope.addToGender = function(){
+        $scope.gridApi.grid.options.data[0].gender = 3;
+        $scope.gridApi.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
+      }
+      
+      $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
+        if( col.filters[0].term ){
+          return 'header-filtered';
+        } else {
+          return '';
+        }
+      };
+
+      $scope.gridOptions = {
+        enableFiltering: true,
+        onRegisterApi: function(gridApi){
+          $scope.gridApi = gridApi;
+        },
+        columnDefs: [
+          // default
+          { field: 'name', headerCellClass: $scope.highlightFilteredHeader },
+          // pre-populated search field
+          { field: 'gender',
+          columnFilter: {
+            type: 'select',
+            selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
+          },
+          filter: {
+              term: '1',
+              type: uiGridConstants.filter.SELECT,
+              selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
+            },
+            cellFilter: 'mapGender', headerCellClass: $scope.highlightFilteredHeader },
+            { field: 'gender',
+                  columnFilter: {
+                    multiple: false
+                  },
+                  filter: {
+                      term: '1',
+                      type: uiGridConstants.filter.SELECT
+                    },
+                    cellFilter: 'mapGender', headerCellClass: $scope.highlightFilteredHeader },
+                  // no filter input
+                  { field: 'company', enableFiltering: false, filter: {
+                    noTerm: true,
+                    condition: function(searchTerm, cellValue) {
+                      return cellValue.match(/a/);
+                    }
+                  }},
+          // no filter input
+          { field: 'company', enableFiltering: false, filter: {
+            noTerm: true,
+            condition: function(searchTerm, cellValue) {
+              return cellValue.match(/a/);
+            }
+          }},
+          // specifies one of the built-in conditions
+          // and a placeholder for the input
+          {
+            field: 'email',
+            filter: {
+              condition: uiGridConstants.filter.ENDS_WITH,
+              placeholder: 'ends with'
+            }, headerCellClass: $scope.highlightFilteredHeader
+          },
+          // custom condition function
+          {
+            field: 'phone',
+            filter: {
+              condition: function(searchTerm, cellValue) {
+                var strippedValue = (cellValue + '').replace(/[^\d]/g, '');
+                return strippedValue.indexOf(searchTerm) >= 0;
+              }
+            }, headerCellClass: $scope.highlightFilteredHeader
+          },
+          // multiple filters
+          { field: 'age',
+            columnFilter: {
+              type: 'number'
+            }
+
+          , headerCellClass: $scope.highlightFilteredHeader},
+          // date filter
+          {
+          field: 'mixedDate',
+          cellFilter: 'date',
+          width: '15%', filter: {
+              condition: uiGridConstants.filter.LESS_THAN,
+              placeholder: 'less than',
+              term: nextWeek,
+              type: 'date'
+            }, columnFilter: {dateType: 'datetime-local'},
+            headerCellClass: $scope.highlightFilteredHeader
+          },
+          { field: 'mixedDate', displayName: "Long Date", cellFilter: 'date:"longDate"', filterCellFiltered:true, width: '15%',
+          }
+        ]
+      };
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+          $scope.gridOptions.data[0].age = -5;
+
+          data.forEach( function addDates( row, index ){
+            row.mixedDate = new Date();
+            row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
+            row.gender = row.gender==='male' ? '1' : '2';
+          });
+        });
+
+      $scope.toggleFiltering = function(){
+        $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
+        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      };
+    }])
+    .filter('mapGender', function() {
+      var genderHash = {
+        1: 'male',
+        2: 'female',
+        3: 'Unknown'
+      };
+
+      return function(input) {
+        if (!input){
+          return '';
+        } else {
+          return genderHash[input];
+        }
+      };
+    });
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      You can use asterisks to fuzz-match, i.e. use "*z*" as your filter to show any row where that column contains a "z".
+      <br>
+      <br>
+      <strong>Note:</strong> The third column has the filter input disabled, but actually has a filter set in code that requires every company to have an 'a' in their name.
+      <br>
+      <br>
+      <button id='toggleFiltering' ng-click="toggleFiltering()" class="btn btn-success">Toggle Filtering</button>
+      <div id="grid1" ui-grid-columns-filters-directive ui-grid="gridOptions" class="grid"></div>
+      <button
+        ng-click="addToGender()">Change first gender</button>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 650px;
+      height: 400px;
+    }
+
+    .header-filtered {
+      color: blue;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
+    describe('first grid on the page, filtered by male by default', function() {
+      gridTestUtils.firefoxReload();
+
+      it('grid should have seven visible columns', function () {
+        gridTestUtils.expectHeaderColumnCount( 'grid1', 7 );
+      });
+
+      it('filter on 4 columns, filter with greater than/less than on one, one with no filter, then one with one filter', function () {
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 0, 1 );
+        gridTestUtils.expectFilterSelectInColumn( 'grid1', 1, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 2, 0 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 3, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 4, 1 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 5, 2 );
+        gridTestUtils.expectFilterBoxInColumn( 'grid1', 6, 1 );
+      });
+
+      it('third row should be Hatfield Hudson - will be Terry Clay if filtering broken', function () {
+        gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Hatfield Hudson' );
+      });
+
+      it('cancel filter on gender column and on date column, should now see Bishop Carr in third row', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 )
+          .then(function () {
+            return gridTestUtils.cancelFilterInColumn( 'grid1', 6 );
+          })
+          .then(function () {
+            gridTestUtils.expectCellValueMatch( 'grid1', 2, 0, 'Bishop Carr' );
+          });
+      });
+
+      it('filter on email column, should automatically do "ends with"', function() {
+        gridTestUtils.cancelFilterInColumn( 'grid1', 1 )
+          .then(function () {
+            return gridTestUtils.cancelFilterInColumn( 'grid1', 6 );
+          })
+          .then(function () {
+            return gridTestUtils.enterFilterInColumn( 'grid1', 3, 'digirang.com' );
+          })
+          .then(function () {
+            gridTestUtils.expectRowCount( 'grid1', 2 );
+          });
+      });
+    });
+  </file>
+</example>

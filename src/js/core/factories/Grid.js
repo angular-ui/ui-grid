@@ -1552,7 +1552,7 @@ angular.module('ui.grid')
 
     self.refreshCanceller = $timeout(function () {
       self.refreshCanvas(true);
-    });
+    }, 0, false);
 
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
@@ -2244,13 +2244,13 @@ angular.module('ui.grid')
         }
 
         p.resolve();
-      });
+      }, false);
     }
     else {
       // Timeout still needs to be here to trigger digest after styles have been rebuilt
       $timeout(function() {
         p.resolve();
-      });
+      }, false);
     }
 
     return p.promise;
