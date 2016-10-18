@@ -7,8 +7,8 @@
       $delegate.add('pl', {
         headerCell: {
           aria: {
-            defaultFilterLabel: 'Filter dla kolumny',
-            removeFilter: 'Usuń filter',
+            defaultFilterLabel: 'Filtr dla kolumny',
+            removeFilter: 'Usuń filtr',
             columnMenuButtonLabel: 'Menu kolumny'
           },
           priority: 'Prioritet:',
