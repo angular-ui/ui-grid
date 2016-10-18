@@ -353,7 +353,7 @@
          *  @description shows counts on the groupHeader rows. Not that if you are using a cellFilter or a
          *  sortingAlgorithm which relies on a specific format or data type, showing counts may cause that
          *  to break, since the group header rows will always be a string with groupingShowCounts enabled.
-         *  <br/>Defaults to true except on columns of type 'date'
+         *  <br/>Defaults to true except on columns of types 'date' and 'object'
          */
         gridOptions.groupingShowCounts = gridOptions.groupingShowCounts !== false;
 
@@ -582,7 +582,7 @@
 
         if ( typeof(aggregation.groupVal) !== 'undefined') {
           aggregation.rendered = aggregation.groupVal;
-          if ( col.grid.options.groupingShowCounts && col.colDef.type !== 'date' ){
+          if ( col.grid.options.groupingShowCounts && col.colDef.type !== 'date' && col.colDef.type !== 'object' ){
             aggregation.rendered += (' (' + aggregation.value + ')');
           }
         } else {
