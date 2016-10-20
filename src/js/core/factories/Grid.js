@@ -1821,9 +1821,9 @@ angular.module('ui.grid')
     return this.renderContainers.body.visibleRowCache.length;
   };
 
-   Grid.prototype.getVisibleRows = function getVisibleRows() {
+  Grid.prototype.getVisibleRows = function getVisibleRows(){
     return this.renderContainers.body.visibleRowCache;
-   };
+  };
 
   Grid.prototype.getVisibleColumnCount = function getVisibleColumnCount() {
     // var count = 0;
