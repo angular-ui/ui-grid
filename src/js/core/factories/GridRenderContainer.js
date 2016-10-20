@@ -304,7 +304,7 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.getHorizontalScrollLength = function getHorizontalScrollLength() {
-    return this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth;
+    return this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth !== 0 ? this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth : -1;
   };
 
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
