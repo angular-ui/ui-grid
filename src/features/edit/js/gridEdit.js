@@ -1115,8 +1115,8 @@
    *
    */
   module.directive('uiGridEditDropdown',
-    ['uiGridConstants', 'uiGridEditConstants',
-      function (uiGridConstants, uiGridEditConstants) {
+    ['uiGridConstants', 'uiGridEditConstants', '$timeout',
+      function (uiGridConstants, uiGridEditConstants, $timeout) {
         return {
           require: ['?^uiGrid', '?^uiGridRenderContainer'],
           scope: true,
@@ -1131,7 +1131,10 @@
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  $elm[0].focus();
+                  $timeout(function(){
+                    $elm[0].focus();      
+                  });
+                  
                   $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
                   $elm.on('blur', function (evt) {
                     $scope.stopEdit(evt);

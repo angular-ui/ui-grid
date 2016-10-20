@@ -7,8 +7,8 @@
       $delegate.add('pl', {
         headerCell: {
           aria: {
-            defaultFilterLabel: 'Filter dla kolumny',
-            removeFilter: 'Usuń filter',
+            defaultFilterLabel: 'Filtr dla kolumny',
+            removeFilter: 'Usuń filtr',
             columnMenuButtonLabel: 'Menu kolumny'
           },
           priority: 'Prioritet:',
@@ -101,6 +101,12 @@
           aggregate_min: 'Zbiorczo: Min',
           aggregate_avg: 'Zbiorczo: Średnia',
           aggregate_remove: 'Zbiorczo: Usuń'
+        },
+        validate: {
+          error: 'Błąd:',
+          minLength: 'Wartość powinna składać się z co najmniej THRESHOLD znaków.',
+          maxLength: 'Wartość powinna składać się z przynajmniej THRESHOLD znaków.',
+          required: 'Wartość jest wymagana.'
         }
       });
       return $delegate;

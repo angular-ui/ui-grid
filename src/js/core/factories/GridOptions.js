@@ -363,7 +363,8 @@ angular.module('ui.grid')
        * @propertyOf ui.grid.class:GridOptions
        * @description True by default. When enabled, this setting adds sort
        * widgets to the column headers, allowing sorting of the data for the entire grid.
-       * Sorting can then be disabled on individual columns using the columnDefs.
+       * Sorting can then be disabled / enabled on individual columns using the columnDefs,
+       * if it set, it will override GridOptions enableSorting setting.
        */
       baseOptions.enableSorting = baseOptions.enableSorting !== false;
 

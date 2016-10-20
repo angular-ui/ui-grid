@@ -43,7 +43,7 @@ module.exports = {
       // '<%= dist %>/release/<%= pkg.name %>.css'
     ],
     title: 'UI Grid',
-    titleLink: 'http://<%= site %>',
+    titleLink: '/',
     html5Mode: false,
     analytics: {
       account: 'UA-46391685-1',
