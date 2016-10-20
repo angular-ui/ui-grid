@@ -50,7 +50,6 @@
     "grunt-contrib-uglify": "~0.2",
     "grunt-contrib-watch": "~0.5",
     "grunt-conventional-changelog": "~1.0.0",
-    "grunt-fontello": "~0.1",
     "grunt-gh-pages": "~0.9.0",
     "grunt-jscs": "^0.7.1",
     "grunt-karma": "~0.8",
