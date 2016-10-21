@@ -154,8 +154,21 @@
       max: 32
     },
 
-    // TODO(c0bra): Create full list of these somehow. NOTE: do any allow a space before or after them?
-    CURRENCY_SYMBOLS: ['ƒ', '$', '£', '$', '¤', '¥', '៛', '₩', '₱', '฿', '₫'],
+    /**
+     * @ngdoc array
+     * @name CURRENCY_SYMBOLS
+     * @propertyOf ui.grid.service:uiGridConstants
+     * @description A list of all presently circulating currency symbols that was copied from
+     * https://en.wikipedia.org/wiki/Currency_symbol#List_of_presently-circulating_currency_symbols
+     *
+     * Can be used on {@link ui.grid.class:rowSorter} to create a number string regex that ignores currency symbols.
+     */
+    CURRENCY_SYMBOLS: ['¤', '؋', 'Ar', 'Ƀ', '฿', 'B/.', 'Br', 'Bs.', 'Bs.F.', 'GH₵', '¢', 'c', 'Ch.', '₡', 'C$', 'D', 'ден',
+      'دج', '.د.ب', 'د.ع', 'JD', 'د.ك', 'ل.د', 'дин', 'د.ت', 'د.م.', 'د.إ', 'Db', '$', '₫', 'Esc', '€', 'ƒ', 'Ft', 'FBu',
+      'FCFA', 'CFA', 'Fr', 'FRw', 'G', 'gr', '₲', 'h', '₴', '₭', 'Kč', 'kr', 'kn', 'MK', 'ZK', 'Kz', 'K', 'L', 'Le', 'лв',
+      'E', 'lp', 'M', 'KM', 'MT', '₥', 'Nfk', '₦', 'Nu.', 'UM', 'T$', 'MOP$', '₱', 'Pt.', '£', 'ج.م.', 'LL', 'LS', 'P', 'Q',
+      'q', 'R', 'R$', 'ر.ع.', 'ر.ق', 'ر.س', '៛', 'RM', 'p', 'Rf.', '₹', '₨', 'SRe', 'Rp', '₪', 'Ksh', 'Sh.So.', 'USh', 'S/',
+      'SDR', 'сом', '৳	', 'WS$', '₮', 'VT', '₩', '¥', 'zł'],
 
     /**
      * @ngdoc object
