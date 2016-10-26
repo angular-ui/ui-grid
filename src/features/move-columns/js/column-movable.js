@@ -488,12 +488,24 @@
 
                 onDownEvents();
 
-
                 var cloneElement = function () {
                   elmCloned = true;
 
+
                   //Cloning header cell and appending to current header cell.
                   movingElm = $elm.clone();
+
+                  //copy column children for full column move effect
+                  if ($scope.grid.options.enableMovableChildCells) {
+                    var idClass = _.find(movingElm[0].classList, function (c) {
+                      return c.indexOf('ui-grid-coluiGrid-') > -1;
+                    });
+                    var extraElms = angular.element(document.querySelectorAll('.ui-grid-cell.' + idClass)).clone();
+                    var _scroll = $scope.grid.renderContainers.body.prevScrollTop - ($scope.grid.renderContainers.body.currentTopRow * $scope.grid.renderContainers.body.renderedRows[0].$$height);
+                    movingElm.append(angular.element('<div class="extras-wrapper" style="top: ' + (0 - _scroll) + 'px;"></div>').append(extraElms));
+                    movingElm.addClass('move-child-cells');
+                  }
+
                   $elm.parent().append(movingElm);
 
                   //Left of cloned element should be aligned to original header cell.
@@ -508,6 +520,7 @@
                   }
                   movingElm.css(movingElementStyles);
                 };
+
 
                 var moveElement = function (changeValue) {
                   //Calculate total column width
