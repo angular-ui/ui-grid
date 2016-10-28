@@ -89,7 +89,7 @@
         $delegate.prototype.setFocused = function(v) {
           if (v !== this.isFocused) {
             this.grid.selection.focusedRow && (this.grid.selection.focusedRow.isFocused = false);
-            this.grid.selection.focusedRow = this;
+            this.grid.selection.focusedRow = v? this : null;
             this.isFocused = v;
           }
         };
