@@ -358,11 +358,11 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
     }
     // Only A has a priority
-    else if (a.sort.priority || a.sort.priority === undefined) {
+    else if (a.sort.priority !== undefined) {
       return -1;
     }
     // Only B has a priority
-    else if (b.sort.priority || b.sort.priority === undefined) {
+    else if (b.sort.priority !== undefined) {
       return 1;
     }
     // Neither has a priority
