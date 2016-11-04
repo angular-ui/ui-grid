@@ -645,7 +645,7 @@ angular.module('ui.grid')
     //self.cursor = self.sortable ? 'pointer' : 'default';
 
     // Turn on sorting by default
-    self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
+    self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : self.grid.options.enableSorting;
     self.sortingAlgorithm = colDef.sortingAlgorithm;
 
     /**

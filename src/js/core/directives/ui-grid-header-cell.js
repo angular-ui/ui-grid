@@ -235,7 +235,7 @@
               });
 
               // Figure out whether this column is sortable or not
-              if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+              if ($scope.col.enableSorting) {
                 $scope.sortable = true;
               }
               else {
