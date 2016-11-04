@@ -836,8 +836,8 @@ describe('Grid factory', function () {
     });
 
     it( 'if two column has sort 1 and 2 on the ui which is 0 and 1 in the sort object and the sort change for the first do not change the priority', function() {
-      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } });
-      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } });
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } }, 0, grid);
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } }, 1, grid);
       grid.columns.push( priorColumn1 );
       grid.columns.push( priorColumn2 );
 
@@ -847,9 +847,9 @@ describe('Grid factory', function () {
     });
 
     it( 'if three column has sort 1,2 and 3 on the ui which is 0,1 and 2 in the sort object and the sort removed for the second decrease priority for the third but do not change for the first', function() {
-      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } });
-      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.DESC, priority: 1 } });
-      var priorColumn3 = new GridColumn({ name: 'c', sort: { direction: uiGridConstants.ASC, priority: 2 } });
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } }, 0, grid);
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.DESC, priority: 1 } }, 1, grid);
+      var priorColumn3 = new GridColumn({ name: 'c', sort: { direction: uiGridConstants.ASC, priority: 2 } }, 2, grid);
       grid.columns.push( priorColumn1 );
       grid.columns.push( priorColumn2 );
       grid.columns.push( priorColumn3 );
