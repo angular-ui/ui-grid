@@ -11,7 +11,7 @@
 
       <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
 
-      This module provides auto-resizing functionality to UI-Grid.
+      This module provides cell navigation functionality to UI-Grid.
    */
   var module = angular.module('ui.grid.cellNav', ['ui.grid']);
 
