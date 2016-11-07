@@ -27,8 +27,8 @@ module.exports = {
   */
   firefoxReload: function () {
     beforeEach(function () {
-      return browser.getCapabilities().then(function (cap) {
-        if (cap.caps_.browserName === 'firefox') {
+      return browser.getCapabilities().then(function (caps) {
+        if (caps.get('browserName') === 'firefox') {
           return browser.refresh()
             .then(function () {
               // Remove the fixed navbar, it overlays elements and intercepts events in Firefox
@@ -46,8 +46,8 @@ module.exports = {
 
   isFirefox: function () {
     return browser.getCapabilities()
-      .then(function (cap) {
-        if (cap.caps_.browserName === 'firefox') {
+      .then(function (caps) {
+        if (caps.get('browserName') === 'firefox') {
           return true;
         }
         else {
@@ -189,7 +189,7 @@ module.exports = {
    *   gridTestUtils.expectHeaderColumns('myGrid', ['ID', 'Name', 'Email']);
    * </pre>
    */
-  expectHeaderColumns: function(gridId, expectedColumns) {
+  expectHeaderColumns: function(gridId, expectedColumns, done) {
     var headerColumns = this.getGrid(gridId)
       .element(by.css('.ui-grid-render-container-body'))
       .element( by.css('.ui-grid-header'))
@@ -203,6 +203,9 @@ module.exports = {
         return text.replace(/^\s+/, '').replace(/\s+$/, '');
       });
       expect(columnTexts).toEqual(expectedColumns);
+      if (done) {
+        done();
+      }
     });
   },
 
