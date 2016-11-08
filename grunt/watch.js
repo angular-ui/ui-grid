@@ -30,11 +30,6 @@ module.exports = function( grunt, options ){
       tasks: ['less', 'ngdocs', 'concat:customizer_less']
     },
 
-    fontello: {
-      files: 'src/font/config.json',
-      tasks: ['fontello', 'less']
-    },
-
     docs: {
       files: ['misc/tutorial/**/*.ngdoc', 'misc/api/**/*.ngdoc', 'misc/doc/**'],
       tasks: 'ngdocs'
