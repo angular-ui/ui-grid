@@ -300,11 +300,11 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.getVerticalScrollLength = function getVerticalScrollLength() {
-    return this.getCanvasHeight() - this.getViewportHeight() + this.grid.scrollbarHeight;
+    return this.getCanvasHeight() - this.getViewportHeight() + this.grid.scrollbarHeight !== 0 ? this.getCanvasHeight() - this.getViewportHeight() + this.grid.scrollbarHeight : -1;
   };
 
   GridRenderContainer.prototype.getHorizontalScrollLength = function getHorizontalScrollLength() {
-    return this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth;
+    return this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth !== 0 ? this.getCanvasWidth() - this.getViewportWidth() + this.grid.scrollbarWidth : -1;
   };
 
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
