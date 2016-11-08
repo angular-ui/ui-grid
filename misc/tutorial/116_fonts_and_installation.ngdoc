@@ -9,7 +9,7 @@ This tutorial addresses the basics of the configuration.
 
 Key points here are:
 
-1. Fonts are a derivative of font-awesome via fontello, and are used for the dropdown icons and 
+1. Fonts are a derivative of font-awesome and are used for the dropdown icons and
 various menu buttons and the like.  When they're not working they show a "chinese looking" character.  
 2. The tutorial pages generally show the fonts correctly.  If a tutorial page, when served from
 ui-grid.info is not showing fonts correctly, then this is likely a defect with ui-grid.  If it's 
