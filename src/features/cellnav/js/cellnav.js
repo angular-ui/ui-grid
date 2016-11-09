@@ -128,7 +128,7 @@
         var nextColIndex = curColIndex === 0 ? focusableCols.length - 1 : curColIndex - 1;
 
         //get column to left
-        if (nextColIndex > curColIndex) {
+        if (nextColIndex >= curColIndex) {
           // On the first row
           // if (curRowIndex === 0 && curColIndex === 0) {
           //   return null;
@@ -160,7 +160,7 @@
         }
         var nextColIndex = curColIndex === focusableCols.length - 1 ? 0 : curColIndex + 1;
 
-        if (nextColIndex < curColIndex) {
+        if (nextColIndex <= curColIndex) {
           if (curRowIndex === focusableRows.length - 1) {
             return new GridRowColumn(curRow, focusableCols[nextColIndex]); //return same row
           }
