@@ -9,7 +9,7 @@ var util = require('./lib/grunt/utils.js');
 /*global module:false*/
 module.exports = function(grunt) {
   require('time-grunt')(grunt);
-  
+
   // use load-grunt-config to load config settings for each individual task from grunt/
   require('load-grunt-config')(grunt, {
     // use jitGrunt to automatically load the grunt tasks that we have defined in our package.json
@@ -36,6 +36,8 @@ module.exports = function(grunt) {
       pkg: grunt.file.readJSON('package.json'),
       version: util.getVersion(),
       stable_version: util.getStableVersion(),
+      latestAngular: util.latestAngular(),
+      angularTestVersions: util.angulars(),
       dist: 'dist',
       site: process.env.TRAVIS ? 'ui-grid.info' : '127.0.0.1:<%= connect.docs.options.port %>',
       banner: '/*!\n' +
@@ -47,7 +49,7 @@ module.exports = function(grunt) {
     }
 
   });
-  
+
   util.updateConfig();
 
   grunt.loadTasks('lib/grunt');

@@ -6,6 +6,15 @@
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('ru', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Фильтр столбца',
+            removeFilter: 'Удалить фильтр',
+            columnMenuButtonLabel: 'Меню столбца'
+          },
+          priority: 'Приоритет:',
+          filterLabel: "Фильтр столбца: "
+        },
         aggregate: {
           label: 'элементы'
         },
@@ -29,6 +38,7 @@
         sort: {
           ascending: 'По возрастанию',
           descending: 'По убыванию',
+          none: 'Без сортировки',
           remove: 'Убрать сортировку'
         },
         column: {
@@ -46,9 +56,15 @@
 					pinRight: 'Закрепить справа',
 					unpin: 'Открепить'
 				},
+        columnMenu: {
+          close: 'Закрыть'
+        },
         gridMenu: {
+          aria: {
+            buttonLabel: 'Меню'
+          },
           columns: 'Столбцы:',
-          importerTitle: 'Import file',
+          importerTitle: 'Импортировать файл',
           exporterAllAsCsv: 'Экспортировать всё в CSV',
           exporterVisibleAsCsv: 'Экспортировать видимые данные в CSV',
           exporterSelectedAsCsv: 'Экспортировать выбранные данные в CSV',
@@ -58,11 +74,34 @@
           clearAllFilters: 'Очистите все фильтры'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Не удалось получить названия столбцов, есть ли в файле заголовок?',
+          noObjects: 'Не удалось получить данные, есть ли в файле строки кроме заголовка?',
+          invalidCsv: 'Не удалось обработать файл, это правильный CSV-файл?',
+          invalidJson: 'Не удалось обработать файл, это правильный JSON?',
+          jsonNotArray: 'Импортируемый JSON-файл должен содержать массив, операция отменена.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'Первая страница',
+            pageBack: 'Предыдущая страница',
+            pageSelected: 'Выбранная страница',
+            pageForward: 'Следующая страница',
+            pageToLast: 'Последняя страница'
+          },
+          sizes: 'строк на страницу',
+          totalItems: 'строк',
+          through: 'по',
+          of: 'из'
+        },
+        grouping: {
+          group: 'Группировать',
+          ungroup: 'Разгруппировать',
+          aggregate_count: 'Группировать: Count',
+          aggregate_sum: 'Для группы: Сумма',
+          aggregate_max: 'Для группы: Максимум',
+          aggregate_min: 'Для группы: Минимум',
+          aggregate_avg: 'Для группы: Среднее',
+          aggregate_remove: 'Для группы: Пусто'
         }
       });
       return $delegate;

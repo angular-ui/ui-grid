@@ -83,7 +83,7 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
     it("doesn't prevent headers from shrinking when filtering gets turned off", function () {
       // Header height with filtering on
       var filteringHeight = $(elm).find('.ui-grid-header').height();
-      
+
       parentScope.options.enableFiltering = false;
       elm.controller('uiGrid').grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       $timeout.flush();

@@ -1,7 +1,7 @@
 (function(){
 
 angular.module('ui.grid')
-.factory('GridRow', ['gridUtil', function(gridUtil) {
+.factory('GridRow', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
 
    /**
    * @ngdoc function
@@ -94,7 +94,11 @@ angular.module('ui.grid')
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
-    return gridUtil.preEval('entity.' + col.field);
+    var base = 'entity';
+    if ( col.field === uiGridConstants.ENTITY_BINDING ) {
+      return base;
+    }
+    return gridUtil.preEval(base + '.' + col.field);
   };
   
   

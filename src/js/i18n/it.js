@@ -63,6 +63,19 @@
           invalidJson: 'Impossibile elaborare il file, sicuro che sia un JSON valido?',
           jsonNotArray: 'Errore! Il file JSON da importare deve contenere un array.'
         },
+        pagination: {
+          aria: {
+            pageToFirst: 'Prima',
+            pageBack: 'Indietro',
+            pageSelected: 'Pagina selezionata',
+            pageForward: 'Avanti',
+            pageToLast: 'Ultima'
+          },
+          sizes: 'elementi per pagina',
+          totalItems: 'elementi',
+          through: 'a',
+          of: 'di'
+        },
         grouping: {
           group: 'Raggruppa',
           ungroup: 'Separa',
@@ -72,6 +85,12 @@
           aggregate_min: 'Agg: Minimo',
           aggregate_avg: 'Agg: Media',
           aggregate_remove: 'Agg: Rimuovi'
+        },
+        validate: {
+          error: 'Errore:',
+          minLength: 'Lunghezza minima pari a THRESHOLD caratteri.',
+          maxLength: 'Lunghezza massima pari a THRESHOLD caratteri.',
+          required: 'Necessario inserire un valore.'
         }
       });
       return $delegate;

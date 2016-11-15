@@ -1,7 +1,7 @@
 
 module.exports = function (grunt, options) {
   var baseTasks = {
-    'install': ['shell:bower-install', 'shell:protractor-install'],
+    'install': ['shell:bower-install', 'shell:protractor-install', 'shell:hooks-install'],
 
     // register before and after test tasks so we don't have to change cli
     // options on the CI server
@@ -10,7 +10,7 @@ module.exports = function (grunt, options) {
     'default': ['before-test', 'test:single', 'after-test'],
 
     // Build with no testing
-    'build': ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy:site', 'copy:less_customizer',],
+    'build': ['ngtemplates', 'concat', 'uglify', 'less', 'ngdocs', 'copy:site', 'copy:less_customizer',],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],

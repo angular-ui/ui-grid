@@ -22,7 +22,7 @@
         var GridApi = function GridApi(grid) {
           this.grid = grid;
           this.listeners = [];
-          
+
           /**
            * @ngdoc function
            * @name renderingComplete
@@ -31,14 +31,14 @@
            * time as `onRegisterApi`, but provides a way to obtain
            * that same event within features without stopping end
            * users from getting at the onRegisterApi method.
-           * 
+           *
            * Included in gridApi so that it's always there - otherwise
            * there is still a timing problem with when a feature can
-           * call this. 
-           * 
-           * @param {GridApi} gridApi the grid api, as normally 
+           * call this.
+           *
+           * @param {GridApi} gridApi the grid api, as normally
            * returned in the onRegisterApi method
-           * 
+           *
            * @example
            * <pre>
            *      gridApi.core.on.renderingComplete( grid );
@@ -52,9 +52,9 @@
            * @eventOf  ui.grid.core.api:PublicApi
            * @description  is raised after the filter is changed.  The nature
            * of the watch expression doesn't allow notification of what changed,
-           * so the receiver of this event will need to re-extract the filter 
+           * so the receiver of this event will need to re-extract the filter
            * conditions from the columns.
-           * 
+           *
            */
           this.registerEvent( 'core', 'filterChanged' );
 
@@ -63,26 +63,26 @@
            * @name setRowInvisible
            * @methodOf  ui.grid.core.api:PublicApi
            * @description Sets an override on the row to make it always invisible,
-           * which will override any filtering or other visibility calculations.  
+           * which will override any filtering or other visibility calculations.
            * If the row is currently visible then sets it to invisible and calls
            * both grid refresh and emits the rowsVisibleChanged event
-           * @param {object} rowEntity gridOptions.data[] array instance
+           * @param {GridRow} row the row we want to make invisible
            */
           this.registerMethod( 'core', 'setRowInvisible', GridRow.prototype.setRowInvisible );
-      
+
           /**
            * @ngdoc function
            * @name clearRowInvisible
            * @methodOf  ui.grid.core.api:PublicApi
-           * @description Clears any override on visibility for the row so that it returns to 
-           * using normal filtering and other visibility calculations.  
+           * @description Clears any override on visibility for the row so that it returns to
+           * using normal filtering and other visibility calculations.
            * If the row is currently invisible then sets it to visible and calls
            * both grid refresh and emits the rowsVisibleChanged event
            * TODO: if a filter is active then we can't just set it to visible?
-           * @param {object} rowEntity gridOptions.data[] array instance
+           * @param {GridRow} row the row we want to make visible
            */
           this.registerMethod( 'core', 'clearRowInvisible', GridRow.prototype.clearRowInvisible );
-      
+
           /**
            * @ngdoc function
            * @name getVisibleRows
@@ -92,7 +92,7 @@
            * @returns {array} an array of gridRow
            */
           this.registerMethod( 'core', 'getVisibleRows', this.grid.getVisibleRows );
-          
+
           /**
            * @ngdoc event
            * @name rowsVisibleChanged
@@ -142,6 +142,16 @@
            * arguments: oldHeight, newHeight
            */
           this.registerEvent( 'core', 'canvasHeightChanged');
+
+          /**
+           * @ngdoc event
+           * @name gridDimensionChanged
+           * @eventOf  ui.grid.core.api:PublicApi
+           * @description  is raised when the grid dimensions have changed (when autoResize is on)
+           * <br/>
+           * arguments: oldGridHeight, oldGridWidth, newGridHeight, newGridWidth
+           */
+          this.registerEvent( 'core', 'gridDimensionChanged');
         };
 
         /**
@@ -365,7 +375,7 @@
           });
 
         };
-        
+
         return GridApi;
 
       }]);

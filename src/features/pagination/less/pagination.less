@@ -3,12 +3,13 @@
 @import (reference) "../../../less/bootstrap/bootstrap";
 
 .ui-grid-pager-panel {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    padding-top: 3px;
-    padding-bottom: 3px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  box-sizing: content-box;
 }
 
 .ui-grid-pager-container {
@@ -52,6 +53,14 @@
     margin-left: -3px;
   }
 
+  .first-bar-rtl {
+    width: 10px;
+    border-left: 2px solid #4d4d4d;
+    margin-top: -6px;
+    height: 12px;
+    margin-right: -7px;
+  }
+
   .first-triangle {
     width: 0;
     height: 0;
@@ -85,6 +94,16 @@
     height: 12px;
     margin-left: 1px;
   }
+
+  .last-bar-rtl {
+    width: 10px;
+    border-left: 2px solid #4d4d4d;
+    margin-top: -6px;
+    height: 12px;
+    margin-right: -11px;
+  }
+
+
 }
 
 .ui-grid-pager-row-count-picker {
@@ -94,7 +113,7 @@
     #ui-grid-twbs > .form-control;
     #ui-grid-twbs > .input-sm ();
     height: 26px;
-    width: 60px;
+    width: 67px;
     display: inline;
   }
 

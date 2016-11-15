@@ -287,6 +287,7 @@
           savedState.selection = service.saveSelection( grid );
           savedState.grouping = service.saveGrouping( grid );
           savedState.treeView = service.saveTreeView( grid );
+          savedState.pagination = service.savePagination( grid );
 
           return savedState;
         },
@@ -321,6 +322,10 @@
 
           if ( state.treeView ){
             service.restoreTreeView( grid, state.treeView );
+          }
+
+          if ( state.pagination ){
+            service.restorePagination( grid, state.pagination );
           }
 
           grid.refresh();
@@ -476,6 +481,26 @@
 
         /**
          * @ngdoc function
+         * @name savePagination
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Saves the pagination state, if the pagination feature is enabled
+         * @param {Grid} grid the grid whose state we'd like to save
+         * @returns {object} the pagination state ready to be saved
+         */
+        savePagination: function( grid ) {
+          if ( !grid.api.pagination || !grid.options.paginationPageSize ){
+            return {};
+          }
+
+          return {
+            paginationCurrentPage: grid.options.paginationCurrentPage,
+            paginationPageSize: grid.options.paginationPageSize
+          };
+        },
+
+
+        /**
+         * @ngdoc function
          * @name saveTreeView
          * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
          * @description Saves the tree view state, if the tree feature is enabled
@@ -544,8 +569,9 @@
                 grid.api.core.raise.columnVisibilityChanged(currentCol);
               }
 
-              if ( grid.options.saveWidths ){
+              if ( grid.options.saveWidths && currentCol.width !== columnState.width){
                 currentCol.width = columnState.width;
+                currentCol.hasCustomWidth = true;
               }
 
               if ( grid.options.saveSort &&
@@ -695,6 +721,25 @@
           }
 
           grid.api.treeView.setTreeView( treeViewState );
+        },
+
+        /**
+         * @ngdoc function
+         * @name restorePagination
+         * @methodOf  ui.grid.saveState.service:uiGridSaveStateService
+         * @description Restores the pagination information, if pagination is enabled.
+         * @param {Grid} grid the grid whose state we'd like to restore
+         * @param {object} pagination the pagination object to be restored
+         * @param {number} pagination.paginationCurrentPage the page number to restore
+         * @param {number} pagination.paginationPageSize the number of items displayed per page
+         */
+        restorePagination: function( grid, pagination ){
+          if ( !grid.api.pagination || !grid.options.paginationPageSize ){
+            return;
+          }
+
+          grid.options.paginationCurrentPage = pagination.paginationCurrentPage;
+          grid.options.paginationPageSize = pagination.paginationPageSize;
         },
 
         /**

@@ -22,7 +22,7 @@ http://localhost:9003/docs/#/tutorial to browse each tutorial.
 <br/> fast - alias for --no-e2e --core --angular=1.3.6
 
 ```
-grunt dev --no-e2e --angular=1.3.16
+grunt dev --no-e2e --angular=1.5.0
 ```
 
 # Code Structure
@@ -32,16 +32,20 @@ The core angular module (ui.grid) provides the basics
  - Virtualization
  - Row Selection
 
-Everything else should be added as new angular modules unless the grid team agrees that it's a core feature.
+Everything else should be added as new angular modules unless the grid team agrees that it's a core feature. All new feature
+modules should be developed as plugins, and be hosted in their own repositories. There is a great [blog post](http://brianhann.com/write-your-own-ui-grid-plugin/)
+about developing a plugin for ui-grid. Your plugin should use the available publicApi, if you need something in the publicApi that isn't
+currently exposed, we welcome pull requests.
+
+The grid team has limited time to spend on this project, and as the list of features grows, so does the effort required to support
+ those features. In a future release we will be working to move some of the existing features out of the core repository. The basic
+ rule of thumb for any new features is: "If it is possible to implement it as a plugin, it should be a plugin".
 
 ## Feature module design
-* We prefer no 3rd party dependencies other than angular. Contact grid team if you have a 3rd party need that can't be avoided.
+* We prefer no 3rd party dependencies other than angular.
 * jQuery is only used in Unit Tests
 * unit test your code! not that hard. see test/unit for examples. Features will be rejected if the test coverage isn't adequate.
 * use ngDoc to document how to use your feature.  see examples in existing code.
-* New module should be named ui.grid.feature
-* feature folder is added below src
-* One js file per feature
 * no global variables
 * public methods and events are registered in grid.api (more on that later)
 * design and code the angular way. What do we mean by that? Dependency injection, small directives, emphasis the model, not the DOM, tests!

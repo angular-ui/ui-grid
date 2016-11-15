@@ -5,8 +5,8 @@
 Using a grid in a modal popup.
 
 In some cases, and in particular with the bootstrap modal, you may find that your grid renders smaller than the
-available width (or sometimes appears to render not at all.  This is believed to be because the bootstrap modal 
-animates the initial render and the grid renders whilst the  modal is still animating - the available space isn't 
+available width (or sometimes appears to render not at all.  This is believed to be because the bootstrap modal
+animates the initial render and the grid renders whilst the  modal is still animating - the available space isn't
 as expected.  You can correct this by calling `handleWindowResize`.  The animation time seems to be somewhat variable,
 so the currently recommended approach is to use $interval, and to call every 500ms for the first 5s after modal opening.
 
@@ -25,11 +25,11 @@ In a sense this is similar to what the auto-resize feature does, but it only doe
       $rootScope.gridOptions = {
         onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
- 
-          // call resize every 200 ms for 2 s after modal finishes opening - usually only necessary on a bootstrap modal
+
+          // call resize every 500 ms for 5 s after modal finishes opening - usually only necessary on a bootstrap modal
           $interval( function() {
             $scope.gridApi.core.handleWindowResize();
-          }, 10, 500);
+          }, 500, 10);
           }
       };
 
@@ -56,7 +56,7 @@ In a sense this is similar to what the auto-resize feature does, but it only doe
             $rootScope.close = function() {
               modal.close();
             };
-            
+
             $rootScope.modalStyle = {"display": "block"};
 
             $compile(elm)($rootScope);
