@@ -21,7 +21,7 @@ if (typeof Function.prototype.bind !== "function") {
   };
 }
 
-function getStyles (elem) {
+function  getStyles (elem) {
   var e = elem;
   if (typeof(e.length) !== 'undefined' && e.length) {
     e = elem[0];
@@ -351,7 +351,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // See if the template is itself a promise
-      if (template.hasOwnProperty('then')) {
+      if (angular.isFunction(template.then)) {
         return template.then(s.postProcessTemplate);
       }
 
@@ -910,7 +910,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         e = elem[0];
       }
 
-      if (e) {
+      if (e && e !== null) {
         var styles = getStyles(e);
         return e.offsetWidth === 0 && rdisplayswap.test(styles.display) ?
                   s.swap(e, cssShow, function() {
@@ -1175,7 +1175,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       if (timeout) {
         $timeout.cancel(timeout);
       }
-      timeout = $timeout(later, wait);
+      timeout = $timeout(later, wait, false);
       if (callNow) {
         result = func.apply(context, args);
       }
@@ -1225,7 +1225,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){ queued = null; }, 0, 1);
+      $interval(function(){queued = null; }, 0, 1, false);
     }
 
     return function(){
@@ -1238,7 +1238,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $interval(runFunc, wait - sinceLast, 1);
+          queued = $interval(runFunc, wait - sinceLast, 1, false);
         }
       }
     };
@@ -1374,8 +1374,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     delta  = Math[ delta  >= 1 ? 'floor' : 'ceil' ](delta  / lowestDelta);
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
-
-    event.deltaMode = 0;
 
     // Normalise offsetX and offsetY properties
     // if ($elm[0].getBoundingClientRect ) {

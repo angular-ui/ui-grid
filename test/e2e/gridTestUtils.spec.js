@@ -123,7 +123,8 @@ module.exports = {
   selectRow: function( gridId, rowNum ) {
     // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
     var row = this.getRow( gridId, rowNum );
-    return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
+    var btn = row.element( by.css('.ui-grid-selection-row-header-buttons') );
+    return browser.actions().mouseMove(btn).mouseDown(btn).mouseUp().perform();
   },
 
   /**
@@ -192,7 +193,8 @@ module.exports = {
     var headerColumns = this.getGrid(gridId)
       .element(by.css('.ui-grid-render-container-body'))
       .element( by.css('.ui-grid-header'))
-      .all(by.repeater('col in colContainer.renderedColumns track by col.uid'));
+      .all(by.repeater('col in colContainer.renderedColumns track by col.uid'))
+      .all(by.css('.ui-grid-header-cell-label'));
 
     expect(headerColumns.count()).toBe(expectedColumns.length);
 
@@ -327,7 +329,8 @@ module.exports = {
   */
   expectHeaderCellValueMatch: function( gridId, expectedCol, expectedValue ) {
     var headerCell = this.headerCell( gridId, expectedCol);
-    expect(headerCell.getText()).toMatch(expectedValue);
+    var headerCellValue = headerCell.element(by.css('.ui-grid-header-cell-label')).getText();
+    expect(headerCellValue).toMatch(expectedValue);
   },
 
   /**
@@ -811,7 +814,8 @@ module.exports = {
     // NOTE: Can't do .click() as it doesn't work when webdriving Firefox
     return browser.actions().mouseMove(gridMenuButton).mouseDown(gridMenuButton).mouseUp().perform()
       .then(function () {
-        var row = gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) );
+        var row = gridMenuButton.element( by.repeater('item in menuItems').row( itemNumber) )
+                    .element(by.css('.ui-grid-menu-item'));
 
         return browser.actions().mouseMove(row).mouseDown(row).mouseUp().perform();
       });

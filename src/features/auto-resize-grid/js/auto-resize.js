@@ -41,6 +41,7 @@
             if (newGridHeight !== prevGridHeight || newGridWidth !== prevGridWidth) {
               uiGridCtrl.grid.gridHeight = newGridHeight;
               uiGridCtrl.grid.gridWidth = newGridWidth;
+              uiGridCtrl.grid.api.core.raise.gridDimensionChanged(prevGridHeight, prevGridWidth, newGridHeight, newGridWidth);
 
               $scope.$apply(function () {
                 uiGridCtrl.grid.refresh()

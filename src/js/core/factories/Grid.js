@@ -121,8 +121,9 @@ angular.module('ui.grid')
      * @ngdoc property
      * @name scrollDirection
      * @propertyOf ui.grid.class:Grid
-     * @description set one of the uiGridConstants.scrollDirection values (UP, DOWN, LEFT, RIGHT, NONE), which tells
-     * us which direction we are scrolling. Set to NONE via debounced method
+     * @description set one of the {@link ui.grid.service:uiGridConstants#properties_scrollDirection uiGridConstants.scrollDirection}
+     *  values (UP, DOWN, LEFT, RIGHT, NONE), which tells us which direction we are scrolling.
+     * Set to NONE via debounced method
      */
     self.scrollDirection = uiGridConstants.scrollDirection.NONE;
 
@@ -214,6 +215,7 @@ angular.module('ui.grid')
      * If you only want to resize the grid, not regenerate all the rows
      * and columns, you should consider directly calling refreshCanvas instead.
      *
+     * @param {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed
      */
     self.api.registerMethod( 'core', 'refresh', this.refresh );
 
@@ -272,6 +274,8 @@ angular.module('ui.grid')
      * @methodOf ui.grid.core.api:PublicApi
      * @description adds a row header column to the grid
      * @param {object} column def
+     * @param {number} order Determines order of header column on grid.  Lower order means header
+     * is positioned to the left of higher order headers
      *
      */
     self.api.registerMethod( 'core', 'addRowHeaderColumn', this.addRowHeaderColumn );
@@ -380,12 +384,12 @@ angular.module('ui.grid')
      * that have sorting on them, sorted in priority order.
      *
      * @param {$scope} scope The scope of the controller. This is used to deregister this event when the scope is destroyed.
-     * @param {Function} callBack Will be called when the event is emited. The function passes back an array of columns with
-     * sorts on them, in priority order.
+     * @param {Function} callBack Will be called when the event is emited. The function passes back the grid and an array of
+     * columns with sorts on them, in priority order.
      *
      * @example
      * <pre>
-     *      gridApi.core.on.sortChanged( $scope, function(sortColumns){
+     *      gridApi.core.on.sortChanged( $scope, function(grid, sortColumns){
      *        // do something
      *      });
      * </pre>
@@ -398,7 +402,7 @@ angular.module('ui.grid')
      * @methodOf  ui.grid.core.api:PublicApi
      * @description The visibility of a column has changed,
      * the column itself is passed out as a parameter of the event.
-     * 
+     *
      * @param {$scope} scope The scope of the controller. This is used to deregister this event when the scope is destroyed.
      * @param {Function} callBack Will be called when the event is emited. The function passes back the GridCol that has changed.
      *
@@ -421,8 +425,8 @@ angular.module('ui.grid')
      * and you'd like cell classes to be re-evaluated, or changed config within
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
      * @param {string} type one of the
-     * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
-     * us which refreshes to fire.
+     * {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+     * values (ALL, ROW, EDIT, COLUMN), which tells us which refreshes to fire.
      *
      */
     self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
@@ -554,8 +558,8 @@ angular.module('ui.grid')
    *
    * @param {function(grid)} callback function to be called
    * @param {array} types the types of data change you want to be informed of.  Values from
-   * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
-   * ALL
+   * the {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+   *  values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to ALL
    * @returns {function} deregister function - a function that can be called to deregister this callback
    */
   Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
@@ -582,8 +586,9 @@ angular.module('ui.grid')
    * @description Calls the callbacks based on the type of data change that
    * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, COLUMN and OPTIONS callbacks if the
    * event type is matching, or if the type is ALL.
-   * @param {number} type the type of event that occurred - one of the
-   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN, OPTIONS)
+   * @param {string} type the type of event that occurred - one of the
+   * {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+   *  values (ALL, ROW, EDIT, COLUMN, OPTIONS)
    */
   Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type, options) {
     angular.forEach( this.dataChangeCallbacks, function( callback, uid ){
@@ -755,8 +760,14 @@ angular.module('ui.grid')
   * @description adds a row header column to the grid
   * @param {object} column def
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order) {
     var self = this;
+
+    //default order
+    if (order === undefined) {
+      order = 0;
+    }
+
     var rowHeaderCol = new GridColumn(colDef, gridUtil.nextUid(), self);
     rowHeaderCol.isRowHeader = true;
     if (self.isRTL()) {
@@ -775,7 +786,12 @@ angular.module('ui.grid')
         rowHeaderCol.enableFiltering = false;
         rowHeaderCol.enableSorting = false;
         rowHeaderCol.enableHiding = false;
+        rowHeaderCol.headerPriority = order;
         self.rowHeaderColumns.push(rowHeaderCol);
+        self.rowHeaderColumns = self.rowHeaderColumns.sort(function (a, b) {
+          return a.headerPriority - b.headerPriority;
+        });
+
         self.buildColumns()
           .then( function() {
             self.preCompileCellTemplates();
@@ -837,9 +853,11 @@ angular.module('ui.grid')
     }
 
     //add row header columns to the grid columns array _after_ columns without columnDefs have been removed
-    self.rowHeaderColumns.forEach(function (rowHeaderColumn) {
-      self.columns.unshift(rowHeaderColumn);
-    });
+    //rowHeaderColumns is ordered by priority so insert in reverse
+    for (var j = self.rowHeaderColumns.length - 1; j >= 0; j--) {
+      self.columns.unshift(self.rowHeaderColumns[j]);
+    }
+
 
 
     // look at each column def, and update column properties to match.  If the column def
@@ -899,6 +917,19 @@ angular.module('ui.grid')
     });
   };
 
+  Grid.prototype.preCompileCellTemplate = function(col) {
+    var self = this;
+    var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
+    html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+
+    var compiledElementFn = $compile(html);
+    col.compiledElementFn = compiledElementFn;
+
+    if (col.compiledElementFnDefer) {
+      col.compiledElementFnDefer.resolve(col.compiledElementFn);
+    }
+  };
+
 /**
  * @ngdoc function
  * @name preCompileCellTemplates
@@ -907,25 +938,12 @@ angular.module('ui.grid')
  */
   Grid.prototype.preCompileCellTemplates = function() {
     var self = this;
-
-    var preCompileTemplate = function( col ) {
-      var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
-      html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
-
-      var compiledElementFn = $compile(html);
-      col.compiledElementFn = compiledElementFn;
-
-      if (col.compiledElementFnDefer) {
-        col.compiledElementFnDefer.resolve(col.compiledElementFn);
-      }
-    };
-
-    this.columns.forEach(function (col) {
+    self.columns.forEach(function (col) {
       if ( col.cellTemplate ){
-        preCompileTemplate( col );
+        self.preCompileCellTemplate( col );
       } else if ( col.cellTemplatePromise ){
         col.cellTemplatePromise.then( function() {
-          preCompileTemplate( col );
+          self.preCompileCellTemplate( col );
         });
       }
     });
@@ -939,7 +957,11 @@ angular.module('ui.grid')
    * @param {GridColumn} col col object
    */
   Grid.prototype.getQualifiedColField = function (col) {
-    return 'row.entity.' + gridUtil.preEval(col.field);
+    var base = 'row.entity';
+    if ( col.field === uiGridConstants.ENTITY_BINDING ) {
+      return base;
+    }
+    return gridUtil.preEval(base + '.' + col.field);
   };
 
   /**
@@ -1066,6 +1088,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description creates or removes GridRow objects from the newRawData array.  Calls each registered
    * rowBuilder to further process the row
+   * @param {array} newRawData Modified set of data
    *
    * This method aims to achieve three things:
    * 1. the resulting rows array is in the same order as the newRawData, we'll call
@@ -1086,9 +1109,20 @@ angular.module('ui.grid')
    *     create newRow
    *   append to the newRows and add to newHash
    *   run the processors
+   * ```
    *
    * Rows are identified using the hashKey if configured.  If not configured, then rows
    * are identified using the gridOptions.rowEquality function
+   *
+   * This method is useful when trying to select rows immediately after loading data without
+   * using a $timeout/$interval, e.g.:
+   *
+   *   $scope.gridOptions.data =  someData;
+   *   $scope.gridApi.grid.modifyRows($scope.gridOptions.data);
+   *   $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+   *
+   * OR to persist row selection after data update (e.g. rows selected, new data loaded, want
+   * originally selected rows to be re-selected))
    */
   Grid.prototype.modifyRows = function modifyRows(newRawData) {
     var self = this;
@@ -1358,6 +1392,7 @@ angular.module('ui.grid')
         self.renderContainers[targetContainer].visibleRowCache.push(row);
       }
     }
+    self.api.core.raise.rowsVisibleChanged(this.api);
     self.api.core.raise.rowsRendered(this.api);
   };
 
@@ -1492,6 +1527,7 @@ angular.module('ui.grid')
    * @name handleWindowResize
    * @methodOf ui.grid.class:Grid
    * @description Triggered when the browser window resizes; automatically resizes the grid
+   * @returns {Promise} A resolved promise once the window resize has completed.
    */
   Grid.prototype.handleWindowResize = function handleWindowResize($event) {
     var self = this;
@@ -1499,7 +1535,7 @@ angular.module('ui.grid')
     self.gridWidth = gridUtil.elementWidth(self.element);
     self.gridHeight = gridUtil.elementHeight(self.element);
 
-    self.queueRefresh();
+    return self.queueRefresh();
   };
 
   /**
@@ -1864,12 +1900,12 @@ angular.module('ui.grid')
         p = 0;
 
     self.columns.forEach(function (col) {
-      if (col.sort && col.sort.priority && col.sort.priority > p) {
-        p = col.sort.priority;
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority >= p) {
+        p = col.sort.priority + 1;
       }
     });
 
-    return p + 1;
+    return p;
   };
 
   /**
@@ -1948,11 +1984,11 @@ angular.module('ui.grid')
 
     if (!add) {
       self.resetColumnSorting(column);
-      column.sort.priority = 0;
+      column.sort.priority = undefined;
       // Get the actual priority since there may be columns which have suppressRemoveSort set
       column.sort.priority = self.getNextColumnSortPriority();
     }
-    else if (!column.sort.priority){
+    else if (column.sort.priority === undefined){
       column.sort.priority = self.getNextColumnSortPriority();
     }
 
@@ -1970,7 +2006,7 @@ angular.module('ui.grid')
       if (column.sortDirectionCycle[i]) {
         column.sort.direction = column.sortDirectionCycle[i];
       } else {
-        column.sort = {};
+        removeSortOfColumn(column, self);
       }
     }
     else {
@@ -1980,6 +2016,18 @@ angular.module('ui.grid')
     self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
+  };
+
+  var removeSortOfColumn = function removeSortOfColumn(column, grid) {
+    //Decrease priority for every col where priority is higher than the removed sort's priority.
+    grid.columns.forEach(function (col) {
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority > column.sort.priority) {
+        col.sort.priority -= 1;
+      }
+    });
+
+    //Remove sort
+    column.sort = {};
   };
 
   /**
@@ -2299,7 +2347,7 @@ angular.module('ui.grid')
       //}
 
       // The right position is the current X scroll position minus the grid width
-      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.gridWidth);
+      var rightBound = self.renderContainers.body.prevScrollLeft + Math.ceil(self.renderContainers.body.getViewportWidth());
 
       // If there's a vertical scrollbar, subtract it from the right boundary or we'll allow it to obscure cells
       //if (self.verticalScrollbarWidth) {
@@ -2320,7 +2368,7 @@ angular.module('ui.grid')
         //}
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-        var pixelsToSeeRow = ((seekRowIndex + 1) * self.options.rowHeight);
+        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight + self.headerHeight);
 
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
@@ -2351,18 +2399,13 @@ angular.module('ui.grid')
 
       // We were given a column to scroll to
       if (gridCol !== null) {
-        // This is the index of the row we want to scroll to, within the list of rows that can be visible
+        // This is the index of the column we want to scroll to, within the list of columns that can be visible
         var seekColumnIndex = visColCache.indexOf(gridCol);
 
-        // Total vertical scroll length of the grid
+        // Total horizontal scroll length of the grid
         var horizScrollLength = (self.renderContainers.body.getCanvasWidth() - self.renderContainers.body.getViewportWidth());
 
-        // Add the height of the native horizontal scrollbar to the scroll length, if it's there. Otherwise it will mask over the final row
-        // if (self.verticalScrollbarWidth && self.verticalScrollbarWidth > 0) {
-        //   horizScrollLength = horizScrollLength + self.verticalScrollbarWidth;
-        // }
-
-        // This is the minimum amount of pixels we need to scroll vertical in order to see this column
+        // This is the minimum amount of pixels we need to scroll horizontal in order to see this column
         var columnLeftEdge = 0;
         for (var i = 0; i < seekColumnIndex; i++) {
           var col = visColCache[i];
@@ -2377,9 +2420,9 @@ angular.module('ui.grid')
 
         var horizScrollPixels, horizPercentage;
 
-        // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
+        // If the scroll position we need to see the column is LESS than the left boundary, i.e. obscured before the left of the self...
         if (columnLeftEdge < leftBound) {
-          // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
+          // Get the different between the left boundary and the required scroll position and subtract it from the current scroll position\
           //   to get the full position we need
           horizScrollPixels = self.renderContainers.body.prevScrollLeft - (leftBound - columnLeftEdge);
 
@@ -2388,9 +2431,9 @@ angular.module('ui.grid')
           horizPercentage = (horizPercentage > 1) ? 1 : horizPercentage;
           scrollEvent.x = { percentage: horizPercentage  };
         }
-        // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
+        // Otherwise if the scroll position we need to see the column is MORE than the right boundary, i.e. obscured after the right of the self...
         else if (columnRightEdge > rightBound) {
-          // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
+          // Get the different between the right boundary and the required scroll position and add it to the current scroll position
           //   to get the full position we need
           horizScrollPixels = columnRightEdge - rightBound + self.renderContainers.body.prevScrollLeft;
 

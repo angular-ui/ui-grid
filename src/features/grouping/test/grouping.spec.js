@@ -85,7 +85,7 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     it( 'will not move header columns', function() {
 
       $timeout(function () {
-        grid.addRowHeaderColumn({name:'aRowHeader'});
+        grid.addRowHeaderColumn({name:'aRowHeader'}, -200);
       });
       $timeout.flush();
 
@@ -101,9 +101,37 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   });
 
 
+  describe('groupColumn', function() {
+    it('saves previous sort state', function() {
+      grid.columns[1].sort = { priority: 42, direction: 'foo'};
+      uiGridGroupingService.groupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].previousSort.priority).toBe(42);
+      expect(grid.columns[1].previousSort.direction).toBe('foo');
+    });
+  });
+
+  describe('ungroupColumn', function() {
+    it('restores previuosly restored state if there is one', function() {
+      grid.columns[1].previousSort = { direction: 'bar'};
+      uiGridGroupingService.ungroupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].sort.direction).toBe('bar');
+    });
+
+    it('should remove previous sort prop from column object after column sort is restored', function() {
+      grid.columns[1].previousSort = {direction: 'bar'};
+      uiGridGroupingService.ungroupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].previousSort).toBeUndefined();
+    });
+  });
+
+
   describe( 'groupRows', function() {
+    beforeEach(function() {
+      spyOn(gridClassFactory, 'rowTemplateAssigner').and.callFake( function() {});
+    });
+
     it( 'group by col0 then col1', function() {
-      spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
+
       grid.columns[0].grouping = { groupPriority: 1 };
       grid.columns[1].grouping = { groupPriority: 2 };
 
@@ -112,7 +140,6 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
     });
 
     it( 'group by col4 (type date with nulls)', function() {
-      spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
       grid.columns[4].grouping = { groupPriority: 1 };
 
       uiGridGroupingService.tidyPriorities(grid);
@@ -482,48 +509,54 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
       });
     });
 
-    it('sorts', function(){
-      grid.grouping.groupingHeaderCache = {
-        male: {
-          row: { treeNode: { state: 'collapsed' } },
-          children: {
-            22: { row: { treeNode: { state: 'expanded' } }, children: {} },
-            39: { row: { treeNode: { state: 'collapsed' } }, children: {} }
-          }
-        },
-        female: {
-          row: { treeNode: { state: 'expanded' } },
-          children: {
-            23: { row: { treeNode: { state: 'collapsed' } }, children: {} },
-            38: { row: { treeNode: { state: 'expanded' } }, children: {} }
-          }
-        }
-      };
 
-      spyOn(grid.api.core.raise, 'sortChanged').andCallThrough();
-
-      grid.api.grouping.setGrouping({
-        grouping: [
-          { field: 'col3', colName: 'col3', groupPriority: 0 },
-          { field: 'col2', colName: 'col2', groupPriority: 1 }
-        ],
-        aggregations: [
-          { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT } }
-        ],
-        rowExpandedStates: {
-          male: { state: 'expanded', children: {
-            22: { state: 'collapsed' },
-            38: { state: 'expanded' }
-          } },
-          female: { state: 'expanded', children: {
-            23: { state: 'expanded' },
-            39: { state: 'collapsed' }
-          } }
-        }
+    describe('sorts', function(){
+      beforeEach(function() {
+        spyOn(grid.api.core.raise, 'sortChanged').and.callThrough();
       });
 
-      // Should call sort change twice because we are grouping by two columns
-      expect(grid.api.core.raise.sortChanged.calls.length).toEqual(2);
+      it('', function() {
+        grid.grouping.groupingHeaderCache = {
+          male: {
+            row: { treeNode: { state: 'collapsed' } },
+            children: {
+              22: { row: { treeNode: { state: 'expanded' } }, children: {} },
+              39: { row: { treeNode: { state: 'collapsed' } }, children: {} }
+            }
+          },
+          female: {
+            row: { treeNode: { state: 'expanded' } },
+            children: {
+              23: { row: { treeNode: { state: 'collapsed' } }, children: {} },
+              38: { row: { treeNode: { state: 'expanded' } }, children: {} }
+            }
+          }
+        };
+
+
+        grid.api.grouping.setGrouping({
+          grouping: [
+            { field: 'col3', colName: 'col3', groupPriority: 0 },
+            { field: 'col2', colName: 'col2', groupPriority: 1 }
+          ],
+          aggregations: [
+            { field: 'col1', colName: 'col1', aggregation: { type: uiGridGroupingConstants.aggregation.COUNT } }
+          ],
+          rowExpandedStates: {
+            male: { state: 'expanded', children: {
+              22: { state: 'collapsed' },
+              38: { state: 'expanded' }
+            } },
+            female: { state: 'expanded', children: {
+              23: { state: 'expanded' },
+              39: { state: 'collapsed' }
+            } }
+          }
+        });
+
+        // Should call sort change twice because we are grouping by two columns
+        expect(grid.api.core.raise.sortChanged.calls.count()).toEqual(2);
+      });
 
     });
 
@@ -572,7 +605,9 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
 
   describe('insertGroupHeader', function() {
     it('inserts a header in the middle', function() {
-      spyOn(gridClassFactory, 'rowTemplateAssigner').andCallFake( function() {});
+      var rowTemplateSpy = jasmine.createSpy('rowTemplateSpy');
+      rowTemplateSpy.and.callFake( function() {});
+      rowTemplateSpy(gridClassFactory, 'rowTemplateAssigner');
       var headerRow1 = new GridRow( {}, null, grid );
       var headerRow2 = new GridRow( {}, null, grid );
       var headerRow3 = new GridRow( {}, null, grid );

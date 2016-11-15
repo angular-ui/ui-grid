@@ -18,7 +18,7 @@ describe('ui.grid.moveColumns', function () {
     timeout = $timeout;
     gridUtil = _gridUtil_;
     document = $document;
-    uiGridConstants = _uiGridConstants_;    
+    uiGridConstants = _uiGridConstants_;
     scope.gridOptions = {};
     scope.gridOptions.data = data;
     scope.gridOptions.columnDefs = [
@@ -97,15 +97,20 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
-  it('expect moveColumn() to not change position of columns if column position given is wrong', function () {
-    spyOn(gridUtil, 'logError').andCallFake(function() {});
-    scope.gridApi.colMovable.moveColumn(4, 5);
-    expect(scope.grid.columns[0].name).toBe('name');
-    expect(scope.grid.columns[1].name).toBe('gender');
-    expect(scope.grid.columns[2].name).toBe('age');
-    expect(scope.grid.columns[3].name).toBe('company');
-    expect(scope.grid.columns[4].name).toBe('phone');
-    expect(gridUtil.logError).toHaveBeenCalledWith('MoveColumn: Invalid values for originalPosition, finalPosition');
+  describe("expect moveColumn() to not change position of columns if column position given is wrong", function () {
+    beforeEach(function() {
+      spyOn(gridUtil, 'logError').and.callFake(function() {});
+      scope.gridApi.colMovable.moveColumn(4, 5);
+    });
+    it('', function() {
+      expect(scope.grid.columns[0].name).toBe('name');
+      expect(scope.grid.columns[1].name).toBe('gender');
+      expect(scope.grid.columns[2].name).toBe('age');
+      expect(scope.grid.columns[3].name).toBe('company');
+      expect(scope.grid.columns[4].name).toBe('phone');
+      expect(gridUtil.logError.calls.mostRecent().args).toEqual(['MoveColumn: Invalid values for originalPosition, finalPosition']);
+    });
+
   });
 
   it('expect event columnPositionChanged to be called when column position is changed', function () {
@@ -140,26 +145,25 @@ describe('ui.grid.moveColumns', function () {
     //expect(scope.grid.columns[4].name).toBe('phone');
   //});
 
-  // NOTE (nsartor) same as above, I believe the cause is the viewport.
-  //it('expect column to move left when dragged left', function () {
-    //var event = jQuery.Event("mousedown", {
-      //pageX: 0
-    //});
-    //var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[1]);
-    //columnHeader.trigger(event);
-    //event = jQuery.Event("mousemove", {
-      //pageX: -200
-    //});
-    //document.trigger(event);
-    //document.trigger(event);
-    //event = jQuery.Event("mouseup");
-    //document.trigger(event);
-    //expect(scope.grid.columns[0].name).toBe('gender');
-    //expect(scope.grid.columns[1].name).toBe('name');
-    //expect(scope.grid.columns[2].name).toBe('age');
-    //expect(scope.grid.columns[3].name).toBe('company');
-    //expect(scope.grid.columns[4].name).toBe('phone');
-  //});
+  it('expect column to move left when dragged left', function () {
+    var event = jQuery.Event("mousedown", {
+      pageX: 0
+    });
+    var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[1]);
+    columnHeader.trigger(event);
+    event = jQuery.Event("mousemove", {
+      pageX: -200
+    });
+    document.trigger(event);
+    document.trigger(event);
+    event = jQuery.Event("mouseup");
+    document.trigger(event);
+    expect(scope.grid.columns[0].name).toBe('gender');
+    expect(scope.grid.columns[1].name).toBe('name');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
 
   it('expect column movement to not happen if enableColumnMoving is false', function () {
     var event = jQuery.Event("mousedown", {
@@ -193,7 +197,7 @@ describe('ui.grid.moveColumns', function () {
 
   it('expect column movement to happen if enableColumnMoving is changed to true', function() {
     scope.grid.options.enableColumnMoving = false;
-    scope.grid.options.enableColumnMoving = true;    
+    scope.grid.options.enableColumnMoving = true;
     scope.gridApi.colMovable.moveColumn(0, 1);
     expect(scope.grid.columns[0].name).toBe('gender');
     expect(scope.grid.columns[1].name).toBe('name');
@@ -202,7 +206,7 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[4].name).toBe('phone');
   });
 
-  it('expect column movement no to happen if column Defination enableColumnMoving is changed to false', function(){
+  it('expect column movement not to happen if column definition enableColumnMoving is changed to false', function(){
     scope.grid.options.enableColumnMoving = true;
     scope.grid.columns[2].colDef.enableColumnMoving = false;
     scope.gridApi.colMovable.moveColumn(2, 0);
@@ -210,16 +214,101 @@ describe('ui.grid.moveColumns', function () {
     expect(scope.grid.columns[2].name).toBe('age');
   });
 
-  it('expect column movement not to happen for column defination enableColumnMoving is false by default', function(){    
-    scope.gridApi.colMovable.moveColumn(2, 0);    
+  it('expect column movement not to happen for column definition enableColumnMoving is false by default', function(){
+    scope.gridApi.colMovable.moveColumn(2, 0);
     expect(scope.grid.columns[0].name).toBe('name');
     expect(scope.grid.columns[3].name).toBe('company');
   });
 
-  it('expect column movement to be happen for changing the column defination enableColumnMoving property to true which is false by default', function(){
+  it('expect column movement to be happen for changing the column definition enableColumnMoving property to true which is false by default', function(){
     scope.grid.columns[3].colDef.enableColumnMoving = true;
     scope.gridApi.colMovable.moveColumn(2, 0);
-    expect(scope.grid.columns[0].name).toBe('company');    
+    expect(scope.grid.columns[0].name).toBe('company');
     expect(scope.grid.columns[3].name).toBe('age');
+  });
+
+  it('expect column move not to happen if moving across hidden columns', function() {
+    scope.gridOptions.columnDefs[1].visible = false;
+    scope.gridApi.colMovable.moveColumn(0, 3);
+    expect(scope.grid.columns[0].name).toBe('name');
+    expect(scope.grid.columns[1].name).toBe('gender');
+    expect(scope.grid.columns[2].name).toBe('age');
+    expect(scope.grid.columns[3].name).toBe('company');
+    expect(scope.grid.columns[4].name).toBe('phone');
+  });
+
+  describe('when jQuery is enabled on touch devices', function() {
+    // NOTE (priceld) this is excluded for the same reason nsartor mentioned above
+    // it('expect column to move right when dragged right', function () {
+    //   var event = jQuery.Event("touchstart", {
+    //     originalEvent: {
+    //       pageX: 0
+    //     }
+    //   });
+    //   var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[0]);
+    //   columnHeader.trigger(event);
+    //   event = jQuery.Event("touchmove", {
+    //     originalEvent: {
+    //       pageX: 200
+    //     }
+    //   });
+    //   document.trigger(event);
+    //   document.trigger(event);
+    //   event = jQuery.Event("touchend");
+    //   document.trigger(event);
+    //   expect(scope.grid.columns[0].name).toBe('gender');
+    //   expect(scope.grid.columns[1].name).toBe('age');
+    //   expect(scope.grid.columns[2].name).toBe('name');
+    //   expect(scope.grid.columns[3].name).toBe('company');
+    //   expect(scope.grid.columns[4].name).toBe('phone');
+    // });
+
+    it('expect column to move left when dragged left', function () {
+      var event = jQuery.Event("touchstart", {
+        originalEvent: {
+          pageX: 0
+        }
+      });
+      var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[1]);
+      columnHeader.trigger(event);
+      event = jQuery.Event("touchmove", {
+        originalEvent: {
+          pageX: -200
+        }
+      });
+      document.trigger(event);
+      document.trigger(event);
+      event = jQuery.Event("touchend");
+      document.trigger(event);
+      expect(scope.grid.columns[0].name).toBe('gender');
+      expect(scope.grid.columns[1].name).toBe('name');
+      expect(scope.grid.columns[2].name).toBe('age');
+      expect(scope.grid.columns[3].name).toBe('company');
+      expect(scope.grid.columns[4].name).toBe('phone');
+    });
+
+    it('expect column movement to not happen if enableColumnMoving is false', function () {
+      var event = jQuery.Event("touchstart", {
+        originalEvent: {
+          pageX: 0
+        }
+      });
+      var columnHeader = angular.element(element.find('.ui-grid-cell-contents')[3]);
+      columnHeader.trigger(event);
+      event = jQuery.Event("touchmove", {
+        originalEvent: {
+          pageX: 200
+        }
+      });
+      document.trigger(event);
+      document.trigger(event);
+      event = jQuery.Event("touchend");
+      document.trigger(event);
+      expect(scope.grid.columns[0].name).toBe('name');
+      expect(scope.grid.columns[1].name).toBe('gender');
+      expect(scope.grid.columns[2].name).toBe('age');
+      expect(scope.grid.columns[3].name).toBe('company');
+      expect(scope.grid.columns[4].name).toBe('phone');
+    });
   });
 });

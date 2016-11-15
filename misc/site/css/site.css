@@ -230,3 +230,8 @@ p.modal-message {
 .info-link {
   color: #34EFBB;
 }
+
+.gitter-chat-embed{
+  /*XXX:HACK to get the chat to show up over the header bar*/
+  z-index: 5000 important!;
+}

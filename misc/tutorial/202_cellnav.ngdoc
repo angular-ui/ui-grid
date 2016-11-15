@@ -28,6 +28,8 @@ Provides an example of scrolling to and setting the focus on a specific cell, us
 Provides an example of utilizing the modifierKeysToMultiSelectCells option and getCurrentSelection API function to
 extract values of selected cells.
 
+Provides an example of utilizing the keyDownOverrides to add a custom Ctrl + Right to focus the last column in the row,
+while still allowing the right arrow to be handled by the grid.
 @example
 <example module="app">
   <file name="app.js">
@@ -36,6 +38,7 @@ extract values of selected cells.
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
       $scope.gridOptions = {
         modifierKeysToMultiSelectCells: true,
+        keyDownOverrides: [ { keyCode: 39, ctrlKey: true }],
         showGridFooter: true
       };
       $scope.gridOptions.columnDefs = [
@@ -93,6 +96,13 @@ extract values of selected cells.
                  //    msg += ' Old RowCol is ' + angular.toJson(rowCol);
                  // }
                   $log.log('navigation event');
+                });
+            gridApi.cellNav.on.viewPortKeyDown($scope,function(event, newRowCol){
+                    var row = newRowCol.row;
+                    var col = newRowCol.col
+                    if (event.keyCode === 39) {
+                        $scope.gridApi.cellNav.scrollToFocus(row.entity, $scope.gridApi.grid.columns[$scope.gridApi.grid.columns.length - 1]);
+                    }
                 });
         };
     }]);

@@ -1,5 +1,6 @@
 <div
   class="ui-grid-filter-container"
+  ng-style="col.extraStyle"
   ng-repeat="colFilter in col.filters"
   ng-class="{'ui-grid-filter-cancel-button-hidden' : colFilter.disableCancelFilterButton === true }">
   <div
@@ -31,6 +32,7 @@
     <select
       class="ui-grid-filter-select ui-grid-filter-input-{{$index}}"
       ng-model="colFilter.term"
+      ng-show="colFilter.selectOptions.length > 0"
       ng-attr-placeholder="{{colFilter.placeholder || aria.defaultFilterLabel}}"
       aria-label="{{colFilter.ariaLabel || ''}}"
       ng-options="option.value as option.label for option in colFilter.selectOptions">

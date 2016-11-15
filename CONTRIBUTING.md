@@ -1,3 +1,5 @@
+# New Issues are for bug reports or feature requests only!!  Questions on how to use the grid should be posted to Stack Overflow or Gitter https://gitter.im/angular-ui/ui-grid.
+
 # Contributing to UI Grid
 
 Please take a moment to review this document in order to make the contribution
@@ -74,7 +76,8 @@ Example:
 Feature requests are welcome. But take a moment to find out whether your idea
 fits with the scope and aims of the project. It's up to *you* to make a strong
 case to convince the project's developers of the merits of this feature. Please
-provide as much detail and context as possible.
+provide as much detail and context as possible. Please also see the note in the
+[Developer guidelines](DEVELOPER.md) about implementing new features as plugins.
 
 
 <a name="pull-requests"></a>
@@ -91,6 +94,10 @@ project's developers might not want to merge into the project.
 
 Please adhere to the coding conventions used throughout a project (indentation,
 accurate comments, etc.) and any other requirements (such as test coverage).
+
+**Include Examples** If possible, include links to a youtube video or GIF
+demonstrating your fix or your feature. It will help us understand what you
+are doing and why we want to merge it in.
 
 Adhering to the following this process is the best way to get your work
 included in the project:
@@ -133,17 +140,22 @@ included in the project:
    git pull [--rebase] upstream master
    ```
 
-6. Push your topic branch up to your fork:
+6. Squash your change into one commit
+  ```bash
+  git rebase -i master
+  ```
+
+7. Push your topic branch up to your fork:
 
    ```bash
-   git push origin <topic-branch-name>
+   git push [--force] origin <topic-branch-name>
    ```
 
-7. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
+8. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
     with a clear title and description.
 
 **IMPORTANT**: By submitting a patch, you agree to allow the project owners to
-license your work under the the terms of the [MIT License](LICENSE.md).
+license your work under the terms of the [MIT License](LICENSE.md).
 
 ## <a name="commit"></a> Git Commit Guidelines
 
@@ -151,7 +163,11 @@ We have very precise rules over how our git commit messages can be formatted.  T
 readable messages** that are easy to follow when looking through the **project history**.  But also,
 we use the git commit messages to **generate the UIGrid change log**.
 
+Alternatively you can install [commitizen](https://github.com/commitizen/cz-cli) **OR**
+use the wizard. To use the wizard, run `npm run commit` in your terminal after staging your changes in git.
+
 ### Commit Message Format
+**If you do not follow this style guide your commit message will fail to be created.**
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
 format that includes a **type**, a **scope** and a **subject**:
 

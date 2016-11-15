@@ -11,7 +11,7 @@
 
       <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
 
-      This module provides auto-resizing functionality to UI-Grid.
+      This module provides cell navigation functionality to UI-Grid.
    */
   var module = angular.module('ui.grid.cellNav', ['ui.grid']);
 
@@ -128,7 +128,7 @@
         var nextColIndex = curColIndex === 0 ? focusableCols.length - 1 : curColIndex - 1;
 
         //get column to left
-        if (nextColIndex > curColIndex) {
+        if (nextColIndex >= curColIndex) {
           // On the first row
           // if (curRowIndex === 0 && curColIndex === 0) {
           //   return null;
@@ -160,7 +160,7 @@
         }
         var nextColIndex = curColIndex === focusableCols.length - 1 ? 0 : curColIndex + 1;
 
-        if (nextColIndex < curColIndex) {
+        if (nextColIndex <= curColIndex) {
           if (curRowIndex === focusableRows.length - 1) {
             return new GridRowColumn(curRow, focusableCols[nextColIndex]); //return same row
           }
@@ -418,6 +418,16 @@
            *  <br/>Defaults to false
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
+          
+          /**
+           *  @ngdoc array
+           *  @name keyDownOverrides
+           *  @propertyOf  ui.grid.cellNav.api:GridOptions
+           *  @description An array of event objects to override on keydown. If an event is overridden, the viewPortKeyDown event will
+           *               be raised with the overridden events, allowing custom keydown behavior.
+           *  <br/>Defaults to []
+           */
+          gridOptions.keyDownOverrides = gridOptions.keyDownOverrides || [];
 
         },
 
@@ -681,8 +691,10 @@
                 if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
                   var newRowCol = new GridRowColumn(row, col);
 
-                  grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
-                  grid.cellNav.lastRowCol = newRowCol;
+                  if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col){
+                    grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
+                    grid.cellNav.lastRowCol = newRowCol;  
+                  }
                   if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown) {
                     grid.cellNav.focusedCells.push(rowCol);
                   } else {
@@ -813,7 +825,7 @@
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(currentSelection[i].getIntersectionValueFiltered());
+                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
@@ -900,7 +912,12 @@
               focuser.on('keydown', function (evt) {
                 evt.uiGridTargetRenderContainerId = containerId;
                 var rowCol = uiGridCtrl.grid.api.cellNav.getFocusedCell();
-                var result = uiGridCtrl.cellNav.handleKeyDown(evt);
+                var raiseViewPortKeyDown = uiGridCtrl.grid.options.keyDownOverrides.some(function (override) {
+                    return Object.keys(override).every( function (property) {
+                        return override[property] === evt[property];
+                    });
+                });
+                var result = raiseViewPortKeyDown ? null : uiGridCtrl.cellNav.handleKeyDown(evt);
                 if (result === null) {
                   uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
                   viewPortKeyDownWasRaisedForRowCol = rowCol;
@@ -1067,6 +1084,10 @@
             });
           }
 
+          // In case we created a new row, and we are the new created row by ngRepeat
+          // then this cell content might have been selected previously
+          refreshCellFocus();
+
           function preventMouseDown(evt) {
             //Prevents the foucus event from firing if the click event is already going to fire.
             //If both events fire it will cause bouncing behavior.
@@ -1081,16 +1102,27 @@
           });
 
           // This event is fired for all cells.  If the cell matches, then focus is set
-          $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function (evt, rowCol, modifierDown) {
-            var isFocused = grid.cellNav.focusedCells.some(function(focusedRowCol, index){
+          $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, refreshCellFocus);
+
+          // Refresh cell focus when a new row id added to the grid
+          var dataChangeDereg = uiGridCtrl.grid.registerDataChangeCallback(function (grid) {
+            // Clear the focus if it's set to avoid the wrong cell getting focused during
+            // a short period of time (from now until $timeout function executed)
+            clearFocus();
+
+            $timeout(refreshCellFocus);
+          }, [uiGridConstants.dataChange.ROW]);
+
+          function refreshCellFocus() {
+            var isFocused = grid.cellNav.focusedCells.some(function (focusedRowCol, index) {
               return (focusedRowCol.row === $scope.row && focusedRowCol.col === $scope.col);
             });
-            if (isFocused){
+            if (isFocused) {
               setFocused();
             } else {
               clearFocus();
             }
-          });
+          }
 
           function setFocused() {
             if (!$scope.focused){
@@ -1113,6 +1145,8 @@
           }
 
           $scope.$on('$destroy', function () {
+            dataChangeDereg();
+
             //.off withouth paramaters removes all handlers
             $elm.find('div').off();
             $elm.off();

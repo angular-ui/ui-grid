@@ -258,14 +258,14 @@ describe('rowSearcher', function() {
         }
       };
 
-      spyOn(custom, 'filterFn').andCallThrough();
+      spyOn(custom, 'filterFn').and.callThrough();
       setFilter(columns[2], '>27', custom.filterFn);
       ret = rowSearcher.search(grid, rows, columns).filter(function(row){ return row.visible; });
     });
     it('should run the function for each row', function() {
-      expect(custom.filterFn.calls.length).toEqual(3);
-      expect(custom.filterFn.calls[0].args).toEqual(['>27', 25, rows[0], columns[2]]);
-      expect(custom.filterFn.calls[1].args).toEqual(['>27', 45, rows[1], columns[2]]);
+      expect(custom.filterFn.calls.count()).toEqual(3);
+      expect(custom.filterFn.calls.argsFor(0)).toEqual(['>27', 25, rows[0], columns[2]]);
+      expect(custom.filterFn.calls.argsFor(1)).toEqual(['>27', 45, rows[1], columns[2]]);
     });
     it('should honor the result of the function call when filtering', function() {
       expect(ret.length).toEqual(1);
