@@ -18,6 +18,7 @@ All features are enabled to get an idea of performance
 
       $scope.gridOptions = {};
       $scope.gridOptions.data = 'myData';
+      $scope.gridOptions.enableCellEditOnFocus = true;
       $scope.gridOptions.enableColumnResizing = true;
       $scope.gridOptions.enableFiltering = true;
       $scope.gridOptions.enableGridMenu = true;
