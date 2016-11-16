@@ -64,6 +64,8 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
   describe('initialisation', function () {
     it('registers the API and methods', function () {
       expect(gridApi.pagination.getPage).toEqual(jasmine.any(Function));
+      expect(gridApi.pagination.getFirstRowIndex).toEqual(jasmine.any(Function));
+      expect(gridApi.pagination.getLastRowIndex).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.getTotalPages).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.nextPage).toEqual(jasmine.any(Function));
       expect(gridApi.pagination.previousPage).toEqual(jasmine.any(Function));
@@ -171,6 +173,113 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
         gridRows = gridElement.find('div.ui-grid-row');
         expect(gridApi.pagination.getPage()).toBe(2);
         expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('K');
+      });
+    });
+  });
+
+  describe('custom pagination', function () {
+
+    var pages = ['COSU', 'DJLPQTVX', 'ABFGHIKNRY', 'EMWZ'];
+
+    function getPage(data, pageNumber) {
+      return data.filter(function(datum) {
+        return pages[pageNumber-1].indexOf(datum.col2) >= 0;
+      });
+    }
+
+    beforeEach(inject(function (_$rootScope_, _$timeout_, $compile) {
+      $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
+
+      $rootScope.gridOptions.useCustomPagination = true;
+      $rootScope.gridOptions.useExternalPagination = true;
+      $rootScope.gridOptions.paginationPageSizes = [4,8,10,4];
+
+      var data = $rootScope.gridOptions.data;
+      $rootScope.gridOptions.data = getPage(data, 1);
+      gridApi.pagination.on.paginationChanged($rootScope, function (pageNumber) {
+        $rootScope.gridOptions.data = getPage(data, pageNumber);
+      });
+
+      $rootScope.$digest();
+    }));
+
+    it('starts at page 1 with 4 records', function () {
+      var gridRows = gridElement.find('div.ui-grid-row');
+
+      expect(gridApi.pagination.getPage()).toBe(1);
+      expect(gridRows.length).toBe(4);
+
+      var firstCell = gridRows.eq(0).find('div.ui-grid-cell:first-child');
+      expect(firstCell.text()).toBe('6_1');
+
+      var lastCell = gridRows.eq(3).find('div.ui-grid-cell:last-child');
+      expect(lastCell.text()).toBe('25_4');
+    });
+
+    it('calculates the total number of pages correctly', function () {
+      expect(gridApi.pagination.getTotalPages()).toBe(4);
+    });
+
+    it('displays page 2 if I call nextPage()', function () {
+      gridApi.pagination.nextPage();
+      $rootScope.$digest();
+      $timeout.flush();
+
+      var gridRows = gridElement.find('div.ui-grid-row');
+
+      expect(gridApi.pagination.getPage()).toBe(2);
+      expect(gridRows.length).toBe(8);
+
+      var firstCell = gridRows.eq(0).find('div.ui-grid-cell:first-child');
+      expect(firstCell.text()).toBe('4_1');
+
+      var lastCell = gridRows.eq(7).find('div.ui-grid-cell:last-child');
+      expect(lastCell.text()).toBe('21_4');
+    });
+
+    it('displays 10 rows on page 3', function () {
+      gridApi.pagination.seek(3);
+      $rootScope.$digest();
+      $timeout.flush();
+
+      var gridRows = gridElement.find('div.ui-grid-row');
+
+      expect(gridApi.pagination.getPage()).toBe(3);
+      expect(gridRows.length).toBe(10);
+
+      var firstCell = gridRows.eq(0).find('div.ui-grid-cell:first-child');
+      expect(firstCell.text()).toBe('1_1');
+
+      var lastCell = gridRows.eq(9).find('div.ui-grid-cell:last-child');
+      expect(lastCell.text()).toBe('26_4');
+    });
+
+    it('paginates correctly on a sorted grid', function() {
+      gridApi.grid.sortColumn(gridApi.grid.columns[1]).then(function () {
+        gridApi.pagination.seek(3);
+        $rootScope.$digest();
+        $timeout.flush();
+
+        var gridRows = gridElement.find('div.ui-grid-row');
+        expect(gridApi.pagination.getPage()).toBe(1);
+        expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('A');
+        expect(gridRows.eq(1).find('div.ui-grid-cell').eq(1).text()).toBe('B');
+        expect(gridRows.eq(2).find('div.ui-grid-cell').eq(1).text()).toBe('F');
+        expect(gridRows.eq(3).find('div.ui-grid-cell').eq(1).text()).toBe('G');
+        expect(gridRows.eq(4).find('div.ui-grid-cell').eq(1).text()).toBe('H');
+        expect(gridRows.eq(5).find('div.ui-grid-cell').eq(1).text()).toBe('I');
+        expect(gridRows.eq(6).find('div.ui-grid-cell').eq(1).text()).toBe('K');
+        expect(gridRows.eq(7).find('div.ui-grid-cell').eq(1).text()).toBe('N');
+        expect(gridRows.eq(8).find('div.ui-grid-cell').eq(1).text()).toBe('R');
+        expect(gridRows.eq(9).find('div.ui-grid-cell').eq(1).text()).toBe('Y');
+
+        gridApi.pagination.nextPage();
+        $rootScope.$digest();
+
+        gridRows = gridElement.find('div.ui-grid-row');
+        expect(gridApi.pagination.getPage()).toBe(2);
+        expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('E');
       });
     });
   });
