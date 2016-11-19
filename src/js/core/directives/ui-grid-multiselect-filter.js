@@ -1,5 +1,5 @@
 (function(){
-  'use strict'
+  'use strict';
   angular.module('ui.grid.multiselect.filter', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.selection'])
     .controller('multiSelectCtrl', ["$scope", "$compile", "$timeout", "$element", "$attrs", "$parse", function($scope, $compile, $timeout, $element, $attrs, $parse) {
       var $elm;
