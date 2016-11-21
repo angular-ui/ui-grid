@@ -10,7 +10,7 @@ module.exports = function (grunt, options) {
     'default': ['before-test', 'test:single', 'after-test'],
 
     // Build with no testing
-    'build': ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy:site', 'copy:less_customizer',],
+    'build': ['ngtemplates', 'concat', 'uglify', 'less', 'ngdocs', 'copy:site', 'copy:less_customizer',],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],
@@ -34,11 +34,6 @@ module.exports = function (grunt, options) {
   if (grunt.option('unit') === false) {
     grunt.log.writeln("Skipping unit testing...");
     baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit'), 1);
-  }
-
-  if (grunt.option('fontello') === false) {
-    grunt.log.writeln("Skipping fontello...");
-    baseTasks['build'].splice(baseTasks['build'].indexOf('fontello'), 1);
   }
 
   if (process.env.TRAVIS){

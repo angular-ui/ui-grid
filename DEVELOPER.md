@@ -22,7 +22,7 @@ http://localhost:9003/docs/#/tutorial to browse each tutorial.
 <br/> fast - alias for --no-e2e --core --angular=1.3.6
 
 ```
-grunt dev --no-e2e --angular=1.3.16
+grunt dev --no-e2e --angular=1.5.0
 ```
 
 # Code Structure

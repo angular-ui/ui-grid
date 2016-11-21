@@ -528,13 +528,13 @@
                   }
                 });
 
-                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     // Don't begin edit if the cell hasn't changed
                     if ((!oldRowCol || newRowCol.row !== oldRowCol.row || newRowCol.col !== oldRowCol.col) &&
                       newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
                       $timeout(function () {
-                        beginEdit();
+                        beginEdit(evt);
                       });
                     }
                   }
@@ -966,9 +966,20 @@
                     });
                   }
 
-                  $elm.on('blur', function (evt) {
-                    $scope.stopEdit(evt);
+                  // macOS will blur the checkbox when clicked in Safari and Firefox,
+                  // to get around this, we disable the blur handler on mousedown,
+                  // and then focus the checkbox and re-enable the blur handler after $timeout
+                  $elm.on('mousedown', function(evt) {
+                    if ($elm[0].type === 'checkbox') {
+                      $elm.off('blur', $scope.stopEdit);
+                      $timeout(function() {
+                        $elm.focus();
+                        $elm.on('blur', $scope.stopEdit);
+                      });
+                    }
                   });
+
+                  $elm.on('blur', $scope.stopEdit);
                 });
 
 
@@ -1132,9 +1143,9 @@
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
                   $timeout(function(){
-                    $elm[0].focus();      
+                    $elm[0].focus();
                   });
-                  
+
                   $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
                   $elm.on('blur', function (evt) {
                     $scope.stopEdit(evt);

@@ -193,7 +193,7 @@ angular.module('ui.grid')
       var clearFilters = [{
         title: i18nService.getSafeText('gridMenu.clearAllFilters'),
         action: function ($event) {
-          $scope.grid.clearAllFilters(undefined, true, undefined);
+          $scope.grid.clearAllFilters();
         },
         shown: function() {
           return $scope.grid.options.enableFiltering;
