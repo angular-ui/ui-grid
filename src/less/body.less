@@ -42,17 +42,10 @@
     border-bottom-style: solid;
   }
 
-  &:hover > [ui-grid-row] > .ui-grid-cell,
-  &:nth-child(odd),
-  &:nth-child(even){
-    &:hover .ui-grid-cell {
-      background-color: @rowColorHovered;
-    }
+  &div:first-child:hover .ui-grid-cell {
+    background-color: @rowColorHovered;
   }
 }
-//.ui-grid-row.ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell{
-//
-//}
 
 .ui-grid-no-row-overlay {
   position: absolute;
