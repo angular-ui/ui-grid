@@ -528,13 +528,13 @@
                   }
                 });
 
-                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     // Don't begin edit if the cell hasn't changed
                     if ((!oldRowCol || newRowCol.row !== oldRowCol.row || newRowCol.col !== oldRowCol.col) &&
                       newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
                       $timeout(function () {
-                        beginEdit();
+                        beginEdit(evt);
                       });
                     }
                   }
@@ -732,20 +732,18 @@
                 return;
               }
 
+              var modelField = $scope.row.getQualifiedColField($scope.col);
+              if ($scope.col.colDef.editModelField) {
+                modelField = gridUtil.preEval('row.entity.' + $scope.col.colDef.editModelField);
+              }
 
-              cellModel = $parse($scope.row.getQualifiedColField($scope.col));
+              cellModel = $parse(modelField);
+
               //get original value from the cell
               origCellValue = cellModel($scope);
 
               html = $scope.col.editableCellTemplate;
-
-              if ($scope.col.colDef.editModelField) {
-                html = html.replace(uiGridConstants.MODEL_COL_FIELD, gridUtil.preEval('row.entity.' + $scope.col.colDef.editModelField));
-              }
-              else {
-                html = html.replace(uiGridConstants.MODEL_COL_FIELD, $scope.row.getQualifiedColField($scope.col));
-              }
-
+              html = html.replace(uiGridConstants.MODEL_COL_FIELD, modelField);
               html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
               var optionFilter = $scope.col.colDef.editDropdownFilter ? '|' + $scope.col.colDef.editDropdownFilter : '';
@@ -938,7 +936,7 @@
                   $timeout(function () {
                     $elm[0].focus();
                     //only select text if it is not being replaced below in the cellNav viewPortKeyPress
-                    if ($elm[0].select && $scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav)) {
+                    if ($elm[0].select && ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav))) {
                       $elm[0].select();
                     }
                     else {
@@ -968,9 +966,20 @@
                     });
                   }
 
-                  $elm.on('blur', function (evt) {
-                    $scope.stopEdit(evt);
+                  // macOS will blur the checkbox when clicked in Safari and Firefox,
+                  // to get around this, we disable the blur handler on mousedown,
+                  // and then focus the checkbox and re-enable the blur handler after $timeout
+                  $elm.on('mousedown', function(evt) {
+                    if ($elm[0].type === 'checkbox') {
+                      $elm.off('blur', $scope.stopEdit);
+                      $timeout(function() {
+                        $elm.focus();
+                        $elm.on('blur', $scope.stopEdit);
+                      });
+                    }
                   });
+
+                  $elm.on('blur', $scope.stopEdit);
                 });
 
 
@@ -1117,8 +1126,8 @@
    *
    */
   module.directive('uiGridEditDropdown',
-    ['uiGridConstants', 'uiGridEditConstants',
-      function (uiGridConstants, uiGridEditConstants) {
+    ['uiGridConstants', 'uiGridEditConstants', '$timeout',
+      function (uiGridConstants, uiGridEditConstants, $timeout) {
         return {
           require: ['?^uiGrid', '?^uiGridRenderContainer'],
           scope: true,
@@ -1133,7 +1142,10 @@
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  $elm[0].focus();
+                  $timeout(function(){
+                    $elm[0].focus();
+                  });
+
                   $elm[0].style.width = ($elm[0].parentElement.offsetWidth - 1) + 'px';
                   $elm.on('blur', function (evt) {
                     $scope.stopEdit(evt);

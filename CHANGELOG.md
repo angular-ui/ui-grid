@@ -1,3 +1,85 @@
+<a name="v3.2.9"></a>
+### v3.2.9 (2016-09-21)
+
+
+#### Bug Fixes
+
+* #5667 honor editModelField when checking new vs old cell value ([d846c5b1](http://github.com/angular-ui/ng-grid/commit/d846c5b1d4fb5896285d9467bd6964b71b6e55e6))
+* use grid headerHeight instead of random 30px value for menu height calculation ([5a67dd82](http://github.com/angular-ui/ng-grid/commit/5a67dd82c43b621aedb53efacf5f9530f60e8995))
+* prevent hidden columns triggering unnecessary re-order ([8413d8e3](http://github.com/angular-ui/ng-grid/commit/8413d8e30e7ddf815a5b429378bcb9547bf3c695))
+* update bower.json and package.json to include files for current npm ([6e2331b7](http://github.com/angular-ui/ng-grid/commit/6e2331b726bd08b209ca3927eb6074d4f1c8d6dd))
+* Wrong sort priorities 4653 and 4196 ([17296cdc](http://github.com/angular-ui/ng-grid/commit/17296cdcd57a67b16168128444b2c87d914b9ec2))
+* **3901:** Raise rowsVisibleChanged on setVisibleRows. ([801042b9](http://github.com/angular-ui/ng-grid/commit/801042b96d7530f5e0b04397bbe597056e1b06d6))
+* **col-movable:** prevent hidden columns triggering unnecessary re-order event ([644b324b](http://github.com/angular-ui/ng-grid/commit/644b324b42e83cf8014ffcd05acc948084698aaa))
+* **columnMoving:** handle touch events properly when jQuery is used (#5666) ([a81e5d5e](http://github.com/angular-ui/ng-grid/commit/a81e5d5e16f5b323d8d202e464a828dfce8d7f78))
+* **filter:** Fix noTerm option for filtering ([45bb113a](http://github.com/angular-ui/ng-grid/commit/45bb113a861525cd93ca63514376d7fe2890d18a))
+* **selection:** remove a logic bug in setSelected(..) ([57cdb31b](http://github.com/angular-ui/ng-grid/commit/57cdb31b8653e19ed306a9a54055c5060adbbf1b))
+
+
+#### Features
+
+* **core:** Allow binding a column to the row entity itself ([65e49fd5](http://github.com/angular-ui/ng-grid/commit/65e49fd59a165672c71738e4ba7df553e7f6e673))
+* **filter:** Add rawTerm option to columnDef filter options ([a75e65a6](http://github.com/angular-ui/ng-grid/commit/a75e65a6d866de174c0021dcfa6aa766e38a240d))
+
+<a name="v3.2.8"></a>
+### v3.2.8 (2016-09-09)
+
+
+#### Bug Fixes
+
+* #5667 honor editModelField when checking new vs old cell value ([d846c5b1](http://github.com/angular-ui/ng-grid/commit/d846c5b1d4fb5896285d9467bd6964b71b6e55e6))
+* Wrong sort priorities 4653 and 4196 ([17296cdc](http://github.com/angular-ui/ng-grid/commit/17296cdcd57a67b16168128444b2c87d914b9ec2))
+* **columnMoving:** handle touch events properly when jQuery is used (#5666) ([a81e5d5e](http://github.com/angular-ui/ng-grid/commit/a81e5d5e16f5b323d8d202e464a828dfce8d7f78))
+* **filter:** Fix noTerm option for filtering ([45bb113a](http://github.com/angular-ui/ng-grid/commit/45bb113a861525cd93ca63514376d7fe2890d18a))
+
+
+#### Features
+
+* **core:** Allow binding a column to the row entity itself ([65e49fd5](http://github.com/angular-ui/ng-grid/commit/65e49fd59a165672c71738e4ba7df553e7f6e673))
+
+<a name="v3.2.7"></a>
+### v3.2.7 (2016-09-09)
+
+
+#### Bug Fixes
+
+* #5667 honor editModelField when checking new vs old cell value ([d846c5b1](http://github.com/angular-ui/ng-grid/commit/d846c5b1d4fb5896285d9467bd6964b71b6e55e6))
+* Wrong sort priorities 4653 and 4196 ([17296cdc](http://github.com/angular-ui/ng-grid/commit/17296cdcd57a67b16168128444b2c87d914b9ec2))
+* **columnMoving:** handle touch events properly when jQuery is used (#5666) ([a81e5d5e](http://github.com/angular-ui/ng-grid/commit/a81e5d5e16f5b323d8d202e464a828dfce8d7f78))
+* **filter:** Fix noTerm option for filtering ([45bb113a](http://github.com/angular-ui/ng-grid/commit/45bb113a861525cd93ca63514376d7fe2890d18a))
+* **runValidators:** runValidators now returns a promise(..) ([f3bf313](http://github.com/angular-ui/ng-grid/commit/57cdb31b8653e19ed306a9a54055c5060adbbf1b))
+
+
+#### Features
+
+* **core:** Allow binding a column to the row entity itself ([65e49fd5](http://github.com/angular-ui/ng-grid/commit/65e49fd59a165672c71738e4ba7df553e7f6e673))
+
+<a name="v3.2.6"></a>
+### v3.2.6 (2016-07-14)
+
+
+#### Bug Fixes
+
+* use grid headerHeight instead of random 30px value for menu height calculation ([5a67dd82](http://github.com/angular-ui/ng-grid/commit/5a67dd82c43b621aedb53efacf5f9530f60e8995))
+* prevent hidden columns triggering unnecessary re-order ([8413d8e3](http://github.com/angular-ui/ng-grid/commit/8413d8e30e7ddf815a5b429378bcb9547bf3c695))
+* update bower.json and package.json to include files for current npm ([6e2331b7](http://github.com/angular-ui/ng-grid/commit/6e2331b726bd08b209ca3927eb6074d4f1c8d6dd))
+* **col-movable:** prevent hidden columns triggering unnecessary re-order event ([644b324b](http://github.com/angular-ui/ng-grid/commit/644b324b42e83cf8014ffcd05acc948084698aaa))
+* **selection:** remove a logic bug in setSelected(..) ([57cdb31b](http://github.com/angular-ui/ng-grid/commit/57cdb31b8653e19ed306a9a54055c5060adbbf1b))
+
+<a name="v3.2.5"></a>
+### v3.2.5 (2016-07-01)
+
+* update for package.json creation for npm
+
+<a name="v3.2.4"></a>
+### v3.2.4 (2016-06-30)
+
+
+#### Bug Fixes
+
+* update bower.json and package.json to include files for current npm ([f7c6700d](http://github.com/angular-ui/ng-grid/commit/f7c6700dedacfa213eaa65838d127aab0bf24867))
+* **col-movable:** prevent hidden columns triggering unnecessary re-order event ([644b324b](http://github.com/angular-ui/ng-grid/commit/644b324b42e83cf8014ffcd05acc948084698aaa))
+
 <a name="v3.2.3"></a>
 ### v3.2.3 (2016-06-29)
 

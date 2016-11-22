@@ -244,6 +244,14 @@
            * <br/>Defaults to false
            */
           gridOptions.exporterIsExcelCompatible = gridOptions.exporterIsExcelCompatible === true;
+		  /**
+           * @ngdoc object
+           * @name exporterMenuItemOrder
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description An option to determine the starting point for the menu items created by the exporter
+           * <br/>Defaults to 200
+           */
+          gridOptions.exporterMenuItemOrder = gridOptions.exporterMenuItemOrder ? gridOptions.exporterMenuItemOrder : 200;
           /**
            * @ngdoc object
            * @name exporterPdfDefaultStyle
@@ -556,7 +564,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData;
               },
-              order: 200
+              order: grid.options.exporterMenuItemOrder
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
@@ -566,7 +574,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuVisibleData;
               },
-              order: 201
+              order: grid.options.exporterMenuItemOrder + 1
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
@@ -577,7 +585,7 @@
                 return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuSelectedData &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: 202
+              order: grid.options.exporterMenuItemOrder + 2
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
@@ -587,7 +595,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData;
               },
-              order: 203
+              order: grid.options.exporterMenuItemOrder + 3
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
@@ -597,7 +605,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuVisibleData;
               },
-              order: 204
+              order: grid.options.exporterMenuItemOrder + 4
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
@@ -608,7 +616,7 @@
                 return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuSelectedData &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: 205
+              order: grid.options.exporterMenuItemOrder + 5
             }
           ]);
         },
@@ -822,7 +830,7 @@
 
         /**
          * @ngdoc function
-         * @name formatAsCSV
+         * @name formatAsCsv
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Formats the column headers and data as a CSV,
          * and sends that data to the user

@@ -121,8 +121,9 @@ angular.module('ui.grid')
      * @ngdoc property
      * @name scrollDirection
      * @propertyOf ui.grid.class:Grid
-     * @description set one of the uiGridConstants.scrollDirection values (UP, DOWN, LEFT, RIGHT, NONE), which tells
-     * us which direction we are scrolling. Set to NONE via debounced method
+     * @description set one of the {@link ui.grid.service:uiGridConstants#properties_scrollDirection uiGridConstants.scrollDirection}
+     *  values (UP, DOWN, LEFT, RIGHT, NONE), which tells us which direction we are scrolling.
+     * Set to NONE via debounced method
      */
     self.scrollDirection = uiGridConstants.scrollDirection.NONE;
 
@@ -423,8 +424,8 @@ angular.module('ui.grid')
      * and you'd like cell classes to be re-evaluated, or changed config within
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
      * @param {string} type one of the
-     * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN), which tells
-     * us which refreshes to fire.
+     * {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+     * values (ALL, ROW, EDIT, COLUMN), which tells us which refreshes to fire.
      *
      */
     self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
@@ -556,8 +557,8 @@ angular.module('ui.grid')
    *
    * @param {function(grid)} callback function to be called
    * @param {array} types the types of data change you want to be informed of.  Values from
-   * the uiGridConstants.dataChange values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to
-   * ALL
+   * the {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+   *  values ( ALL, EDIT, ROW, COLUMN, OPTIONS ).  Optional and defaults to ALL
    * @returns {function} deregister function - a function that can be called to deregister this callback
    */
   Grid.prototype.registerDataChangeCallback = function registerDataChangeCallback(callback, types, _this) {
@@ -584,8 +585,9 @@ angular.module('ui.grid')
    * @description Calls the callbacks based on the type of data change that
    * has occurred. Always calls the ALL callbacks, calls the ROW, EDIT, COLUMN and OPTIONS callbacks if the
    * event type is matching, or if the type is ALL.
-   * @param {number} type the type of event that occurred - one of the
-   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN, OPTIONS)
+   * @param {string} type the type of event that occurred - one of the
+   * {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
+   *  values (ALL, ROW, EDIT, COLUMN, OPTIONS)
    */
   Grid.prototype.callDataChangeCallbacks = function callDataChangeCallbacks(type, options) {
     angular.forEach( this.dataChangeCallbacks, function( callback, uid ){
@@ -954,7 +956,11 @@ angular.module('ui.grid')
    * @param {GridColumn} col col object
    */
   Grid.prototype.getQualifiedColField = function (col) {
-    return 'row.entity.' + gridUtil.preEval(col.field);
+    var base = 'row.entity';
+    if ( col.field === uiGridConstants.ENTITY_BINDING ) {
+      return base;
+    }
+    return gridUtil.preEval(base + '.' + col.field);
   };
 
   /**
@@ -1385,6 +1391,7 @@ angular.module('ui.grid')
         self.renderContainers[targetContainer].visibleRowCache.push(row);
       }
     }
+    self.api.core.raise.rowsVisibleChanged(this.api);
     self.api.core.raise.rowsRendered(this.api);
   };
 
@@ -1980,7 +1987,7 @@ angular.module('ui.grid')
       // Get the actual priority since there may be columns which have suppressRemoveSort set
       column.sort.priority = self.getNextColumnSortPriority();
     }
-    else if (!column.sort.priority){
+    else if (column.sort.priority === undefined){
       column.sort.priority = self.getNextColumnSortPriority();
     }
 
@@ -1998,7 +2005,7 @@ angular.module('ui.grid')
       if (column.sortDirectionCycle[i]) {
         column.sort.direction = column.sortDirectionCycle[i];
       } else {
-        column.sort = {};
+        removeSortOfColumn(column, self);
       }
     }
     else {
@@ -2008,6 +2015,18 @@ angular.module('ui.grid')
     self.api.core.raise.sortChanged( self, self.getColumnSorting() );
 
     return $q.when(column);
+  };
+
+  var removeSortOfColumn = function removeSortOfColumn(column, grid) {
+    //Decrease priority for every col where priority is higher than the removed sort's priority.
+    grid.columns.forEach(function (col) {
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority > column.sort.priority) {
+        col.sort.priority -= 1;
+      }
+    });
+
+    //Remove sort
+    column.sort = {};
   };
 
   /**

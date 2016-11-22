@@ -101,6 +101,30 @@ describe('ui.grid.grouping uiGridGroupingService', function () {
   });
 
 
+  describe('groupColumn', function() {
+    it('saves previous sort state', function() {
+      grid.columns[1].sort = { priority: 42, direction: 'foo'};
+      uiGridGroupingService.groupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].previousSort.priority).toBe(42);
+      expect(grid.columns[1].previousSort.direction).toBe('foo');
+    });
+  });
+
+  describe('ungroupColumn', function() {
+    it('restores previuosly restored state if there is one', function() {
+      grid.columns[1].previousSort = { direction: 'bar'};
+      uiGridGroupingService.ungroupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].sort.direction).toBe('bar');
+    });
+
+    it('should remove previous sort prop from column object after column sort is restored', function() {
+      grid.columns[1].previousSort = {direction: 'bar'};
+      uiGridGroupingService.ungroupColumn(grid, grid.columns[1]);
+      expect(grid.columns[1].previousSort).toBeUndefined();
+    });
+  });
+
+
   describe( 'groupRows', function() {
     beforeEach(function() {
       spyOn(gridClassFactory, 'rowTemplateAssigner').and.callFake( function() {});

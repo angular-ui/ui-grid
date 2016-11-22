@@ -75,7 +75,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterCsvFilename: 'download.csv',
         exporterPdfFilename: 'download.pdf',
         exporterOlderExcelCompatibility: false,
-        exporterIsExcelCompatible: false,ptions to non-default
+        exporterIsExcelCompatible: false,
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
@@ -93,7 +93,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
         exporterAllDataFn: null,
-        exporterSuppressColumns: []
+        exporterSuppressColumns: [],
+        exporterMenuItemOrder: 200
       });
     });
 
@@ -124,7 +125,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterMenuItemOrder: 75
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -152,7 +154,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterFieldCallback: callback,
         exporterAllDataFn: callback,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterMenuItemOrder: 75
       });
     });
   });

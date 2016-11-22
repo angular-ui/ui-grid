@@ -19,9 +19,9 @@ module.exports = function(config) {
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
-      'lib/test/angular/1.3.6/angular.js',
-      'lib/test/angular/1.3.6/angular-mocks.js',
-      'lib/test/angular/1.3.6/angular-animate.js',
+      'lib/test/angular/1.5.0/angular.js',
+      'lib/test/angular/1.5.0/angular-mocks.js',
+      'lib/test/angular/1.5.0/angular-animate.js',
 
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',

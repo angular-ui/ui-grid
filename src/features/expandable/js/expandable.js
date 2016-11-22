@@ -117,7 +117,7 @@
                * @ngdoc event
                * @name rowExpandedStateChanged
                * @eventOf  ui.grid.expandable.api:PublicApi
-               * @description raised when cell editing is complete
+               * @description raised when row expanded or collapsed
                * <pre>
                *      gridApi.expandable.on.rowExpandedStateChanged(scope,function(row){})
                * </pre>
@@ -441,8 +441,9 @@
                       }
                     }
                   }
-                  var expandedRowElement = $compile(template)($scope);
+                  var expandedRowElement = angular.element(template);
                   $elm.append(expandedRowElement);
+                  expandedRowElement = $compile(expandedRowElement)($scope);
                   $scope.row.expandedRendered = true;
               });
             },

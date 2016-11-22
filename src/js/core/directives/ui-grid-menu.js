@@ -47,10 +47,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       $scope.dynamicStyles = '';
 
       var setupHeightStyle = function(gridHeight) {
-        // magic number of 30 because the grid menu displays somewhat below
-        // the top of the grid. It is approximately 30px.
-        var gridMenuMaxHeight = gridHeight - 30;
-		$scope.dynamicStyles = [
+        //menu appears under header row, so substract that height from it's total
+        // additional 20px for general padding
+        var gridMenuMaxHeight = gridHeight - uiGridCtrl.grid.headerHeight - 20;
+        $scope.dynamicStyles = [
           '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
           'max-height: ' + gridMenuMaxHeight + 'px;',
           '}'
