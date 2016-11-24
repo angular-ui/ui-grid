@@ -1,0 +1,99 @@
+@ngdoc overview
+@name Tutorial: 218 Multiselect Filters
+@description
+
+Steps to use:
+<ol><li>Add 'ui.grid.multiselect.filter' module dependency
+<li>Add a filterHeaderTemplate using the multi-select-filter directive
+</ol>
+@example
+<example module="app">
+  <file name="app.js">
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.selection','ui.grid.multiselect.filter']);
+
+    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
+      var today = new Date();
+      var nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      $scope.filtered = function(terms){
+        console.log(terms);
+      }
+      $scope.gridOptions = {
+        enableFiltering: true,
+        onRegisterApi: function(gridApi){
+          $scope.gridApi = gridApi;
+        },
+        columnDefs: [
+          { field: 'name', filterHeaderTemplate: '<div multi-select-filter on-filter="grid.appScope.filtered($terms)"></div>' },
+          { field: 'gender',
+            filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-dropdown></div></div>',
+            filter: {
+              term: 1,
+              options: [ {id: 1, value: 'male'}, {id: 2, value: 'female'}]     // custom attribute that goes with custom directive above
+            },
+            cellFilter: 'mapGender' },
+          { field: 'company', filterHeaderTemplate: '<div multi-select-filter on-filter="grid.appScope.filtered($terms)"></div>' },
+          { field: 'email', enableFiltering: false },
+          { field: 'phone', enableFiltering: false },
+          { field: 'age', filterHeaderTemplate: '<div multi-select-filter on-filter="grid.appScope.filtered($terms)"></div>'
+          },
+          { field: 'mixedDate', cellFilter: 'date', width: '15%', enableFiltering: false }
+        ]
+      };
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+          $scope.gridOptions.data[0].age = -5;
+
+          data.forEach( function addDates( row, index ){
+            row.mixedDate = new Date();
+            row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
+            row.gender = row.gender==='male' ? '1' : '2';
+          });
+        });
+    }])
+
+    .filter('mapGender', function() {
+      var genderHash = {
+        1: 'male',
+        2: 'female'
+      };
+
+      return function(input) {
+        if (!input){
+          return '';
+        } else {
+          return genderHash[input];
+        }
+      };
+    })
+
+    .directive('myCustomDropdown', function() {
+      return {
+        template: '<select class="form-control" ng-model="colFilter.term" ng-options="option.id as option.value for option in colFilter.options"></select>'
+      };
+    });
+  </file>
+  <file name="index.html">
+    <div ng-controller="MainCtrl">
+      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </file>
+  <file name="main.css">
+    .grid {
+      width: 650px;
+      height: 400px;
+    }
+    .modalGrid1 {
+      width: 100px;
+      height: 200px;
+    }
+    .modal-dialog1 {
+      width: 150px;
+    }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+  </file>
+</example>
