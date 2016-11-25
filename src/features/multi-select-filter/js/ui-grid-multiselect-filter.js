@@ -9,7 +9,7 @@
       $scope.title = col.field;
       $scope.showModal = function() {
         $scope.listOfTerms = [];
-        $scope.col.grid.appScope.gridOptions.data.forEach(function(row) {
+        $scope.col.grid.options.data.forEach(function(row) {
           if ($scope.listOfTerms.indexOf(row[col.field]) === -1) {
             $scope.listOfTerms.push(row[col.field]);
           }
