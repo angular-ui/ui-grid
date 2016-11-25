@@ -4,6 +4,7 @@
     .controller('multiSelectCtrl', ["$scope", "$compile", "$timeout", "$element", "$attrs", "$parse", function($scope, $compile, $timeout, $element, $attrs, $parse) {
       var $elm;
       var col = $scope.col;
+      var childScope;
       $scope.colFilter = $scope.col.filters[0];
       $scope.title = col.field;
       $scope.showModal = function() {
@@ -46,11 +47,13 @@
         $elm = angular.element(html);
         angular.element($element[0].closest('div[ui-grid]')).append($elm);
 
-        $compile($elm)($scope);
+        childScope = $scope.$new();
+        $compile($elm)(childScope);
       };
 
       $scope.cancel = function() {
         if ($elm) {
+          childScope.$destroy();
           $elm.remove();
         }
       };
@@ -71,6 +74,7 @@
         $scope.colFilter.condition = new RegExp($scope.colFilter.listTerm.join('|'));
 
         if ($elm) {
+          childScope.$destroy();
           $elm.remove();
         }
 
