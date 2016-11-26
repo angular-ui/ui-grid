@@ -13,7 +13,7 @@ describe('ui.grid.expandable', function () {
     scope.gridOptions = {
       expandableRowTemplate: 'expandableRowTemplate.html',
       expandableRowHeight: 150,
-      expandableRowHeaderWidth: 40
+      expandableRowHeaderWidth: 30
     };
     scope.gridOptions.data = [
       { col1: 'col1', col2: 'col2' }

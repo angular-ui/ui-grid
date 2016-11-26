@@ -166,6 +166,7 @@
                  * @name rowSelectionChanged
                  * @eventOf  ui.grid.selection.api:PublicApi
                  * @description  is raised after the row.isSelected state is changed
+                 * @param {this} scope scope
                  * @param {GridRow} row the row that was selected/deselected
                  * @param {Event} evt object if raised from an event
                  */
@@ -179,6 +180,7 @@
                  * in bulk, if the `enableSelectionBatchEvent` option is set to true
                  * (which it is by default).  This allows more efficient processing
                  * of bulk events.
+                 * @param {this} scope scope
                  * @param {array} rows the rows that were selected/deselected
                  * @param {Event} evt object if raised from an event
                  */
@@ -503,7 +505,7 @@
            */
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
         },
-  
+
         /**
          * @ngdoc function
          * @name toggleRowSelection
@@ -519,7 +521,7 @@
           if ( row.enableSelection === false ) return;
           var selected = row.isSelected,
               selectedRows;
-          
+
           if (!multiSelect) {
             if (!selected) {
               service.clearSelectedRows(grid, evt);
@@ -780,7 +782,8 @@
               uiGridSelectionService.toggleRowSelection(self, row, evt,
                 (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
-            self.options.enableFocusRowOnRowHeaderClick && row.setFocused(!row.isFocused) && self.api.selection.raise.rowFocusChanged(row, evt);
+            self.options.enableFocusRowOnRowHeaderClick
+              && row.setFocused(!row.isFocused) && self.api.selection.raise.rowFocusChanged(row, evt);
           }
 
           function selectButtonMouseDown(evt) {

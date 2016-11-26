@@ -77,15 +77,15 @@
          *  @ngdoc object
          *  @name expandableRowHeaderWidth
          *  @propertyOf  ui.grid.expandable.api:GridOptions
-         *  @description Width in pixels of the expandable column. Defaults to 40
+         *  @description Width in pixels of the expandable column. Defaults to 30
          *  @example
          *  <pre>
          *    $scope.gridOptions = {
-         *      expandableRowHeaderWidth: 40
+         *      expandableRowHeaderWidth: 30
          *    }
          *  </pre>
          */
-        grid.options.expandableRowHeaderWidth = grid.options.expandableRowHeaderWidth || 40;
+        grid.options.expandableRowHeaderWidth = grid.options.expandableRowHeaderWidth || 30;
 
         /**
          *  @ngdoc object
@@ -135,9 +135,10 @@
                *      gridApi.expandable.on.rowExpandedStateChanged(scope,function(row){})
                * </pre>
                * @param {GridRow} row the row that was expanded
+               * @param {Event} evt object if raised from an event
                */
-              rowExpandedBeforeStateChanged: function(scope,row){},
-              rowExpandedStateChanged: function (scope, row) {}
+              rowExpandedBeforeStateChanged: function (scope, row, evt) {},
+              rowExpandedStateChanged: function (scope, row, evt) {}
             }
           },
 
@@ -325,7 +326,7 @@
    *    }
    *  </pre>
    */
-  
+
   module.directive('uiGridExpandable', ['uiGridExpandableService', '$templateCache',
     function (uiGridExpandableService, $templateCache) {
       return {
@@ -349,7 +350,7 @@
                   exporterSuppressExport: true,
                   enableColumnResizing: false,
                   enableColumnMenu: false,
-                  width: uiGridCtrl.grid.options.expandableRowHeaderWidth || 40
+                  width: uiGridCtrl.grid.options.expandableRowHeaderWidth || 30
                 };
                 expandableRowHeaderColDef.cellTemplate = $templateCache.get('ui-grid/expandableRowHeader');
                 expandableRowHeaderColDef.headerCellTemplate = $templateCache.get('ui-grid/expandableTopRowHeader');
@@ -500,7 +501,7 @@
                       $scope.colContainer.name !== 'body'
                       || ($scope.grid.isScrollingVertically && !$scope.row.expandedRendered));
                 };
-  
+
                 if($scope.grid.options.enableOnDblClickExpand) {
                   $elm.on('dblclick', function () {
                     $scope.grid.api.expandable.toggleRowExpansion($scope.row.entity)
@@ -558,10 +559,10 @@
              //      The alternative is to compile the template and append to each row in a uiGridRow directive
 
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
-            var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
+            // var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
             var expandedRowElement = $templateCache.get('ui-grid/expandableRow');
             rowRepeatDiv.append(expandedRowElement);
-            rowRepeatDiv.append(expandedRowFillerElement);
+            // rowRepeatDiv.append(expandedRowFillerElement);
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
               },
