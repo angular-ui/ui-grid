@@ -42,10 +42,10 @@
     border-bottom-color: @borderColor;
     border-bottom-style: solid;
   }
+}
 
-  &div:first-child:hover .ui-grid-cell {
-    background-color: @rowColorHovered;
-  }
+div[ui-grid-row=row]:hover .ui-grid-cell {
+  background-color: @rowColorHovered;
 }
 
 .ui-grid-no-row-overlay {
