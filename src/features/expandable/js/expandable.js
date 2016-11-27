@@ -504,6 +504,9 @@
 
                 if($scope.grid.options.enableOnDblClickExpand) {
                   $elm.on('dblclick', function () {
+                    // если надо, можно для всех остановить обработку одинарного клика ИЛИ
+                    // внутри своего Конфига в обработчике вписать строку:
+                    //event.stopPropagation()
                     $scope.grid.api.expandable.toggleRowExpansion($scope.row.entity)
                   })
                 }
@@ -559,10 +562,10 @@
              //      The alternative is to compile the template and append to each row in a uiGridRow directive
 
             var rowRepeatDiv = angular.element($elm.children().children()[0]);
-            // var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
+            var expandedRowFillerElement = $templateCache.get('ui-grid/expandableScrollFiller');
             var expandedRowElement = $templateCache.get('ui-grid/expandableRow');
             rowRepeatDiv.append(expandedRowElement);
-            // rowRepeatDiv.append(expandedRowFillerElement);
+            rowRepeatDiv.append(expandedRowFillerElement);
             return {
               pre: function ($scope, $elm, $attrs, controllers) {
               },
