@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log', 'GridScrolling',
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log', 'gridScrolling',
     function(gridUtil, ScrollEvent, uiGridConstants, $log, gridScrolling) {
       return {
         replace: true,
