@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('ui.grid')
-    .factory('gridScrolling', function($window, gridUtil) {
+    .factory('gridScrolling', function($window, uiGridConstants, gridUtil) {
       var isAnimating;
 
       /**
@@ -10,9 +10,9 @@
        *  @name initiated
        *  @propertyOf  ui.grid.class:gridScrolling
        *  @description Keeps track of which type of scrolling event has been initiated
-       *  and sets it to 0, when no event is being triggered.
+       *  and sets it to NONE, when no event is being triggered.
        */
-      gridScrolling.initiated = 0;
+      gridScrolling.initiated = uiGridConstants.scrollEvent.NONE;
 
       /**
        * @ngdoc function
@@ -23,24 +23,20 @@
        * @param {function} scrollHandler Function that needs to be called when scrolling happens.
        */
       function gridScrolling(element, scrollHandler) {
-        var wrapper = element, pointX, pointY, startTime, startX, startY,
+        var wrapper = element, pointX, pointY, startTime, startX, startY, maxScroll,
           scroller = wrapper[0].children[0],
-          TOUCHABLE = 1,
-          MOUSE = 2,
-          POINTER = 3,
-          maxScroll,
           initType = {
-            touchstart: TOUCHABLE,
-            touchmove: TOUCHABLE,
-            touchend: TOUCHABLE,
+            touchstart: uiGridConstants.scrollEvent.TOUCHABLE,
+            touchmove: uiGridConstants.scrollEvent.TOUCHABLE,
+            touchend: uiGridConstants.scrollEvent.TOUCHABLE,
 
-            mousedown: MOUSE,
-            mousemove: MOUSE,
-            mouseup: MOUSE,
+            mousedown: uiGridConstants.scrollEvent.MOUSE,
+            mousemove: uiGridConstants.scrollEvent.MOUSE,
+            mouseup: uiGridConstants.scrollEvent.MOUSE,
 
-            pointerdown: POINTER,
-            pointermove: POINTER,
-            pointerup: POINTER
+            pointerdown: uiGridConstants.scrollEvent.POINTER,
+            pointermove: uiGridConstants.scrollEvent.POINTER,
+            pointerup: uiGridConstants.scrollEvent.POINTER
           };
 
         if ('onmousedown' in $window) {
@@ -142,7 +138,7 @@
 
           animate(newX, newY, time, wrapper, scrollHandler.bind(null, event));
 
-          gridScrolling.initiated = 0;
+          gridScrolling.initiated = uiGridConstants.scrollEvent.NONE;
         }
 
         /**
@@ -218,6 +214,21 @@
 
       /**
        * @ngdoc function
+       * @name calcNewPos
+       * @methodOf ui.grid.class:gridScrolling
+       * @description Calculates the new position of the element based on where it started, the animation time
+       * and where it is ultimately supposed to end up.
+       * @param {number} destPos The destination.
+       * @param {number} easeRes The ideal ease time.
+       * @param {number} startPos The original position.
+       * @returns {number} The next position of the element.
+       */
+      function calcNewPos(destPos, easeRes, startPos) {
+        return ( destPos - Math.abs(startPos) ) * easeRes + Math.abs(startPos);
+      }
+
+      /**
+       * @ngdoc function
        * @name animate
        * @methodOf ui.grid.class:gridScrolling
        * @description Calculates the ease resolution base on the current animation times.
@@ -252,8 +263,8 @@
 
           easeRes = easeClb(relPoint);
 
-          newX = ( destX - Math.abs(startX) ) * easeRes + Math.abs(startX);
-          newY = ( destY - Math.abs(startY) ) * easeRes + Math.abs(startY);
+          newX = calcNewPos(destX, easeRes, startX);
+          newY = calcNewPos(destY, easeRes, startY);
 
           translate(newX, newY, wrapper);
 
