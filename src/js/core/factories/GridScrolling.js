@@ -2,8 +2,8 @@
   'use strict';
 
   angular.module('ui.grid')
-    .factory('gridScrolling', ['$document', '$window', 'gridUtil', 'uiGridConstants',
-      function($document, $window, gridUtil, uiGridConstants) {
+    .factory('gridScrolling', ['$window', 'gridUtil', 'uiGridConstants',
+      function($window, gridUtil, uiGridConstants) {
         var isAnimating;
 
         /**
@@ -49,7 +49,7 @@
             wrapper.on('touchmove', move);
             wrapper.on('touchcancel', end);
             wrapper.on('touchend', end);
-            $document.addEventListener('touchmove', function(e) {
+            document.addEventListener('touchmove', function(e) {
               e.preventDefault();
             }, false);
           }
@@ -288,7 +288,7 @@
             callback.call();
 
             if (isAnimating) {
-              $window.requestAnimationFrame(next);
+              window.requestAnimationFrame(next);
             } else {
               wrapper.on('scroll', callback);
             }
