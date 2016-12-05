@@ -20,6 +20,15 @@ angular.module('ui.grid')
    */
   var Grid = function Grid(options) {
     var self = this;
+  
+    /**
+     * @ngdoc property
+     * @name i18n
+     * @propertyOf ui.grid.class:Grid
+     * @description for use Locale just set this property: i18n: 'ru'
+     */
+    self.i18n = options.i18n;
+    
     // Get the id out of the options, then remove it
     if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
       if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
@@ -1066,8 +1075,9 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description returns the GridRow that contains the rowEntity
    * @param {object} rowEntity the gridOptions.data array element instance
-   * @param {array} rows [optional] the rows to look in - if not provided then
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
    * looks in grid.rows
+   * @returns {GridRow|null} Return row or nothing
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;

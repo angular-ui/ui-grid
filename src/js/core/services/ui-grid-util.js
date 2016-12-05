@@ -459,28 +459,30 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     // Thanks to http://stackoverflow.com/a/13382873/888165
     getScrollbarWidth: function() {
-        var outer = document.createElement("div");
-        outer.style.visibility = "hidden";
-        outer.style.width = "100px";
-        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+      var outer = document.createElement("div");
+      outer.style.visibility = "hidden";
+      outer.style.width = "100px";
+      outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
-        document.body.appendChild(outer);
+      document.body.appendChild(outer);
 
-        var widthNoScroll = outer.offsetWidth;
-        // force scrollbars
-        outer.style.overflow = "scroll";
+      var widthNoScroll = outer.offsetWidth;
+      // force scrollbars
+      outer.style.overflow = "scroll";
 
-        // add innerdiv
-        var inner = document.createElement("div");
-        inner.style.width = "100%";
-        outer.appendChild(inner);
+      // add innerdiv
+      var inner = document.createElement("div");
+      inner.style.width = "100%";
+      outer.appendChild(inner);
 
-        var widthWithScroll = inner.offsetWidth;
+      var widthWithScroll = inner.offsetWidth;
 
-        // remove divs
-        outer.parentNode.removeChild(outer);
+      // remove divs
+      outer.parentNode.removeChild(outer);
 
-        return widthNoScroll - widthWithScroll;
+      outer.style.overflow = "auto";
+
+      return widthNoScroll - widthWithScroll;
     },
 
     swap: function( elem, options, callback, args ) {

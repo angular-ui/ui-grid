@@ -29,10 +29,7 @@
 }
 
 .ui-grid-row {
-  //position: absolute;
-  // border-bottom: 1px solid @borderColor;
   clear: both; //prevent columns mixing after expand
-
   &:nth-child(odd) .ui-grid-cell {
     background-color: @rowColorOdd; //rgb(253, 253, 253);
   }
@@ -44,8 +41,11 @@
   &:last-child .ui-grid-cell {
     border-bottom-color: @borderColor;
     border-bottom-style: solid;
-
   }
+}
+
+div[ui-grid-row=row]:hover .ui-grid-cell {
+  background-color: @rowColorHovered;
 }
 
 .ui-grid-no-row-overlay {
