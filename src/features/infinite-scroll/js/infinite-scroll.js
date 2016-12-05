@@ -125,12 +125,11 @@
                * infinite scroll events upward
                * @param {boolean} scrollDown flag that there are pages downwards, so
                * fire infinite scroll events downward
-               * @returns {promise} promise that is resolved when the scroll reset is complete
                */
               resetScroll: function( scrollUp, scrollDown ) {
                 service.setScrollDirections( grid, scrollUp, scrollDown);
 
-                return service.adjustInfiniteScrollPosition(grid, 0);
+                service.adjustInfiniteScrollPosition(grid, 0);
               },
 
 
@@ -414,7 +413,6 @@
        * @description This function fires 'needLoadMoreData' or 'needLoadMoreDataTop' event based on scrollDirection
        * @param {Grid} grid the grid we're working on
        * @param {number} scrollTop the position through the grid that we want to scroll to
-       * @returns {promise} a promise that is resolved when the scrolling finishes
        */
       adjustInfiniteScrollPosition: function (grid, scrollTop) {
         var scrollEvent = new ScrollEvent(grid, null, null, 'ui.grid.adjustInfiniteScrollPosition'),
@@ -448,7 +446,6 @@
        * infinite scroll events upward
        * @param {boolean} scrollDown flag that there are pages downwards, so
        * fire infinite scroll events downward
-       * @returns {promise} a promise that is resolved when the scrolling finishes
        */
       dataRemovedTop: function( grid, scrollUp, scrollDown ) {
         var newVisibleRows, oldTop, newTop, rowHeight;
@@ -462,7 +459,7 @@
         // of rows removed
         newTop = oldTop - ( grid.infiniteScroll.previousVisibleRows - newVisibleRows )*rowHeight;
 
-        return service.adjustInfiniteScrollPosition( grid, newTop );
+        service.adjustInfiniteScrollPosition( grid, newTop );
       },
 
       /**
@@ -485,7 +482,7 @@
 
         newTop = grid.infiniteScroll.prevScrollTop;
 
-        return service.adjustInfiniteScrollPosition( grid, newTop );
+        service.adjustInfiniteScrollPosition( grid, newTop );
       }
     };
     return service;
