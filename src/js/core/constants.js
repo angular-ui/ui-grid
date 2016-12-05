@@ -194,7 +194,7 @@
 
     /**
      * @ngdoc object
-     * @name scrollEvent
+     * @name scrollType
      * @propertyOf ui.grid.service:uiGridConstants
      * @description Used in {@link ui.grid.class:gridScrolling},
      * to the type of scroll event currently in progress
@@ -205,7 +205,7 @@
      * - `uiGridConstants.scrollEvent.MOUSE` - set when mousedown, mousemove or mouseup are triggered
      * - `uiGridConstants.scrollEvent.POINTER` - set when pointerdown, pointermove or pointerup are triggered
      */
-    scrollEvent: {
+    scrollType: {
       NONE: 0,
       TOUCHABLE: 1,
       MOUSE: 2,

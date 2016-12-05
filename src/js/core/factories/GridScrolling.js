@@ -2,296 +2,299 @@
   'use strict';
 
   angular.module('ui.grid')
-    .factory('gridScrolling', function($window, uiGridConstants, gridUtil) {
-      var isAnimating;
+    .factory('gridScrolling', ['$document', '$window', 'gridUtil', 'uiGridConstants',
+      function($document, $window, gridUtil, uiGridConstants) {
+        var isAnimating;
 
-      /**
-       *  @ngdoc object
-       *  @name initiated
-       *  @propertyOf  ui.grid.class:gridScrolling
-       *  @description Keeps track of which type of scrolling event has been initiated
-       *  and sets it to NONE, when no event is being triggered.
-       */
-      gridScrolling.initiated = uiGridConstants.scrollEvent.NONE;
-
-      /**
-       * @ngdoc function
-       * @name ui.grid.class:gridScrolling
-       * @description gridScrolling is a wrapper service that takes over the default scrolling logic in order to
-       * ensure that grid scrolling works consistently in both the browser and devices, as well as slow machines.
-       * @param {object} element Element being scrolled
-       * @param {function} scrollHandler Function that needs to be called when scrolling happens.
-       */
-      function gridScrolling(element, scrollHandler) {
-        var wrapper = element, pointX, pointY, startTime, startX, startY, maxScroll,
-          scroller = wrapper[0].children[0],
-          initType = {
-            touchstart: uiGridConstants.scrollEvent.TOUCHABLE,
-            touchmove: uiGridConstants.scrollEvent.TOUCHABLE,
-            touchend: uiGridConstants.scrollEvent.TOUCHABLE,
-
-            mousedown: uiGridConstants.scrollEvent.MOUSE,
-            mousemove: uiGridConstants.scrollEvent.MOUSE,
-            mouseup: uiGridConstants.scrollEvent.MOUSE,
-
-            pointerdown: uiGridConstants.scrollEvent.POINTER,
-            pointermove: uiGridConstants.scrollEvent.POINTER,
-            pointerup: uiGridConstants.scrollEvent.POINTER
-          };
-
-        if ('onmousedown' in $window) {
-          wrapper.on('scroll', scrollHandler);
-        }
-
-        if (gridUtil.isTouchEnabled()) {
-          wrapper.on('touchstart', start);
-          wrapper.on('touchmove', move);
-          wrapper.on('touchcancel', end);
-          wrapper.on('touchend', end);
-          document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-        }
+        /**
+         *  @ngdoc object
+         *  @name initiated
+         *  @propertyOf  ui.grid.class:gridScrolling
+         *  @description Keeps track of which type of scrolling event has been initiated
+         *  and sets it to NONE, when no event is being triggered.
+         */
+        gridScrolling.initiated = uiGridConstants.scrollType.NONE;
 
         /**
          * @ngdoc function
-         * @name start
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Gets the current coordinates and time, as well as the target coordinate
-         * and initializes the scrolling event
-         * @param {object} event The event object
+         * @name ui.grid.class:gridScrolling
+         * @description gridScrolling is a wrapper service that takes over the default scrolling logic in order to
+         * ensure that grid scrolling works consistently in both the browser and devices, as well as slow machines.
+         * @param {object} element Element being scrolled
+         * @param {function} scrollHandler Function that needs to be called when scrolling happens.
          */
-        function start(event) {
-          var point = event.touches ? event.touches[0] : event;
+        function gridScrolling(element, scrollHandler) {
+          var wrapper = element, pointX, pointY, startTime, startX, startY, maxScroll,
+            scroller = wrapper[0].children[0],
+            initType = {
+              touchstart: uiGridConstants.scrollType.TOUCHABLE,
+              touchmove: uiGridConstants.scrollType.TOUCHABLE,
+              touchend: uiGridConstants.scrollType.TOUCHABLE,
 
-          wrapper.off('scroll', scrollHandler);
+              mousedown: uiGridConstants.scrollType.MOUSE,
+              mousemove: uiGridConstants.scrollType.MOUSE,
+              mouseup: uiGridConstants.scrollType.MOUSE,
 
-          gridScrolling.initiated = initType[event.type];
+              pointerdown: uiGridConstants.scrollType.POINTER,
+              pointermove: uiGridConstants.scrollType.POINTER,
+              pointerup: uiGridConstants.scrollType.POINTER
+            };
 
-          pointX = point.pageX;
-          pointY = point.pageY;
-
-          startTime = (new Date()).getTime();
-          startX    = wrapper[0].scrollLeft;
-          startY    = wrapper[0].scrollTop;
-          isAnimating = false;
-        }
-
-        /**
-         * @ngdoc function
-         * @name calcNewMove
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Calculates the next position of the element for a particular axis
-         * based on the delta.
-         * @param {number} scrollPos The original position of the element.
-         * @param {number} delta The amount the pointer moved.
-         * @param {number} axis The axis being moved.
-         * @returns {number} The next position of the element.
-         */
-        function calcNewMove(scrollPos, delta, axis) {
-          var newMove = scrollPos + delta;
-
-          if ( newMove < 0 || newMove > getMaxScroll()[axis] ) {
-            newMove = newMove < 0 ? 0 : getMaxScroll()[axis];
+          if ('onmousedown' in $window) {
+            wrapper.on('scroll', scrollHandler);
           }
 
-          return newMove;
-        }
-
-        /**
-         * @ngdoc function
-         * @name move
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Calculates what the next move should be and starts the scrolling.
-         * @param {object} event The event object
-         */
-        function move(event) {
-          if (initType[event.type] !== gridScrolling.initiated) {
-            return;
+          if (gridUtil.isTouchEnabled()) {
+            wrapper.on('touchstart', start);
+            wrapper.on('touchmove', move);
+            wrapper.on('touchcancel', end);
+            wrapper.on('touchend', end);
+            $document.addEventListener('touchmove', function(e) {
+              e.preventDefault();
+            }, false);
           }
 
-          var newX, newY, timestamp = (new Date()).getTime(),
-            point		= event.touches ? event.touches[0] : event,
-            deltaX = pointX - point.pageX,
-            deltaY = pointY - point.pageY;
+          /**
+           * @ngdoc function
+           * @name start
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Gets the current coordinates and time, as well as the target coordinate
+           * and initializes the scrolling event
+           * @param {object} event The event object
+           */
+          function start(event) {
+            var point = event.touches ? event.touches[0] : event;
 
-          pointX = point.pageX;
-          pointY = point.pageY;
+            wrapper.off('scroll', scrollHandler);
 
-          newX = calcNewMove(wrapper[0].scrollLeft, deltaX, 'x');
-          newY = calcNewMove(wrapper[0].scrollTop, deltaY, 'y');
+            gridScrolling.initiated = initType[event.type];
 
-          if (timestamp - startTime > 300) {
+            pointX = point.pageX;
+            pointY = point.pageY;
+
             startTime = (new Date()).getTime();
-            startX = newX;
-            startY = newY;
+            startX = wrapper[0].scrollLeft;
+            startY = wrapper[0].scrollTop;
+            isAnimating = false;
           }
 
-          translate(newX, newY, wrapper);
+          /**
+           * @ngdoc function
+           * @name calcNewMove
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Calculates the next position of the element for a particular axis
+           * based on the delta.
+           * @param {number} scrollPos The original position of the element.
+           * @param {number} delta The amount the pointer moved.
+           * @param {number} axis The original position.
+           * @returns {number} The next position of the element.
+           */
+          function calcNewMove(scrollPos, delta, axis) {
+            var newMove = scrollPos + delta;
 
-          scrollHandler.call(null, event);
-        }
+            if (newMove < 0 || newMove > getMaxScroll()[axis]) {
+              newMove = newMove < 0 ? 0 : getMaxScroll()[axis];
+            }
 
-        /**
-         * @ngdoc function
-         * @name end
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Finishes the scrolling animation.
-         * @param {object} event The event object
-         */
-        function end(event) {
-          if ( initType[event.type] !== gridScrolling.initiated ) {
-            return;
+            return newMove;
           }
 
-          var duration = (new Date()).getTime() - startTime,
-            momentumX = momentum(wrapper[0].scrollLeft, startX, duration),
-            momentumY = momentum(wrapper[0].scrollTop, startY, duration),
-            newX = momentumX.destination,
-            newY = momentumY.destination,
-            time = Math.max(momentumX.duration, momentumY.duration);
+          /**
+           * @ngdoc function
+           * @name move
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Calculates what the next move should be and starts the scrolling.
+           * @param {object} event The event object
+           */
+          function move(event) {
+            if (initType[event.type] !== gridScrolling.initiated) {
+              return;
+            }
 
-          animate(newX, newY, time, wrapper, scrollHandler.bind(null, event));
+            var newX, newY, timestamp = (new Date()).getTime(),
+              point = event.touches ? event.touches[0] : event,
+              deltaX = pointX - point.pageX,
+              deltaY = pointY - point.pageY;
 
-          gridScrolling.initiated = uiGridConstants.scrollEvent.NONE;
-        }
+            pointX = point.pageX;
+            pointY = point.pageY;
 
-        /**
-         * @ngdoc function
-         * @name momentum
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Calculates current momentum of the scrolling based on the current position of the element,
-         * its initial position and the duration of this movement.
-         * @param {number} curr The current position of the element
-         * @param {number} start The original position of the element
-         * @param {number} time The time it has taken for the element to get to its current position.
-         * @returns {object} An object with the next position for the element and how long
-         * that animation should take.
-         */
-        function momentum(curr, start, time) {
-          curr = Math.abs(curr);
-          start = Math.abs(start);
+            newX = calcNewMove(wrapper[0].scrollLeft, deltaX, 'x');
+            newY = calcNewMove(wrapper[0].scrollTop, deltaY, 'y');
 
-          var distance = curr - start,
-            speed = Math.abs(distance)/time,
-            deceleration = 0.0007,
-            destination = curr + (speed * speed)/(2 * deceleration)* (distance >= 0 ? 1 : -1),
-            duration = speed / deceleration;
+            if (timestamp - startTime > 300) {
+              startTime = (new Date()).getTime();
+              startX = newX;
+              startY = newY;
+            }
 
-          return {
-            destination: Math.round(destination),
-            duration: duration
-          };
-        }
+            translate(newX, newY, wrapper);
 
-        /**
-         * @ngdoc function
-         * @name getMaxScroll
-         * @methodOf ui.grid.class:gridScrolling
-         * @description Gets the limit of the scrolling for both the x and y positions.
-         * @returns {object} An object with the x and y scroll limits.
-         */
-        function getMaxScroll() {
-          if (!maxScroll) {
-            maxScroll = {
-              x: scroller.offsetWidth - wrapper[0].clientWidth,
-              y: scroller.offsetHeight - wrapper[0].clientHeight
+            scrollHandler.call(null, event);
+          }
+
+          /**
+           * @ngdoc function
+           * @name end
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Finishes the scrolling animation.
+           * @param {object} event The event object
+           */
+          function end(event) {
+            if (initType[event.type] !== gridScrolling.initiated) {
+              return;
+            }
+
+            var duration = (new Date()).getTime() - startTime,
+              momentumX = momentum(wrapper[0].scrollLeft, startX, duration),
+              momentumY = momentum(wrapper[0].scrollTop, startY, duration),
+              newX = momentumX.destination,
+              newY = momentumY.destination,
+              time = Math.max(momentumX.duration, momentumY.duration);
+
+            animate(newX, newY, time, wrapper, scrollHandler.bind(null, event));
+
+            gridScrolling.initiated = uiGridConstants.scrollType.NONE;
+          }
+
+          /**
+           * @ngdoc function
+           * @name momentum
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Calculates current momentum of the scrolling based on the current position of the element,
+           * its initial position and the duration of this movement.
+           * @param {number} curr The current position of the element
+           * @param {number} start The original position of the element
+           * @param {number} time The time it has taken for the element to get to its current position.
+           * @returns {object} An object with the next position for the element and how long
+           * that animation should take.
+           */
+          function momentum(curr, start, time) {
+            curr = Math.abs(curr);
+            start = Math.abs(start);
+
+            var distance = curr - start,
+              speed = Math.abs(distance) / time,
+              deceleration = 0.0007,
+              destination = curr + (speed * speed) / (2 * deceleration) * (distance >= 0 ? 1 : -1),
+              duration = speed / deceleration;
+
+            return {
+              destination: Math.round(destination),
+              duration: duration
             };
           }
-          return maxScroll;
-        }
-      }
 
-      /**
-       * @ngdoc function
-       * @name translate
-       * @methodOf ui.grid.class:gridScrolling
-       * @description Updates the wrapper's scroll position.
-       * @param {number} x The horizontal position of the wrapper
-       * @param {number} y The vertical position of the wrapper
-       * @param {object} wrapper The wrapper element being updated
-       */
-      function translate(x, y, wrapper) {
-        wrapper[0].scrollLeft = x;
-        wrapper[0].scrollTop = y;
-      }
-
-      /**
-       * @ngdoc function
-       * @name easeClb
-       * @methodOf ui.grid.class:gridScrolling
-       * @description Calculates the ease resolution base on the current animation times.
-       * @param {number} relPoint The time the animation is taking between frames.
-       * @returns {number} The ideal ease time.
-       */
-      function easeClb(relPoint) {
-        return relPoint * ( 2 - relPoint );
-      }
-
-      /**
-       * @ngdoc function
-       * @name calcNewPos
-       * @methodOf ui.grid.class:gridScrolling
-       * @description Calculates the new position of the element based on where it started, the animation time
-       * and where it is ultimately supposed to end up.
-       * @param {number} destPos The destination.
-       * @param {number} easeRes The ideal ease time.
-       * @param {number} startPos The original position.
-       * @returns {number} The next position of the element.
-       */
-      function calcNewPos(destPos, easeRes, startPos) {
-        return ( destPos - Math.abs(startPos) ) * easeRes + Math.abs(startPos);
-      }
-
-      /**
-       * @ngdoc function
-       * @name animate
-       * @methodOf ui.grid.class:gridScrolling
-       * @description Calculates the ease resolution base on the current animation times.
-       * @param {number} destX The coordinate of the x axis that the scrolling needs to animate to.
-       * @param {number} destY The coordinate of the y axis that the scrolling needs to animate to.
-       * @param {number} duration The animation duration
-       * @param {object} wrapper The wrapper element being updated
-       * @param {function} callback Function that needs to be called when the animation is done.
-       */
-      function animate(destX, destY, duration, wrapper, callback) {
-        var startTime = (new Date()).getTime(),
-          startX = wrapper[0].scrollLeft,
-          startY = wrapper[0].scrollTop,
-          destTime = startTime + duration;
-
-        isAnimating = true;
-
-        next();
-
-        function next() {
-          var now = (new Date()).getTime(),
-            relPoint, easeRes, newX, newY;
-
-          if (now >= destTime) {
-            isAnimating = false;
-            translate(destX, destY, wrapper);
-            wrapper.on('scroll', callback);
-            return;
-          }
-
-          relPoint = (now - startTime) / duration;
-
-          easeRes = easeClb(relPoint);
-
-          newX = calcNewPos(destX, easeRes, startX);
-          newY = calcNewPos(destY, easeRes, startY);
-
-          translate(newX, newY, wrapper);
-
-          callback.call();
-
-          if (isAnimating) {
-            window.requestAnimationFrame(next);
-          } else {
-            wrapper.on('scroll', callback);
+          /**
+           * @ngdoc function
+           * @name getMaxScroll
+           * @methodOf ui.grid.class:gridScrolling
+           * @description Gets the limit of the scrolling for both the x and y positions.
+           * @returns {object} An object with the x and y scroll limits.
+           */
+          function getMaxScroll() {
+            if (!maxScroll) {
+              maxScroll = {
+                x: scroller.offsetWidth - wrapper[0].clientWidth,
+                y: scroller.offsetHeight - wrapper[0].clientHeight
+              };
+            }
+            return maxScroll;
           }
         }
-      }
 
-      return gridScrolling;
-    });
+        /**
+         * @ngdoc function
+         * @name translate
+         * @methodOf ui.grid.class:gridScrolling
+         * @description Updates the wrapper's scroll position.
+         * @param {number} x The horizontal position of the wrapper
+         * @param {number} y The vertical position of the wrapper
+         * @param {object} wrapper The wrapper element being updated
+         */
+        function translate(x, y, wrapper) {
+          wrapper[0].scrollLeft = x;
+          wrapper[0].scrollTop = y;
+        }
+
+        /**
+         * @ngdoc function
+         * @name easeClb
+         * @methodOf ui.grid.class:gridScrolling
+         * @description Calculates the ease resolution base on the current animation times.
+         * @param {number} relPoint The time the animation is taking between frames.
+         * @returns {number} The ideal ease time.
+         */
+        function easeClb(relPoint) {
+          return relPoint * ( 2 - relPoint );
+        }
+
+        /**
+         * @ngdoc function
+         * @name calcNewPos
+         * @methodOf ui.grid.class:gridScrolling
+         * @description Calculates the new position of the element based on where it started, the animation time
+         * and where it is ultimately supposed to end up.
+         * @param {number} destPos The destination.
+         * @param {number} easeRes The ideal ease time.
+         * @param {number} startPos The original position.
+         * @returns {number} The next position of the element.
+         */
+        function calcNewPos(destPos, easeRes, startPos) {
+          return ( destPos - Math.abs(startPos) ) * easeRes + Math.abs(startPos);
+        }
+
+        /**
+         * @ngdoc function
+         * @name animate
+         * @methodOf ui.grid.class:gridScrolling
+         * @description Calculates the ease resolution base on the current animation times.
+         * @param {number} destX The coordinate of the x axis that the scrolling needs to animate to.
+         * @param {number} destY The coordinate of the y axis that the scrolling needs to animate to.
+         * @param {number} duration The animation duration
+         * @param {object} wrapper The wrapper element being updated
+         * @param {function} callback Function that needs to be called when the animation is done.
+         */
+        function animate(destX, destY, duration, wrapper, callback) {
+          var startTime = (new Date()).getTime(),
+            startX = wrapper[0].scrollLeft,
+            startY = wrapper[0].scrollTop,
+            destTime = startTime + duration;
+
+          isAnimating = true;
+
+          next();
+
+          function next() {
+            var now = (new Date()).getTime(),
+              relPoint, easeRes, newX, newY;
+
+            if (now >= destTime) {
+              isAnimating = false;
+              translate(destX, destY, wrapper);
+              wrapper.on('scroll', callback);
+              return;
+            }
+
+            relPoint = (now - startTime) / duration;
+
+            easeRes = easeClb(relPoint);
+
+            newX = calcNewPos(destX, easeRes, startX);
+            newY = calcNewPos(destY, easeRes, startY);
+
+            translate(newX, newY, wrapper);
+
+            callback.call();
+
+            if (isAnimating) {
+              $window.requestAnimationFrame(next);
+            } else {
+              wrapper.on('scroll', callback);
+            }
+          }
+        }
+
+        return gridScrolling;
+      }]);
 })();
