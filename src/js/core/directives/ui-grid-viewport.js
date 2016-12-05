@@ -1,13 +1,8 @@
 (function(){
   'use strict';
 
-<<<<<<< HEAD
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log', 'gridScrolling',
-    function(gridUtil, ScrollEvent, uiGridConstants, $log, gridScrolling) {
-=======
   angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent',
     function(gridUtil, ScrollEvent) {
->>>>>>> features/pinned_scrolling_2
       return {
         replace: true,
         scope: {},
