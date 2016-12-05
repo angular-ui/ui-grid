@@ -78,7 +78,7 @@
     </div>
     <div
       class="ui-grid-pager-row-count-picker"
-      ng-if="grid.options.paginationPageSizes.length > 1">
+      ng-if="grid.options.paginationPageSizes.length > 1 && !grid.options.useCustomPagination">
       <select
         ui-grid-one-bind-aria-labelledby-grid="'items-per-page-label'"
         ng-model="grid.options.paginationPageSize"
@@ -101,12 +101,12 @@
       class="ui-grid-pager-count">
       <span
         ng-show="grid.options.totalItems > 0">
-        {{showingLow}}
+        {{ 1 + paginationApi.getFirstRowIndex() }}
         <abbr
           ui-grid-one-bind-title="paginationThrough">
           -
         </abbr>
-        {{showingHigh}} {{paginationOf}} {{grid.options.totalItems}} {{totalItemsLabel}}
+        {{ 1 + paginationApi.getLastRowIndex() }} {{paginationOf}} {{grid.options.totalItems}} {{totalItemsLabel}}
       </span>
     </div>
   </div>
