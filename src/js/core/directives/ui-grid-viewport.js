@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log',
-    function(gridUtil, ScrollEvent, uiGridConstants, $log) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log', 'gridScrolling',
+    function(gridUtil, ScrollEvent, uiGridConstants, $log, gridScrolling) {
       return {
         replace: true,
         scope: {},
@@ -31,8 +31,7 @@
           // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
-
-          $elm.on('scroll', scrollHandler);
+          gridScrolling($elm, scrollHandler);
 
           var ignoreScroll = false;
 
