@@ -1,43 +1,94 @@
 (function() {
   'use strict';
 
-  angular.module('ui.grid')
-    .factory('gridScrolling', ['$window', 'gridUtil', 'uiGridConstants',
-      function($window, gridUtil, uiGridConstants) {
+  /**
+   *  @ngdoc overview
+   *  @name ui.grid.customScrolling
+   *
+   *  @description
+   *
+   *  #ui.grid.customScrolling
+   *
+   *  This module provides a custom grid scroller that works as an alternative to the native scroll event that
+   *  uses touch events to ensure that grid scrolling works without a lag on devices.
+   *
+   */
+  var module = angular.module('ui.grid.customScrolling', ['ui.grid']);
+
+  /**
+   *  @ngdoc object
+   *  @name ui.grid.customScrolling.constant:uiGridScrollerConstants
+   *
+   *  @description Constants for use with the  uiGridScroller
+   */
+  module.constant('uiGridScrollerConstants', {
+    /**
+     * @ngdoc object
+     * @name deceleration
+     * @propertyOf ui.grid.customScrolling.constant:uiGridScrollerConstants
+     * @description Used in {@link ui.grid.customScrolling.service:uiGridScroller#momentum uiGridScroller.momentum}
+     * to calculates current momentum of the scrolling.
+     */
+    deceleration: 0.0007,
+
+    /**
+     * @ngdoc object
+     * @name scrollType
+     * @propertyOf ui.grid.customScrolling.constant:uiGridScrollerConstants
+     * @description Used in {@link ui.grid.customScrolling.service:uiGridScroller uiGridScroller},
+     * to the type of scroll event currently in progress
+     *
+     * Available options are:
+     * - `uiGridScrollerConstants.scrollEvent.NONE` - set when no scroll events are being triggered
+     * - `uiGridScrollerConstants.scrollEvent.TOUCHABLE` - set when touchstart, touchmove or touchend are triggered
+     * - `uiGridScrollerConstants.scrollEvent.MOUSE` - set when mousedown, mousemove or mouseup are triggered
+     * - `uiGridScrollerConstants.scrollEvent.POINTER` - set when pointerdown, pointermove or pointerup are triggered
+     */
+    scrollType: {
+      NONE: 0,
+      TOUCHABLE: 1,
+      MOUSE: 2,
+      POINTER: 3
+    }
+  });
+
+  /**
+   * @ngdoc service
+   * @name ui.grid.customScrolling.service:uiGridScroller
+   * @description uiGridScroller is an alternative to the native scroll event that uses touch events to ensure that grid scrolling works
+   * without a lag on devices.
+   * @param {object} element Element being scrolled
+   * @param {function} scrollHandler Function that needs to be called when scrolling happens.
+   */
+  module.factory('uiGridScroller', ['$window', 'gridUtil', 'uiGridScrollerConstants',
+      function($window, gridUtil, uiGridScrollerConstants) {
         var isAnimating;
 
         /**
          *  @ngdoc object
          *  @name initiated
-         *  @propertyOf  ui.grid.class:gridScrolling
+         *  @propertyOf ui.grid.customScrolling.service:uiGridScroller
          *  @description Keeps track of which type of scrolling event has been initiated
          *  and sets it to NONE, when no event is being triggered.
          */
-        gridScrolling.initiated = uiGridConstants.scrollType.NONE;
+        uiGridScroller.initiated = uiGridScrollerConstants.scrollType.NONE;
 
-        /**
-         * @ngdoc function
-         * @name ui.grid.class:gridScrolling
-         * @description gridScrolling is a wrapper service that takes over the default scrolling logic in order to
-         * ensure that grid scrolling works consistently in both the browser and devices, as well as slow machines.
-         * @param {object} element Element being scrolled
-         * @param {function} scrollHandler Function that needs to be called when scrolling happens.
-         */
-        function gridScrolling(element, scrollHandler) {
+        function uiGridScroller(element, scrollHandler) {
           var pointX, pointY, startTime, startX, startY, maxScroll,
             scroller = element[0].children[0],
             initType = {
-              touchstart: uiGridConstants.scrollType.TOUCHABLE,
-              touchmove: uiGridConstants.scrollType.TOUCHABLE,
-              touchend: uiGridConstants.scrollType.TOUCHABLE,
+              touchstart: uiGridScrollerConstants.scrollType.TOUCHABLE,
+              touchmove: uiGridScrollerConstants.scrollType.TOUCHABLE,
+              touchend: uiGridScrollerConstants.scrollType.TOUCHABLE
 
-              mousedown: uiGridConstants.scrollType.MOUSE,
-              mousemove: uiGridConstants.scrollType.MOUSE,
-              mouseup: uiGridConstants.scrollType.MOUSE,
-
-              pointerdown: uiGridConstants.scrollType.POINTER,
-              pointermove: uiGridConstants.scrollType.POINTER,
-              pointerup: uiGridConstants.scrollType.POINTER
+              // TODO: Enhance this scroller to support mouse and pointer events for better performance in slow machines
+              // mousedown: uiGridScrollerConstants.scrollType.MOUSE,
+              // mousemove: uiGridScrollerConstants.scrollType.MOUSE,
+              // mouseup: uiGridScrollerConstants.scrollType.MOUSE,
+							//
+              // pointerdown: uiGridScrollerConstants.scrollType.POINTER,
+              // pointermove: uiGridScrollerConstants.scrollType.POINTER,
+              // pointerup: uiGridScrollerConstants.scrollType.POINTER
             };
 
           if ('onmousedown' in $window) {
@@ -49,15 +100,12 @@
             element.on('touchmove', move);
             element.on('touchcancel', end);
             element.on('touchend', end);
-            document.addEventListener('touchmove', function(e) {
-              e.preventDefault();
-            }, false);
           }
 
           /**
            * @ngdoc function
            * @name start
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Gets the current coordinates and time, as well as the target coordinate
            * and initializes the scrolling event
            * @param {object} event The event object
@@ -67,7 +115,8 @@
 
             element.off('scroll', scrollHandler);
 
-            gridScrolling.initiated = initType[event.type];
+            uiGridScroller.initiated = initType[event.type];
+            console.log('uiGridScroller.initiated', uiGridScroller.initiated);
 
             pointX = point.pageX;
             pointY = point.pageY;
@@ -81,7 +130,7 @@
           /**
            * @ngdoc function
            * @name calcNewMove
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Calculates the next position of the element for a particular axis
            * based on the delta.
            * @param {number} scrollPos The original position of the element.
@@ -102,12 +151,14 @@
           /**
            * @ngdoc function
            * @name move
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Calculates what the next move should be and starts the scrolling.
            * @param {object} event The event object
            */
           function move(event) {
-            if (initType[event.type] !== gridScrolling.initiated) {
+            event.preventDefault();
+
+            if (initType[event.type] !== uiGridScroller.initiated) {
               return;
             }
 
@@ -136,12 +187,12 @@
           /**
            * @ngdoc function
            * @name end
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Finishes the scrolling animation.
            * @param {object} event The event object
            */
           function end(event) {
-            if (initType[event.type] !== gridScrolling.initiated) {
+            if (initType[event.type] !== uiGridScroller.initiated) {
               return;
             }
 
@@ -154,13 +205,13 @@
 
             animate(newX, newY, time, element, scrollHandler.bind(null, event));
 
-            gridScrolling.initiated = uiGridConstants.scrollType.NONE;
+            uiGridScroller.initiated = uiGridScrollerConstants.scrollType.NONE;
           }
 
           /**
            * @ngdoc function
            * @name momentum
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Calculates current momentum of the scrolling based on the current position of the element,
            * its initial position and the duration of this movement.
            * @param {number} curr The current position of the element
@@ -175,9 +226,8 @@
 
             var distance = curr - start,
               speed = Math.abs(distance) / time,
-              deceleration = 0.0007,
-              destination = curr + (speed * speed) / (2 * deceleration) * (distance >= 0 ? 1 : -1),
-              duration = speed / deceleration;
+              destination = curr + (speed * speed) / (2 * uiGridScrollerConstants.deceleration) * (distance >= 0 ? 1 : -1),
+              duration = speed / uiGridScrollerConstants.deceleration;
 
             return {
               destination: Math.round(destination),
@@ -188,7 +238,7 @@
           /**
            * @ngdoc function
            * @name getMaxScroll
-           * @methodOf ui.grid.class:gridScrolling
+           * @methodOf ui.grid.customScrolling.service:uiGridScroller
            * @description Gets the limit of the scrolling for both the x and y positions.
            * @returns {object} An object with the x and y scroll limits.
            */
@@ -206,7 +256,7 @@
         /**
          * @ngdoc function
          * @name translate
-         * @methodOf ui.grid.class:gridScrolling
+         * @methodOf ui.grid.customScrolling.service:uiGridScroller
          * @description Updates the element's scroll position.
          * @param {number} x The horizontal position of the element
          * @param {number} y The vertical position of the element
@@ -220,7 +270,7 @@
         /**
          * @ngdoc function
          * @name easeClb
-         * @methodOf ui.grid.class:gridScrolling
+         * @methodOf ui.grid.customScrolling.service:uiGridScroller
          * @description Calculates the ease resolution base on the current animation times.
          * @param {number} relPoint The time the animation is taking between frames.
          * @returns {number} The ideal ease time.
@@ -232,7 +282,7 @@
         /**
          * @ngdoc function
          * @name calcNewPos
-         * @methodOf ui.grid.class:gridScrolling
+         * @methodOf ui.grid.customScrolling.service:uiGridScroller
          * @description Calculates the new position of the element based on where it started, the animation time
          * and where it is ultimately supposed to end up.
          * @param {number} destPos The destination.
@@ -247,7 +297,7 @@
         /**
          * @ngdoc function
          * @name animate
-         * @methodOf ui.grid.class:gridScrolling
+         * @methodOf ui.grid.customScrolling.service:uiGridScroller
          * @description Calculates the ease resolution base on the current animation times.
          * @param {number} destX The coordinate of the x axis that the scrolling needs to animate to.
          * @param {number} destY The coordinate of the y axis that the scrolling needs to animate to.
@@ -295,6 +345,71 @@
           }
         }
 
-        return gridScrolling;
+        return uiGridScroller;
       }]);
+
+  /**
+   *  @ngdoc directive
+   *  @name ui.grid.customScrolling.directive:uiGridCustomScrolling
+   *  @element div
+   *  @restrict EA
+   *
+   *  @description Updates the grid to use the gridScroller instead of the jquery scroll event
+   *
+   *  @example
+   <example module="app">
+   <file name="app.js">
+   var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.pinning', 'ui.grid.customScrolling']);
+
+   app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
+      $scope.gridOptions = {};
+
+      $scope.gridOptions.columnDefs = [
+        { name:'id', width:50, enablePinning:false },
+        { name:'name', width:100, pinnedLeft:true },
+        { name:'age', width:100, pinnedRight:true  },
+        { name:'address.street', width:150  },
+        { name:'address.city', width:150 },
+        { name:'address.state', width:50 },
+        { name:'address.zip', width:50 },
+        { name:'company', width:100 },
+        { name:'email', width:100 },
+        { name:'phone', width:200 },
+        { name:'about', width:300 },
+        { name:'friends[0].name', displayName:'1st friend', width:150 },
+        { name:'friends[1].name', displayName:'2nd friend', width:150 },
+        { name:'friends[2].name', displayName:'3rd friend', width:150 },
+      ];
+
+      $http.get('/data/500_complex.json')
+        .success(function(data) {
+          $scope.gridOptions.data = data;
+        });
+    }]);
+   </file>
+   <file name="index.html">
+   <div ng-controller="MainCtrl">
+    <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-custom-scrolling></div>
+   </div>
+   </file>
+   </example>
+   */
+  module.directive('uiGridCustomScrolling', ['uiGridScroller',
+    function(uiGridScroller) {
+      return {
+        require: 'uiGrid',
+        scope: false,
+        compile: function() {
+          return {
+            pre: function($scope, $elm, $attrs, uiGridCtrl) {
+              // initializes custom scroller to be the gridScroller when options exist
+              if (uiGridCtrl.grid && uiGridCtrl.grid.options) {
+                uiGridCtrl.grid.options.customScroller = uiGridScroller;
+              }
+            },
+            post: angular.noop
+          };
+        }
+      };
+    }]);
 })();

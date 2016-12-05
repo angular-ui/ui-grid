@@ -194,26 +194,6 @@
 
     /**
      * @ngdoc object
-     * @name scrollType
-     * @propertyOf ui.grid.service:uiGridConstants
-     * @description Used in {@link ui.grid.class:gridScrolling},
-     * to the type of scroll event currently in progress
-     *
-     * Available options are:
-     * - `uiGridConstants.scrollEvent.NONE` - set when no scroll events are being triggered
-     * - `uiGridConstants.scrollEvent.TOUCHABLE` - set when touchstart, touchmove or touchend are triggered
-     * - `uiGridConstants.scrollEvent.MOUSE` - set when mousedown, mousemove or mouseup are triggered
-     * - `uiGridConstants.scrollEvent.POINTER` - set when pointerdown, pointermove or pointerup are triggered
-     */
-    scrollType: {
-      NONE: 0,
-      TOUCHABLE: 1,
-      MOUSE: 2,
-      POINTER: 3
-    },
-
-    /**
-     * @ngdoc object
      * @name dataChange
      * @propertyOf ui.grid.service:uiGridConstants
      * @description Used with {@link ui.grid.core.api:PublicApi#methods_notifyDataChange PublicApi.notifyDataChange},
