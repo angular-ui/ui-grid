@@ -79,7 +79,8 @@
             initType = {
               touchstart: uiGridScrollerConstants.scrollType.TOUCHABLE,
               touchmove: uiGridScrollerConstants.scrollType.TOUCHABLE,
-              touchend: uiGridScrollerConstants.scrollType.TOUCHABLE
+              touchend: uiGridScrollerConstants.scrollType.TOUCHABLE,
+              touchcancel: uiGridScrollerConstants.scrollType.TOUCHABLE
 
               // TODO: Enhance this scroller to support mouse and pointer events for better performance in slow machines
               // mousedown: uiGridScrollerConstants.scrollType.MOUSE,
@@ -116,7 +117,6 @@
             element.off('scroll', scrollHandler);
 
             uiGridScroller.initiated = initType[event.type];
-            console.log('uiGridScroller.initiated', uiGridScroller.initiated);
 
             pointX = point.pageX;
             pointY = point.pageY;
