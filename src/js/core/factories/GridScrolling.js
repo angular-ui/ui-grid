@@ -77,6 +77,27 @@
 
         /**
          * @ngdoc function
+         * @name calcNewMove
+         * @methodOf ui.grid.class:gridScrolling
+         * @description Calculates the next position of the element for a particular axis
+         * based on the delta.
+         * @param {number} scrollPos The original position of the element.
+         * @param {number} delta The amount the pointer moved.
+         * @param {number} axis The axis being moved.
+         * @returns {number} The next position of the element.
+         */
+        function calcNewMove(scrollPos, delta, axis) {
+          var newMove = scrollPos + delta;
+
+          if ( newMove < 0 || newMove > getMaxScroll()[axis] ) {
+            newMove = newMove < 0 ? 0 : getMaxScroll()[axis];
+          }
+
+          return newMove;
+        }
+
+        /**
+         * @ngdoc function
          * @name move
          * @methodOf ui.grid.class:gridScrolling
          * @description Calculates what the next move should be and starts the scrolling.
@@ -95,16 +116,8 @@
           pointX = point.pageX;
           pointY = point.pageY;
 
-          newX = wrapper[0].scrollLeft + deltaX;
-          newY = wrapper[0].scrollTop + deltaY;
-
-          if ( newX < 0 || newX > getMaxScroll().x ) {
-            newX = newX < 0 ? 0 : getMaxScroll().x;
-          }
-
-          if ( newY < 0 || newY > getMaxScroll().y ) {
-            newY = newY < 0 ? 0 : getMaxScroll().y;
-          }
+          newX = calcNewMove(wrapper[0].scrollLeft, deltaX, 'x');
+          newY = calcNewMove(wrapper[0].scrollTop, deltaY, 'y');
 
           if (timestamp - startTime > 300) {
             startTime = (new Date()).getTime();
@@ -174,6 +187,7 @@
          * @name getMaxScroll
          * @methodOf ui.grid.class:gridScrolling
          * @description Gets the limit of the scrolling for both the x and y positions.
+         * @returns {object} An object with the x and y scroll limits.
          */
         function getMaxScroll() {
           if (!maxScroll) {
