@@ -24,8 +24,8 @@
          * @param {function} scrollHandler Function that needs to be called when scrolling happens.
          */
         function gridScrolling(element, scrollHandler) {
-          var wrapper = element, pointX, pointY, startTime, startX, startY, maxScroll,
-            scroller = wrapper[0].children[0],
+          var pointX, pointY, startTime, startX, startY, maxScroll,
+            scroller = element[0].children[0],
             initType = {
               touchstart: uiGridConstants.scrollType.TOUCHABLE,
               touchmove: uiGridConstants.scrollType.TOUCHABLE,
@@ -41,14 +41,14 @@
             };
 
           if ('onmousedown' in $window) {
-            wrapper.on('scroll', scrollHandler);
+            element.on('scroll', scrollHandler);
           }
 
           if (gridUtil.isTouchEnabled()) {
-            wrapper.on('touchstart', start);
-            wrapper.on('touchmove', move);
-            wrapper.on('touchcancel', end);
-            wrapper.on('touchend', end);
+            element.on('touchstart', start);
+            element.on('touchmove', move);
+            element.on('touchcancel', end);
+            element.on('touchend', end);
             document.addEventListener('touchmove', function(e) {
               e.preventDefault();
             }, false);
@@ -65,7 +65,7 @@
           function start(event) {
             var point = event.touches ? event.touches[0] : event;
 
-            wrapper.off('scroll', scrollHandler);
+            element.off('scroll', scrollHandler);
 
             gridScrolling.initiated = initType[event.type];
 
@@ -73,8 +73,8 @@
             pointY = point.pageY;
 
             startTime = (new Date()).getTime();
-            startX = wrapper[0].scrollLeft;
-            startY = wrapper[0].scrollTop;
+            startX = element[0].scrollLeft;
+            startY = element[0].scrollTop;
             isAnimating = false;
           }
 
@@ -119,8 +119,8 @@
             pointX = point.pageX;
             pointY = point.pageY;
 
-            newX = calcNewMove(wrapper[0].scrollLeft, deltaX, 'x');
-            newY = calcNewMove(wrapper[0].scrollTop, deltaY, 'y');
+            newX = calcNewMove(element[0].scrollLeft, deltaX, 'x');
+            newY = calcNewMove(element[0].scrollTop, deltaY, 'y');
 
             if (timestamp - startTime > 300) {
               startTime = (new Date()).getTime();
@@ -128,7 +128,7 @@
               startY = newY;
             }
 
-            translate(newX, newY, wrapper);
+            translate(newX, newY, element);
 
             scrollHandler.call(null, event);
           }
@@ -146,13 +146,13 @@
             }
 
             var duration = (new Date()).getTime() - startTime,
-              momentumX = momentum(wrapper[0].scrollLeft, startX, duration),
-              momentumY = momentum(wrapper[0].scrollTop, startY, duration),
+              momentumX = momentum(element[0].scrollLeft, startX, duration),
+              momentumY = momentum(element[0].scrollTop, startY, duration),
               newX = momentumX.destination,
               newY = momentumY.destination,
               time = Math.max(momentumX.duration, momentumY.duration);
 
-            animate(newX, newY, time, wrapper, scrollHandler.bind(null, event));
+            animate(newX, newY, time, element, scrollHandler.bind(null, event));
 
             gridScrolling.initiated = uiGridConstants.scrollType.NONE;
           }
@@ -195,8 +195,8 @@
           function getMaxScroll() {
             if (!maxScroll) {
               maxScroll = {
-                x: scroller.offsetWidth - wrapper[0].clientWidth,
-                y: scroller.offsetHeight - wrapper[0].clientHeight
+                x: scroller.offsetWidth - element[0].clientWidth,
+                y: scroller.offsetHeight - element[0].clientHeight
               };
             }
             return maxScroll;
@@ -207,14 +207,14 @@
          * @ngdoc function
          * @name translate
          * @methodOf ui.grid.class:gridScrolling
-         * @description Updates the wrapper's scroll position.
-         * @param {number} x The horizontal position of the wrapper
-         * @param {number} y The vertical position of the wrapper
-         * @param {object} wrapper The wrapper element being updated
+         * @description Updates the element's scroll position.
+         * @param {number} x The horizontal position of the element
+         * @param {number} y The vertical position of the element
+         * @param {object} element The element being updated
          */
-        function translate(x, y, wrapper) {
-          wrapper[0].scrollLeft = x;
-          wrapper[0].scrollTop = y;
+        function translate(x, y, element) {
+          element[0].scrollLeft = x;
+          element[0].scrollTop = y;
         }
 
         /**
@@ -252,13 +252,13 @@
          * @param {number} destX The coordinate of the x axis that the scrolling needs to animate to.
          * @param {number} destY The coordinate of the y axis that the scrolling needs to animate to.
          * @param {number} duration The animation duration
-         * @param {object} wrapper The wrapper element being updated
+         * @param {object} element The element being updated
          * @param {function} callback Function that needs to be called when the animation is done.
          */
-        function animate(destX, destY, duration, wrapper, callback) {
+        function animate(destX, destY, duration, element, callback) {
           var startTime = (new Date()).getTime(),
-            startX = wrapper[0].scrollLeft,
-            startY = wrapper[0].scrollTop,
+            startX = element[0].scrollLeft,
+            startY = element[0].scrollTop,
             destTime = startTime + duration;
 
           isAnimating = true;
@@ -271,8 +271,8 @@
 
             if (now >= destTime) {
               isAnimating = false;
-              translate(destX, destY, wrapper);
-              wrapper.on('scroll', callback);
+              translate(destX, destY, element);
+              element.on('scroll', callback);
               return;
             }
 
@@ -283,14 +283,14 @@
             newX = calcNewPos(destX, easeRes, startX);
             newY = calcNewPos(destY, easeRes, startY);
 
-            translate(newX, newY, wrapper);
+            translate(newX, newY, element);
 
             callback.call();
 
             if (isAnimating) {
               window.requestAnimationFrame(next);
             } else {
-              wrapper.on('scroll', callback);
+              element.on('scroll', callback);
             }
           }
         }
