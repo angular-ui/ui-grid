@@ -190,6 +190,7 @@
       LEFT: 'left',
       RIGHT: 'right',
       NONE: 'none'
+
     },
 
     /**

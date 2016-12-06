@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent',
-    function(gridUtil, ScrollEvent) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log',
+    function(gridUtil, ScrollEvent, uiGridConstants, $log) {
       return {
         replace: true,
         scope: {},
@@ -31,12 +31,8 @@
           // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
-          // Checks for the presence of a custom scroller function and uses that if it is available
-          if (grid && grid.options && grid.options.customScroller) {
-            grid.options.customScroller($elm, scrollHandler);
-          } else {
-            $elm.on('scroll', scrollHandler);
-          }
+
+          $elm.on('scroll', scrollHandler);
 
           var ignoreScroll = false;
 
