@@ -4,7 +4,7 @@ module.exports = {
   },
   dist: {
     options: {
-      config  : 'src/font/config.json',
+      config  : 'grunt/font-config.json',
       fonts   : 'dist/release',
       styles  : '.tmp/font',
       scss    : false
