@@ -29,11 +29,19 @@ module.exports = function(config) {
       'test/unit/**/*.spec.js',
       'src/features/**/test/**/*.spec.js',
 
+      'test/assets/BLANK.md',
       'dist/release/ui-grid.css',
+      'src/font/*',
 
-      '.tmp/template.js' //templates
+      '.tmp/template.js' // templates
     ],
 
+    // Ensures that font files do not cause a 404 error
+    proxies: {
+      '/base/dist/release/ui-grid.woff': 'test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.ttf': 'test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.svg': 'test/assets/BLANK.md'
+    },
 
     // list of files to exclude
     exclude: [
