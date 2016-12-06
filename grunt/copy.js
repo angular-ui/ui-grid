@@ -18,6 +18,62 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    font_dist: {
+      files: [
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.eot',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.svg',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.ttf',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.woff',
+          dest: '<%= dist %>/release/'
+        }
+      ]
+    },
+    font_cut_release: {
+      files: [
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/',
+          src: '**/*.eot',
+          dest: '<%= dist %>/release/' + currentTag
+        },
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/',
+          src: '**/*.svg',
+          dest: '<%= dist %>/release/' + currentTag
+        },
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/',
+          src: '**/*.ttf',
+          dest: '<%= dist %>/release/' + currentTag
+        },
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/',
+          src: '**/*.woff',
+          dest: '<%= dist %>/release/' + currentTag
+        }
+      ]
+    },
     less_customizer: {
       files: [
         {
