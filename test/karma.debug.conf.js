@@ -29,7 +29,7 @@ module.exports = function(config) {
       'test/unit/**/*.spec.js',
       'src/features/**/test/**/*.spec.js',
 
-      'test/assets/BLANK.md',
+      {pattern: 'test/assets/BLANK.md', watched: false, included: true, served: true, nocache: false},
       'dist/release/ui-grid.css',
 
       '.tmp/template.js' //templates
@@ -37,9 +37,9 @@ module.exports = function(config) {
 
     // Ensures that font files do not cause a 404 error
     proxies: {
-      '/base/dist/release/ui-grid.woff': 'test/assets/BLANK.md',
-      '/base/dist/release/ui-grid.ttf': 'test/assets/BLANK.md',
-      '/base/dist/release/ui-grid.svg': 'test/assets/BLANK.md'
+      '/base/dist/release/ui-grid.woff': '/base/test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.ttf': '/base/test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.svg': '/base/test/assets/BLANK.md'
     },
 
 
