@@ -241,7 +241,7 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
               sizeChecks++;
             }
             else {
-              $timeout(init);
+              $timeout(init, 0, false);
             }
           }
 

@@ -2254,13 +2254,13 @@ angular.module('ui.grid')
         }
 
         p.resolve();
-      });
+      }, 0, false);
     }
     else {
       // Timeout still needs to be here to trigger digest after styles have been rebuilt
       $timeout(function() {
         p.resolve();
-      });
+      }, 0, false);
     }
 
     return p.promise;

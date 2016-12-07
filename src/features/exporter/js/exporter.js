@@ -237,6 +237,15 @@
           gridOptions.exporterOlderExcelCompatibility = gridOptions.exporterOlderExcelCompatibility === true;
           /**
            * @ngdoc object
+           * @name exporterIsExcelCompatible
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Separator header, used to set a custom column separator in a csv file, only works on MS Excel.
+           * Used it on other programs will make csv content display unproperly. Setting this option to false won't add this header.
+           * <br/>Defaults to false
+           */
+          gridOptions.exporterIsExcelCompatible = gridOptions.exporterIsExcelCompatible === true;
+          /**
+           * @ngdoc object
            * @name exporterMenuItemOrder
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description An option to determine the starting point for the menu items created by the exporter
@@ -634,7 +643,7 @@
             var exportData = self.getData(grid, rowTypes, colTypes);
             var csvContent = self.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
 
-            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
+            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility, grid.options.exporterIsExcelCompatible);
           });
         },
 
@@ -917,13 +926,18 @@
          * @param {string} csvContent the csv content that we'd like to
          * download as a file
          * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
+          * @param {boolean} exporterIsExcelCompatible whether or not we add separator header ('sep=X')
          */
-        downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility) {
+        downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility, exporterIsExcelCompatible) {
           var D = document;
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
           var ieVersion = this.isIE();
+
+          if (exporterIsExcelCompatible) {
+              csvContent = 'sep=' + columnSeparator + '\r\n' + csvContent;
+          }
 
           // IE10+
           if (navigator.msSaveBlob) {
@@ -940,7 +954,7 @@
             document.body.appendChild(frame);
 
             frame.contentWindow.document.open('text/html', 'replace');
-            frame.contentWindow.document.write('sep=' + columnSeparator + '\r\n' + csvContent);
+            frame.contentWindow.document.write(csvContent);
             frame.contentWindow.document.close();
             frame.contentWindow.focus();
             frame.contentWindow.document.execCommand('SaveAs', true, fileName);

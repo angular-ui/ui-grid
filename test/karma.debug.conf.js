@@ -34,6 +34,13 @@ module.exports = function(config) {
       '.tmp/template.js' //templates
     ],
 
+    // Ensures that font files do not cause a 404 error
+    proxies: {
+      '/base/dist/release/ui-grid.woff': 'src/font/ui-grid.woff',
+      '/base/dist/release/ui-grid.ttf': 'src/font/ui-grid.ttf',
+      '/base/dist/release/ui-grid.svg': 'src/font/ui-grid.svg'
+    },
+
 
     // list of files to exclude
     exclude: [
