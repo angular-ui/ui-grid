@@ -11,8 +11,17 @@
               $elm.children().remove();
               if ( filterable ){
                 var template = $scope.col.filterHeaderTemplate;
-
-                $elm.append($compile(template)($scope));
+                if (template === undefined && $scope.col.providedFilterHeaderTemplate !== "") {
+                  if ($scope.col.filterHeaderTemplatePromise) {
+                    $scope.col.filterHeaderTemplatePromise.then(function () {
+                      template = $scope.col.filterHeaderTemplate;
+                      $elm.append($compile(template)($scope));
+                    });
+                  }
+                }
+                else {
+                  $elm.append($compile(template)($scope));
+                }
               }
             };
 
