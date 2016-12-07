@@ -52,6 +52,24 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc property
+   * @name tooltip
+   * @propertyOf ui.grid.class:GridColumn
+   * @description Column name that will be shown in the header tooltip.
+   * If headerTooltip is set and  tooltip is not provided then one is generated using the displayName.
+   *
+   */
+
+  /**
+   * @ngdoc property
+   * @name tooltip
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description Column name that will be shown in the header tooltip.
+   * If headerTooltip is set and tooltip is not provided then one is generated using the displayName.
+   *
+   */
+
+  /**
+   * @ngdoc property
    * @name field
    * @propertyOf ui.grid.class:GridColumn
    * @description field must be provided if you wish to bind to a
@@ -81,17 +99,17 @@ angular.module('ui.grid')
    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', ariaLabel: 'Filter for text', flags: { caseSensitive: false }, type: uiGridConstants.filter.SELECT, [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ] }</pre>
    *
    */
-   
-  /** 
+
+  /**
    * @ngdoc property
    * @name extraStyle
    * @propertyOf ui.grid.class:GridColumn
-   * @description additional on this column.  
+   * @description additional on this column.
    * @example
    * <pre>{extraStyle: {display:'table-cell'}}</pre>
    *
-   */   
-    
+   */
+
   /**
    * @ngdoc object
    * @name ui.grid.class:GridColumn
@@ -208,7 +226,7 @@ angular.module('ui.grid')
   GridColumn.prototype.hideColumn = function() {
     this.colDef.visible = false;
   };
-  
+
 
   /**
    * @ngdoc method
@@ -432,7 +450,9 @@ angular.module('ui.grid')
       throw new Error('colDef.name is required for column at index ' + self.grid.options.columnDefs.indexOf(colDef));
     }
 
-    self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
+    self.displayName = (colDef.displayName === undefined)
+        ? gridUtil.readableColumnName(colDef.name)
+        : colDef.displayName;
 
     if (!angular.isNumber(self.width) || !self.hasCustomWidth || colDef.allowCustomWidthOverride) {
       var colDefWidth = colDef.width;
@@ -499,7 +519,7 @@ angular.module('ui.grid')
     self.name = colDef.name;
 
     // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
-    self.displayName = (colDef.displayName === undefined) ? gridUtil.readableColumnName(colDef.name) : colDef.displayName;
+    self.displayName = colDef.displayName || gridUtil.readableColumnName(colDef.name);
 
     //self.originalIndex = index;
 
@@ -548,9 +568,9 @@ angular.module('ui.grid')
      */
     if ( typeof(colDef.headerTooltip) === 'undefined' || colDef.headerTooltip === false ) {
       self.headerTooltip = false;
-    } else if ( colDef.headerTooltip === true ){
+    } else if ( colDef.headerTooltip === true || colDef.tooltip ){
       self.headerTooltip = function(col) {
-        return col.displayName;
+        return col.tooltip || col.displayName;
       };
     } else if (typeof(colDef.headerTooltip) === 'function' ){
       self.headerTooltip = colDef.headerTooltip;

@@ -1,17 +1,17 @@
 <div
-  role="rowgroup"
-  class="ui-grid-viewport"
-  ng-style="colContainer.getViewportStyle()"><!-- tbody -->
+    role="rowgroup"
+    class="ui-grid-viewport"
+    ng-style="colContainer.getViewportStyle()"><!-- tbody -->
   <div
-    class="ui-grid-canvas">
+      class="ui-grid-canvas">
     <div
-      ng-repeat="(rowRenderIndex, row) in rowContainer.renderedRows track by $index"
-      class="ui-grid-row"
-      ng-style="Viewport.rowStyle(rowRenderIndex)">
+        ng-repeat="(rowRenderIndex, row) in rowContainer.renderedRows track by $index"
+        class="ui-grid-row"
+        ng-style="Viewport.rowStyle(rowRenderIndex)">
       <div
-        role="row"
-        ui-grid-row="row"
-        row-render-index="rowRenderIndex">
+          role="row"
+          ui-grid-row="row"
+          row-render-index="rowRenderIndex">
       </div>
     </div>
   </div>

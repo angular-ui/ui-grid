@@ -17,6 +17,7 @@
     COL_FIELD: /COL_FIELD/g,
     MODEL_COL_FIELD: /MODEL_COL_FIELD/g,
     TOOLTIP: /title=\"TOOLTIP\"/g,
+    TOOLTIPTPL: "title=\"TOOLTIP\"",
     DISPLAY_CELL_TEMPLATE: /DISPLAY_CELL_TEMPLATE/g,
     TEMPLATE_REGEXP: /<.+>/,
     FUNC_REGEXP: /(\([^)]*\))?$/,
