@@ -29,24 +29,14 @@ module.exports = function(config) {
       'test/unit/**/*.spec.js',
       'src/features/**/test/**/*.spec.js',
 
-      {pattern: 'test/assets/BLANK.md', watched: false, included: true, served: true, nocache: false},
       'dist/release/ui-grid.css',
 
       '.tmp/template.js' //templates
     ],
 
-    // Ensures that font files do not cause a 404 error
-    proxies: {
-      '/base/dist/release/ui-grid.woff': '/base/test/assets/BLANK.md',
-      '/base/dist/release/ui-grid.ttf': '/base/test/assets/BLANK.md',
-      '/base/dist/release/ui-grid.svg': '/base/test/assets/BLANK.md'
-    },
-
-
     // list of files to exclude
     exclude: [
     ],
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
@@ -118,7 +108,7 @@ module.exports = function(config) {
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
-    config.logLevel = config.LOG_INFO;
+    config.logLevel = config.LOG_DEBUG;
     config.browserNoActivityTimeout = 120000; // NOTE: from angular.js, for socket.io buffer
     config.reporters = ['dots', 'coverage'];
 
