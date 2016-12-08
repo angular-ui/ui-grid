@@ -159,11 +159,6 @@ describe('ui.grid.customScrolling', function() {
           testEndFunction();
         });
       });
-      afterEach(function() {
-        element.on.calls.reset();
-        element.off.calls.reset();
-        gridUtil.isTouchEnabled.calls.reset();
-      });
     });
 
     describe('when gridUtils.isTouchEnabled returns false', function() {
@@ -200,11 +195,6 @@ describe('ui.grid.customScrolling', function() {
             expect(element.on).not.toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
           });
         });
-      });
-      afterEach(function() {
-        element.on.calls.reset();
-        element.off.calls.reset();
-        gridUtil.isTouchEnabled.calls.reset();
       });
     });
   });
