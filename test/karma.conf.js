@@ -23,24 +23,16 @@ module.exports = function(config) {
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
+      'dist/release/ui-grid.css',
+
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',
       'src/features/**/js/**/*.js',
       'test/unit/**/*.spec.js',
       'src/features/**/test/**/*.spec.js',
 
-      'dist/release/ui-grid.css',
-      'src/font/*',
-
       '.tmp/template.js' // templates
     ],
-
-    // Ensures that font files do not cause a 404 error
-    proxies: {
-      '/base/dist/release/ui-grid.woff': 'src/font/ui-grid.woff',
-      '/base/dist/release/ui-grid.ttf': 'src/font/ui-grid.ttf',
-      '/base/dist/release/ui-grid.svg': 'src/font/ui-grid.svg'
-    },
 
     // list of files to exclude
     exclude: [
@@ -49,7 +41,7 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['dots', 'coverage'],
+    reporters: ['progress', 'dots', 'coverage'],
 
     preprocessors: {
       // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
@@ -119,7 +111,7 @@ module.exports = function(config) {
   if (process.env.TRAVIS) {
     config.logLevel = config.LOG_INFO;
     config.browserNoActivityTimeout = 120000; // NOTE: from angular.js, for socket.io buffer
-    config.reporters = ['dots', 'coverage'];
+    config.reporters = ['progress', 'dots', 'coverage'];
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
 
