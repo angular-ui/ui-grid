@@ -33,7 +33,7 @@
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
-      describe('events', function() {
+      xdescribe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
             element.on.and.callFake(function(eventName, callback) {
@@ -176,7 +176,7 @@
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
-      xdescribe('events', function() {
+      describe('events', function() {
         describe('on scroll', function() {
           it('should be initialized', function() {
             expect(element.on).toHaveBeenCalledWith('scroll', scrollHandler);
