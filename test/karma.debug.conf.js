@@ -29,22 +29,24 @@ module.exports = function(config) {
       'test/unit/**/*.spec.js',
       'src/features/**/test/**/*.spec.js',
 
+      {pattern: 'test/assets/BLANK.md', watched: false, included: true, served: true, nocache: false},
       'dist/release/ui-grid.css',
-      'src/font/*',
 
-      '.tmp/template.js' // templates
+      '.tmp/template.js' //templates
     ],
 
     // Ensures that font files do not cause a 404 error
     proxies: {
-      '/base/dist/release/ui-grid.woff': 'src/font/ui-grid.woff',
-      '/base/dist/release/ui-grid.ttf': 'src/font/ui-grid.ttf',
-      '/base/dist/release/ui-grid.svg': 'src/font/ui-grid.svg'
+      '/base/dist/release/ui-grid.woff': '/base/test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.ttf': '/base/test/assets/BLANK.md',
+      '/base/dist/release/ui-grid.svg': '/base/test/assets/BLANK.md'
     },
+
 
     // list of files to exclude
     exclude: [
     ],
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
