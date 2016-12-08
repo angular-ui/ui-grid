@@ -31,8 +31,11 @@
           // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
-
-          $elm.on('scroll', scrollHandler);
+          if (grid && grid.options && grid.options.customScroller) {
+            grid.options.customScroller($elm, scrollHandler);
+          } else {
+            $elm.on('scroll', scrollHandler);
+          }
 
           var ignoreScroll = false;
 

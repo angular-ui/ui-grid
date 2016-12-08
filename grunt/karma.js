@@ -3,7 +3,7 @@ var util = require('../lib/grunt/utils.js');
 module.exports = function( grunt ){
   var baseConfig = {
     options: {
-      configFile: 'test/karma.debug.conf.js',
+      configFile: 'test/karma.conf.js',
       background: true,
     },
     // dev: {
