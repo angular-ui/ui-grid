@@ -33,7 +33,7 @@
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
-      xdescribe('events', function() {
+      describe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
             element.on.and.callFake(function(eventName, callback) {
@@ -59,7 +59,7 @@
             element.on.and.callFake(angular.noop);
           });
         });
-        describe('on touchmove', function() {
+        xdescribe('on touchmove', function() {
           var preventDefaultSpy;
 
           beforeEach(function() {
@@ -128,7 +128,7 @@
             element.on.and.callFake(angular.noop);
           });
         }
-        describe('on touchend', function() {
+        xdescribe('on touchend', function() {
           beforeEach(function() {
             element.on.and.callFake(function(eventName, callback) {
               if (eventName === 'touchend') {
@@ -144,7 +144,7 @@
           });
           testEndFunction();
         });
-        describe('on touchcancel', function() {
+        xdescribe('on touchcancel', function() {
           beforeEach(function() {
             element.on.and.callFake(function(eventName, callback) {
               if (eventName === 'touchcancel') {
