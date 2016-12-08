@@ -13,21 +13,19 @@ describe('ui.grid.customScrolling', function() {
         off: jasmine.createSpy('off')
       };
       scrollHandler = jasmine.createSpy('scrollHandler');
-      gridUtil = jasmine.createSpyObj('gridUtil', ['isTouchEnabled']);
 
-      module('ui.grid.customScrolling', function($provide) {
-        $provide.value('gridUtil', gridUtil);
-      });
+      module('ui.grid.customScrolling');
 
-      inject(function(_uiGridScroller_, _uiGridScrollerConstants_) {
+      inject(function(_uiGridScroller_, _uiGridScrollerConstants_, _gridUtil_) {
         uiGridScroller = _uiGridScroller_;
         uiGridScrollerConstants = _uiGridScrollerConstants_;
+        gridUtil = _gridUtil_;
       });
     });
 
     describe('when gridUtils.isTouchEnabled returns true', function() {
       beforeEach(function() {
-        gridUtil.isTouchEnabled.and.returnValue(true);
+        spyOn(gridUtil, 'isTouchEnabled').and.returnValue(true);
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
@@ -170,7 +168,7 @@ describe('ui.grid.customScrolling', function() {
 
     describe('when gridUtils.isTouchEnabled returns false', function() {
       beforeEach(function() {
-        gridUtil.isTouchEnabled.and.returnValue(false);
+        spyOn(gridUtil, 'isTouchEnabled').and.returnValue(false);
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
