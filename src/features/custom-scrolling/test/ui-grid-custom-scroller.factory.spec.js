@@ -79,11 +79,8 @@
           it('should remove the scroll event from the element', function() {
             expect(element.off).toHaveBeenCalledWith('scroll', scrollHandler);
           });
-          afterEach(function() {
-            element.on.and.callFake(angular.noop);
-          });
         });
-        describe('on touchmove', function() {
+        xdescribe('on touchmove', function() {
           beforeEach(function() {
             uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
             uiGridScroller(element, scrollHandler);
@@ -99,7 +96,7 @@
           });
         });
         function testEndFunction() {
-          describe('when the uiGridScroller has been initiated with a touch event', function() {
+          xdescribe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
               uiGridScroller(element, scrollHandler);
