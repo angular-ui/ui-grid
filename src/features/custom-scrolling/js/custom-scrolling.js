@@ -62,7 +62,14 @@
    */
   module.factory('uiGridScroller', ['$window', 'gridUtil', 'uiGridScrollerConstants',
     function($window, gridUtil, uiGridScrollerConstants) {
-      var isAnimating;
+
+      /**
+       *  @ngdoc object
+       *  @name isAnimating
+       *  @propertyOf ui.grid.customScrolling.service:uiGridScroller
+       *  @description Keeps track of whether or not the scrolling is animating.
+       */
+      uiGridScroller.isAnimating = false;
 
       /**
        *  @ngdoc object
@@ -124,7 +131,7 @@
           startTime = (new Date()).getTime();
           startX = element[0].scrollLeft;
           startY = element[0].scrollTop;
-          isAnimating = false;
+          uiGridScroller.isAnimating = false;
         }
 
         /**
@@ -311,7 +318,7 @@
           startY = element[0].scrollTop,
           destTime = startTime + duration;
 
-        isAnimating = true;
+        uiGridScroller.isAnimating = true;
 
         next();
 
@@ -320,7 +327,7 @@
             relPoint, easeRes, newX, newY;
 
           if (now >= destTime) {
-            isAnimating = false;
+            uiGridScroller.isAnimating = false;
             translate(destX, destY, element);
             element.on('scroll', callback);
             return;
@@ -337,7 +344,7 @@
 
           callback.call();
 
-          if (isAnimating) {
+          if (uiGridScroller.isAnimating && angular.isFunction(window.requestAnimationFrame)) {
             window.requestAnimationFrame(next);
           } else {
             element.on('scroll', callback);

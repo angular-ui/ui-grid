@@ -2,17 +2,31 @@
   'use strict';
 
   describe('uiGridScroller', function() {
-    var element, scrollHandler, gridUtil, uiGridScroller, uiGridScrollerConstants;
+    var element, scrollHandler, gridUtil, uiGridScroller, uiGridScrollerConstants,
+      callbacks = {};
 
     beforeEach(function() {
       element = {
         0: {
+          scrollTop: 0,
+          scrollLeft: 0,
+          clientWidth: 300,
+          clientHeight: 300,
           children: {
-            0: {}
+            0: {
+              offsetWidth: 300,
+              offsetHeight: 300
+            }
           }
         },
-        on: jasmine.createSpy('on'),
-        off: jasmine.createSpy('off')
+        on: jasmine.createSpy('on').and.callFake(function(eventName, callback) {
+          callbacks[eventName] = callback;
+        }),
+        off: jasmine.createSpy('off'),
+        trigger: function(eventName, args) {
+          args.type = eventName;
+          callbacks[eventName](args);
+        }
       };
       scrollHandler = jasmine.createSpy('scrollHandler');
 
@@ -23,6 +37,8 @@
         uiGridScrollerConstants = _uiGridScrollerConstants_;
         gridUtil = _gridUtil_;
       });
+
+      spyOn(window, 'requestAnimationFrame').and.callFake(jasmine.createSpy('requestAnimationFrame'));
     });
 
     describe('when gridUtils.isTouchEnabled returns true', function() {
@@ -45,18 +61,15 @@
       it('should initialize touchcancel', function() {
         expect(element.on).toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
       });
-      xdescribe('events', function() {
+      describe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
-            element.on.and.callFake(function(eventName, callback) {
-              if (eventName === 'touchstart') {
-                callback({
-                  type: eventName,
-                  touches: [true]
-                });
-              }
+            element.trigger('touchstart', {
+              touches: [{
+                pageX: 0,
+                pageY: 0
+              }]
             });
-            uiGridScroller(element, scrollHandler);
           });
           it('should remove the scroll event from the element', function() {
             expect(element.off).toHaveBeenCalledWith('scroll', scrollHandler);
@@ -64,8 +77,8 @@
           it('should update the uiGridScroller.initiated value to TOUCHABLE', function() {
             expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.TOUCHABLE);
           });
-          afterEach(function() {
-            element.on.and.callFake(angular.noop);
+          it('should update the uiGridScroller.isAnimating value to false', function() {
+            expect(uiGridScroller.isAnimating).toBe(false);
           });
         });
         describe('on touchmove', function() {
@@ -73,20 +86,17 @@
 
           beforeEach(function() {
             preventDefaultSpy = jasmine.createSpy('preventDefault');
-            element.on.and.callFake(function(eventName, callback) {
-              if (eventName === 'touchmove') {
-                callback({
-                  type: eventName,
-                  touches: [true],
-                  preventDefault: preventDefaultSpy
-                });
-              }
-            });
           });
           describe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
-              uiGridScroller(element, scrollHandler);
+              element.trigger('touchmove', {
+                touches: [{
+                  pageX: 0,
+                  pageY: 0
+                }],
+                preventDefault: preventDefaultSpy
+              });
             });
             it('should prevent the default behavior', function() {
               expect(preventDefaultSpy).toHaveBeenCalled();
@@ -98,7 +108,13 @@
           describe('when the uiGridScroller has not been initiated with a touch event', function() {
             beforeEach(function() {
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.NONE;
-              uiGridScroller(element, scrollHandler);
+              element.trigger('touchmove', {
+                touches: [{
+                  pageX: 0,
+                  pageY: 0
+                }],
+                preventDefault: preventDefaultSpy
+              });
             });
             it('should prevent the default behavior', function() {
               expect(preventDefaultSpy).toHaveBeenCalled();
@@ -107,61 +123,56 @@
               expect(scrollHandler).not.toHaveBeenCalled();
             });
           });
-          afterEach(function() {
-            element.on.and.callFake(angular.noop);
-          });
         });
-        function testEndFunction() {
+        function testEndFunction(eventName) {
           describe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
+              uiGridScroller.isAnimating = false;
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
-              uiGridScroller(element, scrollHandler);
+              element.trigger(eventName, {
+                touches: [{
+                  pageX: 0,
+                  pageY: 0
+                }]
+              });
             });
             it('should update the uiGridScroller.initiated value to NONE', function() {
               expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
             });
+            it('should update the uiGridScroller.isAnimating value to true', function() {
+              expect(uiGridScroller.isAnimating).toBe(true);
+            });
+            it('should call requestAnimationFrame in the window', function() {
+              expect(window.requestAnimationFrame).toHaveBeenCalled();
+            });
           });
           describe('when the uiGridScroller has not been initiated with a touch event', function() {
             beforeEach(function() {
+              uiGridScroller.isAnimating = false;
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.MOUSE;
-              uiGridScroller(element, scrollHandler);
+              element.trigger(eventName, {
+                touches: [{
+                  pageX: 0,
+                  pageY: 0
+                }]
+              });
             });
             it('should not update the uiGridScroller.initiated value', function() {
               expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.MOUSE);
             });
-          });
-          afterEach(function() {
-            element.on.and.callFake(angular.noop);
+            it('should not update the uiGridScroller.isAnimating value', function() {
+              expect(uiGridScroller.isAnimating).toBe(false);
+            });
+            it('should not call requestAnimationFrame in the window', function() {
+              expect(window.requestAnimationFrame).not.toHaveBeenCalled();
+            });
           });
         }
         describe('on touchend', function() {
-          beforeEach(function() {
-            element.on.and.callFake(function(eventName, callback) {
-              if (eventName === 'touchend') {
-                callback({
-                  type: eventName,
-                  touches: [true]
-                });
-              }
-            });
-          });
-          testEndFunction();
+          testEndFunction('touchend');
         });
         describe('on touchcancel', function() {
-          beforeEach(function() {
-            element.on.and.callFake(function(eventName, callback) {
-              if (eventName === 'touchcancel') {
-                callback({
-                  type: eventName,
-                  touches: [true]
-                });
-              }
-            });
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
-          });
-          testEndFunction();
+          testEndFunction('touchcancel');
         });
       });
       afterEach(function() {
