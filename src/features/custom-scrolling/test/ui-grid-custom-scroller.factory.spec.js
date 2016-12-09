@@ -36,19 +36,19 @@
 
         element.on.and.callFake(function(eventName, callback) {
           switch (eventName) {
-            case 'touchstart':
-              callback({
-                type: eventName,
-                touches: [true]
-              });
-              break;
-            case 'touchmove':
-              // callback({
-              //   type: eventName,
-              //   touches: [true],
-              //   preventDefault: preventDefaultSpy
-              // });
-              break;
+            // case 'touchstart':
+            //   callback({
+            //     type: eventName,
+            //     touches: [true]
+            //   });
+            //   break;
+            // case 'touchmove':
+            //   callback({
+            //     type: eventName,
+            //     touches: [true],
+            //     preventDefault: preventDefaultSpy
+            //   });
+            //   break;
             case 'touchend':
               callback({
                 type: eventName,
