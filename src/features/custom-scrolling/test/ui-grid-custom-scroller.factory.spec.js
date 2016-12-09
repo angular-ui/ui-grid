@@ -124,56 +124,56 @@
             });
           });
         });
-        function testEndFunction(eventName) {
-          describe('when the uiGridScroller has been initiated with a touch event', function() {
-            beforeEach(function() {
-              uiGridScroller.isAnimating = false;
-              uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
-              element.trigger(eventName, {
-                touches: [{
-                  pageX: 0,
-                  pageY: 0
-                }]
-              });
-            });
-            it('should update the uiGridScroller.initiated value to NONE', function() {
-              expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
-            });
-            it('should update the uiGridScroller.isAnimating value to true', function() {
-              expect(uiGridScroller.isAnimating).toBe(true);
-            });
-            it('should call requestAnimationFrame in the window', function() {
-              expect(window.requestAnimationFrame).toHaveBeenCalled();
-            });
-          });
-          describe('when the uiGridScroller has not been initiated with a touch event', function() {
-            beforeEach(function() {
-              uiGridScroller.isAnimating = false;
-              uiGridScroller.initiated = uiGridScrollerConstants.scrollType.MOUSE;
-              element.trigger(eventName, {
-                touches: [{
-                  pageX: 0,
-                  pageY: 0
-                }]
-              });
-            });
-            it('should not update the uiGridScroller.initiated value', function() {
-              expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.MOUSE);
-            });
-            it('should not update the uiGridScroller.isAnimating value', function() {
-              expect(uiGridScroller.isAnimating).toBe(false);
-            });
-            it('should not call requestAnimationFrame in the window', function() {
-              expect(window.requestAnimationFrame).not.toHaveBeenCalled();
-            });
-          });
-        }
-        describe('on touchend', function() {
-          testEndFunction('touchend');
-        });
-        describe('on touchcancel', function() {
-          testEndFunction('touchcancel');
-        });
+        // function testEndFunction(eventName) {
+        //   describe('when the uiGridScroller has been initiated with a touch event', function() {
+        //     beforeEach(function() {
+        //       uiGridScroller.isAnimating = false;
+        //       uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
+        //       element.trigger(eventName, {
+        //         touches: [{
+        //           pageX: 0,
+        //           pageY: 0
+        //         }]
+        //       });
+        //     });
+        //     it('should update the uiGridScroller.initiated value to NONE', function() {
+        //       expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
+        //     });
+        //     it('should update the uiGridScroller.isAnimating value to true', function() {
+        //       expect(uiGridScroller.isAnimating).toBe(true);
+        //     });
+        //     it('should call requestAnimationFrame in the window', function() {
+        //       expect(window.requestAnimationFrame).toHaveBeenCalled();
+        //     });
+        //   });
+        //   describe('when the uiGridScroller has not been initiated with a touch event', function() {
+        //     beforeEach(function() {
+        //       uiGridScroller.isAnimating = false;
+        //       uiGridScroller.initiated = uiGridScrollerConstants.scrollType.MOUSE;
+        //       element.trigger(eventName, {
+        //         touches: [{
+        //           pageX: 0,
+        //           pageY: 0
+        //         }]
+        //       });
+        //     });
+        //     it('should not update the uiGridScroller.initiated value', function() {
+        //       expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.MOUSE);
+        //     });
+        //     it('should not update the uiGridScroller.isAnimating value', function() {
+        //       expect(uiGridScroller.isAnimating).toBe(false);
+        //     });
+        //     it('should not call requestAnimationFrame in the window', function() {
+        //       expect(window.requestAnimationFrame).not.toHaveBeenCalled();
+        //     });
+        //   });
+        // }
+        // describe('on touchend', function() {
+        //   testEndFunction('touchend');
+        // });
+        // describe('on touchcancel', function() {
+        //   testEndFunction('touchcancel');
+        // });
       });
       afterEach(function() {
         element.on.calls.reset();
