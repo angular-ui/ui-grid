@@ -32,37 +32,37 @@
 
       beforeEach(function() {
         spyOn(gridUtil, 'isTouchEnabled').and.returnValue(true);
-        preventDefaultSpy = jasmine.createSpy('preventDefault');
+        // preventDefaultSpy = jasmine.createSpy('preventDefault');
 
-        element.on.and.callFake(function(eventName, callback) {
-          switch (eventName) {
-            // case 'touchstart':
-            //   callback({
-            //     type: eventName,
-            //     touches: [true]
-            //   });
-            //   break;
-            // case 'touchmove':
-            //   callback({
-            //     type: eventName,
-            //     touches: [true],
-            //     preventDefault: preventDefaultSpy
-            //   });
-            //   break;
-            // case 'touchend':
-            //   callback({
-            //     type: eventName,
-            //     touches: [true]
-            //   });
-            //   break;
-            // case 'touchcancel':
-            //   callback({
-            //     type: eventName,
-            //     touches: [true]
-            //   });
-            //   break;
-          }
-        });
+        // element.on.and.callFake(function(eventName, callback) {
+        //   switch (eventName) {
+        //     case 'touchstart':
+        //       callback({
+        //         type: eventName,
+        //         touches: [true]
+        //       });
+        //       break;
+        //     case 'touchmove':
+        //       callback({
+        //         type: eventName,
+        //         touches: [true],
+        //         preventDefault: preventDefaultSpy
+        //       });
+        //       break;
+        //     case 'touchend':
+        //       callback({
+        //         type: eventName,
+        //         touches: [true]
+        //       });
+        //       break;
+        //     case 'touchcancel':
+        //       callback({
+        //         type: eventName,
+        //         touches: [true]
+        //       });
+        //       break;
+        //   }
+        // });
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
