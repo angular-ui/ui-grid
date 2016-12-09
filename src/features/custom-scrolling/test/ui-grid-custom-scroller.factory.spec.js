@@ -33,6 +33,18 @@
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
+      it('should initialize touchstart', function() {
+        expect(element.on).toHaveBeenCalledWith('touchstart', jasmine.any(Function));
+      });
+      it('should initialize touchmove', function() {
+        expect(element.on).toHaveBeenCalledWith('touchmove', jasmine.any(Function));
+      });
+      it('should initialize touchend', function() {
+        expect(element.on).toHaveBeenCalledWith('touchend', jasmine.any(Function));
+      });
+      it('should initialize touchcancel', function() {
+        expect(element.on).toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
+      });
       xdescribe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
@@ -45,9 +57,6 @@
               }
             });
             uiGridScroller(element, scrollHandler);
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchstart', jasmine.any(Function));
           });
           it('should remove the scroll event from the element', function() {
             expect(element.off).toHaveBeenCalledWith('scroll', scrollHandler);
@@ -73,9 +82,6 @@
                 });
               }
             });
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchmove', jasmine.any(Function));
           });
           describe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
@@ -138,9 +144,6 @@
                 });
               }
             });
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchend', jasmine.any(Function));
           });
           testEndFunction();
         });
