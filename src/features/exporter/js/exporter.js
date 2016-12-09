@@ -830,7 +830,7 @@
 
         /**
          * @ngdoc function
-         * @name formatAsCsv
+         * @name formatAsCSV
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Formats the column headers and data as a CSV,
          * and sends that data to the user
@@ -949,7 +949,7 @@
             );
           }
 
-          if (ieVersion) {
+          if (ieVersion){
             var frame = D.createElement('iframe');
             document.body.appendChild(frame);
 
