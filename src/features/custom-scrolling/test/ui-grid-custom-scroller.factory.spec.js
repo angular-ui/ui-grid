@@ -43,11 +43,11 @@
               });
               break;
             case 'touchmove':
-              callback({
-                type: eventName,
-                touches: [true],
-                preventDefault: preventDefaultSpy
-              });
+              // callback({
+              //   type: eventName,
+              //   touches: [true],
+              //   preventDefault: preventDefaultSpy
+              // });
               break;
             case 'touchend':
               callback({
