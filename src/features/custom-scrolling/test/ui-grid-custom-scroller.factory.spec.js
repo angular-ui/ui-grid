@@ -23,46 +23,11 @@
         uiGridScrollerConstants = _uiGridScrollerConstants_;
         gridUtil = _gridUtil_;
       });
-
-      spyOn(window, 'requestAnimationFrame').and.callFake(angular.noop);
     });
 
     describe('when gridUtils.isTouchEnabled returns true', function() {
-      var preventDefaultSpy;
-
       beforeEach(function() {
         spyOn(gridUtil, 'isTouchEnabled').and.returnValue(true);
-        // preventDefaultSpy = jasmine.createSpy('preventDefault');
-
-        // element.on.and.callFake(function(eventName, callback) {
-        //   switch (eventName) {
-        //     case 'touchstart':
-        //       callback({
-        //         type: eventName,
-        //         touches: [true]
-        //       });
-        //       break;
-        //     case 'touchmove':
-        //       callback({
-        //         type: eventName,
-        //         touches: [true],
-        //         preventDefault: preventDefaultSpy
-        //       });
-        //       break;
-        //     case 'touchend':
-        //       callback({
-        //         type: eventName,
-        //         touches: [true]
-        //       });
-        //       break;
-        //     case 'touchcancel':
-        //       callback({
-        //         type: eventName,
-        //         touches: [true]
-        //       });
-        //       break;
-        //   }
-        // });
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
@@ -71,6 +36,14 @@
       xdescribe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
+            element.on.and.callFake(function(eventName, callback) {
+              if (eventName === 'touchstart') {
+                callback({
+                  type: eventName,
+                  touches: [true]
+                });
+              }
+            });
             uiGridScroller(element, scrollHandler);
           });
           it('should be initialized', function() {
@@ -79,24 +52,61 @@
           it('should remove the scroll event from the element', function() {
             expect(element.off).toHaveBeenCalledWith('scroll', scrollHandler);
           });
+          it('should update the uiGridScroller.initiated value to TOUCHABLE', function() {
+            expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.TOUCHABLE);
+          });
+          afterEach(function() {
+            element.on.and.callFake(angular.noop);
+          });
         });
-        xdescribe('on touchmove', function() {
+        describe('on touchmove', function() {
+          var preventDefaultSpy;
+
           beforeEach(function() {
-            uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
-            uiGridScroller(element, scrollHandler);
+            preventDefaultSpy = jasmine.createSpy('preventDefault');
+            element.on.and.callFake(function(eventName, callback) {
+              if (eventName === 'touchmove') {
+                callback({
+                  type: eventName,
+                  touches: [true],
+                  preventDefault: preventDefaultSpy
+                });
+              }
+            });
           });
           it('should be initialized', function() {
             expect(element.on).toHaveBeenCalledWith('touchmove', jasmine.any(Function));
           });
-          it('should prevent the default behavior', function() {
-            expect(preventDefaultSpy).toHaveBeenCalled();
+          describe('when the uiGridScroller has been initiated with a touch event', function() {
+            beforeEach(function() {
+              uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
+              uiGridScroller(element, scrollHandler);
+            });
+            it('should prevent the default behavior', function() {
+              expect(preventDefaultSpy).toHaveBeenCalled();
+            });
+            it('should call the scrollHandler', function() {
+              expect(scrollHandler).toHaveBeenCalled();
+            });
           });
-          it('should call the scrollHandler', function() {
-            expect(scrollHandler).toHaveBeenCalled();
+          describe('when the uiGridScroller has not been initiated with a touch event', function() {
+            beforeEach(function() {
+              uiGridScroller.initiated = uiGridScrollerConstants.scrollType.NONE;
+              uiGridScroller(element, scrollHandler);
+            });
+            it('should prevent the default behavior', function() {
+              expect(preventDefaultSpy).toHaveBeenCalled();
+            });
+            it('should not call the scrollHandler', function() {
+              expect(scrollHandler).not.toHaveBeenCalled();
+            });
+          });
+          afterEach(function() {
+            element.on.and.callFake(angular.noop);
           });
         });
         function testEndFunction() {
-          xdescribe('when the uiGridScroller has been initiated with a touch event', function() {
+          describe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
               uiGridScroller.initiated = uiGridScrollerConstants.scrollType.TOUCHABLE;
               uiGridScroller(element, scrollHandler);
@@ -105,14 +115,46 @@
               expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
             });
           });
+          describe('when the uiGridScroller has not been initiated with a touch event', function() {
+            beforeEach(function() {
+              uiGridScroller.initiated = uiGridScrollerConstants.scrollType.MOUSE;
+              uiGridScroller(element, scrollHandler);
+            });
+            it('should not update the uiGridScroller.initiated value', function() {
+              expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.MOUSE);
+            });
+          });
+          afterEach(function() {
+            element.on.and.callFake(angular.noop);
+          });
         }
         describe('on touchend', function() {
+          beforeEach(function() {
+            element.on.and.callFake(function(eventName, callback) {
+              if (eventName === 'touchend') {
+                callback({
+                  type: eventName,
+                  touches: [true]
+                });
+              }
+            });
+          });
           it('should be initialized', function() {
             expect(element.on).toHaveBeenCalledWith('touchend', jasmine.any(Function));
           });
           testEndFunction();
         });
         describe('on touchcancel', function() {
+          beforeEach(function() {
+            element.on.and.callFake(function(eventName, callback) {
+              if (eventName === 'touchcancel') {
+                callback({
+                  type: eventName,
+                  touches: [true]
+                });
+              }
+            });
+          });
           it('should be initialized', function() {
             expect(element.on).toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
           });
