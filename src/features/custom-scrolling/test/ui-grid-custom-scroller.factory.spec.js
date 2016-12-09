@@ -68,7 +68,7 @@
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
-      describe('events', function() {
+      xdescribe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
             uiGridScroller(element, scrollHandler);
