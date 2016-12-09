@@ -49,18 +49,18 @@
             //     preventDefault: preventDefaultSpy
             //   });
             //   break;
-            case 'touchend':
-              callback({
-                type: eventName,
-                touches: [true]
-              });
-              break;
-            case 'touchcancel':
-              callback({
-                type: eventName,
-                touches: [true]
-              });
-              break;
+            // case 'touchend':
+            //   callback({
+            //     type: eventName,
+            //     touches: [true]
+            //   });
+            //   break;
+            // case 'touchcancel':
+            //   callback({
+            //     type: eventName,
+            //     touches: [true]
+            //   });
+            //   break;
           }
         });
         uiGridScroller(element, scrollHandler);
