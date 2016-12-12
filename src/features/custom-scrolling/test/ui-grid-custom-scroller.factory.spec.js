@@ -1,4 +1,6 @@
-describe('ui.grid.customScrolling', function() {
+(function () {
+  'use strict';
+
   describe('uiGridScroller', function() {
     var element, scrollHandler, gridUtil, uiGridScroller, uiGridScrollerConstants;
 
@@ -13,27 +15,37 @@ describe('ui.grid.customScrolling', function() {
         off: jasmine.createSpy('off')
       };
       scrollHandler = jasmine.createSpy('scrollHandler');
-      gridUtil = jasmine.createSpyObj('gridUtil', ['isTouchEnabled']);
 
-      module('ui.grid.customScrolling', function($provide) {
-        $provide.value('gridUtil', gridUtil);
-      });
+      module('ui.grid.customScrolling');
 
-      inject(function(_uiGridScroller_, _uiGridScrollerConstants_) {
+      inject(function(_uiGridScroller_, _uiGridScrollerConstants_, _gridUtil_) {
         uiGridScroller = _uiGridScroller_;
         uiGridScrollerConstants = _uiGridScrollerConstants_;
+        gridUtil = _gridUtil_;
       });
     });
 
     describe('when gridUtils.isTouchEnabled returns true', function() {
       beforeEach(function() {
-        gridUtil.isTouchEnabled.and.returnValue(true);
+        spyOn(gridUtil, 'isTouchEnabled').and.returnValue(true);
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
         expect(uiGridScroller.initiated).toEqual(uiGridScrollerConstants.scrollType.NONE);
       });
-      describe('events', function() {
+      it('should initialize touchstart', function() {
+        expect(element.on).toHaveBeenCalledWith('touchstart', jasmine.any(Function));
+      });
+      it('should initialize touchmove', function() {
+        expect(element.on).toHaveBeenCalledWith('touchmove', jasmine.any(Function));
+      });
+      it('should initialize touchend', function() {
+        expect(element.on).toHaveBeenCalledWith('touchend', jasmine.any(Function));
+      });
+      it('should initialize touchcancel', function() {
+        expect(element.on).toHaveBeenCalledWith('touchcancel', jasmine.any(Function));
+      });
+      xdescribe('events', function() {
         describe('on touchstart', function() {
           beforeEach(function() {
             element.on.and.callFake(function(eventName, callback) {
@@ -45,9 +57,6 @@ describe('ui.grid.customScrolling', function() {
               }
             });
             uiGridScroller(element, scrollHandler);
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchstart', jasmine.any(Function));
           });
           it('should remove the scroll event from the element', function() {
             expect(element.off).toHaveBeenCalledWith('scroll', scrollHandler);
@@ -73,9 +82,6 @@ describe('ui.grid.customScrolling', function() {
                 });
               }
             });
-          });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchmove', jasmine.any(Function));
           });
           describe('when the uiGridScroller has been initiated with a touch event', function() {
             beforeEach(function() {
@@ -139,9 +145,6 @@ describe('ui.grid.customScrolling', function() {
               }
             });
           });
-          it('should be initialized', function() {
-            expect(element.on).toHaveBeenCalledWith('touchend', jasmine.any(Function));
-          });
           testEndFunction();
         });
         describe('on touchcancel', function() {
@@ -170,7 +173,7 @@ describe('ui.grid.customScrolling', function() {
 
     describe('when gridUtils.isTouchEnabled returns false', function() {
       beforeEach(function() {
-        gridUtil.isTouchEnabled.and.returnValue(false);
+        spyOn(gridUtil, 'isTouchEnabled').and.returnValue(false);
         uiGridScroller(element, scrollHandler);
       });
       it('should initialize uiGridScroller.initiated to NONE', function() {
@@ -209,5 +212,9 @@ describe('ui.grid.customScrolling', function() {
         gridUtil.isTouchEnabled.calls.reset();
       });
     });
+
+    afterEach(function() {
+      uiGridScroller = null;
+    });
   });
-});
+})();
