@@ -84,6 +84,12 @@
   .ui-grid-sort-priority-number {
     margin-left: -8px;
   }
+
+  &:hover {
+    .ui-grid-column-menu-button {
+      display: block;
+    }
+  }
 }
 
 // Make vertical bar in header row fill the height of the cell completely
@@ -93,6 +99,7 @@
 }
 
 .ui-grid-column-menu-button {
+  display: none;
   position: absolute;
   right: @gridBorderWidth; // So it doesn't overlay the vertical bar
   top: 0;
