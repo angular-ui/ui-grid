@@ -12,7 +12,7 @@ set -e
 # before_script:
 #   - curl https://gist.github.com/santiycr/5139565/raw/sauce_connect_setup.sh | bash
 
-# Skip this if we're un a pull request, we won't be able to connect
+# Skip this if we're on a pull request, we won't be able to connect
 if [ $TRAVIS_PULL_REQUEST != "false" ]
 then
   exit 0

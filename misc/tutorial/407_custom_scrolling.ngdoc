@@ -2,30 +2,40 @@
 @name Tutorial: 407 Custom Scrolling
 @description
 
-<div class="alert alert-info" role="alert"><strong>Note</strong> It is highly recommended that you turn this feature on alongside pinning, especially
-if you plan on using ui-grid on devices.</div>
-
-The custom scrolling feature takes over the default scrolling logic in order to ensure that grid scrolling works without a lag on devices.
-To enable, you must include the 'ui.grid.customScrolling' module and you must include the ui-grid-custom-scrolling directive on your grid element.
+The custom scrolling feature allows you to provide your own scroller function to replace default element.on('scroll') function. It is particularly
+helpful if you are facing issues with scrolling on devices or slow machines, because it allows you to use thirdparty scrollers.
 
 Documentation for the custom scrolling feature is provided in the api documentation, in particular:
 
-- {@link api/ui.grid.customScrolling.constant:uiGridScrollerConstants uiGridScrollerConstants}
-- {@link api/ui.grid.customScrolling.service:uiGridScroller uiGridScroller}
-- {@link api/ui.grid.customScrolling.directive:uiGridCustomScrolling uiGridCustomScrolling}
+- {@link api/ui.grid.class:GridOptions customScroller}
 
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.pinning', 'ui.grid.customScrolling']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {};
+      $scope.scroll ={
+       top: 0,
+       left: 0
+      };
+
+      $scope.gridOptions = {
+        customScroller: function myScrolling(uiGridViewport, scrollHandler) {
+          uiGridViewport.on('scroll', function myScrollingOverride(event) {
+            $scope.scroll.top = uiGridViewport[0].scrollTop;
+            $scope.scroll.left = uiGridViewport[0].scrollLeft;
+
+            // You should always pass the event to the callback since ui-grid needs it
+            scrollHandler(event);
+          });
+        }
+      };
 
       $scope.gridOptions.columnDefs = [
-        { name:'id', width:50, enablePinning:false },
-        { name:'name', width:100, pinnedLeft:true },
-        { name:'age', width:100, pinnedRight:true  },
+        { name:'id', width:50 },
+        { name:'name', width:100 },
+        { name:'age', width:100 },
         { name:'address.street', width:150  },
         { name:'address.city', width:150 },
         { name:'address.state', width:50 },
@@ -47,7 +57,17 @@ Documentation for the custom scrolling feature is provided in the api documentat
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" class="grid" ui-grid-pinning ui-grid-custom-scrolling></div>
+      <div class="row">
+        <label class="col-sm-2">Scroll Top: </label>
+        <div class="col-sm-4">
+          {{ scroll.top }}
+        </div>
+        <label class="col-sm-2">Scroll Left: </label>
+        <div class="col-sm-4">
+          {{ scroll.left }}
+        </div>
+      </div>
+      <div ui-grid="gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
