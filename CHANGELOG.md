@@ -1,3 +1,11 @@
+<a name="v4.0.1"></a>
+### v4.0.1 (2016-12-15)
+
+
+#### Bug Fixes
+
+* **core:** Adding back digest triggers when using $timeout ([d8820874](http://github.com/angular-ui/ng-grid/commit/d8820874312250919a64d0dbfa26b6a6f7e6286b))
+
 <a name="v4.0.0"></a>
 ## v4.0.0 (2016-12-09)
 
