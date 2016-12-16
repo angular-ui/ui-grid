@@ -495,6 +495,15 @@ angular.module('ui.grid')
       baseOptions.rowTemplate = baseOptions.rowTemplate || 'ui-grid/ui-grid-row';
 
       /**
+       * @ngdoc string
+       * @name gridMenuTemplate
+       * @propertyOf ui.grid.class:GridOptions
+       * @description (optional) 'ui-grid/uiGridMenu' by default. When provided, this setting uses a
+       * custom grid menu template.
+       */
+      baseOptions.gridMenuTemplate = baseOptions.gridMenuTemplate || 'ui-grid/uiGridMenu';
+
+      /**
        * @ngdoc object
        * @name appScopeProvider
        * @propertyOf ui.grid.class:GridOptions
