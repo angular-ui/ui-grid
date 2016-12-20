@@ -59,9 +59,9 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
       if (uiGridCtrl) {
         setupHeightStyle(uiGridCtrl.grid.gridHeight);
-        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
+        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function (oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
           setupHeightStyle(newGridHeight);
-		});
+        });
       }
 
       $scope.i18n = {

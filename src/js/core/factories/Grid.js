@@ -20,7 +20,7 @@ angular.module('ui.grid')
    */
   var Grid = function Grid(options) {
     var self = this;
-  
+
     /**
      * @ngdoc property
      * @name i18n
@@ -28,7 +28,7 @@ angular.module('ui.grid')
      * @description for use Locale just set this property: i18n: 'ru'
      */
     self.i18n = options.i18n;
-    
+
     // Get the id out of the options, then remove it
     if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
       if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
@@ -2163,7 +2163,7 @@ angular.module('ui.grid')
       }
 
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
-      $timeout(function() {
+      window.setTimeout(function() {
         // var oldHeaderHeight = self.grid.headerHeight;
         // self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
 
@@ -2254,13 +2254,13 @@ angular.module('ui.grid')
         }
 
         p.resolve();
-      }, 0, false);
+      }, 0);
     }
     else {
       // Timeout still needs to be here to trigger digest after styles have been rebuilt
-      $timeout(function() {
+      window.setTimeout(function() {
         p.resolve();
-      }, 0, false);
+      }, 0);
     }
 
     return p.promise;
