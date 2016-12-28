@@ -1066,7 +1066,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description returns the GridRow that contains the rowEntity
    * @param {object} rowEntity the gridOptions.data array element instance
-   * @param {array} rows [optional] the rows to look in - if not provided then
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
    * looks in grid.rows
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
@@ -1131,13 +1131,20 @@ angular.module('ui.grid')
     self.rows.length = 0;
 
     newRawData.forEach( function( newEntity, i ) {
-      var newRow;
+      var newRow, oldRow;
+
       if ( self.options.enableRowHashing ){
         // if hashing is enabled, then this row will be in the hash if we already know about it
-        newRow = oldRowHash.get( newEntity );
+        oldRow = oldRowHash.get( newEntity );
       } else {
         // otherwise, manually search the oldRows to see if we can find this row
-        newRow = self.getRow(newEntity, oldRows);
+        oldRow = self.getRow(newEntity, oldRows);
+      }
+
+      // update newRow to have an entity
+      if ( oldRow ) {
+        newRow = oldRow;
+        newRow.entity = newEntity;
       }
 
       // if we didn't find the row, it must be new, so create it
