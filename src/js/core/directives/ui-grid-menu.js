@@ -196,13 +196,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         angular.element($window).on('resize', applyHideMenu);
       }
 
-      $scope.$on('$destroy', function () {
-        angular.element(document).off('click touchstart', applyHideMenu);
-      });
-
-
-      $scope.$on('$destroy', function() {
+      $scope.$on('$destroy', function unbindEvents() {
         angular.element($window).off('resize', applyHideMenu);
+        angular.element(document).off('click touchstart', applyHideMenu);
+        $elm.off('keyup', checkKeyUp);
+        $elm.off('keydown', checkKeyDown);
       });
 
       if (uiGridCtrl) {
