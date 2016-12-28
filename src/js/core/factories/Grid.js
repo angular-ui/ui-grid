@@ -1134,7 +1134,11 @@ angular.module('ui.grid')
       var newRow;
       if ( self.options.enableRowHashing ){
         // if hashing is enabled, then this row will be in the hash if we already know about it
-        newRow = oldRowHash.get( newEntity );
+        var oldRow = oldRowHash.get( newEntity );
+        if ( oldRow ) {
+          newRow = oldRow;
+          newRow.entity = newEntity;
+        }
       } else {
         // otherwise, manually search the oldRows to see if we can find this row
         newRow = self.getRow(newEntity, oldRows);
