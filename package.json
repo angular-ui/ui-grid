@@ -5,6 +5,7 @@
   "directories": {
     "test": "test"
   },
+  "main": "index.js",
   "scripts": {
     "init": "validate-commit-msg",
     "test": "grunt",
