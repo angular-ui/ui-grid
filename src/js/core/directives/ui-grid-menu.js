@@ -40,11 +40,19 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       autoHide: '=?'
     },
     require: '?^uiGrid',
-    templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-
       $scope.dynamicStyles = '';
+
+      if (uiGridCtrl) {
+        $scope.grid = uiGridCtrl.grid;
+        var gridMenuTemplate = $scope.grid.options.gridMenuTemplate;
+        gridUtil.getTemplate(gridMenuTemplate).then(function (contents) {
+          var template = angular.element(contents);
+          var newElm = $compile(template)($scope);
+          $elm.append(newElm);
+        });
+      }
 
       var setupHeightStyle = function(gridHeight) {
         //menu appears under header row, so substract that height from it's total
@@ -61,7 +69,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         setupHeightStyle(uiGridCtrl.grid.gridHeight);
         uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
           setupHeightStyle(newGridHeight);
-		});
+        });
       }
 
       $scope.i18n = {
