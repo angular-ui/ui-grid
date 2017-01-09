@@ -51,6 +51,7 @@ describe('GridOptions factory', function () {
         footerTemplate: 'ui-grid/ui-grid-footer',
         gridFooterTemplate: 'ui-grid/ui-grid-grid-footer',
         rowTemplate: 'ui-grid/ui-grid-row',
+        gridMenuTemplate: 'ui-grid/uiGridMenu',
         appScopeProvider: null
       });
     });
@@ -96,6 +97,7 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       };
@@ -139,6 +141,7 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       });
@@ -185,6 +188,7 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -227,6 +231,7 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : null
       });

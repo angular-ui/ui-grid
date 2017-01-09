@@ -46,34 +46,6 @@ module.exports = function ( grunt ) {
         }
       ]
     },
-    font_cut_release: {
-      files: [
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/fonts/',
-          src: '**/*.eot',
-          dest: '<%= dist %>/release/fonts/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/fonts/',
-          src: '**/*.svg',
-          dest: '<%= dist %>/release/fonts/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/fonts/',
-          src: '**/*.ttf',
-          dest: '<%= dist %>/release/fonts/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/fonts/',
-          src: '**/*.woff',
-          dest: '<%= dist %>/release/fonts/' + currentTag
-        }
-      ]
-    },
     less_customizer: {
       files: [
         {

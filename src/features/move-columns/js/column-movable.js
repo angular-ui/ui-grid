@@ -565,6 +565,8 @@
                     movingElm.css({'width': reducedWidth + 'px'});
                   }
                 };
+
+                $scope.$on('$destroy', offAllEvents);
               }
             }
           };

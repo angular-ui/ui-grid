@@ -1,3 +1,18 @@
+<a name="v4.0.2"></a>
+### v4.0.2 (2016-12-30)
+
+
+#### Bug Fixes
+
+* **bower and npm:** Fixing bower.json and package.json configuration. ([84b4f328](http://github.com/angular-ui/ng-grid/commit/84b4f3284e5d928e6dc713f4c33a29d0d233ae52))
+* **memory_leaks:** Ensuring events get unbound when grid is destroyed. (#5913) ([da942e90](http://github.com/angular-ui/ng-grid/commit/da942e90f082b851a08a3114813af88cc5d8b85e))
+* **modifyRows:** modifyRows uses the new entity when using enableRowHashing ([138d1499](http://github.com/angular-ui/ng-grid/commit/138d14994d240764f7be71d25c3034e2eaadb0a7))
+
+
+#### Features
+
+* **core:** expose GridMenuTemplate ([5f15eab5](http://github.com/angular-ui/ng-grid/commit/5f15eab5f9234d47de5d45def65829b3818922ef))
+
 <a name="v4.0.1"></a>
 ### v4.0.1 (2016-12-15)
 
