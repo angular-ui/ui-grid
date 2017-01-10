@@ -4,7 +4,7 @@
     class="ui-grid-cell-contents">
     <i ng-if="!row.groupHeader==true"
       ng-class="{clicable: true, 'ui-grid-icon-plus-squared' : !row.isExpanded, 'ui-grid-icon-minus-squared' : row.isExpanded }"
-      ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">
+      ng-click="grid.api.expandable.toggleRowExpansion(row.entity, $event)">
     </i>
   </div>
 </div>
