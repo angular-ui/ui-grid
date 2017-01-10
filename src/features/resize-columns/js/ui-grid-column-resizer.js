@@ -199,7 +199,9 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            var grid = uiGridCtrl.grid;
+            var grid = uiGridCtrl.grid,
+              resizerScopes = [],
+              resizers = [];
 
             if (grid.options.enableColumnResizing) {
               var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
