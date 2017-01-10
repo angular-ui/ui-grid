@@ -113,13 +113,11 @@
               previousMouseX = event.pageX;
 
               $scope.mousedownStartTime = (new Date()).getTime();
-              $scope.mousedownTimeout = $timeout(function() { }, mousedownTimeout);
-
-              $scope.mousedownTimeout.then(function () {
+              $scope.mousedownTimeout = window.setTimeout(function() {
                 if ( $scope.colMenu ) {
                   uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
-              });
+              }, mousedownTimeout);
 
               uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
 
@@ -135,7 +133,7 @@
 
             $scope.upFn = function( event ){
               event.stopPropagation();
-              $timeout.cancel($scope.mousedownTimeout);
+              window.clearTimeout($scope.mousedownTimeout);
               $scope.offAllEvents();
               $scope.onDownEvents(event.type);
 
@@ -159,7 +157,7 @@
               if ( changeValue === 0 ){ return; }
 
               // we're a move, so do nothing and leave for column move (if enabled) to take over
-              $timeout.cancel($scope.mousedownTimeout);
+              window.clearTimeout($scope.mousedownTimeout);
               $scope.offAllEvents();
               $scope.onDownEvents(event.type);
             };
