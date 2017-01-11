@@ -935,7 +935,7 @@
 
                 // don't re-enable the touchend handler for a little while - some devices generate both, and it will
                 // take a little while to move your hand from the mouse to the screen if you have both modes of input
-                $timeout(function () {
+                window.setTimeout(function () {
                   $elm.on('touchend', touchEnd);
                 }, touchTimeout);
               };
@@ -958,7 +958,7 @@
 
                 // don't re-enable the click handler for a little while - some devices generate both, and it will
                 // take a little while to move your hand from the screen to the mouse if you have both modes of input
-                $timeout(function () {
+                window.setTimeout(function () {
                   $elm.on('click', selectCells);
                 }, touchTimeout);
               };
