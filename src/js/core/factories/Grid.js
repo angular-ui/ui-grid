@@ -1563,7 +1563,7 @@ angular.module('ui.grid')
 
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.refreshCanceller;
   };
@@ -1588,7 +1588,7 @@ angular.module('ui.grid')
 
     self.gridRefreshCanceller.then(function () {
       self.gridRefreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.gridRefreshCanceller;
   };
@@ -2068,17 +2068,17 @@ angular.module('ui.grid')
 
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
       self.setVisibleRows(renderableRows);
-    });
+    }).catch(angular.noop);
 
     var p2 = self.processColumnsProcessors(self.columns).then(function (renderableColumns) {
       self.setVisibleColumns(renderableColumns);
-    });
+    }).catch(angular.noop);
 
     return $q.all([p1, p2]).then(function () {
       self.redrawInPlace(rowsAltered);
 
       self.refreshCanvas(true);
-    });
+    }).catch(angular.noop);
   };
 
   /**
