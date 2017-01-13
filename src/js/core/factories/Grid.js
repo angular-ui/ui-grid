@@ -1362,7 +1362,7 @@ angular.module('ui.grid')
           else {
             finished.resolve(processedRows);
           }
-        });
+        }).catch(angular.noop);
     }
 
     // Start on the first processor
