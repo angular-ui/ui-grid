@@ -59,7 +59,7 @@
                 }
 
                 $scope.grid.queueRefresh();
-              });
+              }).catch(angular.noop);
 
             function updateHeaderReferences() {
               containerCtrl.header = containerCtrl.colContainer.header = $elm;
