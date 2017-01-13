@@ -50,7 +50,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           var template = angular.element(contents);
           var newElm = $compile(template)($scope);
           $elm.replaceWith(newElm);
-        });
+        }).catch(angular.noop);
       }
 
       var setupHeightStyle = function(gridHeight) {
