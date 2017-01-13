@@ -913,7 +913,7 @@ angular.module('ui.grid')
       if (self.rows.length > 0){
         self.assignTypes();
       }
-    });
+    }).catch(angular.noop);
   };
 
   Grid.prototype.preCompileCellTemplate = function(col) {
