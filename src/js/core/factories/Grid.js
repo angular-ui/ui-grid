@@ -943,7 +943,7 @@ angular.module('ui.grid')
       } else if ( col.cellTemplatePromise ){
         col.cellTemplatePromise.then( function() {
           self.preCompileCellTemplate( col );
-        });
+        }).catch(angular.noop);
       }
     });
   };
