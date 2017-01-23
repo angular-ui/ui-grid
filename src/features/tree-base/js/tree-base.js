@@ -1013,12 +1013,10 @@
         if ( grid.options.treeRowHeaderAlwaysVisible === false && grid.treeBase.numberLevels <= 0 ){
           newVisibility = false;
         }
-        if ( rowHeader ) {
-          if ( rowHeader.visible !== newVisibility ) {
-            rowHeader.visible = newVisibility;
-            rowHeader.colDef.visible = newVisibility;
-            grid.queueGridRefresh();
-          }
+        if ( rowHeader  && rowHeader.visible !== newVisibility ) {
+          rowHeader.visible = newVisibility;
+          rowHeader.colDef.visible = newVisibility;
+          grid.queueGridRefresh();
         }
       },
 
