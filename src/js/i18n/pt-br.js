@@ -89,7 +89,7 @@
           },
           sizes: 'itens por página',
           totalItems: 'itens',
-          through: 'a',
+          through: 'através dos',
           of: 'de'
         },
         grouping: {
