@@ -2074,10 +2074,10 @@ angular.module('ui.grid')
       self.setVisibleColumns(renderableColumns);
     });
 
-    return $q.all([p1, p2]).then(function () {
-      self.redrawInPlace(rowsAltered);
+    var p3 = self.refreshCanvas(true);
 
-      self.refreshCanvas(true);
+    return $q.all([p1, p2, p3]).then(function () {
+      self.redrawInPlace(rowsAltered);
     });
   };
 
