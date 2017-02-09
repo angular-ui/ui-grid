@@ -19,7 +19,9 @@
 </div>
 <div class="ngViewport" unselectable="on" ng-viewport ng-class="{'ui-widget-content': jqueryUITheme}" ng-style="viewportStyle()">
     <div class="ngCanvas" ng-style="canvasStyle()">
-        <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" ng-class="row.alternatingRowClass()" ng-row></div>
+        <div ng-style="rowStyle(row)" ng-repeat="row in renderedRows" ng-click="row.toggleSelected($event)" ng-class="row.alternatingRowClass()" ng-row class="rowDiv">
+
+        </div>
     </div>
 </div>
 <div ng-grid-footer></div>
