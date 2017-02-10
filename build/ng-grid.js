@@ -1868,7 +1868,7 @@ var ngGrid = function ($scope, options, sortService, domUtilityService, $filter,
                 var w = col.width + colwidths;
                 if (col.pinned) {
                     addCol(col);
-                    var newLeft = i > 0 ? (scrollLeft + totalLeft) : scrollLeft;
+                    var newLeft = Math.round(i > 0 ? (scrollLeft + totalLeft) : scrollLeft);
                     domUtilityService.setColLeft(col, newLeft, self);
                     totalLeft += col.width;
                 } else {
