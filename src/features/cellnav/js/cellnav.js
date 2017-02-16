@@ -418,7 +418,7 @@
            *  <br/>Defaults to false
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
-          
+
           /**
            *  @ngdoc array
            *  @name keyDownOverrides
@@ -771,6 +771,17 @@
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               var _scope = $scope;
               var grid = uiGridCtrl.grid;
+              var usesAria = true;
+
+              // Detect whether we are using ngAria
+              // (if ngAria module is not used then the stuff inside addAriaLiveRegion
+              // is not used and provides extra fluff)
+              try {
+                angular.module('ngAria');
+              }
+              catch (err) {
+                usesAria = false;
+              }
 
               function addAriaLiveRegion(){
                 // Thanks to google docs for the inspiration behind how to do this
@@ -832,7 +843,10 @@
 
                 });
               }
-              addAriaLiveRegion();
+              // Only add the ngAria stuff it will be used
+              if (usesAria) {
+                addAriaLiveRegion();
+              }
             }
           };
         }
