@@ -98,30 +98,30 @@
               col[providedType] = colDef[templateType];
             }
  
-             templateGetPromises.push(gridUtil.getTemplate(col[providedType])
-                .then(
-                function (template) {
-                  if ( angular.isFunction(template) ) { template = template(); }
-                  var tooltipCall = ( tooltipType === 'cellTooltip' ) ? 'col.cellTooltip(row,col)' : 'col.headerTooltip(col)';
-                  if ( tooltipType && col[tooltipType] === false ){
-                    template = template.replace(uiGridConstants.TOOLTIP, '');
-                  } else if ( tooltipType && col[tooltipType] ){
-                    template = template.replace(uiGridConstants.TOOLTIP, 'title="{{' + tooltipCall + ' CUSTOM_FILTERS }}"');
-                  }
+            var templatePromises = gridUtil.getTemplate(col[providedType])
+              .then(function (template) {
+                if ( angular.isFunction(template) ) { template = template(); }
+                var tooltipCall = ( tooltipType === 'cellTooltip' ) ? 'col.cellTooltip(row,col)' : 'col.headerTooltip(col)';
+                if ( tooltipType && col[tooltipType] === false ){
+                  template = template.replace(uiGridConstants.TOOLTIP, '');
+                } else if ( tooltipType && col[tooltipType] ){
+                  template = template.replace(uiGridConstants.TOOLTIP, 'title="{{' + tooltipCall + ' CUSTOM_FILTERS }}"');
+                }
 
-                  if ( filterType ){
-                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
-                      return col[filterType] ? "|" + col[filterType] : "";
-                    });
-                  } else {
-                    col[templateType] = template;
-                  }
-                },
-                function (res) {
-                  throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
-                })
-            );
+                if ( filterType ){
+                  col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
+                    return col[filterType] ? "|" + col[filterType] : "";
+                  });
+                } else {
+                  col[templateType] = template;
+                }
+              },
+              function (res) {
+                throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
+              });
 
+            templateGetPromises.push(templatePromises);
+            return templatePromises;
           };
 
 
@@ -134,8 +134,7 @@
            * must contain a div that can receive focus.
            *
            */
-          processTemplate( 'cellTemplate', 'providedCellTemplate', 'ui-grid/uiGridCell', 'cellFilter', 'cellTooltip' );
-          col.cellTemplatePromise = templateGetPromises[0];
+          col.cellTemplatePromise = processTemplate( 'cellTemplate', 'providedCellTemplate', 'ui-grid/uiGridCell', 'cellFilter', 'cellTooltip' );
 
           /**
            * @ngdoc property
@@ -145,7 +144,7 @@
            * is ui-grid/uiGridHeaderCell
            *
            */
-          processTemplate( 'headerCellTemplate', 'providedHeaderCellTemplate', 'ui-grid/uiGridHeaderCell', 'headerCellFilter', 'headerTooltip' );
+          col.headerCellTemplatePromise = processTemplate( 'headerCellTemplate', 'providedHeaderCellTemplate', 'ui-grid/uiGridHeaderCell', 'headerCellFilter', 'headerTooltip' );
 
           /**
            * @ngdoc property
@@ -155,7 +154,7 @@
            * is ui-grid/uiGridFooterCell
            *
            */
-          processTemplate( 'footerCellTemplate', 'providedFooterCellTemplate', 'ui-grid/uiGridFooterCell', 'footerCellFilter' );
+          col.footerCellTemplatePromise = processTemplate( 'footerCellTemplate', 'providedFooterCellTemplate', 'ui-grid/uiGridFooterCell', 'footerCellFilter' );
 
           /**
            * @ngdoc property
@@ -164,7 +163,7 @@
            * @description a custom template for the filter input.  The default is ui-grid/ui-grid-filter
            *
            */
-          processTemplate( 'filterHeaderTemplate', 'providedFilterHeaderTemplate', 'ui-grid/ui-grid-filter' );
+          col.filterHeaderTemplatePromise = processTemplate( 'filterHeaderTemplate', 'providedFilterHeaderTemplate', 'ui-grid/ui-grid-filter' );
 
           // Create a promise for the compiled element function
           col.compiledElementFnDefer = $q.defer();
