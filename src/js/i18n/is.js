@@ -95,12 +95,12 @@
         grouping: {
           group: 'Flokka',
           ungroup: 'Sundurliða',
-          aggregate_count: 'Summa: Fjöldi',
-          aggregate_sum: 'Summa: Summa',
-          aggregate_max: 'Summa: Hámark',
-          aggregate_min: 'Summa: Lágmark',
-          aggregate_avg: 'Summa: Meðaltal',
-          aggregate_remove: 'Summa: Fjarlægja'
+          aggregate_count: 'Fjöldi: ',
+          aggregate_sum: 'Summa: ',
+          aggregate_max: 'Hámark: ',
+          aggregate_min: 'Lágmark: ',
+          aggregate_avg: 'Meðaltal: ',
+          aggregate_remove: 'Fjarlægja: '
         },
         validate: {
           error: 'Villa:',
