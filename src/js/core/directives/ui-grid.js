@@ -31,7 +31,7 @@
               self.grid.preCompileCellTemplates();
 
               self.grid.refreshCanvas(true);
-            });
+            }).catch(angular.noop);
         });
       }
 
@@ -74,7 +74,7 @@
               self.grid.preCompileCellTemplates();
 
               self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
-            });
+            }).catch(angular.noop);
         }
       }
 
@@ -118,7 +118,7 @@
             promises.push(self.grid.buildColumns()
               .then(function() {
                 self.grid.preCompileCellTemplates();
-              }));
+              }).catch(angular.noop));
           }
 
           $q.all(promises).then(function() {
@@ -133,8 +133,8 @@
                   self.grid.refreshCanvas(true);
                   self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.ROW);
                 });
-              });
-          });
+              }).catch(angular.noop);
+          }).catch(angular.noop);
         }
       }
 

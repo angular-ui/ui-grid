@@ -28,7 +28,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
                   compiledElementFn($scope, function(clonedElement, scope) {
                     $elm.append(clonedElement);
                   });
-                });
+                }).catch(angular.noop);
             }
             else {
               var html = $scope.col.cellTemplate

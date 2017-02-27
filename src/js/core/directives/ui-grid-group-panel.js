@@ -20,7 +20,7 @@
                 
                 var newElm = $compile(template)($scope);
                 $elm.append(newElm);
-              });
+              }).catch(angular.noop);
           },
 
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
