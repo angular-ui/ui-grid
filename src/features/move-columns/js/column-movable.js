@@ -306,7 +306,7 @@
                  * and we instead get a mouseup or a touchend, then we just drop out again and do nothing.
                  *
                  */
-                var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
+                var contentsSelector = '.ui-grid-cell-contents';
 
                 var gridLeft;
                 var previousMouseX;
@@ -471,13 +471,13 @@
                 };
 
                 var onDownEvents = function(){
-                  $contentsElm.on('touchstart', downFn);
-                  $contentsElm.on('mousedown', downFn);
+                  $elm.on('touchstart', contentsSelector, downFn);
+                  $elm.on('mousedown', contentsSelector, downFn);
                 };
 
                 var offAllEvents = function() {
-                  $contentsElm.off('touchstart', downFn);
-                  $contentsElm.off('mousedown', downFn);
+                  $elm.off('touchstart', contentsSelector, downFn);
+                  $elm.off('mousedown', contentsSelector, downFn);
 
                   $document.off('mousemove', moveFn);
                   $document.off('touchmove', moveFn);

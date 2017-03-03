@@ -352,13 +352,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
       // See if the template is itself a promise
       if (angular.isFunction(template.then)) {
-        return template.then(s.postProcessTemplate);
+        return template.then(s.postProcessTemplate).catch(angular.noop);
       }
 
       // If the template is an element, return the element
       try {
         if (angular.element(template).length > 0) {
-          return $q.when(template).then(s.postProcessTemplate);
+          return $q.when(template).then(s.postProcessTemplate).catch(angular.noop);
         }
       }
       catch (err){
@@ -380,7 +380,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
             throw new Error("Could not get template " + template + ": " + err);
           }
         )
-        .then(s.postProcessTemplate);
+        .then(s.postProcessTemplate).catch(angular.noop);
     },
 
     //

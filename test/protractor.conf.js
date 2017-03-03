@@ -37,6 +37,6 @@ exports.config = {
       // Since the site has some serious element contrast issues this is needed.
       treatWarningsAsFailures: false
     },
-    path: '../node_modules/protractor/plugins/accessibility'
+    package: 'protractor-accessibility-plugin'
   }]
 };
