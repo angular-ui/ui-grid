@@ -977,7 +977,7 @@
                     if ($elm[0].type === 'checkbox') {
                       $elm.off('blur', $scope.stopEdit);
                       $timeout(function() {
-                        $elm.focus();
+                        $elm[0].focus();
                         $elm.on('blur', $scope.stopEdit);
                       });
                     }
