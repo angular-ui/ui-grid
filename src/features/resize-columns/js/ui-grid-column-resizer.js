@@ -199,7 +199,9 @@
       compile: function() {
         return {
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            var grid = uiGridCtrl.grid;
+            var grid = uiGridCtrl.grid,
+              resizerScopes = [],
+              resizers = [];
 
             if (grid.options.enableColumnResizing) {
               var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
@@ -211,13 +213,9 @@
                 rtlMultiplier = -1;
               }
 
-              var displayResizers = function(){
+              var displayResizers = function () {
 
-                // remove any existing resizers.
-                var resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
-                for ( var i = 0; i < resizers.length; i++ ){
-                  angular.element(resizers[i]).remove();
-                }
+                removeResizers();
 
                 // get the target column for the left resizer
                 var otherCol = uiGridResizeColumnsService.findTargetCol($scope.col, 'left', rtlMultiplier);
@@ -227,18 +225,29 @@
                 if (otherCol && renderContainer.visibleColumnCache.indexOf($scope.col) !== 0 && otherCol.colDef.enableColumnResizing !== false) {
                   var resizerLeft = angular.element(columnResizerElm).clone();
                   resizerLeft.attr('position', 'left');
-
                   $elm.prepend(resizerLeft);
-                  $compile(resizerLeft)($scope);
+                  $compile(resizerLeft)(resizerScopes[resizerScopes.push($scope.$new()) - 1]);
                 }
 
                 // Don't append the right resizer if this column has resizing disabled
                 if ($scope.col.colDef.enableColumnResizing !== false) {
                   var resizerRight = angular.element(columnResizerElm).clone();
                   resizerRight.attr('position', 'right');
-
                   $elm.append(resizerRight);
-                  $compile(resizerRight)($scope);
+                  $compile(resizerRight)(resizerScopes[resizerScopes.push($scope.$new()) - 1]);
+                }
+              };
+
+              var removeResizers = function() {
+                // remove any existing resizer scopes.
+                for (var x = resizerScopes.length - 1; x >= 0; x--) {
+                  resizerScopes[x].$destroy();
+                  resizerScopes.splice(x);
+                }
+                // remove any existing resizer elements.
+                resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
+                for (var i = resizers.length - 1; i >= 0; i--) {
+                  angular.element(resizers[i]).remove();
                 }
               };
 
@@ -250,7 +259,10 @@
 
               var dataChangeDereg = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
 
-              $scope.$on( '$destroy', dataChangeDereg );
+              $scope.$on( '$destroy',function() {
+                dataChangeDereg();
+                removeResizers();
+              });
             }
           }
         };
