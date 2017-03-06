@@ -67,7 +67,7 @@
             // Store a reference to menu element
             var $colMenu = angular.element( $elm[0].querySelectorAll('.ui-grid-header-cell-menu') );
 
-            var contentsSelector = '.ui-grid-cell-contents';
+            var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
 
 
             // apply any headerCellClass
@@ -166,13 +166,13 @@
 
             $scope.clickFn = function ( event ){
               event.stopPropagation();
-              $elm.off('click', contentsSelector, $scope.clickFn);
+              $contentsElm.off('click', $scope.clickFn);
             };
 
 
             $scope.offAllEvents = function(){
-              $elm.off('touchstart', contentsSelector, $scope.downFn);
-              $elm.off('mousedown', contentsSelector, $scope.downFn);
+              $contentsElm.off('touchstart', $scope.downFn);
+              $contentsElm.off('mousedown', $scope.downFn);
 
               $document.off('touchend', $scope.upFn);
               $document.off('mouseup', $scope.upFn);
@@ -180,7 +180,7 @@
               $document.off('touchmove', $scope.moveFn);
               $document.off('mousemove', $scope.moveFn);
 
-              $elm.off('click', contentsSelector, $scope.clickFn);
+              $contentsElm.off('click', $scope.clickFn);
             };
 
             $scope.onDownEvents = function( type ){
@@ -192,24 +192,24 @@
               switch (type){
                 case 'touchmove':
                 case 'touchend':
-                  $elm.on('click', contentsSelector, $scope.clickFn);
-                  $elm.on('touchstart', contentsSelector, $scope.downFn);
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('touchstart', $scope.downFn);
                   $timeout(function(){
-                    $elm.on('mousedown', contentsSelector, $scope.downFn);
+                    $contentsElm.on('mousedown', $scope.downFn);
                   }, changeModeTimeout);
                   break;
                 case 'mousemove':
                 case 'mouseup':
-                  $elm.on('click', contentsSelector, $scope.clickFn);
-                  $elm.on('mousedown', contentsSelector, $scope.downFn);
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('mousedown', $scope.downFn);
                   $timeout(function(){
-                    $elm.on('touchstart', contentsSelector, $scope.downFn);
+                    $contentsElm.on('touchstart', $scope.downFn);
                   }, changeModeTimeout);
                   break;
                 default:
-                  $elm.on('click', contentsSelector, $scope.clickFn);
-                  $elm.on('touchstart', contentsSelector, $scope.downFn);
-                  $elm.on('mousedown', contentsSelector, $scope.downFn);
+                  $contentsElm.on('click', $scope.clickFn);
+                  $contentsElm.on('touchstart', $scope.downFn);
+                  $contentsElm.on('mousedown', $scope.downFn);
               }
             };
 
