@@ -93,16 +93,6 @@ describe('ui.grid.resizeColumns', function () {
     });
   });
 
-  describe('destroying header cell',function(){
-    it('should have 0 watchers after destroy',function(){
-      var secondCol = $(grid).find('[ui-grid-header-cell]:nth-child(1)');
-      secondCol.parent().scope().$destroy();
-      var numWatchers = secondCol.scope().$$watchers.length;
-
-      expect(numWatchers).toEqual(0);
-    });
-  });
-
   describe('setting enableColumnResizing to false', function () {
     it('should result in no resizer elements being attached to the column', function () {
       $scope.gridOpts.enableColumnResizing = false;
