@@ -72,8 +72,8 @@
         importer: {
           noHeaders: 'Kolonnenavn kunne ikke avledes. Har filen en overskrift?',
           noObjects: 'Objekter kunne ikke avledes. Er der andre data i filen enn overskriften?',
-          invalidCsv: 'Filen kunne ikke prosesseres. Er den gyldig CSV?',
-          invalidJson: 'Filen kunne ikke prosesseres. Er den gyldig JSON?',
+          invalidCsv: 'Filen kunne ikke behandles. Er den gyldig CSV?',
+          invalidJson: 'Filen kunne ikke behandles. Er den gyldig JSON?',
           jsonNotArray: 'Importert JSON-fil må inneholde en liste. Avbryter.'
         },
         pagination: {
