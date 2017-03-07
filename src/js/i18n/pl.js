@@ -60,7 +60,7 @@
         },
         gridMenu: {
           aria: {
-            buttonLabel: 'Opcje siatki'
+            buttonLabel: 'Opcje tabelki'
           },
           columns: 'Kolumny:',
           importerTitle: 'Importuj plik',
