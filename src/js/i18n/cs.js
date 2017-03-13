@@ -54,6 +54,9 @@
                   exporterAllAsPdf: 'Exportovat všechna data do pdf',
                   exporterVisibleAsPdf: 'Exportovat viditelná data do pdf',
                   exporterSelectedAsPdf: 'Exportovat vybraná data do pdf',
+                  exporterAllAsExcel: 'Exportovat všechna data do excel',
+                  exporterVisibleAsExcel: 'Exportovat viditelná data do excel',
+                  exporterSelectedAsExcel: 'Exportovat vybraná data do excel',
                   clearAllFilters: 'Odstranit všechny filtry'
               },
               importer: {

@@ -91,6 +91,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuCsv: true,
         exporterMenuPdf: true,
         exporterFieldCallback: jasmine.any(Function),
+        exporterFieldFormatCallback: jasmine.any(Function),
+        exporterFieldApplyFilters: false,
         exporterAllDataFn: null,
         exporterSuppressColumns: []
       });
@@ -121,8 +123,15 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
+        exporterFieldFormatCallback: callback,
+        exporterFieldApplyFilters: false,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterExcelCustomFormatters: callback,
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
+        exporterExcelHeader: "My Header",
+        exporterExcelFooter: "My Footer"
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -148,9 +157,16 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuCsv: false,
         exporterMenuPdf: false,
         exporterFieldCallback: callback,
+        exporterFieldFormatCallback: callback,
+        exporterFieldApplyFilters: false,
         exporterAllDataFn: callback,
         exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ]
+        exporterSuppressColumns: [ 'buttons' ],
+        exporterExcelFormatters: callback,
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
+        exporterExcelHeader: "My Header",
+        exporterExcelFooter: "My Footer"
       });
     });
   });
