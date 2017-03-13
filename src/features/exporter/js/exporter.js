@@ -795,7 +795,8 @@
           }
 
           columns.forEach( function( gridCol, index ) {
-            if ( gridCol.colDef.exporterSuppressExport !== true &&
+            // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
+            if ( gridCol.colDef.exporterSuppressExport !== true  && gridCol.field !== '$$hashKey' &&
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
               var headerEntry = {
                 name: gridCol.field,
@@ -946,8 +947,9 @@
 
 
               columns.forEach( function( gridCol, index ) {
+              // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
               if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) &&
-                   gridCol.colDef.exporterSuppressExport !== true &&
+                   gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
                    grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
                   var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol );
                   var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) };
