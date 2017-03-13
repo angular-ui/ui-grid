@@ -5,39 +5,56 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
       gridCtrl,
       $compile,
       $rootScope,
+      $timeout,
       uiGridConstants;
 
-  beforeEach(module('ui.grid.selection'));
+  /*
+   NOTES
+   - We have to flush $timeout because the header calculations are done post-$timeout, as that's when the header has been fully rendered.
+   - We have to actually attach the grid element to the document body, otherwise it will not have a rendered height.
+   */
+  function compileUiGridSelectionDirective(parentScope) {
+    var elm = angular.element('<div style="width: 300px; height: 500px" ui-grid="options" ui-grid-selection></div>');
 
-  beforeEach(inject(function(_$rootScope_, _$compile_, _uiGridConstants_) {
-    $compile = _$compile_;
-    $rootScope = _$rootScope_;
-    uiGridConstants = _uiGridConstants_;
+    document.body.appendChild(elm[0]);
+    $compile(elm)(parentScope);
+    $timeout.flush();
+    parentScope.$digest();
+
+    return elm;
+  }
+
+  beforeEach(function() {
+    module('ui.grid.selection');
+
+    inject(function(_$compile_, _$rootScope_, _$timeout_, _uiGridConstants_) {
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
+      uiGridConstants = _uiGridConstants_;
+    });
 
     parentScope = $rootScope.$new();
-
     parentScope.options = {
-      columnDefs : [{field: 'id'}]
+      columnDefs : [{field: 'id'}],
+      data: [],
+      isRowSelectable: function(gridRow) {
+        return gridRow.entity.id % 2 === 0;
+      }
     };
 
-    parentScope.options.isRowSelectable = function(gridRow) {
-      return gridRow.entity.id % 2 === 0;
-    };
-
-    parentScope.options.data = [];
     for (var i = 0; i < 10; i++) {
       parentScope.options.data.push({id: i});
     }
 
-    var tpl = '<div ui-grid="options" ui-grid-selection options="options"></div>';
-    elm = $compile(tpl)(parentScope);
-
-    parentScope.$digest();
+    elm = compileUiGridSelectionDirective(parentScope);
     scope = elm.scope();
-
     gridCtrl = elm.controller('uiGrid');
+  });
 
-  }));
+  it('should add the row header selection buttons', function() {
+    expect($(elm).find('.ui-grid-header .ui-grid-selection-row-header-buttons').length).toEqual(1);
+  });
 
   it('should set the "enableSelection" field of the row using the function specified in "isRowSelectable"', function() {
     for (var i = 0; i < gridCtrl.grid.rows.length; i++) {
@@ -56,25 +73,10 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
   });
 
   describe('with filtering turned on', function () {
-    var elm, $timeout;
-
-    /*
-      NOTES
-       - We have to flush $timeout because the header calculations are done post-$timeout, as that's when the header has been fully rendered.
-       - We have to actually attach the grid element to the document body, otherwise it will not have a rendered height.
-    */
-
-    beforeEach(inject(function (_$timeout_) {
-      $timeout = _$timeout_;
-
+    beforeEach(function () {
       parentScope.options.enableFiltering = true;
-
-      elm = angular.element('<div style="width: 300px; height: 500px" ui-grid="options" ui-grid-selection></div>');
-      document.body.appendChild(elm[0]);
-      $compile(elm)(parentScope);
-      $timeout.flush();
-      parentScope.$digest();
-    }));
+      elm = compileUiGridSelectionDirective(parentScope);
+    });
 
     afterEach(function () {
       $(elm).remove();
@@ -93,6 +95,32 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
 
       expect(noFilteringHeight).not.toEqual(filteringHeight);
       expect(noFilteringHeight < filteringHeight).toBe(true);
+    });
+  });
+
+  describe('when row header selection is turned off', function() {
+    beforeEach(function () {
+      parentScope.options.enableRowHeaderSelection = false;
+      elm = compileUiGridSelectionDirective(parentScope);
+    });
+
+    it('should not add the row header selection buttons', function() {
+      expect($(elm).find('.ui-grid-header .ui-grid-selection-row-header-buttons').length).toEqual(0);
+    });
+  });
+
+  describe('when isRowSelectable is not defined', function() {
+    beforeEach(function () {
+      delete parentScope.options.isRowSelectable;
+      elm = compileUiGridSelectionDirective(parentScope);
+      gridCtrl = elm.controller('uiGrid');
+    });
+
+    it('should not define enableSelection', function() {
+      for (var i = 0; i < gridCtrl.grid.rows.length; i++) {
+        var currentRow = gridCtrl.grid.rows[i];
+        expect(currentRow.enableSelection).toBeUndefined();
+      }
     });
   });
 });

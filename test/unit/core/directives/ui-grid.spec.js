@@ -1,86 +1,42 @@
 describe('ui-grid', function() {
+  var $compile, $document, $rootScope, $timeout, element, scope, gridApi;
 
-  beforeEach(module('ui.grid'));
-  // beforeEach(module('ui.grid.body'));
-  // beforeEach(module('ui.grid.header'));
+  function compileGrid(template, options) {
+    element = angular.element(template);
 
-  /*describe('ui-grid calculated columns', function() {
-    var element, scope;
+    scope = $rootScope;
+    scope.gridOptions = {
+      data: [
+        { col1: 'col1', col2: 'col2' }
+      ],
+      onRegisterApi: function( api ){
+        gridApi = api;
+      }
+    };
 
-    beforeEach(inject(function($compile, $rootScope) {
-      element = angular.element('<div class="col-md-5" ui-grid="data" ui-grid-table-class="table"></div>');
-      scope = $rootScope;
-      scope.data = [{ col1: 'col1', col2: 'col2' }];
-      $compile(element)(scope);
-      scope.$digest();
-    }));
+    angular.extend(scope.gridOptions, options);
 
-    it('gets columns correctly', function() {
-      expect(element.isolateScope().gridOptions.columnDefs.length).toBe(2);
-      expect(element.isolateScope().gridOptions.columnDefs[0].name).toBe('Col1');
-      expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('col1');
+    $compile(element)(scope);
+
+    $document[0].body.appendChild(element[0]);
+    scope.$apply();
+  }
+
+  beforeEach(function() {
+    module('ui.grid');
+
+    inject(function(_$compile_, _$document_, _$rootScope_, _$timeout_) {
+      $compile = _$compile_;
+      $document = _$document_;
+      $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
     });
-
   });
-
-  describe('ui-grid declarative columns', function() {
-      var element, scope;
-
-      beforeEach(inject(function($compile, $rootScope) {
-        element = angular.element('<div class="col-md-5" ui-grid="data" ui-grid-columns="[{name:\'Decl Col 1\',field:\'declCol1\'}]" ui-grid-table-class="table"></div>');
-        scope = $rootScope;
-        scope.data = [{ declCol1: 'col1', declCol2: 'col2' }];
-        $compile(element)(scope);
-        scope.$digest();
-      }));
-
-      it('gets columns correctly', function() {
-        expect(element.isolateScope().gridOptions.columnDefs.length).toBe(1);
-        expect(element.isolateScope().gridOptions.columnDefs[0].name).toBe('Decl Col 1');
-        expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('declCol1');
-      });
-
-  });
-
-  describe('ui-grid imperative columns', function () {
-    var element, scope;
-
-    beforeEach(inject(function ($compile, $rootScope) {
-      element = angular.element('<div class="col-md-5" ui-grid="data" ui-grid-options="myGridOptions" ui-grid-columns="[{name:\'Decl Col 1\',field:\'declCol1\'}]" ui-grid-table-class="table"></div>');
-      scope = $rootScope;
-      scope.data = [{ impCol1: 'col1', impCol2: 'col2' }];
-      //specifying gridOptions on parent scope will override any attributes
-      scope.myGridOptions = {};
-      scope.myGridOptions.columnDefs = [{ name: 'Imp Col 1', field: 'impCol1' }];
-      $compile(element)(scope);
-      scope.$digest();
-    }));
-
-    it('gets columns correctly', function () {
-      expect(element.isolateScope().gridOptions.columnDefs.length).toBe(1);
-      expect(element.isolateScope().gridOptions.columnDefs[0].name).toBe('Imp Col 1');
-      expect(element.isolateScope().gridOptions.columnDefs[0].field).toBe('impCol1');
-    });
-
-  });*/
-
-
-  //describe('minColumnsToRender', function() {
-  //  it('calculates the minimum number of columns to render, correctly', function() {
-  //    // TODO
-  //  });
-  //});
 
   describe('column width calculation', function () {
-    var element = null, gridApi = null;
+    var columnDefs, options;
 
-    var columnDefs;
-
-    beforeEach(inject(function (_$compile_, _$rootScope_, _$document_) {
-      var scope = _$rootScope_;
-      var $compile = _$compile_;
-      var $document = _$document_;
-
+    beforeEach(function() {
       columnDefs = [
         { name: 'col1' },
         { name: 'col2' },
@@ -91,18 +47,13 @@ describe('ui-grid', function() {
         { name: 'col7' }
       ];
 
-      element = angular.element('<div style="width 333px; height: 150px" ui-grid="gridOptions"></div>');
-      scope.gridOptions = {
+      options = {
         columnDefs: columnDefs,
-        data: [],
-        onRegisterApi: function( api ){ gridApi = api; }
+        data: []
       };
 
-      $compile(element)(scope);
-      $document[0].body.appendChild(element[0]);
-
-      scope.$digest();
-    }));
+      compileGrid('<div style="width: 333px; height: 150px" ui-grid="gridOptions"></div>', options);
+    });
 
     afterEach(function() {
       element.remove();
@@ -192,46 +143,163 @@ describe('ui-grid', function() {
   });
 
   describe('appScope is correctly assigned', function () {
-    var $compile, $rootScope, $timeout;
-    var element, scope, gridApi;
+    var template;
 
-    beforeEach(inject(function(_$compile_, _$rootScope_, _$timeout_) {
-      $compile = _$compile_;
-      $rootScope = _$rootScope_;
-      $timeout = _$timeout_;
-    }));
-
-    it('should assign scope to grid.appScope', function() {
-      element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
-      scope = $rootScope;
-      scope.gridOptions = { onRegisterApi: function( api ){ gridApi = api; }};
-      scope.gridOptions.data = [
-        { col1: 'col1', col2: 'col2' }
-      ];
-
-      $timeout(function () {
-        $compile(element)(scope);
-      });
-      $timeout.flush();
-      expect(gridApi.grid.appScope).toBe(scope);
+    beforeEach(function() {
+      template = '<div class="col-md-5" ui-grid="gridOptions"></div>';
     });
 
-    it('should assign gridOptions.appScopeProvider to grid.appScope', function() {
-      element = angular.element('<div class="col-md-5" ui-grid="gridOptions"></div>');
-      scope = $rootScope;
-      scope.gridOptions = {
-        appScopeProvider : 'someValue',
-        onRegisterApi: function( api ){ gridApi = api; }};
-      scope.gridOptions.data = [
-        { col1: 'col1', col2: 'col2' }
-      ];
+    it('should assign scope to grid.appScope', function() {
+      compileGrid(template);
 
-      $timeout(function () {
-        $compile(element)(scope);
-      });
-      $timeout.flush();
+      expect(gridApi.grid.appScope).toBe(scope);
+    });
+    it('should assign gridOptions.appScopeProvider to grid.appScope', function() {
+      compileGrid(template, {appScopeProvider: 'someValue'});
+
       expect(gridApi.grid.appScope).toBe('someValue');
     });
   });
 
+  describe('watches', function() {
+    describe('uiGridColumns attribute', function() {
+      var columnDefs;
+
+      beforeEach(function() {
+        columnDefs = [
+          { name: 'col1' },
+          { name: 'col2' },
+          { name: 'col3' },
+          { name: 'col4' },
+          { name: 'col5' },
+          { name: 'col6' },
+          { name: 'col7' }
+        ];
+
+        $rootScope.columnDefs = columnDefs;
+        compileGrid('<div class="col-md-5" ui-grid="gridOptions" ui-grid-columns="{{ columnDefs }}"></div>', {
+          columnDefs: [],
+          data: []
+        });
+        spyOn(gridApi.grid, 'buildColumns').and.callThrough();
+      });
+
+      it('should change columnDefs and call buildColumns when the uiGridColumns attribute changes', function() {
+        expect(scope.gridOptions.columnDefs.length).toEqual(columnDefs.length);
+
+        scope.columnDefs = [];
+
+        // need to trigger an apply a second time to get buildColumns promise to be covered
+        scope.$apply();
+        scope.$apply();
+
+        expect(scope.gridOptions.columnDefs).toEqual([]);
+        expect(gridApi.grid.buildColumns).toHaveBeenCalled();
+      });
+    });
+
+    function testWatches(fastWatch) {
+      describe('$scope.uiGrid.data', function() {
+        var newData;
+
+        beforeEach(function() {
+          compileGrid('<div class="col-md-5" ui-grid="gridOptions"></div>', {
+            columnDefs: [
+              { name: 'col1' },
+              { name: 'col2' },
+              { name: 'col3' },
+              { name: 'col4' },
+              { name: 'col5' },
+              { name: 'col6' },
+              { name: 'col7' }
+            ],
+            data: [],
+            fastWatch: fastWatch
+          });
+          spyOn(gridApi.grid, 'modifyRows').and.callThrough();
+        });
+
+        describe('when the new data is defined', function() {
+          beforeEach(function() {
+            newData = [{'col1': 'row1'}, {'col1': 'row2'}, {'col1': 'row3'}];
+            scope.gridOptions.data = newData;
+            scope.$apply();
+          });
+          it('should call modifyRows with the new data', function() {
+            expect(gridApi.grid.modifyRows).toHaveBeenCalledWith(newData);
+          });
+        });
+
+        describe('when the new data is not defined', function() {
+          beforeEach(function() {
+            newData = undefined;
+            scope.gridOptions.data = newData;
+            scope.$apply();
+          });
+          it('should not call modifyRows with the new data', function() {
+            expect(gridApi.grid.modifyRows).not.toHaveBeenCalled();
+          });
+        });
+
+        describe('when the data is a string', function() {
+          beforeEach(function() {
+            newData = [{'col1': 'row1'}, {'col1': 'row2'}, {'col1': 'row3'}];
+            compileGrid('<div class="col-md-5" ui-grid="gridOptions"></div>', {
+              columnDefs: [
+                { name: 'col1' },
+                { name: 'col2' },
+                { name: 'col3' },
+                { name: 'col4' },
+                { name: 'col5' },
+                { name: 'col6' },
+                { name: 'col7' }
+              ],
+              data: 'myData',
+              fastWatch: fastWatch
+            });
+            spyOn(gridApi.grid, 'modifyRows').and.callThrough();
+            scope.myData = newData;
+            scope.$apply();
+          });
+          it('should watch the changes to the scope variable with the same name', function() {
+            expect(gridApi.grid.modifyRows).toHaveBeenCalledWith(newData);
+          });
+        });
+      });
+    }
+    describe('when fastWatch is false', function() {
+      testWatches(false);
+    });
+    describe('when fastWatch is true', function() {
+      testWatches(true);
+    });
+  });
+
+  describe('$destroy', function() {
+    var columnDefs, newData;
+
+    beforeEach(function() {
+      columnDefs = [{ name: 'col1' }];
+      newData = [{'col1': 'row1'}, {'col1': 'row2'}, {'col1': 'row3'}];
+
+      compileGrid('<div class="col-md-5" ui-grid="gridOptions"></div>', {
+        columnDefs: [],
+        data: []
+      });
+      spyOn(gridApi.grid, 'modifyRows').and.callThrough();
+      spyOn(gridApi.grid, 'buildColumns').and.callThrough();
+
+      scope.$broadcast('$destroy');
+      scope.$apply();
+
+      scope.gridOptions.columnDefs = columnDefs;
+      scope.gridOptions.data = newData;
+      scope.$apply();
+    });
+
+    it('should stop watching data and column changes', function() {
+      expect(gridApi.grid.modifyRows).not.toHaveBeenCalled();
+      expect(gridApi.grid.buildColumns).not.toHaveBeenCalled();
+    });
+  });
 });
