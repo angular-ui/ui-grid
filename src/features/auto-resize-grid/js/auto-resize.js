@@ -15,54 +15,24 @@
   var module = angular.module('ui.grid.autoResize', ['ui.grid']);
 
 
-  module.directive('uiGridAutoResize', ['$timeout', 'gridUtil', function ($timeout, gridUtil) {
+  module.directive('uiGridAutoResize', ['gridUtil', function (gridUtil) {
     return {
       require: 'uiGrid',
       scope: false,
       link: function ($scope, $elm, $attrs, uiGridCtrl) {
-        var prevGridWidth, prevGridHeight;
-
-        function getDimensions() {
-          prevGridHeight = gridUtil.elementHeight($elm);
-          prevGridWidth = gridUtil.elementWidth($elm);
-        }
-
-        // Initialize the dimensions
-        getDimensions();
-
-        var resizeTimeoutId;
-        function startTimeout() {
-          clearTimeout(resizeTimeoutId);
-
-          resizeTimeoutId = setTimeout(function () {
-            var newGridHeight = gridUtil.elementHeight($elm);
-            var newGridWidth = gridUtil.elementWidth($elm);
-
-            if (newGridHeight !== prevGridHeight || newGridWidth !== prevGridWidth) {
-              uiGridCtrl.grid.gridHeight = newGridHeight;
-              uiGridCtrl.grid.gridWidth = newGridWidth;
-              uiGridCtrl.grid.api.core.raise.gridDimensionChanged(prevGridHeight, prevGridWidth, newGridHeight, newGridWidth);
-
-              $scope.$apply(function () {
-                uiGridCtrl.grid.refresh()
-                  .then(function () {
-                    getDimensions();
-
-                    startTimeout();
-                  });
-              });
-            }
-            else {
-              startTimeout();
-            }
-          }, 250);
-        }
-
-        startTimeout();
-
-        $scope.$on('$destroy', function() {
-          clearTimeout(resizeTimeoutId);
-        });
+        $scope.$watch(function () {
+          return {
+            height: gridUtil.elementHeight($elm),
+            width: gridUtil.elementWidth($elm)
+          }
+        }, function (newDimensions, oldDimensions) {
+          if (newDimensions.height !== oldDimensions.height || newDimensions.width !== oldDimensions.width) {
+            uiGridCtrl.grid.gridHeight = newDimensions.height;
+            uiGridCtrl.grid.gridWidth = newDimensions.width;
+            uiGridCtrl.grid.api.core.raise.gridDimensionChanged(oldDimensions.height, oldDimensions.width, newDimensions.height, newDimensions.width);
+            uiGridCtrl.grid.refresh();
+          }
+        }, true);
       }
     };
   }]);
