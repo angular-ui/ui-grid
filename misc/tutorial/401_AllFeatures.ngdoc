@@ -133,7 +133,7 @@ All features are enabled to get an idea of performance
         it('should not duplicate the menu options for pinning when resizing a column', function () {
           element( by.id('refreshButton') ).click();
           gridTestUtils.resizeHeaderCell( 'grid1', 1 );
-          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 12);
+          gridTestUtils.expectVisibleColumnMenuItems( 'grid1', 1, 11);
         });
       });
   </file>
