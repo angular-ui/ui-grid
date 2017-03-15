@@ -247,8 +247,8 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
       });
 
       it('click one menu, then click another menu, expect undisplay and redisplay on second click', function() {
-        grid1.expectVisibleColumnMenuItems( 0, 4 );
-        grid1.expectVisibleColumnMenuItems( 1, 4 );
+        grid1.expectVisibleColumnMenuItems( 0, 3 );
+        grid1.expectVisibleColumnMenuItems( 1, 3 );
       });
 
       it('toggle gender, expect Alexander Foley to move around', function() {

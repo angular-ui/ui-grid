@@ -35,8 +35,7 @@ In this example, we will override the color and background for the first column 
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <br>
-      <br>
-      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" ng-if="gridOptions.data" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -49,21 +48,24 @@ In this example, we will override the color and background for the first column 
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1 = new GridObjectTest('grid1');
+
     describe( '111 cell class', function() {
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      it('grid should have two visible columns', function () {
-        gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
+      it('header values should be as expected', function () {
+        grid1.expectHeaderColumnCount( 2 );
       });
 
       it('column one formatted color red, background yellow', function () {
         // sort by company, 2,1 is no longer Velity so shouldn't be blue, check it's the same colour as row 1
-        gridTestUtils.clickHeaderCell( 'grid1', 1 )
+        grid1.clickHeaderCell( 1 )
           .then(function () {
-            gridTestUtils.expectCellValueMatch( 'grid1', 2, 1, 'Acusage' );
-            expect( gridTestUtils.dataCell( 'grid1', 1, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
-            expect( gridTestUtils.dataCell( 'grid1', 2, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
+            grid1.expectCellValueMatch( 2, 1, 'Acusage' );
+            expect( grid1.dataCell( 1, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
+            expect( grid1.dataCell( 2, 1 ).getCssValue('color')).toEqual('rgba(44, 62, 80, 1)');
           });
       });
     });

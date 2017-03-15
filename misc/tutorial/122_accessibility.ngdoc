@@ -228,8 +228,8 @@ You can visualize the accessibility roles that have been applied to the grid usi
           it('should set focus to the first element in the menu', function(){
             grid1.clickColumnMenu(0).then(function(){
               var columnMenu = grid1.getGrid().element(by.css( '.ui-grid-column-menu' ));
-              var closeButton = columnMenu.element( by.css( '.ui-grid-menu-close-button' ) );
-              return expectToBeFocused(closeButton);
+              var sortAscButton = columnMenu.all(by.css( '.ui-grid-menu-item' )).first();
+              return expectToBeFocused(sortAscButton);
             });
           });
         });

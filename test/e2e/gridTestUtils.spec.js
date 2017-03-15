@@ -28,7 +28,7 @@ module.exports = {
   firefoxReload: function () {
     beforeEach(function () {
       return browser.getCapabilities().then(function (cap) {
-        if (cap.caps_.browserName === 'firefox') {
+        if (cap && cap.caps_ && cap.caps_.browserName === 'firefox') {
           return browser.refresh()
             .then(function () {
               // Remove the fixed navbar, it overlays elements and intercepts events in Firefox
@@ -47,12 +47,7 @@ module.exports = {
   isFirefox: function () {
     return browser.getCapabilities()
       .then(function (cap) {
-        if (cap.caps_.browserName === 'firefox') {
-          return true;
-        }
-        else {
-         return false;
-        }
+        return (cap && cap.caps_ && cap.caps_.browserName === 'firefox');
       });
   },
 
@@ -329,8 +324,7 @@ module.exports = {
   */
   expectHeaderCellValueMatch: function( gridId, expectedCol, expectedValue ) {
     var headerCell = this.headerCell( gridId, expectedCol);
-    var headerCellValue = headerCell.element(by.css('.ui-grid-header-cell-label')).getText();
-    expect(headerCellValue).toMatch(expectedValue);
+    expect(headerCell.element(by.css('.ui-grid-header-cell-label')).getText()).toMatch(expectedValue);
   },
 
   /**
