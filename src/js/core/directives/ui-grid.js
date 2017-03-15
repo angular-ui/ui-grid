@@ -6,8 +6,8 @@
     function ($scope, $elm, $attrs, gridUtil, $q, uiGridConstants,
               gridClassFactory, $parse, $compile) {
       // gridUtil.logDebug('ui-grid controller');
-      var self = this,
-        deregFunctions = [];
+      var self = this;
+      var deregFunctions = [];
 
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
 
@@ -241,7 +241,8 @@ function uiGridDirective($window, gridUtil, uiGridConstants) {
 
           // Setup event listeners and watchers
           function setup() {
-            var deregisterLeftWatcher, deregisterRightWatcher;
+            var deregisterLeftWatcher;
+            var deregisterRightWatcher;
 
             // Bind to window resize events
             angular.element($window).on('resize', gridResize);
