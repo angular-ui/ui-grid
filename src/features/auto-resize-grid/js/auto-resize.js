@@ -24,7 +24,7 @@
           return {
             height: gridUtil.elementHeight($elm),
             width: gridUtil.elementWidth($elm)
-          }
+          };
         }, function (newDimensions, oldDimensions) {
           if (newDimensions.height !== oldDimensions.height || newDimensions.width !== oldDimensions.width) {
             uiGridCtrl.grid.gridHeight = newDimensions.height;
