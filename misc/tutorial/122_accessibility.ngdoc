@@ -245,7 +245,7 @@ You can visualize the accessibility roles that have been applied to the grid usi
           it('should move the focus to the nearest header button unless there is no column then should move to the grid menu', function(){
             function hideColCheckFocusedCol(colNum, focusedNumb){
               return grid1.clickColumnMenuHide(colNum).then(function(){
-                var gridMenuButton = grid1.headerCell(focusedNumb).element( by.css( '.ui-grid-header-cell-primary-focus:focus' ));
+                var gridMenuButton = grid1.headerCell(focusedNumb).element( by.css( '.ui-grid-header-cell-primary-focus' ));
                 return expectToBeFocused(gridMenuButton);
               });
             };
