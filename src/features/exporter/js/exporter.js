@@ -559,62 +559,62 @@
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuAllData;
               },
               order: grid.options.exporterMenuItemOrder
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuVisibleData;
               },
               order: grid.options.exporterMenuItemOrder + 1
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
               order: grid.options.exporterMenuItemOrder + 2
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuAllData;
               },
               order: grid.options.exporterMenuItemOrder + 3
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuVisibleData;
               },
               order: grid.options.exporterMenuItemOrder + 4
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
               order: grid.options.exporterMenuItemOrder + 5
             }
