@@ -28,10 +28,13 @@ All features are enabled to get an idea of performance
         fastWatch: true,
         rowIdentity: getRowId,
         getRowIdentity: getRowId,
+        importerDataAddCallback: function importerDataAddCallback( grid, newObjects ) {
+          $scope.myData = $scope.data.concat( newObjects );
+        },
         columnDefs: [
           { name:'id', width:50 },
           { name:'name', width:100 },
-          { name:'age', width:100, enableCellEdit: true, aggregationType:uiGridConstants.aggregationTypes.avg, treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
+          { name:'age', width:100, enableCellEdit: true, aggregationType: uiGridConstants.aggregationTypes.avg, treeAggregationType: uiGridGroupingConstants.aggregation.AVG },
           { name:'address.street', width:150, enableCellEdit: true },
           { name:'address.city', width:150, enableCellEdit: true },
           { name:'address.state', width:50, enableCellEdit: true },
@@ -45,8 +48,8 @@ All features are enabled to get an idea of performance
           { name:'friends[2].name', displayName:'3rd friend', width:150, enableCellEdit: true },
           { name:'agetemplate',field:'age', width:150, cellTemplate: '<div class="ui-grid-cell-contents"><span>Age 2:{{COL_FIELD}}</span></div>' },
           { name:'Is Active',field:'isActive', width:150, type:'boolean' },
-          { name:'Join Date',field:'registered', cellFilter:'date', width:150, type:'date', enableFiltering:false },
-          { name:'Month Joined',field:'registered', cellFilter: 'date:"MMMM"', filterCellFiltered:true, sortCellFiltered:true, width:150, type:'date' }
+          { name:'Join Date',field:'registered', cellFilter:'date', width:150, type:'date', enableFiltering: false },
+          { name:'Month Joined',field:'registered', cellFilter: 'date:"MMMM"', filterCellFiltered: true, sortCellFiltered: true, width:150, type:'date' }
         ],
         onRegisterApi: function onRegisterApi(registeredApi) {
           gridApi = registeredApi;
