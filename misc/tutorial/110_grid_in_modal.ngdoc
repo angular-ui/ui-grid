@@ -83,7 +83,7 @@ In a sense this is similar to what the auto-resize feature does, but it only doe
     }
   </file>
   <file name="scenario.js">
-    // TODO: Fix this test. Commenting out because it is causing other tests to fail
+    // TODO: Fix this test. It is currently causing other tests to fail.
     /*var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
     var grid1 = new GridObjectTest('grid1');
