@@ -49,6 +49,7 @@
   display: table;
   box-sizing: border-box;
   height: 100%;
+  border-left: 1px solid #ddd;
 }
 
 .ui-grid-header-cell-row {
@@ -60,7 +61,6 @@
   position: relative;
   box-sizing: border-box;
   background-color: inherit;
-  border-right: @gridBorderWidth solid;
   border-color: @headerVerticalBarColor;
   display: table-cell;
 
@@ -95,7 +95,7 @@
 .ui-grid-column-menu-button {
   position: absolute;
   right: @gridBorderWidth; // So it doesn't overlay the vertical bar
-  top: 0;
+  top: 5px;
   // bottom: 0;
   // .ui-grid-top-panel-background;
 
