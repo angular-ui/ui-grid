@@ -828,7 +828,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         } else {
           s.logWarn('[focus.byId] Element id ' + elementID + ' was not found.');
         }
-      }, 0, false);
+      });
       this.queue.push(promise);
       return promise;
     },
@@ -853,7 +853,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         if (element){
           element[0].focus();
         }
-      }, 0, false);
+      });
       this.queue.push(promise);
       return promise;
     },
@@ -883,7 +883,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       };
       this._purgeQueue();
       if (aSync){ //Do this asynchronysly
-        var promise = $timeout(focusBySelector, 0, false);
+        var promise = $timeout(focusBySelector);
         this.queue.push(promise);
         return promise;
       } else {
