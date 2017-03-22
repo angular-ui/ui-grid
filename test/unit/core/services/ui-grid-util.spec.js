@@ -6,22 +6,24 @@ describe('ui.grid.utilService', function() {
       $q,
       $interpolateProvider;
 
-  beforeEach(module('ui.grid', function (_$interpolateProvider_) {
-    $interpolateProvider = _$interpolateProvider_;
-  }));
+  beforeEach(function() {
+    module('ui.grid', function (_$interpolateProvider_) {
+      $interpolateProvider = _$interpolateProvider_;
+    });
 
-  beforeEach(inject(function(_$rootScope_, _$q_, _gridUtil_, _$window_, _Grid_) {
-    gridUtil = _gridUtil_;
-    $window = _$window_;
-    Grid = _Grid_;
-    $rootScope = _$rootScope_;
-    $q = _$q_;
-  }));
+    inject(function(_$rootScope_, _$q_, _gridUtil_, _$window_, _Grid_) {
+      gridUtil = _gridUtil_;
+      $window = _$window_;
+      Grid = _Grid_;
+      $rootScope = _$rootScope_;
+      $q = _$q_;
+    });
+  });
 
   describe('newId()', function() {
     it('creates a unique id each time it is called', function() {
-      var id1 = gridUtil.newId();
-      var id2 = gridUtil.newId();
+      var id1 = gridUtil.newId(),
+          id2 = gridUtil.newId();
 
       expect(id1).not.toEqual(id2);
     });
@@ -532,12 +534,14 @@ describe('ui.grid.utilService', function() {
       /* Create Button1 */
       button1 = document.createElement('button');
       aButton1 = angular.element(button1);
+      aButton1.attr('id', 'aButton1');
       aButton1.attr('type', 'button');
       // The class is not set here because it is set inside of tests if needed
 
       /* Create Button2 */
       button2 = document.createElement('button');
       aButton2 = angular.element(button1);
+      aButton2.attr('id', 'aButton2');
       aButton2.attr('type', 'button');
       aButton2.addClass(button2class);
 
@@ -557,14 +561,61 @@ describe('ui.grid.utilService', function() {
       expect(element.innerHTML).toEqual(document.activeElement.innerHTML);
     }
 
+    describe('byId', function() {
+      describe('when the grid is not defined', function() {
+        it('should focus on the element with the id passed', function(){
+          gridUtil.focus.byId('aButton2');
+          $timeout.flush();
+
+          expectFocused(button2);
+        });
+      });
+      describe('when the grid is defined', function() {
+        it('should focus on the element with the grid id and the id passed', function(){
+          var gridId = 'gridId';
+
+          aButton2.attr('id', 'gridId-aButton2');
+          gridUtil.focus.byId('aButton2', {id: gridId});
+          $timeout.flush();
+
+          expectFocused(button2);
+        });
+      });
+      describe('when the id passed in is not in the dom', function() {
+        it('should keep focus on the body', function() {
+          gridUtil.focus.byId('notAnElement');
+          $timeout.flush();
+
+          expectFocused(document.body);
+        });
+      });
+    });
     describe('byElement', function(){
-      it('should focus on the element passed', function(){
-        gridUtil.focus.byElement(button1);
-        $timeout.flush();
-        expectFocused(button1);
+      describe('when argument passed is an element', function() {
+        it('should focus on the element passed', function(){
+          gridUtil.focus.byElement(button1);
+          $timeout.flush();
+          expectFocused(button1);
+        });
+      });
+      describe('when argument passed is not an element', function() {
+        it('should keep focus on the body', function(){
+          gridUtil.focus.byElement('');
+          expectFocused(document.body);
+        });
       });
     });
     describe('bySelector', function(){
+      describe('when argument passed is not an element', function() {
+        it('should throw an error', function(done){
+          try {
+            gridUtil.focus.bySelector('');
+          } catch (error) {
+            expect(error.message).toEqual('The parent element is not an element.');
+            done();
+          }
+        });
+      });
       it('should focus on an elment using a selector', function(){
         gridUtil.focus.bySelector(elm, '.' + button2class);
         $timeout.flush();
