@@ -2082,9 +2082,8 @@ angular.module('ui.grid')
       self.setVisibleColumns(renderableColumns);
     }).catch(angular.noop);
 
-    var p3 = self.refreshCanvas(true);
-
-    return $q.all([p1, p2, p3]).then(function () {
+    return $q.all([p1, p2]).then(function () {
+      self.refreshCanvas(true);
       self.redrawInPlace(rowsAltered);
     }).catch(angular.noop);
   };
