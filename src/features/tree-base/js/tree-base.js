@@ -715,7 +715,7 @@
         };
 
         rowHeaderColumnDef.visible = grid.options.treeRowHeaderAlwaysVisible;
-        grid.addRowHeaderColumn(rowHeaderColumnDef, -100, true);
+        grid.addRowHeaderColumn( rowHeaderColumnDef, -100 );
       },
 
 

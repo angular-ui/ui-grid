@@ -595,10 +595,10 @@ angular.module('ui.grid')
            callback.types.indexOf( type ) !== -1 ||
            type === uiGridConstants.dataChange.ALL ) {
         if (callback._this) {
-           callback.callback.apply(callback._this, this, options);
+           callback.callback.apply(callback._this,this);
         }
         else {
-          callback.callback(this, options);
+          callback.callback( this );
         }
       }
     }, this);
@@ -636,11 +636,10 @@ angular.module('ui.grid')
    * is notified, which triggers handling of the visible flag.
    * This is called on uiGridConstants.dataChange.COLUMN, and is
    * registered as a dataChangeCallback in grid.js
-   * @param {object} grid The grid object.
-   * @param {object} options Any options passed into the callback.
+   * @param {string} name column name
    */
-  Grid.prototype.columnRefreshCallback = function columnRefreshCallback(grid, options){
-    grid.buildColumns(options);
+  Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
+    grid.buildColumns();
     grid.queueGridRefresh();
   };
 
@@ -758,12 +757,9 @@ angular.module('ui.grid')
   * @name addRowHeaderColumn
   * @methodOf ui.grid.class:Grid
   * @description adds a row header column to the grid
-  * @param {object} colDef Column definition object.
-  * @param {float} order Number that indicates where the column should be placed in the grid.
-  * @param {boolean} stopColumnBuild Prevents the buildColumn callback from being triggered. This is useful to improve
-  * performance of the grid during initial load.
+  * @param {object} column def
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order, stopColumnBuild) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order) {
     var self = this;
 
     //default order
@@ -795,13 +791,11 @@ angular.module('ui.grid')
           return a.headerPriority - b.headerPriority;
         });
 
-        if (!stopColumnBuild) {
-          self.buildColumns()
-            .then(function() {
-              self.preCompileCellTemplates();
-              self.queueGridRefresh();
-            }).catch(angular.noop);
-        }
+        self.buildColumns()
+          .then( function() {
+            self.preCompileCellTemplates();
+            self.queueGridRefresh();
+          }).catch(angular.noop);
       }).catch(angular.noop);
   };
 
@@ -918,9 +912,6 @@ angular.module('ui.grid')
     return $q.all(builderPromises).then(function(){
       if (self.rows.length > 0){
         self.assignTypes();
-      }
-      if (options.preCompileCellTemplates) {
-        self.preCompileCellTemplates();
       }
     }).catch(angular.noop);
   };
@@ -1626,10 +1617,11 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description calls each styleComputation function
    */
+  // TODO: this used to take $scope, but couldn't see that it was used
   Grid.prototype.buildStyles = function buildStyles() {
-    var self = this;
-
     // gridUtil.logDebug('buildStyles');
+
+    var self = this;
 
     self.customStyles = '';
 
@@ -2122,7 +2114,9 @@ angular.module('ui.grid')
   Grid.prototype.refreshCanvas = function(buildStyles) {
     var self = this;
 
-    // gridUtil.logDebug('refreshCanvas');
+    if (buildStyles) {
+      self.buildStyles();
+    }
 
     var p = $q.defer();
 
@@ -2146,11 +2140,6 @@ angular.module('ui.grid')
       }
     }
 
-    // Build the styles without the explicit header heights
-    if (buildStyles) {
-      self.buildStyles();
-    }
-
     /*
      *
      * Here we loop through the headers, measuring each element as well as any header "canvas" it has within it.
@@ -2164,6 +2153,11 @@ angular.module('ui.grid')
      *
      */
     if (containerHeadersToRecalc.length > 0) {
+      // Build the styles without the explicit header heights
+      if (buildStyles) {
+        self.buildStyles();
+      }
+
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
       $timeout(function() {
         // var oldHeaderHeight = self.grid.headerHeight;
