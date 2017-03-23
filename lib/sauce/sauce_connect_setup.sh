@@ -18,9 +18,9 @@ then
   exit 0
 fi
 
-CONNECT_URL="http://saucelabs.com/downloads/Sauce-Connect-latest.zip"
+CONNECT_URL="https://saucelabs.com/downloads/sc-4.4.5-linux.tar.gz"
 CONNECT_DIR="/tmp/sauce-connect-$RANDOM"
-CONNECT_DOWNLOAD="Sauce_Connect.zip"
+CONNECT_DOWNLOAD="sc-4.4.5-linux.tar.gz"
 
 if [ -z "$LOGS_DIR" ]
 then
@@ -35,8 +35,8 @@ CONNECT_STDERR="$LOGS_DIR/sauce-connect.stderr"
 # Get Connect and start it
 mkdir -p $CONNECT_DIR
 cd $CONNECT_DIR
-curl $CONNECT_URL -o $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
-unzip $CONNECT_DOWNLOAD > /dev/null
+wget $CONNECT_URL 1> /dev/null
+tar -xvzf $CONNECT_DOWNLOAD --strip 1
 rm $CONNECT_DOWNLOAD
 
 # Don't think we need this with a secure env var
@@ -58,5 +58,5 @@ echo "Starting Sauce Connect in the background, logging into:"
 echo "  $CONNECT_LOG"
 echo "  $CONNECT_STDOUT"
 echo "  $CONNECT_STDERR"
-java -jar Sauce-Connect.jar $ARGS $SAUCE_USERNAME $SAUCE_ACCESS_KEY \
-  --logfile $CONNECT_LOG 2> $CONNECT_STDERR 1> $CONNECT_STDOUT &
+./bin/sc -u $SAUCE_USERNAME -k $SAUCE_ACCESS_KEY $ARGS \
+  --logfile $CONNECT_LOG &
