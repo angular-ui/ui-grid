@@ -43,7 +43,7 @@ rm $CONNECT_DOWNLOAD
 # SAUCE_ACCESS_KEY=`echo $SAUCE_ACCESS_KEY | rev`
 
 
-ARGS="-vv -l -"
+ARGS=""
 
 # Set tunnel-id only on Travis, to make local testing easier.
 if [ ! -z "$TRAVIS_JOB_NUMBER" ]; then
@@ -58,4 +58,5 @@ echo "Starting Sauce Connect in the background, logging into:"
 echo "  $CONNECT_LOG"
 echo "  $CONNECT_STDOUT"
 echo "  $CONNECT_STDERR"
-java -jar Sauce-Connect.jar $ARGS $SAUCE_USERNAME $SAUCE_ACCESS_KEY
+java -jar Sauce-Connect.jar $ARGS $SAUCE_USERNAME $SAUCE_ACCESS_KEY \
+  --logfile $CONNECT_LOG 2> $CONNECT_STDERR 1> $CONNECT_STDOUT &
