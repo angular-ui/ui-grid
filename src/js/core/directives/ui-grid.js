@@ -71,13 +71,10 @@
       function columnDefsWatchFunction(n, o) {
         if (n && n !== o) {
           self.grid.options.columnDefs = $scope.uiGrid.columnDefs;
-          self.grid.buildColumns({ orderByColumnDefs: true })
-            .then(function(){
-
-              self.grid.preCompileCellTemplates();
-
-              self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
-            }).catch(angular.noop);
+          self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN, {
+            orderByColumnDefs: true,
+            preCompileCellTemplates: true
+          });
         }
       }
 
@@ -244,8 +241,7 @@ function uiGridDirective($window, gridUtil, uiGridConstants) {
 
           // Setup event listeners and watchers
           function setup() {
-            var deregisterLeftWatcher;
-            var deregisterRightWatcher;
+            var deregisterLeftWatcher, deregisterRightWatcher;
 
             // Bind to window resize events
             angular.element($window).on('resize', gridResize);
