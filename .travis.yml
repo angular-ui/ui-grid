@@ -30,8 +30,9 @@ env:
 branches:
   only:
     - master
-    - /^3\.0$/
-    - /^3\.x$/
+    - 4.0.3-release
+    - /^4\.0$/
+    - /^4\.x$/
     - /^release-.*$/
 
 before_install:
