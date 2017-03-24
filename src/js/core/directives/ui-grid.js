@@ -2,12 +2,12 @@
   'use strict';
 
   angular.module('ui.grid').controller('uiGridController', ['$scope', '$element', '$attrs', 'gridUtil', '$q', 'uiGridConstants',
-                    '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile',
+                    'gridClassFactory', '$parse', '$compile',
     function ($scope, $elm, $attrs, gridUtil, $q, uiGridConstants,
-              $templateCache, gridClassFactory, $timeout, $parse, $compile) {
+              gridClassFactory, $parse, $compile) {
       // gridUtil.logDebug('ui-grid controller');
-
       var self = this;
+      var deregFunctions = [];
 
       self.grid = gridClassFactory.createGrid($scope.uiGrid);
 
@@ -24,20 +24,23 @@
       $scope.grid = self.grid;
 
       if ($attrs.uiGridColumns) {
-        $attrs.$observe('uiGridColumns', function(value) {
-          self.grid.options.columnDefs = value;
+        deregFunctions.push( $attrs.$observe('uiGridColumns', function(value) {
+          self.grid.options.columnDefs = angular.isString(value) ? angular.fromJson(value) : value;
           self.grid.buildColumns()
             .then(function(){
               self.grid.preCompileCellTemplates();
 
               self.grid.refreshCanvas(true);
             }).catch(angular.noop);
-        });
+        }) );
       }
 
+      // prevents an error from being thrown when the array is not defined yet and fastWatch is on
+      function getSize(array) {
+        return array ? array.length : 0;
+      }
 
       // if fastWatch is set we watch only the length and the reference, not every individual object
-      var deregFunctions = [];
       if (self.grid.options.fastWatch) {
         self.uiGrid = $scope.uiGrid;
         if (angular.isString($scope.uiGrid.data)) {
@@ -51,10 +54,10 @@
           }, dataWatchFunction) );
         } else {
           deregFunctions.push( $scope.$parent.$watch(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
-          deregFunctions.push( $scope.$parent.$watch(function() { return $scope.uiGrid.data.length; }, function(){ dataWatchFunction($scope.uiGrid.data); }) );
+          deregFunctions.push( $scope.$parent.$watch(function() { return getSize($scope.uiGrid.data); }, function(){ dataWatchFunction($scope.uiGrid.data); }) );
         }
         deregFunctions.push( $scope.$parent.$watch(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
-        deregFunctions.push( $scope.$parent.$watch(function() { return $scope.uiGrid.columnDefs.length; }, function(){ columnDefsWatchFunction($scope.uiGrid.columnDefs); }) );
+        deregFunctions.push( $scope.$parent.$watch(function() { return getSize($scope.uiGrid.columnDefs); }, function(){ columnDefsWatchFunction($scope.uiGrid.columnDefs); }) );
       } else {
         if (angular.isString($scope.uiGrid.data)) {
           deregFunctions.push( $scope.$parent.$watchCollection($scope.uiGrid.data, dataWatchFunction) );
@@ -84,12 +87,10 @@
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
 
-        if ( self.grid.options.fastWatch ){
-          if (angular.isString($scope.uiGrid.data)) {
-            newData = self.grid.appScope[$scope.uiGrid.data];
-          } else {
-            newData = $scope.uiGrid.data;
-          }
+        if (angular.isString($scope.uiGrid.data)) {
+          newData = self.grid.appScope[$scope.uiGrid.data];
+        } else {
+          newData = $scope.uiGrid.data;
         }
 
         mostRecentData = newData;
@@ -148,12 +149,10 @@
       });
 
       self.fireEvent = function(eventName, args) {
-        // Add the grid to the event arguments if it's not there
-        if (typeof(args) === 'undefined' || args === undefined) {
-          args = {};
-        }
+        args = args || {};
 
-        if (typeof(args.grid) === 'undefined' || args.grid === undefined) {
+        // Add the grid to the event arguments if it's not there
+        if (angular.isUndefined(args.grid)) {
           args.grid = self.grid;
         }
 
@@ -163,7 +162,6 @@
       self.innerCompile = function innerCompile(elm) {
         $compile(elm)($scope);
       };
-
     }]);
 
 /**
@@ -196,8 +194,8 @@
  */
 angular.module('ui.grid').directive('uiGrid', uiGridDirective);
 
-uiGridDirective.$inject = ['$compile', '$templateCache', '$timeout', '$window', 'gridUtil', 'uiGridConstants'];
-function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, uiGridConstants) {
+uiGridDirective.$inject = ['$window', 'gridUtil', 'uiGridConstants'];
+function uiGridDirective($window, gridUtil, uiGridConstants) {
   return {
     templateUrl: 'ui-grid/ui-grid',
     scope: {
@@ -239,24 +237,28 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
             if ($elm[0].offsetWidth <= 0 && sizeChecks < maxSizeChecks) {
               setTimeout(checkSize, sizeCheckInterval);
               sizeChecks++;
-            }
-            else {
-              $timeout(init);
+            } else {
+              $scope.$applyAsync(init);
             }
           }
 
           // Setup event listeners and watchers
           function setup() {
+            var deregisterLeftWatcher;
+            var deregisterRightWatcher;
+
             // Bind to window resize events
             angular.element($window).on('resize', gridResize);
 
             // Unbind from window resize events when the grid is destroyed
             $elm.on('$destroy', function () {
               angular.element($window).off('resize', gridResize);
+              deregisterLeftWatcher();
+              deregisterRightWatcher();
             });
 
             // If we add a left container after render, we need to watch and react
-            $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
+            deregisterLeftWatcher = $scope.$watch(function () { return grid.hasLeftContainer();}, function (newValue, oldValue) {
               if (newValue === oldValue) {
                 return;
               }
@@ -264,7 +266,7 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
             });
 
             // If we add a right container after render, we need to watch and react
-            $scope.$watch(function () { return grid.hasRightContainer();}, function (newValue, oldValue) {
+            deregisterRightWatcher = $scope.$watch(function () { return grid.hasRightContainer();}, function (newValue, oldValue) {
               if (newValue === oldValue) {
                 return;
               }
@@ -337,7 +339,7 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
           }
 
           // Resize the grid on window resize events
-          function gridResize($event) {
+          function gridResize() {
             grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
             grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
@@ -348,5 +350,4 @@ function uiGridDirective($compile, $templateCache, $timeout, $window, gridUtil, 
     }
   };
 }
-
 })();
