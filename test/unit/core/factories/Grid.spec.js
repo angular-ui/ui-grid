@@ -611,6 +611,36 @@ describe('Grid factory', function () {
 
     });
 
+    it('should set cache correctly with flatEntityAccess', function() {
+
+      var colDefs = [
+        {name:'simpleProp'}
+      ];
+      var entity2 = {
+        simpleProp: 'simplePropValue.2'
+      };
+
+      var grid = new Grid({ id: 1, columnDefs:colDefs, flatEntityAccess:true });
+      var rows = [
+        new GridRow(entity,1,grid),
+        new GridRow(entity2,2,grid)
+      ];
+
+
+      grid.buildColumns();
+      grid.modifyRows([entity, entity2]);
+
+      var simpleCol = grid.getColumn('simpleProp');
+
+      var row = grid.rows[0];
+      expect(grid.getCellValue(row,simpleCol)).toBe('simplePropValue');
+      expect(grid.getCellDisplayValue(row,simpleCol)).toBe('simplePropValue');
+      
+      var row2 = grid.rows[1];
+      expect(grid.getCellValue(row2,simpleCol)).toBe('simplePropValue.2');
+      expect(grid.getCellDisplayValue(row2,simpleCol)).toBe('simplePropValue.2');
+    });
+
     it('should bind correctly to $$this', function() {
       var colDefs = [
         {name: 'thisProp', field: '$$this'}
@@ -641,6 +671,23 @@ describe('Grid factory', function () {
         {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
       ];
       var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+      grid.buildColumns();
+      grid.modifyRows([entity]);
+
+      var row = grid.rows[0];
+      expect(grid.getCellDisplayValue(row,grid.columns[0])).toEqual("2015-07-01");
+      expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
+    });
+
+    it('should apply angularjs filters with flatEntityAccess', function(){
+      var colDefs = [
+        {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
+        {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs, flatEntityAccess:true });
       var rows = [
         new GridRow(entity,1,grid)
       ];
