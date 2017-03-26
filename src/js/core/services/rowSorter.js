@@ -405,14 +405,25 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
     // Build the list of columns to sort by
     var sortCols = [];
+    var defaultSortCols = [];
     columns.forEach(function (col) {
       if (col.sort && !col.sort.ignoreSort && col.sort.direction && (col.sort.direction === uiGridConstants.ASC || col.sort.direction === uiGridConstants.DESC)) {
-        sortCols.push(col);
+        sortCols.push({
+          col: col,
+          sort: col.sort
+        });
+      } else if ( col.defaultSort && col.defaultSort.direction && (col.defaultSort.direction === uiGridConstants.ASC || col.defaultSort.direction === uiGridConstants.DESC) ) {
+        defaultSortCols.push({
+          col: col,
+          sort: col.defaultSort
+        });
       }
     });
 
     // Sort the "sort columns" by their sort priority
     sortCols = sortCols.sort(rowSorter.prioritySort);
+    defaultSortCols = defaultSortCols.sort(rowSorter.prioritySort);
+    sortCols = sortCols.concat(defaultSortCols);
 
     // Now rows to sort by, maintain original order
     if (sortCols.length === 0) {
@@ -440,7 +451,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
       while (tem === 0 && idx < sortCols.length) {
         // grab the metadata for the rest of the logic
-        col = sortCols[idx];
+        col = sortCols[idx].col;
         direction = sortCols[idx].sort.direction;
 
         sortFn = rowSorter.getSortFn(grid, col, r);
