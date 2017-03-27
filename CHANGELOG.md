@@ -1,3 +1,11 @@
+<a name="v3.2.10"></a>
+### v3.2.10 (2017-03-27)
+
+
+#### Bug Fixes
+
+* **#6007:** Fixes ui-grid-viewport scroll issue in chrome v56. Credit to @Joel-Kornbluh ([cc8afa8](https://github.com/angular-ui/ui-grid/pull/6125/commits/cc8afa88d2facd70f37653b6d8fabb926996fbbb))
+
 <a name="v3.2.9"></a>
 ### v3.2.9 (2016-09-21)
 
