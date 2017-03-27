@@ -111,7 +111,6 @@
      * - `uiGridConstants.filter.LESS_THAN`
      * - `uiGridConstants.filter.LESS_THAN_OR_EQUAL`
      * - `uiGridConstants.filter.NOT_EQUAL`
-     * - `uiGridConstants.filter.STARTS_WITH`
      *
      *
      * Available `type` options are:
