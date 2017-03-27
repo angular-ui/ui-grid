@@ -62,4 +62,5 @@ after_failure:
   - ./travis_print_logs.sh
 
 after_script:
+  - killall -9 sc
   - ./travis_print_logs.sh
