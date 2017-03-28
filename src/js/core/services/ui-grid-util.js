@@ -358,13 +358,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
       // See if the template is itself a promise
       if (angular.isFunction(template.then)) {
-        return template.then(s.postProcessTemplate);
+        return template.then(s.postProcessTemplate).catch(angular.noop);
       }
 
       // If the template is an element, return the element
       try {
         if (angular.element(template).length > 0) {
-          return $q.when(template).then(s.postProcessTemplate);
+          return $q.when(template).then(s.postProcessTemplate).catch(angular.noop);
         }
       }
       catch (err){
@@ -386,7 +386,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
             throw new Error("Could not get template " + template + ": " + err);
           }
         )
-        .then(s.postProcessTemplate);
+        .then(s.postProcessTemplate).catch(angular.noop);
     },
 
     //
@@ -630,10 +630,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     },
 
     isNullOrUndefined: function(obj) {
-      if (obj === undefined || obj === null) {
-        return true;
-      }
-      return false;
+      return (obj === undefined || obj === null);
     },
 
     endsWith: function(str, suffix) {
@@ -842,7 +839,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         } else {
           s.logWarn('[focus.byId] Element id ' + elementID + ' was not found.');
         }
-      });
+      }, 0, false);
       this.queue.push(promise);
       return promise;
     },
@@ -867,7 +864,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         if (element){
           element[0].focus();
         }
-      });
+      }, 0, false);
       this.queue.push(promise);
       return promise;
     },
@@ -897,8 +894,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       };
       this._purgeQueue();
       if (aSync){ //Do this asynchronysly
-        var promise = $timeout(focusBySelector);
-        this.queue.push($timeout(focusBySelector));
+        var promise = $timeout(focusBySelector, 0, false);
+        this.queue.push(promise);
         return promise;
       } else {
         return focusBySelector();

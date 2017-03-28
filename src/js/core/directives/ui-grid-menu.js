@@ -50,7 +50,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           var template = angular.element(contents);
           var newElm = $compile(template)($scope);
           $elm.replaceWith(newElm);
-        });
+        }).catch(angular.noop);
       }
 
       var setupHeightStyle = function(gridHeight) {
@@ -248,7 +248,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
                   var newElm = $compile(template)($scope);
                   $elm.replaceWith(newElm);
-                });
+                }).catch(angular.noop);
           }
         },
         post: function ($scope, $elm, $attrs, controllers) {
@@ -295,12 +295,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               if ( !$scope.leaveOpen ){
                 $scope.$emit('hide-menu');
               } else {
-                /*
-                 * XXX: Fix after column refactor
-                 * Ideally the focus would remain on the item.
-                 * However, since there are two menu items that have their 'show' property toggled instead. This is a quick fix.
-                 */
-                gridUtil.focus.bySelector(angular.element(gridUtil.closestElm($elm, ".ui-grid-menu-items")), 'button[type=button]', true);
+                // Maintain focus on the selected item
+                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
               }
             }
           };

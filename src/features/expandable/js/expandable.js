@@ -253,7 +253,7 @@
        */
       toggleRowExpansion: function (grid, row, e) {
         // trigger the "before change" event. Can change row height dynamically this way.
-        grid.api.expandable.raise.rowExpandedBeforeStateChanged(row);
+        grid.api.expandable.raise.rowExpandedBeforeStateChanged(row, e||event);
         /**
          *  @ngdoc object
          *  @name isExpanded
@@ -280,7 +280,7 @@
           row.height = row.grid.options.rowHeight;
           grid.expandable.expandedAll = false;
         }
-        grid.api.expandable.raise.rowExpandedStateChanged(row, e);
+        grid.api.expandable.raise.rowExpandedStateChanged(row, e||event);
 
         // fire event on render complite
         function _tWatcher(){

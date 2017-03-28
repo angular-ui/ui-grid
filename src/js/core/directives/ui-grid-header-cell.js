@@ -348,7 +348,7 @@
                 .then(function () {
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
-                });
+                }).catch(angular.noop);
             };
 
 

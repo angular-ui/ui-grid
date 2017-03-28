@@ -46,7 +46,7 @@
                   clonedElement = newElm;
                   cloneScope = newScope;
                 });
-              });
+              }).catch(angular.noop);
             }
 
             // Initially attach the compiled template to this scope

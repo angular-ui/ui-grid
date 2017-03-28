@@ -715,7 +715,7 @@
                   allowCellFocus: true
                 };
 
-                uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef, 0);
+                uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef, 0, true);
               }
 
               var processorSet = false;

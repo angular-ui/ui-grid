@@ -3,7 +3,7 @@ exports.config = {
   // The address of a running selenium server.
 
   //seleniumAddress: 'http://localhost:4444/wd/hub',
-  seleniumServerJar: '../node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
+  seleniumServerJar: '../node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-2.45.0.jar',
   // seleniumPort: 4444,
 
   specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],
@@ -39,12 +39,12 @@ exports.config = {
 
     realtimeFailure: true
   },
-  
+
   plugins: [{
     chromeA11YDevTools: {
       // Since the site has some serious element contrast issues this is needed.
       treatWarningsAsFailures: false
     },
-    path: '../node_modules/protractor/plugins/accessibility'
+    package: 'protractor-accessibility-plugin'
   }]
 };
