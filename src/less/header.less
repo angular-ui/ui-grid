@@ -15,7 +15,8 @@
     // border-bottom: 1px solid @borderColor; // #D4D4D4
 
     overflow: hidden;  // Disable so menus show up
-    font-weight: bold;
+    font-weight: normal;
+    color: #000;
 
     // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
     .ui-grid-top-panel-background;
@@ -61,7 +62,7 @@
   position: relative;
   box-sizing: border-box;
   background-color: inherit;
-  border-color: @headerVerticalBarColor;
+  border-right: 1px solid @headerVerticalBarColor;
   display: table-cell;
 
   &:last-child {
@@ -196,6 +197,7 @@
 
 input[type="text"].ui-grid-filter-input {
   padding: 0;
+  height: 26px;
   margin: 0;
   border: 0;
   width: 100%;
@@ -209,6 +211,7 @@ input[type="text"].ui-grid-filter-input {
 }
 
 select.ui-grid-filter-select {
+  height: 26px;
   padding: 0;
   margin: 0;
   border: 0;

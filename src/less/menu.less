@@ -70,6 +70,8 @@
       // Show a shadow when hovering over a menu item
       &:hover,
       &:focus {
+        background: @selectedColor;
+        color: #0f0f0f;
         // background-color: negation(@headerBackgroundColor, #fff);
         .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
       }
