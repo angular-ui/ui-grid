@@ -1,3 +1,11 @@
+<a name="v3.2.11"></a>
+### v3.2.11 (2017-03-28)
+
+
+#### Bug Fixes
+
+* **6130:** Renaming font files to match icon.less expectation. ([53b9e33a](http://github.com/angular-ui/ng-grid/commit/53b9e33a8771a81e86d0d56b38a1eb6cd880c230))
+
 <a name="v3.2.10"></a>
 ### v3.2.10 (2017-03-27)
 
