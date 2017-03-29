@@ -2351,7 +2351,7 @@ angular.module('ui.grid')
       // The bottom boundary is row count to show + plus scroll height.
       // This allows calculate main grid position without header and footer height that can be streched by content
       var bottomBound = self.renderContainers.body.prevScrollTop +
-          grid.options.minRowsToShow * grid.options.rowHeight;
+          self.options.minRowsToShow * self.options.rowHeight;
 
       // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
       //if (self.horizontalScrollbarHeight) {
