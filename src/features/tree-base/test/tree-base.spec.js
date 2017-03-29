@@ -81,7 +81,7 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       });
     });
     it('should call addRowHeaderColumn', function() {
-      expect(grid.addRowHeaderColumn).toHaveBeenCalledWith(jasmine.any(Object), -100, true);
+      expect(grid.addRowHeaderColumn).toHaveBeenCalledWith(jasmine.any(Object), -100);
     });
   });
 
