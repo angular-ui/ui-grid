@@ -46,34 +46,6 @@ module.exports = function ( grunt ) {
         }
       ]
     },
-    font_cut_release: {
-      files: [
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/',
-          src: '**/*.eot',
-          dest: '<%= dist %>/release/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/',
-          src: '**/*.svg',
-          dest: '<%= dist %>/release/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/',
-          src: '**/*.ttf',
-          dest: '<%= dist %>/release/' + currentTag
-        },
-        {
-          expand: true,
-          cwd: '<%= dist %>/release/',
-          src: '**/*.woff',
-          dest: '<%= dist %>/release/' + currentTag
-        }
-      ]
-    },
     less_customizer: {
       files: [
         {
