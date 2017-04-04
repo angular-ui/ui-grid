@@ -1,3 +1,17 @@
+<a name="v4.0.4"></a>
+### v4.0.4 (2017-04-04)
+
+
+#### Bug Fixes
+
+* **6123:** Allowing selection and tree-base to build columns. ([2ea9a06e](http://github.com/angular-ui/ng-grid/commit/2ea9a06e594601cc44947a997f08bce628e813f4))
+* **flatEntityAccess:**  getCellDisplayValue now returns the correct value. ([ba77c875](http://github.com/angular-ui/ng-grid/commit/ba77c8750431236ff4f729fe8a77eb44cbbfc9b7))
+
+
+#### Features
+
+* **japanese:** Update japanese translation. ([47e78d1](https://github.com/angular-ui/ui-grid/commit/47e78d16710a96033c692f800c5bb4874f694fc8))
+
 <a name="v4.0.3"></a>
 ### v4.0.3 (2017-03-24)
 
