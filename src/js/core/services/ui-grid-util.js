@@ -683,7 +683,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       catch (e) {}
     },
 
-    // Blatantly stolen from Angular as it isn't exposed (yet. 2.0 maybe?)
+    // Blatantly stolen from Angular as it isn't exposed (yet)
     nextUid: function nextUid() {
       var index = uid.length;
       var digit;
@@ -707,7 +707,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       return uidPrefix + uid.join('');
     },
 
-    // Blatantly stolen from Angular as it isn't exposed (yet. 2.0 maybe?)
+    // Blatantly stolen from Angular as it isn't exposed (yet)
     hashKey: function hashKey(obj) {
       var objType = typeof obj,
           key;
