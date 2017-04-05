@@ -16,6 +16,15 @@
               }
             };
 
+            $scope.initFilter = (col) => {
+                let filteredField = {
+                    fieldName: col.field,
+                    value: col.filters[0].term,
+                    id: col.uid
+                }
+                $rootScope.$broadcast('uiGridFilter:changed', filteredField)
+            }
+
             $scope.$on( '$destroy', function() {
               delete $scope.col.updateFilters;
             });
