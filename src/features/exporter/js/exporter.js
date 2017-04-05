@@ -892,6 +892,9 @@
           if (typeof(field.value) === 'string') {
             return '"' + field.value.replace(/"/g,'""') + '"';
           }
+          if (typeof(field.value) === 'object') {
+            return field.value.text;
+          }
 
           return JSON.stringify(field.value);
         },
@@ -1230,6 +1233,8 @@
             returnVal = (field.value ? 'TRUE' : 'FALSE') ;
           } else if (typeof(field.value) === 'string') {
             returnVal = field.value.replace(/"/g,'""');
+          } else if (typeof(field.value) === 'object') {
+            returnVal = field.value;
           } else {
             returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
           }
