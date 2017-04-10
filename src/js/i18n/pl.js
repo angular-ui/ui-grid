@@ -41,7 +41,7 @@
           remove: 'Wyłącz sortowanie'
         },
         column: {
-          hide: 'Ukryj kolumne'
+          hide: 'Ukryj kolumnę'
         },
         aggregation: {
           count: 'Razem pozycji: ',
@@ -60,7 +60,7 @@
         },
         gridMenu: {
           aria: {
-            buttonLabel: 'Menu Grida'
+            buttonLabel: 'Opcje tabeli'
           },
           columns: 'Kolumny:',
           importerTitle: 'Importuj plik',

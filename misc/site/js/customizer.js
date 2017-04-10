@@ -1,6 +1,6 @@
 (function() {
 
-var app = angular.module('customizer', ['ui.grid']);
+var app = angular.module('customizer', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.selection']);
 
 app.run(function($log, $rootScope, $http) {
 });
@@ -39,7 +39,10 @@ app.controller('Main', function($log, $http, $scope, less, Theme, FILES) {
       );
   }
 
-  $scope.gridOptions = {};
+  $scope.gridOptions = {
+    enableFiltering: true,
+    enableGridMenu: true
+  };
   $http.get(FILES.DATA_100)
     .success(function(data) {
       $scope.gridOptions.data = data;

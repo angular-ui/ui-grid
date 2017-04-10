@@ -30,6 +30,7 @@ describe('ui.grid.importer uiGridImporterService', function () {
     $compile = _$compile_;
     gridUtil = _gridUtil_;
 
+    spyOn($window, 'alert').and.callFake(angular.noop);
     $scope.data = [];
     for (var i = 0; i < 3; i++) {
         $scope.data.push({col1:'a_'+i, col2:'b_'+i, col3:'c_'+i, col4:'d_'+i});
@@ -504,7 +505,6 @@ describe('ui.grid.importer uiGridImporterService', function () {
     describe( 'alertError', function() {
       describe('', function() {
         beforeEach(function() {
-          spyOn( $window, "alert").and.callFake(function () {});
           spyOn( gridUtil, 'logError').and.callFake(function () {});
         });
 

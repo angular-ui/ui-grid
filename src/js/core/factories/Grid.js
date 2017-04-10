@@ -595,10 +595,10 @@ angular.module('ui.grid')
            callback.types.indexOf( type ) !== -1 ||
            type === uiGridConstants.dataChange.ALL ) {
         if (callback._this) {
-           callback.callback.apply(callback._this,this);
+           callback.callback.apply(callback._this, this, options);
         }
         else {
-          callback.callback( this );
+          callback.callback(this, options);
         }
       }
     }, this);
@@ -636,10 +636,11 @@ angular.module('ui.grid')
    * is notified, which triggers handling of the visible flag.
    * This is called on uiGridConstants.dataChange.COLUMN, and is
    * registered as a dataChangeCallback in grid.js
-   * @param {string} name column name
+   * @param {object} grid The grid object.
+   * @param {object} options Any options passed into the callback.
    */
-  Grid.prototype.columnRefreshCallback = function columnRefreshCallback( grid ){
-    grid.buildColumns();
+  Grid.prototype.columnRefreshCallback = function columnRefreshCallback(grid, options){
+    grid.buildColumns(options);
     grid.queueGridRefresh();
   };
 
@@ -757,9 +758,12 @@ angular.module('ui.grid')
   * @name addRowHeaderColumn
   * @methodOf ui.grid.class:Grid
   * @description adds a row header column to the grid
-  * @param {object} column def
+  * @param {object} colDef Column definition object.
+  * @param {float} order Number that indicates where the column should be placed in the grid.
+  * @param {boolean} stopColumnBuild Prevents the buildColumn callback from being triggered. This is useful to improve
+  * performance of the grid during initial load.
   */
-  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order) {
+  Grid.prototype.addRowHeaderColumn = function addRowHeaderColumn(colDef, order, stopColumnBuild) {
     var self = this;
 
     //default order
@@ -791,12 +795,14 @@ angular.module('ui.grid')
           return a.headerPriority - b.headerPriority;
         });
 
-        self.buildColumns()
-          .then( function() {
-            self.preCompileCellTemplates();
-            self.queueGridRefresh();
-          });
-      });
+        if (!stopColumnBuild) {
+          self.buildColumns()
+            .then(function() {
+              self.preCompileCellTemplates();
+              self.queueGridRefresh();
+            }).catch(angular.noop);
+        }
+      }).catch(angular.noop);
   };
 
   /**
@@ -913,7 +919,10 @@ angular.module('ui.grid')
       if (self.rows.length > 0){
         self.assignTypes();
       }
-    });
+      if (options.preCompileCellTemplates) {
+        self.preCompileCellTemplates();
+      }
+    }).catch(angular.noop);
   };
 
   Grid.prototype.preCompileCellTemplate = function(col) {
@@ -943,7 +952,7 @@ angular.module('ui.grid')
       } else if ( col.cellTemplatePromise ){
         col.cellTemplatePromise.then( function() {
           self.preCompileCellTemplate( col );
-        });
+        }).catch(angular.noop);
       }
     });
   };
@@ -1169,12 +1178,12 @@ angular.module('ui.grid')
     var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
-      });
+      }).catch(angular.noop);
 
     var p2 = $q.when(self.processColumnsProcessors(self.columns))
       .then(function (renderableColumns) {
         return self.setVisibleColumns(renderableColumns);
-      });
+      }).catch(angular.noop);
 
     return $q.all([p1, p2]);
   };
@@ -1370,7 +1379,7 @@ angular.module('ui.grid')
           else {
             finished.resolve(processedRows);
           }
-        });
+        }).catch(angular.noop);
     }
 
     // Start on the first processor
@@ -1498,7 +1507,7 @@ angular.module('ui.grid')
           else {
             finished.resolve(myRenderableColumns);
           }
-        });
+        }).catch(angular.noop);
     }
 
     // Start on the first processor
@@ -1571,7 +1580,7 @@ angular.module('ui.grid')
 
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.refreshCanceller;
   };
@@ -1596,7 +1605,7 @@ angular.module('ui.grid')
 
     self.gridRefreshCanceller.then(function () {
       self.gridRefreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.gridRefreshCanceller;
   };
@@ -1625,11 +1634,10 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:Grid
    * @description calls each styleComputation function
    */
-  // TODO: this used to take $scope, but couldn't see that it was used
   Grid.prototype.buildStyles = function buildStyles() {
-    // gridUtil.logDebug('buildStyles');
-
     var self = this;
+
+    // gridUtil.logDebug('buildStyles');
 
     self.customStyles = '';
 
@@ -1899,7 +1907,7 @@ angular.module('ui.grid')
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
         col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse(row.entity[col.field] + custom_filter);
+        col.cellDisplayGetterCache = $parse('entity.' + col.field + custom_filter);
       } else {
         col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
       }
@@ -2076,17 +2084,16 @@ angular.module('ui.grid')
 
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
       self.setVisibleRows(renderableRows);
-    });
+    }).catch(angular.noop);
 
     var p2 = self.processColumnsProcessors(self.columns).then(function (renderableColumns) {
       self.setVisibleColumns(renderableColumns);
-    });
+    }).catch(angular.noop);
 
     return $q.all([p1, p2]).then(function () {
-      self.redrawInPlace(rowsAltered);
-
       self.refreshCanvas(true);
-    });
+      self.redrawInPlace(rowsAltered);
+    }).catch(angular.noop);
   };
 
   /**
@@ -2107,7 +2114,7 @@ angular.module('ui.grid')
         self.redrawInPlace();
 
         self.refreshCanvas( true );
-      });
+      }).catch(angular.noop);
   };
 
   /**
@@ -2123,9 +2130,7 @@ angular.module('ui.grid')
   Grid.prototype.refreshCanvas = function(buildStyles) {
     var self = this;
 
-    if (buildStyles) {
-      self.buildStyles();
-    }
+    // gridUtil.logDebug('refreshCanvas');
 
     var p = $q.defer();
 
@@ -2149,6 +2154,11 @@ angular.module('ui.grid')
       }
     }
 
+    // Build the styles without the explicit header heights
+    if (buildStyles) {
+      self.buildStyles();
+    }
+
     /*
      *
      * Here we loop through the headers, measuring each element as well as any header "canvas" it has within it.
@@ -2162,11 +2172,6 @@ angular.module('ui.grid')
      *
      */
     if (containerHeadersToRecalc.length > 0) {
-      // Build the styles without the explicit header heights
-      if (buildStyles) {
-        self.buildStyles();
-      }
-
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
       $timeout(function() {
         // var oldHeaderHeight = self.grid.headerHeight;

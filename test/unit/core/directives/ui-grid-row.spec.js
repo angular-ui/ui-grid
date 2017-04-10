@@ -1,5 +1,5 @@
 describe('uiGridRow', function () {
-  var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, GridRow, gridUtil;
+  var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, GridRow, gridUtil, $timeout;
 
   data = [
     { "name": "Bob", "age": 35 },
@@ -15,13 +15,14 @@ describe('uiGridRow', function () {
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _uiGridConstants_, _GridRow_, _gridUtil_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _uiGridConstants_, _GridRow_, _gridUtil_, _$timeout_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
     uiGridConstants = _uiGridConstants_;
     GridRow = _GridRow_;
     gridUtil = _gridUtil_;
+    $timeout = _$timeout_;
 
     $scope.gridOpts = {
       columnDefs: columnDefs,
@@ -87,6 +88,7 @@ describe('uiGridRow', function () {
             });
           });
         $scope.$digest();
+        $timeout.flush();
       });
 
       it("should have the forth row with text", function() {
