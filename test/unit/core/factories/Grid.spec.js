@@ -832,6 +832,15 @@ describe('Grid factory', function () {
       expect( column.sort.priority ).toEqual(0);
     });
 
+    it( 'if clearExistingGridSortsOnColumnHeaderMenuSort is set to true expect resetColumnSorting to be called', function() {
+      spyOn(grid, 'resetColumnSorting');
+      column.clearExistingGridSortsOnColumnHeaderMenuSort = true;
+      grid.sortColumn( column, false );
+      expect(grid.resetColumnSorting).toHaveBeenCalled();
+      delete column.clearExistingGridSortsOnColumnHeaderMenuSort;
+    });
+
+
     it( 'if sort is currently ASC, then should toggle to DESC, and reset priortiy', function() {
       column.sort = {direction: uiGridConstants.ASC, priority: 2};
       grid.sortColumn( column, false );
