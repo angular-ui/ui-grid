@@ -177,7 +177,9 @@ angular.module('ui.grid')
      */
     self.flagScrollingHorizontally = function(scrollEvent) {
       if (!self.isScrollingVertically && !self.isScrollingHorizontally) {
-        self.api.core.raise.scrollBegin(scrollEvent);
+        if (scrollEvent.x && scrollEvent.x.percentage !== 1) {
+          self.api.core.raise.scrollBegin(scrollEvent);
+        }
       }
       self.isScrollingHorizontally = true;
       if (self.options.scrollDebounce === 0 || !scrollEvent.withDelay) {
