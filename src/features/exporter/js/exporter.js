@@ -1501,7 +1501,7 @@
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
 
             var workbook = new ExcelBuilder.Workbook();
-            var aName = grid.options.exporterExcelSheetName ? grid.options.exporterExcelSheetName : '';
+            var aName = grid.options.exporterExcelSheetName ? grid.options.exporterExcelSheetName : 'Sheet1';
             var sheet = new ExcelBuilder.Worksheet({name: aName});
             workbook.addWorksheet(sheet);
             var docDefinition = self.prepareAsExcel(grid, workbook, sheet);
