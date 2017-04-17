@@ -23,7 +23,7 @@ Steps:
 <ul>
  <li>Include uiGrid in your script and css
   <pre>
-      <link rel="styleSheet" href="release/ui-grid.min.css"/>
+      <link rel="styleSheet" href="/node_modules/angular-ui-grid/ui-grid.min.css"/>
       <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
       <script src="/release/ui-grid.min.js"></script>
   </pre>
