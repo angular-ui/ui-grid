@@ -725,6 +725,11 @@
             else if (evt.ctrlKey || evt.metaKey) {
               uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
             }
+            else if (row.groupHeader) {
+                          for (var i = 0; i < row.treeNode.children.length; i++) {
+                              uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+                          }
+                      }
             else {
               uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
