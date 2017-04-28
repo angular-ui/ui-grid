@@ -45,7 +45,7 @@
               var label = sortDirectionText;
 
               if ($scope.isSortPriorityVisible()) {
-                label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + col.sort.priority;
+                label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + (col.sort.priority + 1);
               }
               return label;
             };
