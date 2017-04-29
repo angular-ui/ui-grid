@@ -990,6 +990,7 @@
                 $scope.deepEdit = false;
 
                 $scope.stopEdit = function (evt) {
+                  evt.target.blur();
                   if ($scope.inputForm && !$scope.inputForm.$valid) {
                     evt.stopPropagation();
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
