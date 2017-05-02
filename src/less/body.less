@@ -28,6 +28,14 @@
   padding-top:1px; //to prevent canvas from absorbing the 1st rendered row's margin
 }
 
+.ui-grid-render-container-middle .scroll-y,
+.ui-grid-render-container-left .scroll-y {
+  display: none !important;
+}
+.ui-grid-render-container-middle:hover + .ui-grid-pinned-container-right .scroll-bar {
+  opacity: 0.7 !important;
+}
+
 .ui-grid-row {
   //position: absolute;
   // border-bottom: 1px solid @borderColor;

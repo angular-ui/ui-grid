@@ -37,7 +37,8 @@
       bind-scroll-horizontal="true"
       bind-scroll-vertical="true"
       enable-horizontal-scrollbar="grid.options.enableHorizontalScrollbar"
-      enable-vertical-scrollbar="grid.options.enableVerticalScrollbar">
+      enable-vertical-scrollbar="grid.options.enableVerticalScrollbar"
+      ng-class="{'ui-grid-render-container-middle': grid.hasRightContainer()}">
     </div>
 
     <div ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="'right'"></div>
