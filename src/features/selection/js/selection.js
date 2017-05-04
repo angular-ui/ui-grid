@@ -399,7 +399,7 @@
            *  @name enableFullRowSelection
            *  @propertyOf  ui.grid.selection.api:GridOptions
            *  @description Enable selection by clicking anywhere on the row.  Defaults to
-           *  false if `enableRowHeaderSelection` is true, otherwise defaults to false.
+           *  false if `enableRowHeaderSelection` is true, otherwise defaults to true.
            */
           if ( typeof(gridOptions.enableFullRowSelection) === 'undefined' ){
             gridOptions.enableFullRowSelection = !gridOptions.enableRowHeaderSelection;
