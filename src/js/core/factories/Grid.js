@@ -1385,15 +1385,17 @@ angular.module('ui.grid')
 
     // Reset all the render container row caches
     for (var i in self.renderContainers) {
-      var container = self.renderContainers[i];
+		if(self.renderContainers.hasOwnProperty(i)) {
+          var container = self.renderContainers[i];
 
-      container.canvasHeightShouldUpdate = true;
+          container.canvasHeightShouldUpdate = true;
 
-      if ( typeof(container.visibleRowCache) === 'undefined' ){
-        container.visibleRowCache = [];
-      } else {
-        container.visibleRowCache.length = 0;
-      }
+          if ( typeof(container.visibleRowCache) === 'undefined' ){
+            container.visibleRowCache = [];
+          } else {
+            container.visibleRowCache.length = 0;
+          }
+		}
     }
 
     // rows.forEach(function (row) {
@@ -1515,9 +1517,11 @@ angular.module('ui.grid')
 
     // Reset all the render container row caches
     for (var i in self.renderContainers) {
-      var container = self.renderContainers[i];
+        if (self.renderContainers.hasOwnProperty(i)) {
+            var container = self.renderContainers[i];
 
-      container.visibleColumnCache.length = 0;
+            container.visibleColumnCache.length = 0;
+        }
     }
 
     for (var ci = 0; ci < columns.length; ci++) {
@@ -2283,18 +2287,19 @@ angular.module('ui.grid')
     var self = this;
 
     for (var i in self.renderContainers) {
-      var container = self.renderContainers[i];
+        if (self.renderContainers.hasOwnProperty(i)) {
+            var container = self.renderContainers[i];
 
-      // gridUtil.logDebug('redrawing container', i);
+            // gridUtil.logDebug('redrawing container', i);
 
-      if (rowsAdded) {
-        container.adjustRows(container.prevScrollTop, null);
-        container.adjustColumns(container.prevScrollLeft, null);
-      }
-      else {
-        container.adjustRows(null, container.prevScrolltopPercentage);
-        container.adjustColumns(null, container.prevScrollleftPercentage);
-      }
+            if (rowsAdded) {
+                container.adjustRows(container.prevScrollTop, null);
+                container.adjustColumns(container.prevScrollLeft, null);
+            } else {
+                container.adjustRows(null, container.prevScrolltopPercentage);
+                container.adjustColumns(null, container.prevScrollleftPercentage);
+            }
+        }
     }
   };
 
