@@ -254,6 +254,15 @@
           gridOptions.exporterMenuItemOrder = gridOptions.exporterMenuItemOrder ? gridOptions.exporterMenuItemOrder : 200;
           /**
            * @ngdoc object
+           * @name exporterIsExcelCompatible
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Separator header, used to set a custom column separator in a csv file, only works on MS Excel.
+           * Used it on other programs will make csv content display unproperly. Setting this option to false won't add this header.
+           * <br/>Defaults to false
+           */
+          gridOptions.exporterIsExcelCompatible = gridOptions.exporterIsExcelCompatible === true;
+          /**
+           * @ngdoc object
            * @name exporterPdfDefaultStyle
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default style in pdfMake format
@@ -564,7 +573,7 @@
               shown: function() {
                 return grid.options.exporterMenuCsv && grid.options.exporterMenuAllData;
               },
-              order: grid.options.exporterMenuItemOrder
+              order: 200
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
@@ -574,7 +583,7 @@
               shown: function() {
                 return grid.options.exporterMenuCsv && grid.options.exporterMenuVisibleData;
               },
-              order: grid.options.exporterMenuItemOrder + 1
+              order: 201
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
@@ -585,7 +594,7 @@
                 return grid.options.exporterMenuCsv && grid.options.exporterMenuSelectedData &&
                        ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: grid.options.exporterMenuItemOrder + 2
+              order: 202
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
@@ -595,7 +604,7 @@
               shown: function() {
                 return grid.options.exporterMenuPdf && grid.options.exporterMenuAllData;
               },
-              order: grid.options.exporterMenuItemOrder + 3
+              order: 203
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
@@ -605,7 +614,7 @@
               shown: function() {
                 return grid.options.exporterMenuPdf && grid.options.exporterMenuVisibleData;
               },
-              order: grid.options.exporterMenuItemOrder + 4
+              order: 204
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
@@ -616,7 +625,7 @@
                 return grid.options.exporterMenuPdf && grid.options.exporterMenuSelectedData &&
                        ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: grid.options.exporterMenuItemOrder + 5
+              order: 205
             }
           ]);
         },
@@ -830,7 +839,7 @@
 
         /**
          * @ngdoc function
-         * @name formatAsCsv
+         * @name formatAsCSV
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Formats the column headers and data as a CSV,
          * and sends that data to the user
