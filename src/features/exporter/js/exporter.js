@@ -844,12 +844,12 @@
          * @description Gets rows from a node. If the node is grouped it will
          * recurse down into the children to get to the raw data element
          * which is a row without children (a leaf).
-         * @param aNode the tree node on the grid
+         * @param {Node} aNode the tree node on the grid
          * @returns {Array} an array of leaf nodes
          */
         getRowsFromNode: function(aNode) {
           var rows = [];
-          for (var i=0; i<aNode.children.length; i++) {
+          for (var i = 0; i<aNode.children.length; i++) {
             if (aNode.children[i].children && aNode.children[i].children.length === 0) {
               rows.push(aNode.children[i]);
             } else {
@@ -879,14 +879,14 @@
          * @returns {Array} an array of leaf nodes
          */
         getDataSorted: function (grid, rowTypes, colTypes, applyCellFilters) {
-          if (grid.treeBase.numberLevels === 0) {
+          if (!grid.treeBase || grid.treeBase.numberLevels === 0) {
             return grid.rows;
           }
           var rows = [];
 
-          for (var i=0; i< grid.treeBase.tree.length; i++) {
+          for (var i = 0; i< grid.treeBase.tree.length; i++) {
             var nodeRows = this.getRowsFromNode(grid.treeBase.tree[i]);
-            for (var j=0; j<nodeRows.length; j++) {
+            for (var j = 0; j<nodeRows.length; j++) {
               rows.push(nodeRows[j].row);
             }
           }
@@ -1403,7 +1403,7 @@
           for (var i = 0; i < bareHeaders.length; i++) {
             // TODO - probably need callback to determine header value and header styling
             var exportStyle = 'header';
-            switch(exportColumnHeaders[i].align) {
+            switch (exportColumnHeaders[i].align) {
               case 'center':
                 exportStyle = 'headerCenter';
                 break;
@@ -1411,14 +1411,14 @@
                 exportStyle = 'headerRight';
                 break;
             }
-            var metadata = (docDefinition.styles && docDefinition.styles[exportStyle])?{style: docDefinition.styles[exportStyle].id}:null;
+            var metadata = (docDefinition.styles && docDefinition.styles[exportStyle]) ? {style: docDefinition.styles[exportStyle].id} : null;
             headerData.push({value: bareHeaders[i].value, metadata: metadata});
           }
           sheetData.push(headerData);
 
           var result = exportData.map(this.formatRowAsExcel(this, workbook, sheet));
-          for (var i = 0; i<result.length; i++) {
-            sheetData.push(result[i]);
+          for (var j = 0; j<result.length; j++) {
+            sheetData.push(result[j]);
           }
           return sheetData;
         },
@@ -1509,7 +1509,7 @@
             // The standard column width in Microsoft Excel 2000 is 8.43 characters based on fixed-width Courier font
             // Width of 10 in excel is 75 pixels
             var colWidths = [];
-            var startDataIndex= grid.treeBase.numberLevels;
+            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : 0;
             for (var i = startDataIndex; i < grid.columns.length; i++) {
               colWidths.push({width: (grid.columns[i].drawnWidth / 75) * 10});
             }
