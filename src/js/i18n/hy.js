@@ -54,6 +54,9 @@
           exporterAllAsPdf: 'Արտահանել PDF',
           exporterVisibleAsPdf: 'Արտահանել երևացող տվյալները PDF',
           exporterSelectedAsPdf: 'Արտահանել ընտրված տվյալները PDF',
+          exporterAllAsExcel: 'Արտահանել excel',
+          exporterVisibleAsExcel: 'Արտահանել երևացող տվյալները excel',
+          exporterSelectedAsExcel: 'Արտահանել ընտրված տվյալները excel',
           clearAllFilters: 'Մաքրել բոլոր ֆիլտրերը'
         },
         importer: {

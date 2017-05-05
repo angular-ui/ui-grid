@@ -23,7 +23,10 @@ module.exports = {
       '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js',
       'bower_components/csv-js/csv.js',
       'bower_components/pdfmake/build/pdfmake.js',
-      'bower_components/pdfmake/build/vfs_fonts.js'
+      'bower_components/pdfmake/build/vfs_fonts.js',
+      'bower_components/lodash/dist/lodash.min.js',
+      'bower_components/jszip/dist/jszip.min.js',
+      'bower_components/excel-builder-js/dist/excel-builder.dist.js'
     ],
     hiddenScripts: [
       '//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js',
