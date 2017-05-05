@@ -13,6 +13,12 @@ directive on your grid.  If you want to export as PDF you need to have installed
 available through:
 <pre>  bower install pdfmake  </pre>
 
+If you want to export as Excel you need to have installed Excel-Builder,
+available through:
+<pre>  bower install lodash
+  bower install jszip#2.6.1
+  bower install excelbuilder  </pre>
+
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}, and
 
 - {@link api/ui.grid.exporter.api:ColumnDef columnDef}
@@ -73,6 +79,8 @@ In this example we use the native grid menu buttons, and we show both the pdf an
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
         onRegisterApi: function(gridApi){
           $scope.gridApi = gridApi;
         }
