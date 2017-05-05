@@ -2,7 +2,7 @@
 @name Tutorial: 322 Validation
 @description
 
-<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development. 
+<div class="alert alert-warning" role="alert"><strong>Alpha</strong> This feature is in development.
 There will almost certainly be breaking api changes, or there are major outstanding bugs.</div>
 
 Feature ui.grid.validate allows validating cells after they are changed. To enable, you must include the
@@ -27,8 +27,8 @@ Some custom validators come with the feature and are:
 To define a new validator you should use the {@link
 api/ui.grid.validate.service:uiGridValidateService#methods_setValidator setValidator} method.
 
-To add a validator to a column you just need to add a `validators` property to its `colDef` 
-object, containing a property for each validator you want to add. The name of the property 
+To add a validator to a column you just need to add a `validators` property to its `colDef`
+object, containing a property for each validator you want to add. The name of the property
 will set the validator and the value of the property will be treated as an argument by the validator function.
 
 When a field does not pass validation it gets a `invalid` class so you can customize it via css.
@@ -40,12 +40,12 @@ The feature adds 2 templates to ui-grid:
 
 ## External Factory
 
-In case you have an external service providing validators, you can add a function calling said service 
+In case you have an external service providing validators, you can add a function calling said service
 by setting an external validator factory function via {@link
 api/ui.grid.validate.service:uiGridValidateService#methods_setExternalFactoryFunction setExternalFactoryFunction}.
 
 Please be advised that external validators should accept the same parameters (or at least an ordered subset) as
-our validators do (`newValue`, `oldValue`, `rowEntity`, `colDef`);
+our validators do (`oldValue`, `newValue`, `rowEntity`, `colDef`);
 
 @example
 <example module="app">
@@ -59,10 +59,10 @@ our validators do (`newValue`, `oldValue`, `rowEntity`, `colDef`);
     });
 
     app.controller('MainCtrl', ['$scope', '$http', '$window', 'uiGridValidateService', function ($scope, $http, $window, uiGridValidateService) {
-      
+
       uiGridValidateService.setValidator('startWith',
         function(argument) {
-          return function(newValue, oldValue, rowEntity, colDef) {
+          return function(oldValue, newValue, rowEntity, colDef) {
             if (!newValue) {
               return true; // We should not test for existence here
             } else {
@@ -74,12 +74,12 @@ our validators do (`newValue`, `oldValue`, `rowEntity`, `colDef`);
           return 'You can only insert names starting with: "' + argument + '"';
         }
       );
-      
+
       $scope.gridOptions = { enableCellEditOnFocus: true };
 
       $scope.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
-        { name: 'name', displayName: 'Name (editable)', width: '20%', 
+        { name: 'name', displayName: 'Name (editable)', width: '20%',
           validators: {required: true, startWith: 'M'}, cellTemplate: 'ui-grid/cellTitleValidator' }
       ];
 
@@ -92,7 +92,7 @@ our validators do (`newValue`, `oldValue`, `rowEntity`, `colDef`);
               $scope.gridApi = gridApi;
               gridApi.validate.on.validationFailed($scope,function(rowEntity, colDef, newValue, oldValue){
                 $window.alert('rowEntity: '+ rowEntity + '\n' +
-                              'colDef: ' + colDef + '\n' + 
+                              'colDef: ' + colDef + '\n' +
                               'newValue: ' + newValue + '\n' +
                               'oldValue: ' + oldValue);
               });

@@ -45,7 +45,7 @@
               var label = sortDirectionText;
 
               if ($scope.isSortPriorityVisible()) {
-                label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + col.sort.priority;
+                label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + (col.sort.priority + 1);
               }
               return label;
             };
@@ -119,7 +119,7 @@
                 if ( $scope.colMenu ) {
                   uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
-              });
+              }).catch(angular.noop);
 
               uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
 
@@ -235,7 +235,7 @@
               });
 
               // Figure out whether this column is sortable or not
-              if (uiGridCtrl.grid.options.enableSorting && $scope.col.enableSorting) {
+              if ($scope.col.enableSorting) {
                 $scope.sortable = true;
               }
               else {
@@ -350,7 +350,7 @@
                 .then(function () {
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
-                });
+                }).catch(angular.noop);
             };
 
 

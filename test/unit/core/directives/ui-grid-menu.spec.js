@@ -80,7 +80,7 @@ describe('ui-grid-menu', function() {
       $scope.$broadcast('show-menu');
 
       expect(isolateScope.dynamicStyles).toBeDefined();
-      expect(isolateScope.dynamicStyles).toContain('.grid1234 .ui-grid-menu-mid { max-height: 370px; }');
+      expect(isolateScope.dynamicStyles).toContain('.grid1234 .ui-grid-menu-mid { max-height: 350px; }');
     });
 
     function compileWithGrid () {
@@ -88,6 +88,7 @@ describe('ui-grid-menu', function() {
       grid.data('$uiGridController', $controller(function ($scope) {
         this.grid = {
           gridHeight: 400,
+          headerHeight: 30,
           id: '1234',
           api: {
             core: {
@@ -265,6 +266,35 @@ describe('ui-grid-menu', function() {
       e.keyCode = 27;
       $(menu).trigger(e);
       expect(hideSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('custom gridMenu templates', function () {
+    var $timeout;
+    var customGridMenu = '<div ui-grid-menu-custom menu-items="items"></div>';
+
+    beforeEach(inject(function (_$timeout_) {
+      $timeout = _$timeout_;
+    }));
+    beforeEach( function() {
+      recompile = function () {
+        var element = angular.element('<div ui-grid="gridOptions"></div>');
+        $scope.gridOptions = {};
+        $scope.gridOptions.gridMenuTemplate = customGridMenu;
+        $scope.gridOptions.onRegisterApi = function(gridApi) {
+          $scope.grid = gridApi.grid;
+        };
+        $timeout(function () {
+          $compile(element)($scope);
+        });
+        $timeout.flush();
+      };
+
+      recompile();
+    });
+
+    it('should have gridMenuTemplate defined in grid options', function() {
+      expect($scope.grid.options.gridMenuTemplate).toEqual(customGridMenu);
     });
   });
 });

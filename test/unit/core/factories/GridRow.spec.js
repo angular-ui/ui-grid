@@ -39,6 +39,14 @@ describe('GridRow factory', function () {
       expect(gridRow.getQualifiedColField(col)).toBe('row.entity[\'simpleProp\']');
     });
 
+    it('binds correctly to $$this', function() {
+      var gridRow = new GridRow(entity,0,grid);
+      var col = {
+        field: '$$this'
+      };
+      expect(gridRow.getQualifiedColField(col)).toBe('row.entity');
+    });
+
   });
 
 

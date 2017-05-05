@@ -75,6 +75,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterCsvFilename: 'download.csv',
         exporterPdfFilename: 'download.pdf',
         exporterOlderExcelCompatibility: false,
+        exporterIsExcelCompatible: false,
         exporterPdfDefaultStyle : { fontSize : 11 },
         exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
         exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
@@ -94,7 +95,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterFieldFormatCallback: jasmine.any(Function),
         exporterFieldApplyFilters: false,
         exporterAllDataFn: null,
-        exporterSuppressColumns: []
+        exporterSuppressColumns: [],
+        exporterMenuItemOrder: 200
       });
     });
 
@@ -107,6 +109,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterCsvFilename: 'myfile.csv',
         exporterPdfFilename: 'myfile.pdf',
         exporterOlderExcelCompatibility: true,
+        exporterIsExcelCompatible: true,
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -131,7 +134,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterExcelFilename: 'myFile.xlsx',
         exporterExcelSheetName: 'Sheet1',
         exporterExcelHeader: "My Header",
-        exporterExcelFooter: "My Footer"
+        exporterExcelFooter: "My Footer",
+        exporterMenuItemOrder: 75
       };
       uiGridExporterService.defaultGridOptions(options);
       expect( options ).toEqual({
@@ -141,6 +145,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterCsvFilename: 'myfile.csv',
         exporterPdfFilename: 'myfile.pdf',
         exporterOlderExcelCompatibility: true,
+        exporterIsExcelCompatible: true,
         exporterPdfDefaultStyle : { fontSize : 12 },
         exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
         exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
@@ -166,7 +171,8 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterExcelFilename: 'myFile.xlsx',
         exporterExcelSheetName: 'Sheet1',
         exporterExcelHeader: "My Header",
-        exporterExcelFooter: "My Footer"
+        exporterExcelFooter: "My Footer",
+        exporterMenuItemOrder: 75
       });
     });
   });

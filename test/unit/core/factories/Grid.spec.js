@@ -1,34 +1,32 @@
 describe('Grid factory', function () {
-  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants;
-  var gridClassFactory;
+  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants, gridClassFactory;
 
-  beforeEach(module('ui.grid'));
+  beforeEach(function() {
+    module('ui.grid');
 
-  beforeEach(inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
-    $timeout = _$timeout_;
-    $q = _$q_;
-    $scope = _$rootScope_;
-    Grid = _Grid_;
-    GridRow = _GridRow_;
-    GridColumn = _GridColumn_;
-    uiGridConstants = _uiGridConstants_;
-    gridClassFactory = _gridClassFactory_;
-
+    inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
+      $timeout = _$timeout_;
+      $q = _$q_;
+      $scope = _$rootScope_;
+      Grid = _Grid_;
+      GridRow = _GridRow_;
+      GridColumn = _GridColumn_;
+      uiGridConstants = _uiGridConstants_;
+      gridClassFactory = _gridClassFactory_;
+    });
     grid = new Grid({ id: 1 });
     rows = [
       new GridRow({ a: 'one' }, 0, grid),
       new GridRow({ a: 'two' }, 1, grid)
     ];
 
-
     column = new GridColumn({ name: 'a' }, 0, grid);
-
 
     grid.rows = rows;
     grid.columns = [column];
 
     returnedRows = null;
-  }));
+  });
 
   function runProcs (done) {
     grid.processRowsProcessors(grid.rows)
@@ -64,7 +62,7 @@ describe('Grid factory', function () {
   });
 
   describe('row processors', function () {
-    var proc1, proc2, returnedRows;
+    var proc1, proc2;
 
     // Stub for adding function spies to
     function testObj() {
@@ -243,7 +241,6 @@ describe('Grid factory', function () {
     });
 
     it('not overwrite column types specified in options', function() {
-
       var grid1 = new Grid({ id: 3 });
 
       grid1.options.columnDefs = [
@@ -411,89 +408,135 @@ describe('Grid factory', function () {
         expect(grid.columns[4].displayName).toEqual('A5');
       });
     });
+
+    describe('when preCompileCellTemplates option is set to true', function() {
+      var grid;
+
+      beforeEach(function() {
+        grid = new Grid({ id: 3 });
+
+        grid.options.columnDefs = [
+          {name:'1'},
+          {name:'2'},
+          {name:'3'},
+          {name:'4'},
+          {name:'5'}
+        ];
+        spyOn(grid, 'preCompileCellTemplates').and.callThrough();
+        grid.buildColumns({preCompileCellTemplates: true});
+        $scope.$apply();
+      });
+
+      it('should call preCompileCellTemplates on the grid', function() {
+        expect(grid.preCompileCellTemplates).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('follow source array', function() {
-    it('should insert it on position 0', function() {
-      var dataRows = [{str:'abc'}];
-      var grid = new Grid({ id: 1 });
+    var dataRows, grid;
+
+    beforeEach(function() {
+      dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+      grid = new Grid({ id: 1 });
+      grid.options.enableRowHashing = false;
+
+      spyOn(grid, 'getRow').and.callThrough();
 
       grid.modifyRows(dataRows);
+    });
 
-
-      expect(grid.rows.length).toBe(1);
+    it('should update the grid rows', function() {
+      expect(grid.rows.length).toBe(3);
       expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('cba');
+      expect(grid.rows[2].entity.str).toBe('bac');
+    });
 
+    it('should insert it on position 0', function() {
       dataRows.splice(0,0,{str:'cba'});
       grid.modifyRows(dataRows);
 
-      expect(grid.rows.length).toBe(2);
+      expect(grid.getRow).toHaveBeenCalled();
+      expect(grid.rows.length).toBe(4);
       expect(grid.rows[0].entity.str).toBe('cba');
     });
 
     it('should swap', function() {
-      var dataRows = [{str:'abc'},{str:'cba'}];
-      var grid = new Grid({ id: 1 });
-
-      grid.modifyRows(dataRows);
-
-      expect(grid.rows[0].entity.str).toBe('abc');
-      expect(grid.rows[1].entity.str).toBe('cba');
-
       var tmpRow = dataRows[0];
+
       dataRows[0] = dataRows[1];
       dataRows[1] = tmpRow;
       grid.modifyRows(dataRows);
 
+      expect(grid.getRow).toHaveBeenCalled();
       expect(grid.rows[0].entity.str).toBe('cba');
       expect(grid.rows[1].entity.str).toBe('abc');
     });
 
     it('should delete and insert new in the middle', function() {
-      var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
-      var grid = new Grid({ id: 1 });
-
-      grid.modifyRows(dataRows);
-
-      expect(grid.rows.length).toBe(3);
-      expect(grid.rows[0].entity.str).toBe('abc');
-      expect(grid.rows[1].entity.str).toBe('cba');
-      expect(grid.rows[2].entity.str).toBe('bac');
-
       dataRows[1] = {str:'xyz'};
       grid.modifyRows(dataRows);
 
+      expect(grid.getRow).toHaveBeenCalled();
       expect(grid.rows.length).toBe(3);
       expect(grid.rows[0].entity.str).toBe('abc');
       expect(grid.rows[1].entity.str).toBe('xyz');
       expect(grid.rows[2].entity.str).toBe('bac');
     });
+  });
 
-    /*
-     * No longer trying to keep order of sort - we run rowsProcessors
-     * immediately after anyway, which will resort.
-     *
-    it('should keep the order of the sort', function() {
-      var dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
-      var grid = new Grid({ id: 1 });
-      grid.options.columnDefs = [{name:'1',type:'string'}];
-      grid.buildColumns();
+  describe('when row hashing is enabled', function() {
+    var dataRows, grid;
+
+    beforeEach(function() {
+      dataRows = [{str:'abc'},{str:'cba'},{str:'bac'}];
+      grid = new Grid({ id: 1 });
+      grid.options.enableRowHashing = true;
+
+      spyOn(grid, 'getRow').and.callThrough();
+
       grid.modifyRows(dataRows);
+    });
 
+    it('should update the grid rows', function() {
       expect(grid.rows.length).toBe(3);
       expect(grid.rows[0].entity.str).toBe('abc');
       expect(grid.rows[1].entity.str).toBe('cba');
       expect(grid.rows[2].entity.str).toBe('bac');
-
-      grid.sortColumn(grid.columns[0]);
-
-      dataRows.splice(0,0,{str:'xyz'});
-      grid.modifyRows(dataRows);
-      expect(grid.rows.length).toBe(4);
-      expect(grid.rows[0].entity.str).toBe('abc');
-      expect(grid.rows[3].entity.str).toBe('xyz');
     });
-    */
+
+    it('should insert it on position 0', function() {
+      dataRows.splice(0,0,{str:'cba'});
+      grid.modifyRows(dataRows);
+
+      expect(grid.getRow).not.toHaveBeenCalled();
+      expect(grid.rows.length).toBe(4);
+      expect(grid.rows[0].entity.str).toBe('cba');
+    });
+
+    it('should swap', function() {
+      var tmpRow = dataRows[0];
+
+      dataRows[0] = dataRows[1];
+      dataRows[1] = tmpRow;
+      grid.modifyRows(dataRows);
+
+      expect(grid.getRow).not.toHaveBeenCalled();
+      expect(grid.rows[0].entity.str).toBe('cba');
+      expect(grid.rows[1].entity.str).toBe('abc');
+    });
+
+    it('should delete and insert new in the middle', function() {
+      dataRows[1] = {str:'xyz'};
+      grid.modifyRows(dataRows);
+
+      expect(grid.getRow).not.toHaveBeenCalled();
+      expect(grid.rows.length).toBe(3);
+      expect(grid.rows[0].entity.str).toBe('abc');
+      expect(grid.rows[1].entity.str).toBe('xyz');
+      expect(grid.rows[2].entity.str).toBe('bac');
+    });
   });
 
   describe('binding', function() {
@@ -568,12 +611,83 @@ describe('Grid factory', function () {
 
     });
 
+    it('should set cache correctly with flatEntityAccess', function() {
+
+      var colDefs = [
+        {name:'simpleProp'}
+      ];
+      var entity2 = {
+        simpleProp: 'simplePropValue.2'
+      };
+
+      var grid = new Grid({ id: 1, columnDefs:colDefs, flatEntityAccess:true });
+      var rows = [
+        new GridRow(entity,1,grid),
+        new GridRow(entity2,2,grid)
+      ];
+
+
+      grid.buildColumns();
+      grid.modifyRows([entity, entity2]);
+
+      var simpleCol = grid.getColumn('simpleProp');
+
+      var row = grid.rows[0];
+      expect(grid.getCellValue(row,simpleCol)).toBe('simplePropValue');
+      expect(grid.getCellDisplayValue(row,simpleCol)).toBe('simplePropValue');
+      
+      var row2 = grid.rows[1];
+      expect(grid.getCellValue(row2,simpleCol)).toBe('simplePropValue.2');
+      expect(grid.getCellDisplayValue(row2,simpleCol)).toBe('simplePropValue.2');
+    });
+
+    it('should bind correctly to $$this', function() {
+      var colDefs = [
+        {name: 'thisProp', field: '$$this'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var data = [
+        "abc",
+        "def"
+      ];
+      var rows = [
+        new GridRow(data[0], 1, grid),
+        new GridRow(data[1], 2, grid)
+      ];
+
+      grid.buildColumns();
+      grid.modifyRows(data);
+
+      expect(grid.getCellValue(rows[0], grid.getColumn('thisProp'))).toBe('abc');
+      expect(grid.getCellValue(rows[1], grid.getColumn('thisProp'))).toBe('def');
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('thisProp'))).toBe('abc');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('thisProp'))).toBe('def');
+    });
+
     it('should apply angularjs filters', function(){
       var colDefs = [
         {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
         {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
       ];
       var grid = new Grid({ id: 1, columnDefs:colDefs });
+      var rows = [
+        new GridRow(entity,1,grid)
+      ];
+      grid.buildColumns();
+      grid.modifyRows([entity]);
+
+      var row = grid.rows[0];
+      expect(grid.getCellDisplayValue(row,grid.columns[0])).toEqual("2015-07-01");
+      expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
+    });
+
+    it('should apply angularjs filters with flatEntityAccess', function(){
+      var colDefs = [
+        {displayName:'date', field:'dateProp', cellFilter: 'date:"yyyy-MM-dd"'},
+        {displayName:'weekday', field:'dateProp', cellFilter: 'date:"EEEE" | uppercase'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs, flatEntityAccess:true });
       var rows = [
         new GridRow(entity,1,grid)
       ];
@@ -607,15 +721,37 @@ describe('Grid factory', function () {
     });
   });
 
-  describe('row header', function() {
+  describe('addRowHeaderColumn', function() {
+    var grid;
 
+    beforeEach(function() {
+      var colDefs = [
+        {name:'col1'}
+      ];
 
-    beforeEach(function(){
-
-
+      grid = new gridClassFactory.createGrid({columnDefs: colDefs});
+      spyOn(grid, 'buildColumns').and.callThrough();
     });
 
+    describe('when stopBuildColumns is set to true', function() {
+      it('should not call buildColumns', function() {
+        grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: '<div/>'}, 1, true);
+        $scope.$apply();
 
+        expect(grid.buildColumns).not.toHaveBeenCalled();
+      });
+    });
+    describe('when stopBuildColumns is set to false', function() {
+      it('should call buildColumns', function() {
+        grid.addRowHeaderColumn({name: 'rowHeader', cellTemplate: '<div/>'}, 1, false);
+        $scope.$apply();
+
+        expect(grid.buildColumns).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('row header', function() {
     it('should create left container for left row header', inject(function(gridClassFactory, $timeout) {
       var colDefs = [
         {name:'col1'}
@@ -810,11 +946,37 @@ describe('Grid factory', function () {
       expect( column.sort.direction ).toEqual(uiGridConstants.ASC);
       expect( column.sort.priority ).toEqual(0);
     });
+
+    it( 'if two column has sort 1 and 2 on the ui which is 0 and 1 in the sort object and the sort change for the first do not change the priority', function() {
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } }, 0, grid);
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.ASC, priority: 1 } }, 1, grid);
+      grid.columns.push( priorColumn1 );
+      grid.columns.push( priorColumn2 );
+
+      grid.sortColumn( priorColumn1, true );
+
+      expect( priorColumn1.sort ).toEqual({ direction: uiGridConstants.DESC, priority: 0});
+    });
+
+    it( 'if three column has sort 1,2 and 3 on the ui which is 0,1 and 2 in the sort object and the sort removed for the second decrease priority for the third but do not change for the first', function() {
+      var priorColumn1 = new GridColumn({ name: 'a', sort: { direction: uiGridConstants.ASC, priority: 0 } }, 0, grid);
+      var priorColumn2 = new GridColumn({ name: 'b', sort: { direction: uiGridConstants.DESC, priority: 1 } }, 1, grid);
+      var priorColumn3 = new GridColumn({ name: 'c', sort: { direction: uiGridConstants.ASC, priority: 2 } }, 2, grid);
+      grid.columns.push( priorColumn1 );
+      grid.columns.push( priorColumn2 );
+      grid.columns.push( priorColumn3 );
+
+      grid.sortColumn( priorColumn2, true );
+
+      expect( priorColumn1.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 0 });
+      expect( priorColumn2.sort ).toEqual({ });
+      expect( priorColumn3.sort ).toEqual({ direction: uiGridConstants.ASC, priority: 1 });
+    });
   });
 
 
   describe( 'data change callbacks', function() {
-    it( 'register then deregister data change callback', function() {
+    it('register then deregister data change callback', function() {
       var countCallbacks = function(){
         var i = 0;
         angular.forEach(grid.dataChangeCallbacks, function(callback, key){
@@ -831,57 +993,88 @@ describe('Grid factory', function () {
       expect( countCallbacks() ).toEqual( prevCount );
     });
 
-    describe( 'mix of callbacks being called', function() {
-      var called;
-      var constants;
+    describe('mix of callbacks being called', function() {
+      var called, constants, optionsPassed;
 
       beforeEach( function() {
         called = [];
+        optionsPassed = false;
         constants = uiGridConstants.dataChange;
 
         // this function will push it's type into the called array when it's called
-        var createCallbackFunction = function( type ){
-          return function( grid ){
-            called.push( type );
+        function createCallbackFunction(type){
+          return function(grid, options){
+            called.push(type);
+            optionsPassed = angular.isDefined(options);
           };
-        };
+        }
 
-        grid.registerDataChangeCallback( createCallbackFunction( constants.ALL ), [constants.ALL] );
-        grid.registerDataChangeCallback( createCallbackFunction( constants.ROW ), [constants.ROW] );
-        grid.registerDataChangeCallback( createCallbackFunction( constants.EDIT ), [constants.EDIT] );
-        grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN ), [constants.COLUMN] );
-        grid.registerDataChangeCallback( createCallbackFunction( constants.COLUMN + constants.EDIT ), [constants.COLUMN, constants.EDIT] );
+        grid.registerDataChangeCallback(createCallbackFunction( constants.ALL ), [constants.ALL]);
+        grid.registerDataChangeCallback(createCallbackFunction( constants.ROW ), [constants.ROW]);
+        grid.registerDataChangeCallback(createCallbackFunction( constants.EDIT ), [constants.EDIT]);
+        grid.registerDataChangeCallback(createCallbackFunction( constants.COLUMN ), [constants.COLUMN]);
+        grid.registerDataChangeCallback(createCallbackFunction( constants.COLUMN + constants.EDIT ), [constants.COLUMN, constants.EDIT]);
       });
 
       it( 'call of type ALL', function() {
-        grid.callDataChangeCallbacks( constants.ALL );
-        expect( called ).toEqual( [ constants.ALL, constants.ROW, constants.EDIT, constants.COLUMN, constants.COLUMN + constants.EDIT]);
+        grid.callDataChangeCallbacks(constants.ALL);
+        expect(called).toEqual([constants.ALL, constants.ROW, constants.EDIT, constants.COLUMN, constants.COLUMN + constants.EDIT]);
+        expect(optionsPassed).toBe(false);
       });
 
       it( 'call of type ROW', function() {
-        grid.callDataChangeCallbacks( constants.ROW );
-        expect( called ).toEqual( [ constants.ALL, constants.ROW ]);
+        grid.callDataChangeCallbacks(constants.ROW);
+        expect(called).toEqual([constants.ALL, constants.ROW ]);
+        expect(optionsPassed).toBe(false);
       });
 
       it( 'call of type EDIT', function() {
-        grid.callDataChangeCallbacks( constants.EDIT );
-        expect( called ).toEqual( [ constants.ALL, constants.EDIT, constants.COLUMN + constants.EDIT ]);
+        grid.callDataChangeCallbacks(constants.EDIT);
+        expect(called).toEqual([constants.ALL, constants.EDIT, constants.COLUMN + constants.EDIT ]);
+        expect(optionsPassed).toBe(false);
       });
 
       it( 'call of type COLUMN', function() {
-        grid.callDataChangeCallbacks( constants.COLUMN );
-        expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+        grid.callDataChangeCallbacks(constants.COLUMN);
+        expect(called).toEqual([constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+        expect(optionsPassed).toBe(false);
       });
 
       it( 'call works via api', function() {
-        grid.api.core.notifyDataChange( constants.COLUMN );
-        expect( called ).toEqual( [ constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+        grid.api.core.notifyDataChange(constants.COLUMN);
+        expect(called).toEqual([constants.ALL, constants.COLUMN, constants.COLUMN + constants.EDIT ]);
+        expect(optionsPassed).toBe(false);
+      });
+
+      describe('when options are passed in', function() {
+        it('should pass the options to the callback', function() {
+          grid.callDataChangeCallbacks(constants.ALL, {options: true});
+          expect(called).toEqual([constants.ALL, constants.ROW, constants.EDIT, constants.COLUMN, constants.COLUMN + constants.EDIT]);
+          expect(optionsPassed).toBe(true);
+        });
       });
     });
   });
 
-  describe('clearAllFilters', function() {
+  describe('columnRefreshCallback', function() {
+    var options;
 
+    beforeEach(function() {
+      options = {preCompileCellTemplates: true};
+      spyOn(grid, 'buildColumns').and.callThrough();
+      spyOn(grid, 'queueGridRefresh').and.callThrough();
+      grid.columnRefreshCallback(grid, options);
+    });
+
+    it('should call buildColumns with the options passed into it', function() {
+      expect(grid.buildColumns).toHaveBeenCalledWith(options);
+    });
+    it('should call queueGridRefresh', function() {
+      expect(grid.queueGridRefresh).toHaveBeenCalled();
+    });
+  });
+
+  describe('clearAllFilters', function() {
     it('should clear all filter terms from all columns', function() {
       grid.columns = [
         {filters: [{term: 'A'}, {term: 'B'}]},

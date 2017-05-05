@@ -253,6 +253,23 @@
           gridOptions.exporterOlderExcelCompatibility = gridOptions.exporterOlderExcelCompatibility === true;
           /**
            * @ngdoc object
+           * @name exporterIsExcelCompatible
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Separator header, used to set a custom column separator in a csv file, only works on MS Excel.
+           * Used it on other programs will make csv content display unproperly. Setting this option to false won't add this header.
+           * <br/>Defaults to false
+           */
+          gridOptions.exporterIsExcelCompatible = gridOptions.exporterIsExcelCompatible === true;
+          /**
+           * @ngdoc object
+           * @name exporterMenuItemOrder
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description An option to determine the starting point for the menu items created by the exporter
+           * <br/>Defaults to 200
+           */
+          gridOptions.exporterMenuItemOrder = gridOptions.exporterMenuItemOrder ? gridOptions.exporterMenuItemOrder : 200;
+          /**
+           * @ngdoc object
            * @name exporterPdfDefaultStyle
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default style in pdfMake format
@@ -608,64 +625,64 @@
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuAllData;
               },
-              order: 200
+              order: grid.options.exporterMenuItemOrder
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuVisibleData;
               },
-              order: 201
+              order: grid.options.exporterMenuItemOrder + 1
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: 202
+              order: grid.options.exporterMenuItemOrder + 2
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuAllData;
               },
-              order: 203
+              order: grid.options.exporterMenuItemOrder + 3
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuVisibleData;
               },
-              order: 204
+              order: grid.options.exporterMenuItemOrder + 4
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: 205
+              order: grid.options.exporterMenuItemOrder + 5
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsExcel'),
@@ -675,7 +692,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuAllData;
               },
-              order: 206
+              order: grid.options.exporterMenuItemOrder + 6
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsExcel'),
@@ -685,7 +702,7 @@
               shown: function() {
                 return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuVisibleData;
               },
-              order: 207
+              order: grid.options.exporterMenuItemOrder + 7
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsExcel'),
@@ -696,7 +713,7 @@
                 return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuSelectedData &&
                   ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
               },
-              order: 208
+              order: grid.options.exporterMenuItemOrder + 8
             }
           ]);
         },
@@ -723,7 +740,7 @@
             var exportData = self.getData(grid, rowTypes, colTypes);
             var csvContent = self.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
 
-            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
+            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility, grid.options.exporterIsExcelCompatible);
           });
         },
 
@@ -974,7 +991,7 @@
 
         /**
          * @ngdoc function
-         * @name formatAsCSV
+         * @name formatAsCsv
          * @methodOf  ui.grid.exporter.service:uiGridExporterService
          * @description Formats the column headers and data as a CSV,
          * and sends that data to the user
@@ -1070,13 +1087,18 @@
          * @param {string} csvContent the csv content that we'd like to
          * download as a file
          * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
+          * @param {boolean} exporterIsExcelCompatible whether or not we add separator header ('sep=X')
          */
-        downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility) {
+        downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility, exporterIsExcelCompatible) {
           var D = document;
           var a = D.createElement('a');
           var strMimeType = 'application/octet-stream;charset=utf-8';
           var rawFile;
           var ieVersion = this.isIE();
+
+          if (exporterIsExcelCompatible) {
+              csvContent = 'sep=' + columnSeparator + '\r\n' + csvContent;
+          }
 
           // IE10+
           if (navigator.msSaveBlob) {
@@ -1093,7 +1115,7 @@
             document.body.appendChild(frame);
 
             frame.contentWindow.document.open('text/html', 'replace');
-            frame.contentWindow.document.write('sep=' + columnSeparator + '\r\n' + csvContent);
+            frame.contentWindow.document.write(csvContent);
             frame.contentWindow.document.close();
             frame.contentWindow.focus();
             frame.contentWindow.document.execCommand('SaveAs', true, fileName);

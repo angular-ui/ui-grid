@@ -353,7 +353,7 @@
          *  @description shows counts on the groupHeader rows. Not that if you are using a cellFilter or a
          *  sortingAlgorithm which relies on a specific format or data type, showing counts may cause that
          *  to break, since the group header rows will always be a string with groupingShowCounts enabled.
-         *  <br/>Defaults to true except on columns of type 'date'
+         *  <br/>Defaults to true except on columns of types 'date' and 'object'
          */
         gridOptions.groupingShowCounts = gridOptions.groupingShowCounts !== false;
 
@@ -582,7 +582,7 @@
 
         if ( typeof(aggregation.groupVal) !== 'undefined') {
           aggregation.rendered = aggregation.groupVal;
-          if ( col.grid.options.groupingShowCounts && col.colDef.type !== 'date' ){
+          if ( col.grid.options.groupingShowCounts && col.colDef.type !== 'date' && col.colDef.type !== 'object' ){
             aggregation.rendered += (' (' + aggregation.value + ')');
           }
         } else {
@@ -674,6 +674,9 @@
         var existingGrouping = service.getGrouping( grid );
         column.grouping.groupPriority = existingGrouping.grouping.length;
 
+        // save sort in order to restore it when column is ungrouped
+        column.previousSort = angular.copy(column.sort);
+
         // add sort if not present
         if ( !column.sort ){
           column.sort = { direction: uiGridConstants.ASC };
@@ -716,9 +719,15 @@
         delete column.treeAggregation;
         delete column.customTreeAggregationFinalizer;
 
+        if (column.previousSort) {
+          column.sort = column.previousSort;
+          delete column.previousSort;
+        }
+
         service.tidyPriorities( grid );
 
         grid.api.grouping.raise.groupingChanged(column);
+        grid.api.core.raise.sortChanged(grid, grid.getColumnSorting());
 
         grid.queueGridRefresh();
       },

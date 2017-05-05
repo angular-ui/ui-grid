@@ -66,7 +66,7 @@
            * which will override any filtering or other visibility calculations.
            * If the row is currently visible then sets it to invisible and calls
            * both grid refresh and emits the rowsVisibleChanged event
-           * @param {object} rowEntity gridOptions.data[] array instance
+           * @param {GridRow} row the row we want to make invisible
            */
           this.registerMethod( 'core', 'setRowInvisible', GridRow.prototype.setRowInvisible );
 
@@ -79,7 +79,7 @@
            * If the row is currently invisible then sets it to visible and calls
            * both grid refresh and emits the rowsVisibleChanged event
            * TODO: if a filter is active then we can't just set it to visible?
-           * @param {object} rowEntity gridOptions.data[] array instance
+           * @param {GridRow} row the row we want to make visible
            */
           this.registerMethod( 'core', 'clearRowInvisible', GridRow.prototype.clearRowInvisible );
 

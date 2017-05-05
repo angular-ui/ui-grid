@@ -10,18 +10,18 @@ module.exports = function(config) {
     basePath: '../',
 
     // frameworks to use
-    frameworks: ['jasmine2'],
+    frameworks: ['jasmine'],
 
-    // list of files / patterns to load in the browser (we add more dynamically in our tasks)
+    // list of files / patterns to load in the browser
+    // note that the karmangular setup from util.createKarmangularConfig seems
+    // to take precedence over this, but we can't remove this because then
+    // the karmangular task doesn't appear to run.  So includes the features/**/test, but
+    // they don't get run if you've used the --fast or --core options
     files: [
       'bower_components/jquery/jquery.min.js',
       'lib/test/jquery.simulate.js',
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
-
-      'lib/test/angular/1.3.6/angular.js',
-      'lib/test/angular/1.3.6/angular-mocks.js',
-      'lib/test/angular/1.3.6/angular-animate.js',
 
       'src/js/core/bootstrap.js',
       'src/js/**/*.js',
@@ -31,14 +31,12 @@ module.exports = function(config) {
 
       'dist/release/ui-grid.css',
 
-      '.tmp/template.js' //templates
+      '.tmp/template.js' // templates
     ],
-
 
     // list of files to exclude
     exclude: [
     ],
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
@@ -65,7 +63,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -110,7 +108,7 @@ module.exports = function(config) {
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
-    config.logLevel = config.LOG_INFO;
+    config.logLevel = config.LOG_DEBUG;
     config.browserNoActivityTimeout = 120000; // NOTE: from angular.js, for socket.io buffer
     config.reporters = ['dots', 'coverage'];
 

@@ -43,14 +43,21 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-
       $scope.dynamicStyles = '';
+      if (uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options && uiGridCtrl.grid.options.gridMenuTemplate) {
+        var gridMenuTemplate = uiGridCtrl.grid.options.gridMenuTemplate;
+        gridUtil.getTemplate(gridMenuTemplate).then(function (contents) {
+          var template = angular.element(contents);
+          var newElm = $compile(template)($scope);
+          $elm.replaceWith(newElm);
+        }).catch(angular.noop);
+      }
 
       var setupHeightStyle = function(gridHeight) {
-        // magic number of 30 because the grid menu displays somewhat below
-        // the top of the grid. It is approximately 30px.
-        var gridMenuMaxHeight = gridHeight - 30;
-		$scope.dynamicStyles = [
+        //menu appears under header row, so substract that height from it's total
+        // additional 20px for general padding
+        var gridMenuMaxHeight = gridHeight - uiGridCtrl.grid.headerHeight - 20;
+        $scope.dynamicStyles = [
           '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
           'max-height: ' + gridMenuMaxHeight + 'px;',
           '}'
@@ -61,7 +68,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         setupHeightStyle(uiGridCtrl.grid.gridHeight);
         uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
           setupHeightStyle(newGridHeight);
-		});
+        });
       }
 
       $scope.i18n = {
@@ -196,13 +203,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         angular.element($window).on('resize', applyHideMenu);
       }
 
-      $scope.$on('$destroy', function () {
-        angular.element(document).off('click touchstart', applyHideMenu);
-      });
-
-
-      $scope.$on('$destroy', function() {
+      $scope.$on('$destroy', function unbindEvents() {
         angular.element($window).off('resize', applyHideMenu);
+        angular.element(document).off('click touchstart', applyHideMenu);
+        $elm.off('keyup', checkKeyUp);
+        $elm.off('keydown', checkKeyDown);
       });
 
       if (uiGridCtrl) {
@@ -243,7 +248,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
                   var newElm = $compile(template)($scope);
                   $elm.replaceWith(newElm);
-                });
+                }).catch(angular.noop);
           }
         },
         post: function ($scope, $elm, $attrs, controllers) {
@@ -290,12 +295,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               if ( !$scope.leaveOpen ){
                 $scope.$emit('hide-menu');
               } else {
-                /*
-                 * XXX: Fix after column refactor
-                 * Ideally the focus would remain on the item.
-                 * However, since there are two menu items that have their 'show' property toggled instead. This is a quick fix.
-                 */
-                gridUtil.focus.bySelector(angular.element(gridUtil.closestElm($elm, ".ui-grid-menu-items")), 'button[type=button]', true);
+                // Maintain focus on the selected item
+                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
               }
             }
           };

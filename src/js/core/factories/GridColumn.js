@@ -75,8 +75,20 @@ angular.module('ui.grid')
    * @name filter
    * @propertyOf ui.grid.class:GridColumn
    * @description Filter on this column.
+   *
+   * Available built-in conditions and types are listed under {@link jui.grid.service:uiGridConstants#properties_filter uiGridOptions.filter}
    * @example
    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', ariaLabel: 'Filter for text', flags: { caseSensitive: false }, type: uiGridConstants.filter.SELECT, [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ] }</pre>
+   *
+   */
+
+  /**
+   * @ngdoc property
+   * @name extraStyle
+   * @propertyOf ui.grid.class:GridColumn
+   * @description additional on this column.
+   * @example
+   * <pre>{extraStyle: {display:'table-cell'}}</pre>
    *
    */
 
@@ -110,7 +122,9 @@ angular.module('ui.grid')
        * @name aggregationType
        * @propertyOf ui.grid.class:GridOptions.columnDef
        * @description The aggregation that you'd like to show in the columnFooter for this
-       * column.  Valid values are in uiGridConstants, and currently include `uiGridConstants.aggregationTypes.count`,
+       * column.  Valid values are in
+       * {@link ui.grid.service:uiGridConstants#properties_aggregationTypes uiGridConstants.aggregationTypes},
+       * and currently include `uiGridConstants.aggregationTypes.count`,
        * `uiGridConstants.aggregationTypes.sum`, `uiGridConstants.aggregationTypes.avg`, `uiGridConstants.aggregationTypes.min`,
        * `uiGridConstants.aggregationTypes.max`.
        *
@@ -194,7 +208,7 @@ angular.module('ui.grid')
   GridColumn.prototype.hideColumn = function() {
     this.colDef.visible = false;
   };
-  
+
 
   /**
    * @ngdoc method
@@ -278,7 +292,8 @@ angular.module('ui.grid')
   * @propertyOf ui.grid.class:GridOptions.columnDef
   * @description An object of sort information, attributes are:
   *
-  * - direction: values are uiGridConstants.ASC or uiGridConstants.DESC
+  * - direction: values are {@link ui.grid.service:uiGridConstants#properties_ASC uiGridConstants.ASC}
+  *  or {@link ui.grid.service:uiGridConstants#properties_DESC uiGridConstants.DESC}
   * - ignoreSort: if set to true this sort is ignored (used by tree to manipulate the sort functionality)
   * - priority: says what order to sort the columns in (lower priority gets sorted first).
   * @example
@@ -304,6 +319,31 @@ angular.module('ui.grid')
    * that are the row objects and the current direction of the sort respectively.
    *
    */
+
+   /**
+    * @ngdoc property
+    * @name defaultSort
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description An object of sort information, provides a hidden default ordering of the data
+    * when no user sorts are applied, or when a user-provided sort deems two rows to be equal.
+    *
+    * May be combined with a regular {@link ui.grid.class:GridOptions.columnDef#properties_sort columnDef.sort}
+    * to explicitly sort by that column by default.
+    *
+    * Shares the same object format as {@link ui.grid.class:GridOptions.columnDef#properties_sort columnDef.sort}.
+    *
+    * Note that a defaultSort can never take priority over an explicit sort.
+    * @example
+    * <pre>
+    *   $scope.gridOptions.columnDefs = [{
+    *     field: 'field1',
+    *     defaultSort: {
+    *       direction: uiGridConstants.ASC,
+    *       priority: 0
+    *      }
+    *   }];
+    * </pre>
+    */
 
   /**
    * @ngdoc array
@@ -640,15 +680,15 @@ angular.module('ui.grid')
     //self.cursor = self.sortable ? 'pointer' : 'default';
 
     // Turn on sorting by default
-    self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : true;
+    self.enableSorting = typeof(colDef.enableSorting) !== 'undefined' ? colDef.enableSorting : self.grid.options.enableSorting;
     self.sortingAlgorithm = colDef.sortingAlgorithm;
 
     /**
      * @ngdoc property
      * @name sortDirectionCycle
      * @propertyOf ui.grid.class:GridOptions.columnDef
-     * @description (optional) An array of sort directions, specifying the order that they
-     * should cycle through as the user repeatedly clicks on the column heading.
+     * @description (optional) An array of {@link ui.grid.service:uiGridConstants#properties_ASC sort directions},
+     * specifying the order that they should cycle through as the user repeatedly clicks on the column heading.
      * The default is `[null, uiGridConstants.ASC, uiGridConstants.DESC]`. Null
      * refers to the unsorted state. This does not affect the initial sort
      * direction; use the {@link ui.grid.class:GridOptions.columnDef#sort sort}
@@ -695,6 +735,9 @@ angular.module('ui.grid')
       self.setPropertyOrDefault(colDef, 'sort');
     }
 
+    // Use the column definition defaultSort always, unlike normal sort
+    self.setPropertyOrDefault(colDef, 'defaultSort');
+
     // Set up default filters array for when one is not provided.
     //   In other words, this (in column def):
     //
@@ -726,7 +769,8 @@ angular.module('ui.grid')
      * A filter consists of a condition, a term, and a placeholder:
      *
      * - condition defines how rows are chosen as matching the filter term. This can be set to
-     * one of the constants in uiGridConstants.filter, or you can supply a custom filter function
+     * one of the constants in {@link ui.grid.service:uiGridConstants#properties_filter uiGridConstants.filter},
+     * or you can supply a custom filter function
      * that gets passed the following arguments: [searchTerm, cellValue, row, column].
      * - term: If set, the filter field will be pre-populated
      * with this value.
@@ -734,9 +778,12 @@ angular.module('ui.grid')
      * - ariaLabel: String that will be set to the `<input>.ariaLabel` attribute. This is what is read as a label to screen reader users.
      * - noTerm: set this to true if you have defined a custom function in condition, and
      * your custom function doesn't require a term (so it can run even when the term is null)
+     * - rawTerm: set this to true if you have defined a custom function in condition, and
+     * your custom function requires access to the raw unmodified search term that was entered
      * - flags: only flag currently available is `caseSensitive`, set to false if you don't want
      * case sensitive matching
-     * - type: defaults to uiGridConstants.filter.INPUT, which gives a text box.  If set to uiGridConstants.filter.SELECT
+     * - type: defaults to {@link ui.grid.service:uiGridConstants#properties_filter uiGridConstants.filter.INPUT},
+     * which gives a text box.  If set to {@link ui.grid.service:uiGridConstants#properties_filter uiGridConstants.filter.SELECT}
      * then a select box will be shown with options selectOptions
      * - selectOptions: options in the format `[ { value: 1, label: 'male' }]`.  No i18n filter is provided, you need
      * to perform the i18n on the values before you provide them
@@ -786,6 +833,7 @@ angular.module('ui.grid')
     // However, we do want to keep the settings if they change, just not the term
     if ( isNew ) {
       self.setPropertyOrDefault(colDef, 'filter');
+      self.setPropertyOrDefault(colDef, 'extraStyle');
       self.setPropertyOrDefault(colDef, 'filters', defaultFilters);
     } else if ( self.filters.length === defaultFilters.length ) {
       self.filters.forEach( function( filter, index ){

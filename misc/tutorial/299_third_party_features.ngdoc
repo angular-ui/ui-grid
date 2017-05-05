@@ -16,3 +16,10 @@ Draggable rows in UI Grid.
 Allows querying for odata v3/v4 services
 <br>https://github.com/mirik123/ui-grid-odata
 
+### **ui-grid-auto-scroll** ###
+Auto scrolls when new data is added to the grid
+<br>https://github.com/stevezau/ui-grid-auto-scroll
+
+### **ui-grid-custom-scroller** ###
+The custom scroller takes over the default scrolling logic in order to ensure that grid scrolling works without a lag on devices.
+<br>https://github.com/mportuga/ui-grid-custom-scroller

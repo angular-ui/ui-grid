@@ -133,6 +133,28 @@ describe('ui.grid.validate uiGridValidateService', function () {
 
 
   });
+  
+  it('should return a promise when calling runValidators on a cell', function() {
+    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};
+    var entity = {};
+
+    var validatorFactory = function (argument) {return function() {return argument === 'foo';};};
+
+    uiGridValidateService.setValidator('foo', validatorFactory, angular.noop);
+    uiGridValidateService.setValidator('bar', validatorFactory, angular.noop);
+
+    var promise = uiGridValidateService.runValidators(entity, colDef, 1, 0);
+    
+    expect(promise).toBeDefined();
+
+    $rootScope.$apply();
+
+    expect(entity['$$errorstest'].bar).toBe(true);
+    expect(entity['$$invalidtest']).toBe(true);
+
+    expect(entity['$$errorstest'].foo).toBeFalsy();
+
+  });
 
   it('should not execute any validator when calling runValidators with newValue === oldValue', function() {
     var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};

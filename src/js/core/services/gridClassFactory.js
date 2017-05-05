@@ -38,7 +38,7 @@
                 function (res) {
                   // Todo handle response error here?
                   throw new Error("Couldn't fetch/use row template '" + grid.options.rowTemplate + "'");
-                });
+                }).catch(angular.noop);
           }
 
           grid.registerColumnBuilder(service.defaultColumnBuilder);
@@ -55,24 +55,13 @@
             return rows;
           });
 
-          grid.registerColumnsProcessor(function allColumnsVisible(columns) {
+          grid.registerColumnsProcessor(function applyColumnVisibility(columns) {
             columns.forEach(function (column) {
-              column.visible = true;
+              column.visible = angular.isDefined(column.colDef.visible) ? column.colDef.visible : true;
             });
 
             return columns;
           }, 50);
-
-          grid.registerColumnsProcessor(function(renderableColumns) {
-              renderableColumns.forEach(function (column) {
-                  if (column.colDef.visible === false) {
-                      column.visible = false;
-                  }
-              });
-
-              return renderableColumns;
-          }, 50);
-
 
           grid.registerRowsProcessor(grid.searchRows, 100);
 
@@ -130,7 +119,7 @@
                 },
                 function (res) {
                   throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
-                })
+                }).catch(angular.noop)
             );
 
           };

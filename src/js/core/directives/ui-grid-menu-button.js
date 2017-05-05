@@ -193,7 +193,7 @@ angular.module('ui.grid')
       var clearFilters = [{
         title: i18nService.getSafeText('gridMenu.clearAllFilters'),
         action: function ($event) {
-          $scope.grid.clearAllFilters(undefined, true, undefined);
+          $scope.grid.clearAllFilters();
         },
         shown: function() {
           return $scope.grid.options.enableFiltering;
@@ -323,7 +323,7 @@ angular.module('ui.grid')
           menuItem.title = successValue;
         }, function( errorValue ) {
           menuItem.title = errorValue;
-        });
+        }).catch(angular.noop);
       } else {
         gridUtil.logError('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
         menuItem.title = 'badconfig';

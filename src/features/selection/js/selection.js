@@ -66,12 +66,9 @@
          * @param {bool} selected value to set
          */
         $delegate.prototype.setSelected = function(selected) {
-          this.isSelected = selected;
-          if (selected) {
-            this.grid.selection.selectedCount++;
-          }
-          else {
-            this.grid.selection.selectedCount--;
+          if (selected !== this.isSelected) {
+            this.isSelected = selected;
+            this.grid.selection.selectedCount += selected ? 1 : -1;
           }
         };
 
@@ -739,6 +736,10 @@
               window.setTimeout(function () { evt.target.onselectstart = null; }, 0);
             }
           }
+
+          $scope.$on('$destroy', function unbindEvents() {
+            $elm.off();
+          });
         }
       };
     }]);
@@ -856,6 +857,11 @@
             //});
 
             var selectCells = function(evt){
+              // if you click on expandable icon doesn't trigger selection
+              if (evt.target.className === "ui-grid-icon-minus-squared" || evt.target.className === "ui-grid-icon-plus-squared") {
+                return;
+              }
+
               // if we get a click, then stop listening for touchend
               $elm.off('touchend', touchEnd);
 
