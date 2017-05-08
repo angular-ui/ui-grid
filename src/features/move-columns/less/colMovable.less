@@ -6,6 +6,60 @@
   border: 1px solid @borderColor;
   box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
 
+  &.move-child-cells {
+
+    position: fixed;
+    top: 0;
+    box-shadow: none;
+    z-index: 99;
+    background: transparent !important;
+    overflow-x: hidden;
+
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+    max-height: 100%;
+    overflow-y: hidden;
+    box-shadow: 0 1px 1px;
+
+    &.ui-grid-header-cell:last-child {
+      border-right: 1px solid @borderColor;
+    }
+
+    .extras-wrapper {
+      position: relative;
+
+    }
+
+    .ui-grid-cell-contents.ui-grid-header-cell-primary-focus {
+      padding: 0;
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
+
+    div[role=columnheader] {
+
+      position: relative;
+      z-index: 99;
+      width: 100%;
+      padding: 5px;
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+      background: #EEE;
+      border-bottom: 1px solid #d4d4d4;
+    }
+    .ui-grid-cell {
+      display: block;
+      visibility: visible;
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+      font-weight: normal;
+
+    }
+  }
   .ui-grid-icon-angle-down {
     display: none;
   }
