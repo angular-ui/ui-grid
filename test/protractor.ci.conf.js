@@ -13,7 +13,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    browserName: 'chrome',
+    browserName: 'firefox',
     build: process.env.TRAVIS_BUILD_NUMBER,
     // 'tunnel-identifier': process.env.TRAVIS_BUILD_NUMBER,
     'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
