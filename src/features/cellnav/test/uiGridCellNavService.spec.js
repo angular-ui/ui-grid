@@ -77,7 +77,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
     });
   });
 
-  describe('getDirection(evt)', function () {
+  describe('getDirection(grid, evt)', function () {
     beforeEach(function(){
       grid.registerColumnBuilder(uiGridCellNavService.cellNavColumnBuilder);
       grid.buildColumns();
@@ -87,7 +87,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.TAB;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.RIGHT);
     });
 
@@ -96,7 +96,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.RIGHT;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.RIGHT);
     });
 
@@ -106,7 +106,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.shiftKey = true;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.LEFT);
     });
 
@@ -115,7 +115,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.LEFT;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.LEFT);
     });
 
@@ -124,7 +124,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.ENTER;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.DOWN);
     });
 
@@ -133,7 +133,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.DOWN;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.DOWN);
     });
 
@@ -143,7 +143,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.shiftKey = true;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.UP);
     });
 
@@ -152,7 +152,7 @@ describe('ui.grid.edit uiGridCellNavService', function () {
       evt.keyCode = uiGridConstants.keymap.UP;
       var colDef = grid.options.columnDefs[0];
       var col = grid.columns[0];
-      var direction = uiGridCellNavService.getDirection(evt);
+      var direction = uiGridCellNavService.getDirection(grid, evt);
       expect(direction).toBe(uiGridCellNavConstants.direction.UP);
     });
 
