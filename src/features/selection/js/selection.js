@@ -597,7 +597,7 @@
          * if we're doing batch events
          */
         decideRaiseSelectionBatchEvent: function( grid, changedRows, evt ){
-          if ( changedRows.length > 0 ){
+          if ( changedRows.length > 1 ){
             grid.api.selection.raise.rowSelectionChangedBatch(changedRows, evt);
           }
         }
