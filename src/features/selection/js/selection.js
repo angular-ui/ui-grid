@@ -792,7 +792,7 @@
           priority: -200, // run after default  directive
           scope: false,
           compile: function ($elm, $attrs) {
-            var rowRepeatDiv = angular.element($elm.children().children()[0]);
+            var rowRepeatDiv = angular.element($elm[0].querySelector('.ui-grid-canvas:not(.ui-grid-empty-base-layer-container)').children[0]);
 
             var existingNgClass = rowRepeatDiv.attr("ng-class");
             var newNgClass = '';
