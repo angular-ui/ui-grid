@@ -2570,6 +2570,66 @@ angular.module('ui.grid')
     }
   };
 
+  /**
+  * @ngdoc function
+  * @name autoAdjustHeight
+  * @methodOf ui.grid.class:Grid
+  * @description Automatically adjusts the height of the grid by calculating a height
+  * necessary to display the gridOptions.minRowsToShow
+  */
+  Grid.prototype.autoAdjustHeight = function () {
+    var self = this;
+    // Set the grid's height ourselves in the case that its height would be unusably small
+    // Figure out the new height
+    var contentHeight = self.options.minRowsToShow * self.options.rowHeight;
+    var headerHeight = self.options.showHeader ? self.options.headerRowHeight : 0;
+    var footerHeight = self.calcFooterHeight();
+    var prevGridHeight = self.gridHeight;
+
+    var scrollbarHeight = 0;
+    if (self.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+      scrollbarHeight = gridUtil.getScrollbarWidth();
+    }
+
+    var maxNumberOfFilters = 0;
+    // Calculates the maximum number of filters in the columns
+    angular.forEach(self.options.columnDefs, function (col) {
+      if (col.hasOwnProperty('filter')) {
+        if (maxNumberOfFilters < 1) {
+          maxNumberOfFilters = 1;
+        }
+      }
+      else if (col.hasOwnProperty('filters')) {
+        if (maxNumberOfFilters < col.filters.length) {
+          maxNumberOfFilters = col.filters.length;
+        }
+      }
+    });
+
+    if (self.options.enableFiltering) {
+      var allColumnsHaveFilteringTurnedOff = self.options.columnDefs.every(function (col) {
+        return col.enableFiltering === false;
+      });
+
+      if (!allColumnsHaveFilteringTurnedOff) {
+        maxNumberOfFilters++;
+      }
+    }
+
+    var filterHeight = maxNumberOfFilters * headerHeight;
+
+    var newHeight = headerHeight + contentHeight + footerHeight + scrollbarHeight + filterHeight;
+
+
+    self.element.css('height', newHeight + 'px');
+
+    self.gridHeight = gridUtil.elementHeight(self.element);
+
+    if (self.gridHeight !== prevGridHeight) {
+      self.api.core.raise.gridDimensionChanged(prevGridHeight, self.gridWidth, self.gridHeight, self.gridWidth);
+    }
+  };
+
 
 
   return Grid;

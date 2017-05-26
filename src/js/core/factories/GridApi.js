@@ -152,6 +152,15 @@
            * arguments: oldGridHeight, oldGridWidth, newGridHeight, newGridWidth
            */
           this.registerEvent( 'core', 'gridDimensionChanged');
+
+          /**
+           * @ngdoc function
+           * @name autoAdjustHeight
+           * @methodOf  ui.grid.core.api:PublicApi
+           * @description Automatically adjusts the height of the grid by calculating a height
+           * necessary to display the gridOptions.minRowsToShow
+           */
+          this.registerMethod('core', 'autoAdjustHeight', this.grid.autoAdjustHeight);
         };
 
         /**

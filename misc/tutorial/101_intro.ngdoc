@@ -39,7 +39,10 @@ Steps:
    </pre>
  </li>
  <li>
-   Add a css style to your app css so the grid knows it's dimensions
+   Add a css style to your app css so the grid knows it's dimensions. This is optional.
+   <br>
+   If the grid container does not have a height, the grid's height will be calculated using gridOptions.minsRowsToShow,
+   assuming gridOptions.enableMinHeightCheck = true (The default).
    <pre>
      .myGrid {
          width: 500px;
