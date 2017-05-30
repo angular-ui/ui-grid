@@ -1230,6 +1230,10 @@
             returnVal = (field.value ? 'TRUE' : 'FALSE') ;
           } else if (typeof(field.value) === 'string') {
             returnVal = field.value.replace(/"/g,'""');
+          } else if (field.value instanceof Date) {
+            returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
+          } else if (typeof(field.value) === 'object') {
+            returnVal = field.value;
           } else {
             returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
           }
