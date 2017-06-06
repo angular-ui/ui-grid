@@ -196,6 +196,15 @@ angular.module('ui.grid')
        * By default false
        */
       baseOptions.flatEntityAccess = baseOptions.flatEntityAccess === true;
+      
+      
+      /**
+* @ngdoc property
+* @name gridMenuShowHideColumns
+* @propertyOf ui.grid.class:GripOptions
+* @descripton boolean. Display all columns in the grid menu at right upper corner, with check mark or cross for users to show or hide the column, default: true
+*/
+      baseOptions.gridMenuShowHideColumns = baseOptions.gridMenuShowHideColumns === true;
 
       /**
        * @ngdoc property
