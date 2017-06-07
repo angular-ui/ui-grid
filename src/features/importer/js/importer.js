@@ -1,4 +1,5 @@
 /* global CSV */
+/* global XLSX */
 
 (function () {
   'use strict';
@@ -359,17 +360,23 @@
           }
 
           var reader = new FileReader();
+          var readAsText = true;
 
           switch ( fileObject.type ){
             case 'application/json':
               reader.onload = service.importJsonClosure( grid );
               break;
-            default:
+            case 'application/csv':
+            case 'text/csv':
               reader.onload = service.importCsvClosure( grid );
               break;
+            default:
+              readAsText = false;
+              reader.onload = service.importXlsxClosure( grid );
           }
 
-          reader.readAsText( fileObject );
+          if ( readAsText ){ reader.readAsText( fileObject ); }
+          else { reader.readAsBinaryString( fileObject ); }
         },
 
 
@@ -518,6 +525,89 @@
                 }
               });
             }
+            newObject = grid.options.importerObjectCallback( grid, newObject );
+            newObjects.push( newObject );
+          });
+
+          return newObjects;
+        },
+
+
+        /**
+         * @ngdoc function
+         * @name importXlsxClosure
+         * @methodOf ui.grid.importer.service:uiGridImporterService
+         * @description Creates a function that imports an Excel file into the grid
+         * (allowing it to be used in the reader.onload event)
+         * @param {Grid} grid the grid that we want to import into
+         * @param {FileObject} importFile the file that we want to import, as
+         * a file object
+         */
+        importXlsxClosure: function( grid ) {
+          return function ( importFile ) {
+            var importWorkbook = service.parseXlsxWorkbook( importFile );
+            if ( !importWorkbook ){
+              service.alertError( grid, 'importer.invalidXlsx', 'File could not be processed, is it valid Xlsx file? Content was: ', importFile.target.result );
+              return;
+            }
+
+            var newObjects = service.createXlsxObjects( grid, importWorkbook );
+            if ( !newObjects || newObjects.length === 0 ){
+              service.alertError( grid, 'importer.noObjects', 'Objects were not able to be derived, content was: ', importFile.target.result );
+              return;
+            }
+
+            service.addObjects( grid, newObjects );
+          };
+        },
+
+
+        /**
+         * @ngdoc function
+         * @name parseXlsxWorkbook
+         * @methodOf ui.grid.importer.service:uiGridImporterService
+         * @description Parses an Excel file into a Workbook Object.
+         * The logic for this comes from https://github.com/SheetJS/js-xlsx,
+         * which is noted as being under the Apache License, Version 2.0.
+         * @param {FileObject} importFile the file that we want to import, as a
+         * file object
+         */
+        parseXlsxWorkbook: function ( importFile ) {
+          var xlsx = importFile.target.result;
+
+          // use the JS-XLSX library to create a Workbook
+          return XLSX.read(xlsx, {type: 'binary'});
+        },
+
+
+        /**
+         * @ngdoc function
+         * @name createXlsxObjects
+         * @methodOf ui.grid.importer.service:uiGridImporterService
+         * @description Converts the Workbook Object (representing the Excel file)
+         * into an array of objects, where all Workbook Sheets are flattened into one.
+         * Uses logic provided by JS-XLSX to convert Sheet(s) into Row(s) and concats
+         * given rows onto the importArray. All worksheets are combined into one array.
+         * The json data in the importArray is then is imported into new objects
+         * of type `gridOptions.importerNewObject`,
+         * @param {Grid} grid the grid that we want to import into
+         * @param {Workbook} importWorkbook the data that we want to import, as a
+         * Workbook object
+         */
+        createXlsxObjects: function ( grid, importWorkbook ) {
+          var importArray = [];
+          importWorkbook.SheetNames.forEach(function(sheetName) {
+            var roa = XLSX.utils.sheet_to_row_object_array(importWorkbook.Sheets[sheetName]);
+            if ( roa.length > 0 ){
+              importArray = importArray.concat(roa);
+            }
+          });
+
+          var newObjects = [];
+          var newObject;
+          importArray.forEach( function( value ) {
+            newObject = service.newObject( grid );
+            angular.extend( newObject, value );
             newObject = grid.options.importerObjectCallback( grid, newObject );
             newObjects.push( newObject );
           });
