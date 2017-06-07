@@ -229,6 +229,9 @@ describe('GridRenderContainer factory', function () {
       body.name = 'body';
       left = new GridRenderContainer('leftContainer', grid);
       left.name = 'left';
+      left.canvasWidth = 100;
+      body.canvasWidth = 200;
+      grid.gridWidth = 200;
     });
 	
     it('should return false if the container does not have the horizontal scrollbar enabled', function(){
@@ -237,15 +240,10 @@ describe('GridRenderContainer factory', function () {
     });
 	
     it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is greater than the grid width', function(){
-      left.canvasWidth = 100;
-      body.canvasWidth = 200;
-      grid.gridWidth = 200;
       expect(left.needsHScrollbarPlaceholder()).toBe(true);
     });
 	
-    it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is less than the grid width', function(){
-      left.canvasWidth = 100;
-      body.canvasWidth = 200;
+    it('should return false if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is less than the grid width', function(){
       grid.gridWidth = 400;
       expect(left.needsHScrollbarPlaceholder()).toBe(false);
     });
