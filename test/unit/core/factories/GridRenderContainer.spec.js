@@ -228,7 +228,7 @@ describe('GridRenderContainer factory', function () {
       body = new GridRenderContainer('bodyContainer', grid);
       body.name = 'body';
       left = new GridRenderContainer('leftContainer', grid);
-      left.name = 'left'
+      left.name = 'left';
     });
 	
     it('should return false if the container does not have the horizontal scrollbar enabled', function(){
