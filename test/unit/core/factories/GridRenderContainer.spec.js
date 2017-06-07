@@ -226,29 +226,29 @@ describe('GridRenderContainer factory', function () {
 
     beforeEach(function () {
       body = new GridRenderContainer('bodyContainer', grid);
-	  body.name = 'body';
+      body.name = 'body';
       left = new GridRenderContainer('leftContainer', grid);
-	  left.name = 'left'
+      left.name = 'left'
     });
 	
-	it('should return false if the container does not have the horizontal scrollbar enabled', function(){
+    it('should return false if the container does not have the horizontal scrollbar enabled', function(){
       grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.NEVER;
       expect(body.needsHScrollbarPlaceholder()).toBe(false);
-	});
+    });
 	
-	it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is greater than the grid width', function(){
+    it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is greater than the grid width', function(){
       left.canvasWidth = 100;
-	  body.canvasWidth = 200;
-	  grid.gridWidth = 200;
-	  expect(left.needsHScrollbarPlaceholder()).toBe(true);
-	});
+      body.canvasWidth = 200;
+      grid.gridWidth = 200;
+      expect(left.needsHScrollbarPlaceholder()).toBe(true);
+    });
 	
-	it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is less than the grid width', function(){
+    it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is less than the grid width', function(){
       left.canvasWidth = 100;
-	  body.canvasWidth = 200;
-	  grid.gridWidth = 400;
-	  expect(left.needsHScrollbarPlaceholder()).toBe(false);
-	});
+      body.canvasWidth = 200;
+      grid.gridWidth = 400;
+      expect(left.needsHScrollbarPlaceholder()).toBe(false);
+    });
 	
   });
   
