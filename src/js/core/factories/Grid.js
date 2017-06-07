@@ -1901,11 +1901,11 @@ angular.module('ui.grid')
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
         col.cellDisplayGetterCache = $parse('entity.' + col.field + custom_filter);
       } else {
-        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
+        col.cellDisplayGetterCache = $parse("row." + row.getEntityQualifiedColField(col) + custom_filter);
       }
     }
 
-    return col.cellDisplayGetterCache(row);
+    return col.cellDisplayGetterCache({ row: row, col: col });
   };
 
 
