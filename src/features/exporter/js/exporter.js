@@ -606,7 +606,7 @@
            *   }
            * </pre>
            */
-          if ( gridOptions.exporterAllDataFn == null && gridOptions.exporterAllDataPromise ) {
+          if ( gridOptions.exporterAllDataFn === null && gridOptions.exporterAllDataPromise ) {
             gridOptions.exporterAllDataFn = gridOptions.exporterAllDataPromise;
           }
         },

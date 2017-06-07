@@ -36,6 +36,7 @@
     "jszip": "~2.6.1"
   },
   "resolutions": {
-    "jszip": "2.6.1"
+    "jszip": "2.6.1",
+    "lodash": "~2.4.1"
   }
 }

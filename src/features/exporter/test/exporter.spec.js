@@ -91,6 +91,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
+        exporterMenuExcel: true,
         exporterFieldCallback: jasmine.any(Function),
         exporterFieldFormatCallback: jasmine.any(Function),
         exporterFieldApplyFilters: false,
@@ -125,6 +126,7 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
+        exporterMenuExcel: false,
         exporterFieldCallback: callback,
         exporterFieldFormatCallback: callback,
         exporterFieldApplyFilters: false,
@@ -161,18 +163,19 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
+        exporterMenuExcel: false,
         exporterFieldCallback: callback,
         exporterFieldFormatCallback: callback,
         exporterFieldApplyFilters: false,
-        exporterAllDataFn: callback,
         exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ],
-        exporterExcelFormatters: callback,
+        exporterExcelCustomFormatters: callback,
         exporterExcelFilename: 'myFile.xlsx',
         exporterExcelSheetName: 'Sheet1',
         exporterExcelHeader: "My Header",
         exporterExcelFooter: "My Footer",
-        exporterMenuItemOrder: 75
+        exporterMenuItemOrder: 75,
+        exporterAllDataFn: callback
       });
     });
   });
