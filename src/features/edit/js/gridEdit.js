@@ -835,9 +835,9 @@
                 deregOnEndCellEdit();
               });
 
-              $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT, triggerEvent);
               $timeout(function () {
                 //execute in a timeout to give any complex editor templates a cycle to completely render
+				$scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT, triggerEvent);
                 $scope.grid.api.edit.raise.beginCellEdit($scope.row.entity, $scope.col.colDef, triggerEvent);
               });
             }
