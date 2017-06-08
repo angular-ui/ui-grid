@@ -233,6 +233,8 @@ describe('GridRenderContainer factory', function () {
       body.canvasWidth = 200;
       grid.gridWidth = 200;
       grid.options.enableHorizontalScrollbar = true;
+      body.hasHScrollbar = true;
+      left.hasHScrollbar = false;
     });
 	
     it('should return false if the container does not have the horizontal scrollbar enabled', function(){
