@@ -112,12 +112,49 @@
               }
             },
             methods: {
-              edit: { }
+              edit: {
+                /**
+                 * @ngDoc function
+                 * @name editCell
+                 * @methodOf ui.grid.edit.api:PublicApi
+                 * @description invokes a cells editor and optionally allows the edit to persist
+                 * <pre>
+                 *      gridApi.edit.editCell(row, col, true);
+                 * </pre>
+                 * @param {integer} row of the cell to edit
+                 * @param {integer} col of the cell to edit
+                 * @param {boolean} persist the cell in edit mode. Prevent cancel events such as scroll from removing the editor
+                 */
+                editCell: function (row, col, persist) {
+                  var cellScope = this.element.find("div[id*=" + row.toString() + "-" + this.columns[col].uid + "]").scope();
+                  if (persist) {
+                    cellScope.persistEdit = true;
+                  }
+                  cellScope.$broadcast('editCell');
+                },
+                /**
+                 * @ngDoc function
+                 * @name editEditCell
+                 * @methodOf ui.grid.edit.api:PublicApi
+                 * @description cancels a cells editor if persisted by editCell(...)
+                 * <pre>
+                 *      gridApi.edit.endEditCell(row, col);
+                 * </pre>
+                 * @param {integer} row of the cell to edit
+                 * @param {integer} col of the cell to edit
+                 */
+                endEditCell: function (row, col) {
+                  var cellScope = this.element.find("div[id*=" + row.toString() + "-" + this.columns[col].uid + "]").scope();
+                  cellScope.persistEdit = false;
+                  cellScope.$broadcast('endEditCell', false);
+                }
+
+              }
             }
           };
 
           grid.api.registerEventsFromObject(publicApi.events);
-          //grid.api.registerMethodsFromObject(publicApi.methods);
+          grid.api.registerMethodsFromObject(publicApi.methods);
 
         },
 
@@ -518,6 +555,8 @@
 
               // Add touchstart handling. If the users starts a touch and it doesn't end after X milliseconds, then start the edit
               $elm.on('touchstart', touchStart);
+              $scope.$on('editCell', beginEdit);
+              $scope.$on('endEditCell', endEdit);
 
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
 
@@ -844,7 +883,7 @@
 
             function endEdit() {
               $scope.grid.disableScrolling = false;
-              if (!inEdit) {
+              if (!inEdit || $scope.persistEdit) {
                 return;
               }
 

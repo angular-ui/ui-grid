@@ -1,3 +1,10 @@
+/* global angular */
+/* global input */
+/* global it */
+/* global describe */
+/* global beforeEach */
+/* global expect */
+/* global jQuery */
 describe('ui.grid.edit GridCellDirective', function () {
   var gridUtil;
   var scope;
@@ -109,7 +116,7 @@ describe('ui.grid.edit GridCellDirective', function () {
       //back to beginning
       expect(element.html()).toBe(displayHtml);
     });
-
+    
     it('should stop editing on tab', function () {
       //stop edit
       var event = jQuery.Event("keydown");
@@ -149,6 +156,101 @@ describe('ui.grid.edit GridCellDirective', function () {
 
     }));
 
+
+  });
+  it('should contain a method called editCell and endEditCell', function(){
+    expect(scope.grid.api.edit.editCell).toBeDefined();
+    expect(scope.grid.api.edit.endEditCell).toBeDefined();
+  });
+  it('should not persist edit is the parameter persist is not set', function(){
+    
+      element = angular.element('<div ui-grid-cell/>');
+      recompile();
+
+      var displayHtml = element.html();
+      expect(element.text()).toBe('val');
+      //invoke edit
+      scope.grid.api.edit.editCell(0, 0, false);
+      $timeout(function () {
+        expect(element.find('input')).toBeDefined();
+        expect(element.find('input').val()).toBe('val');
+        var event = jQuery.Event("keydown");
+        event.keyCode = uiGridConstants.keymap.ENTER;
+        element.find('input').trigger(event);
+        expect(element.html()).toBe(displayHtml);
+      });
+      $timeout.flush();
+  
+  });
+  describe('ui.grid.edit uiGridCell and uiGridEditor with editCell full workflow', function () {
+    var displayHtml;
+    beforeEach(function () {
+      element = angular.element('<div ui-grid-cell/>');
+      recompile();
+
+      displayHtml = element.html();
+      expect(element.text()).toBe('val');
+      //invoke edit
+      scope.grid.api.edit.editCell(0, 0, true);
+      $timeout(function () {
+        expect(element.find('input')).toBeDefined();
+        expect(element.find('input').val()).toBe('val');
+      });
+      $timeout.flush();
+    });
+
+    it('should not stop editing on enter', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.ENTER;
+      element.find('input').trigger(event);
+      input = element.find('input');
+      //back to beginning
+      expect(input.length).toBe(1);
+      scope.grid.api.edit.endEditCell(0, 0);
+      input = element.find('input');
+      expect(input.length).toBe(0);
+    });
+
+    it('should not stop editing on esc', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.ESC;
+      element.find('input').trigger(event);
+
+      //back to beginning
+      input = element.find('input');
+      expect(input.length).toBe(1);
+      scope.grid.api.edit.endEditCell(0, 0);
+      input = element.find('input');
+      expect(input.length).toBe(0);
+    });
+
+    it('should not stop editing on tab', function () {
+      //stop edit
+      var event = jQuery.Event("keydown");
+      event.keyCode = uiGridConstants.keymap.TAB;
+      element.find('input').trigger(event);
+
+      //back to beginning
+      input = element.find('input');
+      expect(input.length).toBe(1);
+      scope.grid.api.edit.endEditCell(0, 0);
+      input = element.find('input');
+      expect(input.length).toBe(0);
+    });
+
+    it('should not stop when grid scrolls', function () {
+      //stop edit
+      scope.grid.api.core.raise.scrollBegin();
+      scope.$digest();
+      //back to beginning
+      input = element.find('input');
+      expect(input.length).toBe(1);
+      scope.grid.api.edit.endEditCell(0, 0);
+      input = element.find('input');
+      expect(input.length).toBe(0);
+    });
 
   });
 
