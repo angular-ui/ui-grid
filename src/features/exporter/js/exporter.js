@@ -980,7 +980,10 @@
           a.setAttribute('style', 'display:none;');
           D.body.appendChild(a);
           setTimeout(function() {
-            if (a.click) {
+						if (window.ionic && window.saveAs) {
+							//Fix on ionic app
+							window.saveAs(blob, fileName);
+            } else if (a.click) {
               a.click();
               // Workaround for Safari 5
             } else if (document.createEvent) {
