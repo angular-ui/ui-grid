@@ -57,7 +57,7 @@ auto-selects the first row once the data is loaded.
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection']);
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.cellNav', 'ngAria']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', 'uiGridConstants', function ($scope, $http, $log, $timeout, uiGridConstants) {
       $scope.gridOptions = {
@@ -192,7 +192,7 @@ auto-selects the first row once the data is loaded.
       <button type="button" class="btn btn-success" ng-click="toggleFullRowSelection()">Toggle full row selection</button>
       <br/>
 
-      <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+      <div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
     </div>
     <div ng-controller="SecondCtrl">
       Single selection grid without rowHeader, and allowing rowSelection to be toggled on and off dynamically:
@@ -206,5 +206,27 @@ auto-selects the first row once the data is loaded.
       width: 100%;
       height: 400px;
     }
+  </file>
+  <file name="scenario.js">
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1Selection = new GridObjectTest('grid1Selection');
+
+    describe('210 tutorial', function() {
+      xit('should output aria text for cells that come from selection feature', function () {
+          pending('For unknown reasons causes next test suite to fail. It looks as if the page for the next test was not loaded before selectors/expects fire.')
+          var focuser = element(by.css('.ui-grid-focuser'));
+          grid1Selection.selectRow(1).then(function () {
+            return gridTestUtils.click(focuser);
+          })
+          .then(function () {
+             expect(element(by.css('.ui-grid-a11y-ariascreenreader-speakable.ui-grid-offscreen')).getInnerHtml()).toEqual('Row selected ');
+             return focuser.sendKeys(protractor.Key.ARROW_DOWN);
+          })
+          .then(function () {
+             expect(element(by.css('.ui-grid-a11y-ariascreenreader-speakable.ui-grid-offscreen')).getInnerHtml()).toEqual('Row not selected ');
+          })
+      });
+    });
   </file>
 </example>

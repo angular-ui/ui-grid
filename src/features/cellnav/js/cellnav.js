@@ -629,8 +629,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile', 'i18nService',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile, i18nService) {
       return {
         replace: true,
         priority: -150,
@@ -833,10 +833,22 @@
                     }
                   }
 
+                  function getCellDisplayValue(currentRowColumn) {
+                    if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
+                      // This is the case when the 'selection' feature is used in the grid and the user has moved
+                      // to or inside of the left grid container which holds the checkboxes for selecting rows.
+                      // This is necessary for Accessibility. Without this a screen reader cannot determine if the row
+                      // is or is not currently selected.
+                        return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
+                      } else {
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentSelection[i].col);
+                      }
+                    }
+
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
+                    values.push(getCellDisplayValue(currentSelection[i]));
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
