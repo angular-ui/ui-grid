@@ -63,12 +63,12 @@ describe('Grid factory', function () {
 
     it('should not scroll.y when scrollpercentage > 100% when row is less then top boundry', function() {
       // row is less then the top boundary
-      prevScrollTop = 100;
       var rowCache = [];
       for ( var i = 0; i < 9; i++ ){
         rowCache.push(i);
       }
       rowCache.push(rows[1]);
+      renderContainers.body.prevScrollTop = 100;
       renderContainers.body.visibleRowCache = rowCache;
       renderContainers.body.visibleColumnCache = [column];
       grid.renderContainers = renderContainers;
@@ -83,12 +83,12 @@ describe('Grid factory', function () {
 
     it('should not scroll.y when scrollpercentage > 100% when row is more then top boundry', function() {
       // row is more then the top boundary
-      prevScrollTop = 300;
       var rowCache = [];
       for ( var i = 0; i < 9; i++ ){
         rowCache.push(i);
       }
       rowCache.push(rows[1]);
+      renderContainers.body.prevScrollTop = 300;
       renderContainers.body.visibleRowCache = rowCache;
       renderContainers.body.visibleColumnCache = [column];
       grid.renderContainers = renderContainers;
