@@ -1,3 +1,28 @@
+<a name="v4.0.5"></a>
+### v4.0.5 (2017-06-14)
+
+
+#### Bug Fixes
+
+* **5007:**
+  * Reduced the amount of digest cycles initiated by the grid. ([d0bc03d9](http://github.com/angular-ui/ng-grid/commit/d0bc03d960cf06a85f8819a1d227b47d1cedc527))
+  * Reduced the amount of digest cycles initiated by the grid. ([bd51855f](http://github.com/angular-ui/ng-grid/commit/bd51855fe00dac4e932f854c1d3d5116beef5678))
+  * Reduced the amount of digest cycles initiated by the grid. ([75f98c3e](http://github.com/angular-ui/ng-grid/commit/75f98c3eda3e46f14f9d924e6f5a6d6e35bcc2b5))
+* **6160:** Select childrens of row group (#6167) ([21819c57](http://github.com/angular-ui/ng-grid/commit/21819c57474bf4451f3126985cfccf294c4c01e2))
+* **build:**
+  * Fixing test expectations since removal of close button. ([5bf9400a](http://github.com/angular-ui/ng-grid/commit/5bf9400aed4520010cfc04b3bbe91b6183092884))
+  * Removing performance improvements from ui-grid-util.js and comma separated vars. ([738df91f](http://github.com/angular-ui/ng-grid/commit/738df91fd61642e2d31cec8a7381f0083dbfb338))
+  * Updating protractor and selenium dependencies. (#6034) ([ca0c0368](http://github.com/angular-ui/ng-grid/commit/ca0c03683878889a5d9c40b4f2cac7ff32ee5b64))
+* **protractor:** Fixing npm so protractor can be installed and run locally. ([724df352](http://github.com/angular-ui/ng-grid/commit/724df3520ccc1d5f585fcc42508a537935875da2))
+* **shell.js:** Adding windows support. ([5e438643](http://github.com/angular-ui/ng-grid/commit/5e438643ea06e06455e91f9d0368f0021b8ef9c8))
+* **sort:** Fixing sorting priority aria-label ([a364886f](http://github.com/angular-ui/ng-grid/commit/a364886f37a2685500643d5df05b4c936dcd42a5))
+
+
+#### Features
+
+* **saveState:** change restore() to return Promise created by refresh() (#6178) ([f380055b](http://github.com/angular-ui/ng-grid/commit/f380055b58e3a42ee922c36812aa316cfef34174))
+* **sorting:** Default sorting ([e629bc69](http://github.com/angular-ui/ng-grid/commit/e629bc695d4e98a04710478310729aabf53853a1))
+
 <a name="v4.0.4"></a>
 ### v4.0.4 (2017-04-04)
 
