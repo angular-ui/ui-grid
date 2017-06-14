@@ -84,9 +84,10 @@
                  * @description Restores the provided state into the grid
                  * @param {scope} $scope a scope that we can broadcast on
                  * @param {object} state the state that should be restored into the grid
+                 * @returns {object} the promise created by refresh
                  */
                 restore: function ( $scope, state) {
-                  service.restore(grid, $scope, state);
+                  return service.restore(grid, $scope, state);
                 }
               }
             }
@@ -302,6 +303,7 @@
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {scope} $scope a scope that we can broadcast on
          * @param {object} state the state we'd like to restore
+         * @returns {object} the promise created by refresh
          */
         restore: function( grid, $scope, state ){
           if ( state.columns ) {
@@ -328,7 +330,7 @@
             service.restorePagination( grid, state.pagination );
           }
 
-          grid.refresh();
+          return grid.refresh();
         },
 
 

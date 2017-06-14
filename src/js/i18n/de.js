@@ -88,7 +88,7 @@
             pageToLast: 'Zum Ende'
           },
           sizes: 'Einträge pro Seite',
-          totalItems: 'Einträge',
+          totalItems: 'Einträgen',
           through: 'bis',
           of: 'von'
         },
