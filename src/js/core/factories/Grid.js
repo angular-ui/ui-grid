@@ -1,4 +1,4 @@
-(function(){
+﻿(function(){
 
 angular.module('ui.grid')
 .factory('Grid', ['$q', '$compile', '$parse', 'gridUtil', 'uiGridConstants', 'GridOptions', 'GridColumn', 'GridRow', 'GridApi', 'rowSorter', 'rowSearcher', 'GridRenderContainer', '$timeout','ScrollEvent',
@@ -2348,9 +2348,10 @@ angular.module('ui.grid')
       // The left boundary is the current X scroll position
       var leftBound = self.renderContainers.body.prevScrollLeft;
 
-      // The bottom boundary is the current Y scroll position, plus the height of the grid, but minus the header height.
-      //   Basically this is the viewport height added on to the scroll position
-      var bottomBound = self.renderContainers.body.prevScrollTop + self.gridHeight - self.renderContainers.body.headerHeight - self.footerHeight -  self.scrollbarWidth;
+      // The bottom boundary is row count to show + plus scroll height.
+      // This allows calculate main grid position without header and footer height that can be streched by content
+      var bottomBound = self.renderContainers.body.prevScrollTop +
+          self.options.minRowsToShow * self.options.rowHeight;
 
       // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
       //if (self.horizontalScrollbarHeight) {
@@ -2379,7 +2380,7 @@ angular.module('ui.grid')
         //}
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight + self.headerHeight);
+        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight);
 
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
