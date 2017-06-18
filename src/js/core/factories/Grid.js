@@ -2394,7 +2394,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
         else if (pixelsToSeeRow > bottomBound) {
@@ -2404,7 +2406,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
       }
 

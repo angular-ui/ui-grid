@@ -38,6 +38,70 @@ describe('Grid factory', function () {
     $scope.$digest();
   }
 
+  describe('scrollToIfNecessary', function() {
+    var renderContainers;
+    var prevScrollTop = 100;
+    var viewportWidth = 100;
+    var viewportHeight = 100;
+    var canvasHeight = 360;
+    var canvasWidth = 100;
+
+    beforeEach(function() {
+      renderContainers = { 
+        body: { 
+          visibleRowCache: null, 
+          visibleColumnCache: null,
+          prevScrollTop: prevScrollTop,
+          headerHeight: 30,
+          getViewportWidth: jasmine.createSpy('getViewportWidth').and.callFake(function() { return viewportWidth;}),
+          getViewportHeight: jasmine.createSpy('getViewportWidth').and.callFake(function() { return viewportHeight;}),
+          getCanvasHeight: jasmine.createSpy('getCanvasHeight').and.callFake(function() { return canvasHeight; }),
+          getCanvasWidth: jasmine.createSpy('getCanvasHeight').and.callFake(function() { return canvasWidth; })
+        }
+      };
+    });
+
+    it('should not scroll.y when scrollpercentage > 100% when row is less then top boundry', function() {
+      // row is less then the top boundary
+      var rowCache = [];
+      for ( var i = 0; i < 9; i++ ){
+        rowCache.push(i);
+      }
+      rowCache.push(rows[1]);
+      renderContainers.body.prevScrollTop = 100;
+      renderContainers.body.visibleRowCache = rowCache;
+      renderContainers.body.visibleColumnCache = [column];
+      grid.renderContainers = renderContainers;
+
+      // try to scroll to row 10
+      grid.scrollToIfNecessary(rowCache[9], column).then(function(scrollEvent){
+        expect(scrollEvent).toBeUndefined();
+      });
+
+      $scope.$apply();
+    });
+
+    it('should not scroll.y when scrollpercentage > 100% when row is more then top boundry', function() {
+      // row is more then the top boundary
+      var rowCache = [];
+      for ( var i = 0; i < 9; i++ ){
+        rowCache.push(i);
+      }
+      rowCache.push(rows[1]);
+      renderContainers.body.prevScrollTop = 300;
+      renderContainers.body.visibleRowCache = rowCache;
+      renderContainers.body.visibleColumnCache = [column];
+      grid.renderContainers = renderContainers;
+
+      // try to scroll to row 10
+      grid.scrollToIfNecessary(rowCache[9], column).then(function(scrollEvent){
+        expect(scrollEvent).toBeUndefined();
+      });
+
+      $scope.$apply();
+    });    
+  });
+
   describe('constructor', function() {
     it('should throw an exception if no id is provided', function() {
       expect(function() {
