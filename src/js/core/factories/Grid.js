@@ -1899,7 +1899,8 @@ angular.module('ui.grid')
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
         col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse('entity.' + col.field + custom_filter);
+        var colField = col.field.replace(/(')|(\\)/g, "\\$&");
+        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + custom_filter);
       } else {
         col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
       }

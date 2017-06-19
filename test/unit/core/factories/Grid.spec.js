@@ -699,7 +699,7 @@ describe('Grid factory', function () {
       var row = grid.rows[0];
       expect(grid.getCellValue(row,simpleCol)).toBe('simplePropValue');
       expect(grid.getCellDisplayValue(row,simpleCol)).toBe('simplePropValue');
-      
+
       var row2 = grid.rows[1];
       expect(grid.getCellValue(row2,simpleCol)).toBe('simplePropValue.2');
       expect(grid.getCellDisplayValue(row2,simpleCol)).toBe('simplePropValue.2');
@@ -761,6 +761,49 @@ describe('Grid factory', function () {
       var row = grid.rows[0];
       expect(grid.getCellDisplayValue(row,grid.columns[0])).toEqual("2015-07-01");
       expect(grid.getCellDisplayValue(row,grid.columns[1])).toEqual("WEDNESDAY");
+    });
+
+    it('should get cell display value with special chars column name and flatEntityAccess', function() {
+      var colDefs = [
+        {name: 'Column 1', field: 'column.1'},
+        {name: 'Column 2', field: 'column \'2\'', cellFilter: 'number:2'},
+        {name: 'Column 3', field: 'column   3'},
+        {name: 'Column 4', field: '\\\\////&é"(-è_çà)=+{}:/\\_!<>*|\',?;.§$ê£µ%'}
+      ];
+      var grid = new Grid({ id: 1, columnDefs:colDefs, flatEntityAccess:true });
+      var data = [
+        {
+          'column.1': 'test',
+          'column \'2\'': 2,
+          'column   3': '3',
+          '\\\\////&é"(-è_çà)=+{}:/\\_!<>*|\',?;.§$ê£µ%': '&é"(-è_çà)=+{}'
+        },
+        {
+          'column.1': 'test1',
+          'column \'2\'': 3,
+          'column   3': '4',
+          '\\\\////&é"(-è_çà)=+{}:/\\_!<>*|\',?;.§$ê£µ%': ''
+        }
+      ];
+      var rows = [
+        new GridRow(data[0], 1, grid),
+        new GridRow(data[1], 2, grid)
+      ];
+
+      grid.buildColumns();
+      grid.modifyRows(data);
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('Column 1'))).toBe('test');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('Column 1'))).toBe('test1');
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('Column 2'))).toBe('2.00');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('Column 2'))).toBe('3.00');
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('Column 3'))).toBe('3');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('Column 3'))).toBe('4');
+
+      expect(grid.getCellDisplayValue(rows[0], grid.getColumn('Column 4'))).toBe('&é"(-è_çà)=+{}');
+      expect(grid.getCellDisplayValue(rows[1], grid.getColumn('Column 4'))).toBe('');
     });
 
     it('not overwrite column types specified in options', function() {
