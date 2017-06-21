@@ -627,7 +627,7 @@ angular.module('ui.grid')
       // Skip hidden columns
       if (!column.visible) { return; }
 
-      if(pinRightColumn) {
+      if (pinRightColumn) {
         availableWidth += self.grid.scrollbarWidth;
       }
 
