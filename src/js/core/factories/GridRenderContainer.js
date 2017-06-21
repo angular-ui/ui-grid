@@ -608,7 +608,8 @@ angular.module('ui.grid')
     var asterisksArray = [],
         asteriskNum = 0,
         usedWidthSum = 0,
-        ret = '';
+        ret = '',
+        pinRightColumn = false;
 
     // Get the width of the viewport
     var availableWidth = self.grid.getViewportWidth() - self.grid.scrollbarWidth;
@@ -625,6 +626,14 @@ angular.module('ui.grid')
       var width = 0;
       // Skip hidden columns
       if (!column.visible) { return; }
+
+      if(pinRightColumn) {
+        availableWidth += self.grid.scrollbarWidth;
+      }
+
+      if (!pinRightColumn && column.colDef.pinnedRight) {
+        pinRightColumn = true;
+      }
 
       if (angular.isNumber(column.width)) {
         // pixel width, set to this value
