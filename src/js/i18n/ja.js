@@ -2,6 +2,15 @@
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('ja', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: '列のフィルター',
+            removeFilter: 'フィルターの解除',
+            columnMenuButtonLabel: '列のメニュー'
+          },
+          priority: '優先度:',
+          filterLabel: "列フィルター: "
+        },
         aggregate: {
           label: '項目'
         },
@@ -25,13 +34,14 @@
         sort: {
           ascending: '昇順に並べ替え',
           descending: '降順に並べ替え',
+          none: '並べ替え無し',
           remove: '並べ替えの解除'
         },
         column: {
           hide: '列の非表示'
         },
         aggregation: {
-          count: '合計行数: ',
+          count: '行数: ',
           sum: '合計: ',
           avg: '平均: ',
           min: '最小: ',
@@ -42,8 +52,14 @@
           pinRight: '右に固定',
           unpin: '固定解除'
         },
+        columnMenu: {
+          close: '閉じる'
+        },
         gridMenu: {
-          columns: '列:',
+          aria: {
+            buttonLabel: 'グリッドメニュー'
+          },
+          columns: '列の表示/非表示:',
           importerTitle: 'ファイルのインポート',
           exporterAllAsCsv: 'すべてのデータをCSV形式でエクスポート',
           exporterVisibleAsCsv: '表示中のデータをCSV形式でエクスポート',
@@ -51,7 +67,7 @@
           exporterAllAsPdf: 'すべてのデータをPDF形式でエクスポート',
           exporterVisibleAsPdf: '表示中のデータをPDF形式でエクスポート',
           exporterSelectedAsPdf: '選択したデータをPDF形式でエクスポート',
-          clearAllFilters: 'すべてのフィルタを清掃してください'
+          clearAllFilters: 'すべてのフィルタをクリア'
         },
         importer: {
           noHeaders: '列名を取得できません。ファイルにヘッダが含まれていることを確認してください。',
@@ -72,6 +88,22 @@
           totalItems: '項目',
           through: 'から',
           of: '項目/全'
+        },
+        grouping: {
+          group: 'グループ化',
+          ungroup: 'グループ化の解除',
+          aggregate_count: '集計表示: 行数',
+          aggregate_sum: '集計表示: 合計',
+          aggregate_max: '集計表示: 最大',
+          aggregate_min: '集計表示: 最小',
+          aggregate_avg: '集計表示: 平均',
+          aggregate_remove: '集計表示: 解除'
+        },
+        validate: {
+          error: 'Error:',
+          minLength: 'THRESHOLD 文字以上で入力してください。',
+          maxLength: 'THRESHOLD 文字以下で入力してください。',
+          required: '値が必要です。'
         }
       });
       return $delegate;
