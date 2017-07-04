@@ -147,8 +147,8 @@
            *  If false, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope){
-           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *  function($scope, triggerEvent){
+           *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
            *  </pre>
@@ -209,8 +209,8 @@
            *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope){
-           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *  function($scope, triggerEvent){
+           *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
            *  </pre>
@@ -592,10 +592,10 @@
               }
             }
 
-            function shouldEdit(col, row) {
+            function shouldEdit(col, row, triggerEvent) {
               return !row.isSaving &&
                 ( angular.isFunction(col.colDef.cellEditableCondition) ?
-                    col.colDef.cellEditableCondition($scope) :
+                    col.colDef.cellEditableCondition($scope, triggerEvent) :
                     col.colDef.cellEditableCondition );
             }
 
@@ -732,7 +732,7 @@
                 return;
               }
 
-              if (!shouldEdit($scope.col, $scope.row)) {
+              if (!shouldEdit($scope.col, $scope.row, triggerEvent)) {
                 return;
               }
 
