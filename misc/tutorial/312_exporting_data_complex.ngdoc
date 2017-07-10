@@ -100,13 +100,10 @@ resulting export.
         switch( input ){
           case 1:
             return 'female';
-            break;
           case 2:
             return 'male';
-            break;
           default:
             return 'unknown';
-            break;
         }
       };
     });
