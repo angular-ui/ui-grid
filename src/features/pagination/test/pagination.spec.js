@@ -5,13 +5,15 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
   var gridElement;
   var $rootScope;
   var $timeout;
+  var i18nService;
 
   beforeEach(module('ui.grid'));
   beforeEach(module('ui.grid.pagination'));
 
-  beforeEach(inject(function (_$rootScope_, _$timeout_, $compile) {
+  beforeEach(inject(function (_$rootScope_, _$timeout_, $compile, _i18nService_) {
     $rootScope = _$rootScope_;
     $timeout = _$timeout_;
+    i18nService = _i18nService_;
 
     $rootScope.gridOptions = {
       columnDefs: [
@@ -174,6 +176,19 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
         expect(gridApi.pagination.getPage()).toBe(2);
         expect(gridRows.eq(0).find('div.ui-grid-cell').eq(1).text()).toBe('K');
       });
+    });
+
+    it('changes labels according to i18nService', function(){
+      $rootScope.$digest();
+      $timeout.flush();
+
+      expect(gridElement.find('.ui-grid-pager-row-count-label').text()).toEqual(' items per page');
+
+      i18nService.setCurrentLang('fr');
+
+      $rootScope.$digest();
+
+      expect(gridElement.find('.ui-grid-pager-row-count-label').text()).toEqual(' éléments par page');
     });
   });
 
