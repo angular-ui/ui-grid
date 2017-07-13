@@ -206,7 +206,7 @@ column and row builders (see below).  See ui.grid.edit unit tests on how to easi
             uiGridCtrl.grid.api.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
             uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
             uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
-            uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
+            uiGridCtrl.grid.registerRowsProcessor(uiGridFeatureService.featureRowsProcessor);
             //do anything else you can safely do here
             //!! of course, don't stomp on core grid logic or data
           }
@@ -290,7 +290,7 @@ RowsProcessor allows your feature to affect the entire rows collections.  Gives 
         ....
 
         //from feature directive pre-link
-        uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
+        uiGridCtrl.grid.registerRowsProcessor(uiGridFeatureService.featureRowsProcessor);
 ```
 
 ## Public Methods and Events
