@@ -1906,7 +1906,8 @@ angular.module('ui.grid')
       }
     }
 
-    return col.cellDisplayGetterCache(row);
+    var rowWithCol = angular.extend({}, row, {col: col});
+    return col.cellDisplayGetterCache(rowWithCol);
   };
 
 
