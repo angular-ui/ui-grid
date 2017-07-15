@@ -301,6 +301,16 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             }
           };
 
+          $scope.label = function(){
+            var toBeDisplayed = $scope.name;
+
+            if (typeof($scope.name) === 'function'){
+              toBeDisplayed = $scope.name.call();
+            }
+
+            return toBeDisplayed;
+          };
+
           $scope.i18n = i18nService.get();
         }
       };

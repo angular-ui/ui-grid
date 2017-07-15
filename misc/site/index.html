@@ -160,6 +160,10 @@
 
           <h4 class="feature-heading">Complex Example</h4>
           <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
+
+          
+          <label>Language: </label>
+          <select ng-options="language for language in languages" ng-model="currentLanguage" ng-change="changeLanguage()"></select>
         </div>
       </div>
     </div>
@@ -182,10 +186,10 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-animate.js"></script>
-  <script src="//ui-grid.info/release/ui-grid-unstable.min.js"></script>
+  <script src="/release/ui-grid.js"></script>
   <script>
     angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns'])
-    .run(function($rootScope, uiGridConstants) {
+    .run(function($rootScope, uiGridConstants, i18nService) {
       $rootScope.gridOptionsSimple = {
         data: [
           {
@@ -455,6 +459,12 @@
               "age": 31
           }
         ]
+      };
+
+      $rootScope.languages = i18nService.getAllLangs();
+      $rootScope.currentLanguage = i18nService.getCurrentLang();
+      $rootScope.changeLanguage = function(){
+          i18nService.setCurrentLang($rootScope.currentLanguage);
       };
     });
   </script>
