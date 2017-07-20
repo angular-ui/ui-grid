@@ -330,9 +330,10 @@
                * @methodOf  ui.grid.treeBase.api:PublicApi
                * @description expand the immediate children of the specified row
                * @param {gridRow} row the row you wish to expand
+               * @param {boolean} recursive true if you wish to expand the row's ancients
                */
-              expandRow: function (row) {
-                service.expandRow(grid, row);
+              expandRow: function (row, recursive) {
+                service.expandRow(grid, row, recursive);
               },
 
               /**
@@ -804,7 +805,7 @@
         if (row.treeNode.state === uiGridTreeBaseConstants.EXPANDED){
           service.collapseRow(grid, row);
         } else {
-          service.expandRow(grid, row);
+          service.expandRow(grid, row, false);
         }
 
         grid.queueGridRefresh();
@@ -819,17 +820,38 @@
        *
        * @param {Grid} grid grid object
        * @param {GridRow} row the row we want to expand
+       * @param {boolean} recursive true if you wish to expand the row's ancients
        */
-      expandRow: function ( grid, row ){
-        if ( typeof(row.treeLevel) === 'undefined' || row.treeLevel === null || row.treeLevel < 0 ){
-          return;
-        }
+      expandRow: function ( grid, row, recursive ){
+        if ( recursive ){
+          var parents = [];
+          while ( row && typeof(row.treeLevel) !== 'undefined' && row.treeLevel !== null && row.treeLevel >= 0 && row.treeNode.state !== uiGridTreeBaseConstants.EXPANDED ){
+            parents.push(row);
+            row = row.treeNode.parentRow;
+          }
 
-        if ( row.treeNode.state !== uiGridTreeBaseConstants.EXPANDED ){
-          row.treeNode.state = uiGridTreeBaseConstants.EXPANDED;
-          grid.api.treeBase.raise.rowExpanded(row);
-          grid.treeBase.expandAll = service.allExpanded(grid.treeBase.tree);
-          grid.queueGridRefresh();
+          if ( parents.length > 0 ){
+            row = parents.pop();
+            while ( row ){
+                row.treeNode.state = uiGridTreeBaseConstants.EXPANDED;
+                grid.api.treeBase.raise.rowExpanded(row);
+                row = parents.pop();
+            }
+
+            grid.treeBase.expandAll = service.allExpanded(grid.treeBase.tree);
+            grid.queueGridRefresh();
+          }
+        } else {
+          if ( typeof(row.treeLevel) === 'undefined' || row.treeLevel === null || row.treeLevel < 0 ){
+            return;
+          }
+
+          if ( row.treeNode.state !== uiGridTreeBaseConstants.EXPANDED ){
+            row.treeNode.state = uiGridTreeBaseConstants.EXPANDED;
+            grid.api.treeBase.raise.rowExpanded(row);
+            grid.treeBase.expandAll = service.allExpanded(grid.treeBase.tree);
+            grid.queueGridRefresh();
+          }
         }
       },
 

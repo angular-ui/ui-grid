@@ -125,6 +125,15 @@ describe('ui.grid.treeBase uiGridTreeBaseService', function () {
       expect( expandCount ).toEqual(1);
     });
 
+    it( 'expandRow recursively', function() {
+      expect( treeRows.length ).toEqual( 2, 'only the level 0 rows are visible' );
+
+      grid.api.treeBase.expandRow(grid.rows[4], true);
+      treeRows = uiGridTreeBaseService.treeRows.call( grid, grid.rows.slice(0) );
+      expect( treeRows.length ).toEqual( 7, 'children of row 0, row 3 and row 4 are also visible' );
+      expect( expandCount ).toEqual(3);
+    });
+
     it( 'expandRowChildren', function() {
       expect( treeRows.length ).toEqual( 2, 'only the level 0 rows are visible' );
 
