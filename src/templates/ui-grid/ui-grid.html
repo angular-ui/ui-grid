@@ -25,7 +25,7 @@
     {{ grid.customStyles }}
   </style>
 
-  <div class="ui-grid-contents-wrapper">
+  <div class="ui-grid-contents-wrapper" role="grid">
     <div ui-grid-menu-button ng-if="grid.options.enableGridMenu"></div>
 
     <div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="'left'"></div>
