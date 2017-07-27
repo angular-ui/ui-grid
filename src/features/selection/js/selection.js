@@ -229,7 +229,7 @@
                  */
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof(row) !== 'undefined' && !row.isSelected) {
+                  if (row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -440,7 +440,7 @@
            *  @description Enable selection by clicking anywhere on the row.  Defaults to
            *  false if `enableRowHeaderSelection` is true, otherwise defaults to true.
            */
-          if (typeof(gridOptions.enableFullRowSelection) === 'undefined') {
+          if (typeof (gridOptions.enableFullRowSelection) === 'undefined') {
             gridOptions.enableFullRowSelection = !gridOptions.enableRowHeaderSelection;
           }
           /**
@@ -775,6 +775,11 @@
             else if (evt.ctrlKey || evt.metaKey) {
               uiGridSelectionService.toggleRowSelection(self, row, evt,
                   self.options.multiSelect, self.options.noUnselect);
+            }
+            else if (row.groupHeader) {
+              for (var i = 0; i < row.treeNode.children.length; i++) {
+                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+              }
             }
             else {
               uiGridSelectionService.toggleRowSelection(self, row, evt,

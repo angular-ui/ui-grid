@@ -21,6 +21,10 @@
           description: 'Przeciągnij nagłówek kolumny tutaj, aby pogrupować według niej.'
         },
         search: {
+          aria: {
+            selected: 'Wiersz zaznaczony',
+            notSelected: 'Wiersz niezaznaczony'
+          },
           placeholder: 'Szukaj...',
           showingItems: 'Widoczne pozycje:',
           selectedItems: 'Zaznaczone pozycje:',

@@ -1909,7 +1909,8 @@ angular.module('ui.grid')
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
         col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse('entity.' + col.field + custom_filter);
+        var colField = col.field.replace(/(')|(\\)/g, "\\$&");
+        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + custom_filter);
       } else {
         col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
       }
@@ -2404,7 +2405,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
         else if (pixelsToSeeRow > bottomBound) {
@@ -2414,7 +2417,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
       }
 
