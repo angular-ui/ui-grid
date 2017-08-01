@@ -159,8 +159,7 @@
           <div class="grid" ui-grid="gridOptionsSimple"></div>
 
           <h4 class="feature-heading">Complex Example</h4>
-          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns ui-grid-pagination></div>
-          
+          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns ui-grid-pagination></div>          
           <label>Language: </label>
           <select ng-options="language for language in languages" ng-model="currentLanguage" ng-change="changeLanguage()"></select>
         </div>
@@ -467,7 +466,6 @@
       $rootScope.changeLanguage = function(){
           i18nService.setCurrentLang($rootScope.currentLanguage);
       };
-
     });
   </script>
 
