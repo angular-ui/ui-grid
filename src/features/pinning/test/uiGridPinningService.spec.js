@@ -35,11 +35,11 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     });
 
     it('should have hide PinLeft disabled', function () {
-      expect(grid.options.hidePinLeft).toBe(false);
+      expect(grid.options.hidePinLeft).toBeFalsy();
     });
 
     it('should have hide PinRight disabled', function () {
-      expect(grid.options.hidePinRight).toBe(false);
+      expect(grid.options.hidePinRight).toBeFalsy();
     });
 
     it('should register a column builder to the grid', function() {
@@ -62,7 +62,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     it('should default to false for hidePinLeft', function () {
       var options = {};
       uiGridPinningService.defaultGridOptions(options);
-      expect(options.hidePinLeft).toBe(false);
+      expect(options.hidePinLeft).toBeFalsy();
     });
     it('should allow true for hidePinLeft when pinning is enabled', function () {
       var options = { enablePinning: true, hidePinLeft: true};
@@ -79,7 +79,7 @@ describe('ui.grid.pinning uiGridPinningService', function () {
     it('should default to false for hidePinRight', function () {
       var options = {};
       uiGridPinningService.defaultGridOptions(options);
-      expect(options.hidePinRight).toBe(false);
+      expect(options.hidePinRight).toBeFalsy();
     });
     it('should allow true for hidePinRight when pinning is enabled', function () {
       var options = { enablePinning: true, hidePinRight: true};
