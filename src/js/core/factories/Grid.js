@@ -1146,6 +1146,7 @@ angular.module('ui.grid')
     var self = this;
     var oldRows = self.rows.slice(0);
     var oldRowHash = self.rowHashMap || self.createRowHashMap();
+    var allRowsSelected = true;
     self.rowHashMap = self.createRowHashMap();
     self.rows.length = 0;
 
@@ -1173,7 +1174,14 @@ angular.module('ui.grid')
 
       self.rows.push( newRow );
       self.rowHashMap.put( newEntity, newRow );
+      if (!newRow.isSelected) {
+        allRowsSelected = false;
+      }
     });
+
+    if (self.selection) {
+      self.selection.selectAll = allRowsSelected;
+    }
 
     self.assignTypes();
 
@@ -2201,7 +2209,7 @@ angular.module('ui.grid')
           }
 
           if (container.header) {
-            var headerHeight = container.headerHeight = getHeight(container.headerHeight, parseInt(gridUtil.outerElementHeight(container.header), 10));
+            var headerHeight = container.headerHeight = getHeight(container.headerHeight, gridUtil.outerElementHeight(container.header));
 
             // Get the "inner" header height, that is the height minus the top and bottom borders, if present. We'll use it to make sure all the headers have a consistent height
             var topBorder = gridUtil.getBorderSize(container.header, 'top');

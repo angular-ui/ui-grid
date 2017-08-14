@@ -792,7 +792,7 @@
                                            'id="' + grid.id +'-aria-speakable" ' +
                                            'class="ui-grid-a11y-ariascreenreader-speakable ui-grid-offscreen" ' +
                                            'aria-live="assertive" ' +
-                                           'role="region" ' +
+                                           'role="alert" ' +
                                            'aria-atomic="true" ' +
                                            'aria-hidden="false" ' +
                                            'aria-relevant="additions" ' +
