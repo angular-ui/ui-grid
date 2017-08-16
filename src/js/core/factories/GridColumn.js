@@ -644,13 +644,26 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc property
+     * @name renderer
+     * @propertyOf ui.grid.class:GridOptions.columnDef
+     * @description (optional) renderer is a render-function for generating template of each cell
+     * @example
+     * <pre>
+     *  gridOptions.columnDefs[0].renderer = function(v){
+     *    return '<span style="color: red;">' + v + '</span>';
+     *  }
+     * </pre>
+     */
+    self.renderer = colDef.renderer ? colDef.renderer : '';
+    /**
+     * @ngdoc property
      * @name cellFilter
      * @propertyOf ui.grid.class:GridOptions.columnDef
      * @description cellFilter is a filter to apply to the content of each cell
      * @example
      * <pre>
      *   gridOptions.columnDefs[0].cellFilter = 'date'
-     *
+     * </pre>
      */
     self.cellFilter = colDef.cellFilter ? colDef.cellFilter : "";
 
@@ -984,9 +997,6 @@ angular.module('ui.grid')
    * @description Gets the aggregation label from colDef.aggregationLabel if
    * specified or by using i18n, including deciding whether or not to display
    * based on colDef.aggregationHideLabel.
-   *
-   * @param {string} label the i18n lookup value to use for the column label
-   *
    */
   GridColumn.prototype.getAggregationText = function () {
     var self = this;

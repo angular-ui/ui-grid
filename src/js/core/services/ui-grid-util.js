@@ -1265,9 +1265,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     };
   };
 
-  var mouseWheeltoBind = ( 'onwheel' in document || document.documentMode >= 9 ) ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'],
-      nullLowestDeltaTimeout,
-      lowestDelta;
+    var mouseWheeltoBind = ( 'onwheel' in document || document.documentMode >= 9 )
+        ? ['wheel']
+        : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'],
+        nullLowestDeltaTimeout,
+        lowestDelta;
 
   s.on.mousewheel = function (elm, fn) {
     if (!elm || !fn) { return; }

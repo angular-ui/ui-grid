@@ -3,7 +3,8 @@
 angular.module('ui.grid')
 .factory('GridRow', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
 
-   /**
+  /**
+   * @class GridRow
    * @ngdoc function
    * @name ui.grid.class:GridRow
    * @description GridRow is the viewModel for one logical row on the grid.  A grid Row is not necessarily a one-to-one
@@ -77,7 +78,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:GridRow
    * @description returns the qualified field name as it exists on scope
    * ie: row.entity.fieldA
-   * @param {GridCol} col column instance
+   * @param {GridColumn} col column instance
    * @returns {string} resulting name that can be evaluated on scope
    */
     GridRow.prototype.getQualifiedColField = function(col) {
@@ -87,10 +88,12 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name getEntityQualifiedColField
+     * @method getEntityQualifiedColField
+     * @member GridRow
      * @methodOf ui.grid.class:GridRow
      * @description returns the qualified field name minus the row path
      * ie: entity.fieldA
-     * @param {GridCol} col column instance
+     * @param {GridColumn} col column instance
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
@@ -100,8 +103,8 @@ angular.module('ui.grid')
     }
     return gridUtil.preEval(base + '.' + col.field);
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name setRowInvisible
@@ -122,8 +125,8 @@ angular.module('ui.grid')
       row.setThisRowInvisible( 'user' );
     }
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name clearRowInvisible
@@ -144,8 +147,8 @@ angular.module('ui.grid')
       row.clearThisRowInvisible( 'user' );
     }
   };
-  
-  
+
+
   /**
    * @ngdoc function
    * @name setThisRowInvisible
@@ -206,7 +209,7 @@ angular.module('ui.grid')
         }
       });
     }
-    
+
     if ( typeof(this.visible) === 'undefined' || this.visible !== newVisibility ){
       this.visible = newVisibility;
       if ( !fromRowProcessor ){
@@ -215,7 +218,7 @@ angular.module('ui.grid')
       }
     }
   };
-  
+
 
   return GridRow;
 }]);

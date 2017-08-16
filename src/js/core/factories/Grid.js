@@ -935,12 +935,14 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.preCompileCellTemplate = function(col) {
-    var self = this;
-    var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
-    html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+    var self = this,
+        html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col)),
+        COL_FIELD = col.renderer
+            ? 'col.renderer(grid.getCellValue(row, col), row.entity)'
+            : 'grid.getCellValue(row, col)';
+    html = html.replace(uiGridConstants.COL_FIELD, COL_FIELD);
 
-    var compiledElementFn = $compile(html);
-    col.compiledElementFn = compiledElementFn;
+    col.compiledElementFn = $compile(html);
 
     if (col.compiledElementFnDefer) {
       col.compiledElementFnDefer.resolve(col.compiledElementFn);
@@ -1898,6 +1900,7 @@ angular.module('ui.grid')
         col.cellValueGetterCache = $parse(row.getEntityQualifiedColField(col));
       }
 
+      //TODO: col.renderer(col.cellValueGetterCache(row))
       return col.cellValueGetterCache(row);
     }
   };
@@ -1912,15 +1915,16 @@ angular.module('ui.grid')
    */
   Grid.prototype.getCellDisplayValue = function getCellDisplayValue(row, col) {
     if ( !col.cellDisplayGetterCache ) {
-      var custom_filter = col.cellFilter ? " | " + col.cellFilter : "";
+      var custom_filter = col.cellFilter ? " | " + col.cellFilter : "",
+          renderer = col.renderer ? ' (' + col.renderer.toString() + ')() ' : '';
 
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
+        col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + renderer + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
         var colField = col.field.replace(/(')|(\\)/g, "\\$&");
-        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + custom_filter);
+        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + renderer + custom_filter);
       } else {
-        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
+        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + renderer + custom_filter);
       }
     }
 
