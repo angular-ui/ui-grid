@@ -963,10 +963,10 @@
                   if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                     var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
                       if (uiGridEditService.isStartEditKey(evt)) {
-                          var code = typeof evt.which === 'number' ? evt.which : evt.keyCode;
+                        var code = typeof evt.which === 'number' ? evt.which : evt.keyCode;
                         if(code > 0) {
-                            ngModel.$setViewValue(String.fromCharCode(code), evt);
-                            ngModel.$render();
+                          ngModel.$setViewValue(String.fromCharCode(code), evt);
+                          ngModel.$render();
                         }
                       }
                       viewPortKeyDownUnregister();
