@@ -3,6 +3,9 @@
 @import (reference) "../../../less/bootstrap/bootstrap";
 
 .ui-grid-pager-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -13,14 +16,22 @@
 }
 
 .ui-grid-pager-container {
-  display: inline-block;
+  float: left;
 }
 
 .ui-grid-pager-control {
+  padding: 5px 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
   margin-right: 10px;
   margin-left: 10px;
   min-width: 135px;
-  display: inline-block;
+  float: left;
+
+  button, span, input {
+    margin-right: 4px;
+  }
 
   button {
     height: 25px;
@@ -38,7 +49,7 @@
     vertical-align: top;
   }
 
-  .ui-grid-pager-max-pages-number{
+  .ui-grid-pager-max-pages-number {
     vertical-align: bottom;
     > * {
       vertical-align: bottom;
@@ -109,7 +120,8 @@
 }
 
 .ui-grid-pager-row-count-picker {
-  display: inline-block;
+  float: left;
+  padding: 5px 10px;
 
   select {
     #ui-grid-twbs > .form-control;
