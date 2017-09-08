@@ -833,6 +833,10 @@
                     }
                   }
 
+                  function getAppendedColumnHeaderText(col) {
+                    return ', ' + i18nService.getSafeText('headerCell.aria.column') + ' ' + col.displayName;
+                  }
+
                   function getCellDisplayValue(currentRowColumn) {
                     if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
                       // This is the case when the 'selection' feature is used in the grid and the user has moved
@@ -841,14 +845,15 @@
                       // is or is not currently selected.
                         return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
                       } else {
-                        return grid.getCellDisplayValue(currentRowColumn.row, currentSelection[i].col);
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
                       }
                     }
 
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(getCellDisplayValue(currentSelection[i]));
+                    var cellDisplayValue = getCellDisplayValue(currentSelection[i]) + getAppendedColumnHeaderText(currentSelection[i].col);
+                    values.push(cellDisplayValue);
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
