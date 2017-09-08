@@ -9,7 +9,8 @@
           aria: {
             defaultFilterLabel: 'Filter für Spalte',
             removeFilter: 'Filter löschen',
-            columnMenuButtonLabel: 'Spaltenmenü'
+            columnMenuButtonLabel: 'Spaltenmenü',
+            column: 'Spalte'
           },
           priority: 'Priorität:',
           filterLabel: "Filter für Spalte: "
