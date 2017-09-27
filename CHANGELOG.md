@@ -1,3 +1,25 @@
+<a name="v4.0.7"></a>
+### v4.0.7 (2017-09-27)
+
+
+#### Bug Fixes
+
+* **build:** Cope with tags not conforming to semver format when building. (#6376) ([1248e5a3](http://github.com/angular-ui/ng-grid/commit/1248e5a3209595fc232de992880d5de9d6397201))
+* **i18n:** Fixed i18n typo in German language (#6262) ([02a6a68d](http://github.com/angular-ui/ng-grid/commit/02a6a68d52d064f5fa9cc0c2d47f1588ba71f912))
+* **rowEdit:** cancel rowEditSaveTimer on flushDirtyRows - may cause double row save ([6711c725](http://github.com/angular-ui/ng-grid/commit/6711c725f634a1a755316269ce840ec1633109cb))
+* **scrollEvent:** Prevent scrollEvent when scroll percentage is greater then 1. (#6241) ([43ffebba](http://github.com/angular-ui/ng-grid/commit/43ffebbad73d9d4b4c4bc982d15872fb2a378f6f))
+* **ui-grid.info:**
+  * Removing unknown broken link. ([2968158c](http://github.com/angular-ui/ng-grid/commit/2968158c5fec17576fe88f8be6e366ef7330fc98))
+  * Fix broken customizer url on homepage (#5976) ([209fc1d6](http://github.com/angular-ui/ng-grid/commit/209fc1d68769fe1918d88f3accf5cd6e48f64acb))
+
+
+#### Features
+
+* **cellnav:**
+  * output aria text for cells that come from selection feature - works on IE with J ([151f32b9](http://github.com/angular-ui/ng-grid/commit/151f32b904145893c9e6d51c8350814be70b5dc8))
+  * output aria text for cells that come from selection feature ([6d951b2a](http://github.com/angular-ui/ng-grid/commit/6d951b2a7ac33f53b8512a6f3ad5d5498cd079c9))
+* **gridEdit:** Pass triggerEvent to cellEditableCondition fn call ([219ea716](http://github.com/angular-ui/ng-grid/commit/219ea7165ff1f6030c7d125550020181fa1fc3ae))
+
 <a name="v4.0.6"></a>
 ### v4.0.6 (2017-06-14)
 
