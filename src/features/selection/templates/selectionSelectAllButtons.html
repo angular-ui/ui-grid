@@ -1,5 +1,6 @@
 <div
   class="ui-grid-selection-row-header-buttons ui-grid-icon-ok"
   ng-class="{'ui-grid-all-selected': grid.selection.selectAll}"
-  ng-click="headerButtonClick($event)">
+  ng-click="headerButtonClick($event)"
+  ng-keydown="headerButtonKeyDown($event)">
 </div>
