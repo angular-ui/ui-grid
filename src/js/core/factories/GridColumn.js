@@ -18,8 +18,11 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name name
    * @propertyOf ui.grid.class:GridColumn
-   * @description (mandatory) each column should have a name, although for backward
-   * compatibility with 2.x name can be omitted if field is present
+   * @description (mandatory) Each column should have a name, although for backward
+   * compatibility with 2.x name can be omitted if field is present.
+   *
+   * Important - This must be unique to each column on a web page since it can
+   * be used as a key for retrieving information such as custom sort algorithms.
    *
    */
 
@@ -27,8 +30,11 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name name
    * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description (mandatory) each column should have a name, although for backward
-   * compatibility with 2.x name can be omitted if field is present
+   * @description (mandatory) Each column should have a name, although for backward
+   * compatibility with 2.x name can be omitted if field is present.
+   *
+   * Important - This must be unique to each column on a web page since it can
+   * be used as a key for retrieving information such as custom sort algorithms.
    *
    */
 
@@ -81,17 +87,17 @@ angular.module('ui.grid')
    * <pre>{ term: 'text', condition: uiGridConstants.filter.STARTS_WITH, placeholder: 'type to filter...', ariaLabel: 'Filter for text', flags: { caseSensitive: false }, type: uiGridConstants.filter.SELECT, [ { value: 1, label: 'male' }, { value: 2, label: 'female' } ] }</pre>
    *
    */
-   
-  /** 
+
+  /**
    * @ngdoc property
    * @name extraStyle
    * @propertyOf ui.grid.class:GridColumn
-   * @description additional on this column.  
+   * @description additional on this column.
    * @example
    * <pre>{extraStyle: {display:'table-cell'}}</pre>
    *
-   */   
-    
+   */
+
   /**
    * @ngdoc object
    * @name ui.grid.class:GridColumn
@@ -208,7 +214,7 @@ angular.module('ui.grid')
   GridColumn.prototype.hideColumn = function() {
     this.colDef.visible = false;
   };
-  
+
 
   /**
    * @ngdoc method
@@ -319,6 +325,31 @@ angular.module('ui.grid')
    * that are the row objects and the current direction of the sort respectively.
    *
    */
+
+   /**
+    * @ngdoc property
+    * @name defaultSort
+    * @propertyOf ui.grid.class:GridOptions.columnDef
+    * @description An object of sort information, provides a hidden default ordering of the data
+    * when no user sorts are applied, or when a user-provided sort deems two rows to be equal.
+    *
+    * May be combined with a regular {@link ui.grid.class:GridOptions.columnDef#properties_sort columnDef.sort}
+    * to explicitly sort by that column by default.
+    *
+    * Shares the same object format as {@link ui.grid.class:GridOptions.columnDef#properties_sort columnDef.sort}.
+    *
+    * Note that a defaultSort can never take priority over an explicit sort.
+    * @example
+    * <pre>
+    *   $scope.gridOptions.columnDefs = [{
+    *     field: 'field1',
+    *     defaultSort: {
+    *       direction: uiGridConstants.ASC,
+    *       priority: 0
+    *      }
+    *   }];
+    * </pre>
+    */
 
   /**
    * @ngdoc array
@@ -709,6 +740,9 @@ angular.module('ui.grid')
     if ( isNew ){
       self.setPropertyOrDefault(colDef, 'sort');
     }
+
+    // Use the column definition defaultSort always, unlike normal sort
+    self.setPropertyOrDefault(colDef, 'defaultSort');
 
     // Set up default filters array for when one is not provided.
     //   In other words, this (in column def):

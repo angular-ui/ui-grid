@@ -9,27 +9,21 @@ Demonstrating scrolling with large amount of columns
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
-      $scope.gridOptions = {
-        enableSorting: true
-      };
-
+    app.controller('MainCtrl', ['$scope', function ($scope) {
       var colCount = 500;
       var rowCount = 500;
+      var gridOptions = {};
 
-      $scope.gridOptions.columnDefs = [];
-      $timeout( function() {
+      function generateColumns() {
         for (var colIndex = 0; colIndex < colCount; colIndex++) {
-          $scope.gridOptions.columnDefs.push({
+          gridOptions.columnDefs.push({
             name: 'col' + colIndex,
             width: Math.floor(Math.random() * (120 - 50 + 1)) + 50
           });
         }
-      });
+      }
 
-      var data = [];
-
-      $timeout( function() {
+      function generateData() {
         for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
           var row = {};
 
@@ -37,15 +31,24 @@ Demonstrating scrolling with large amount of columns
             row['col' + colIndex] = 'r' + rowIndex + 'c' + colIndex;
           }
 
-          data.push(row);
+          gridOptions.data.push(row);
         }
-      });
+      }
 
-      $scope.gridOptions.data = data;
+      function initialize() {
+        gridOptions = {
+          enableSorting: true,
+          fastWatch: true,
+          columnDefs: [],
+          data: []
+        };
+        generateColumns();
+        generateData();
 
-      $scope.$on("destroy", function(){
-        $timeout.cancel();
-      });
+        $scope.gridOptions = gridOptions;
+      }
+
+      initialize();
     }]);
   </file>
   <file name="index.html">
@@ -53,7 +56,7 @@ Demonstrating scrolling with large amount of columns
       <strong>{{ gridOptions.columnDefs.length | number }} Columns with Random Widths</strong>
       <br>
       <br>
-      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+      <div id="grid1" ui-grid="gridOptions" class="grid" ng-if="gridOptions"></div>
     </div>
   </file>
   <file name="main.css">
@@ -64,8 +67,12 @@ Demonstrating scrolling with large amount of columns
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
+    var grid1 = new GridObjectTest('grid1');
+
     describe( '191 horizontal scrolling', function() {
       gridTestUtils.firefoxReload();
+
       it('check first couple of headers and cells - make sure grid has rendered', function () {
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Col0' );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Col1' );

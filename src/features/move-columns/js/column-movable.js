@@ -645,6 +645,7 @@
                   }
                 }
               };
+              $scope.$on('$destroy', offAllEvents);
             }
           };
         }

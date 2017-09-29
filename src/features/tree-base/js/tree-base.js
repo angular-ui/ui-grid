@@ -715,7 +715,7 @@
         };
 
         rowHeaderColumnDef.visible = grid.options.treeRowHeaderAlwaysVisible;
-        grid.addRowHeaderColumn( rowHeaderColumnDef, -100 );
+        grid.addRowHeaderColumn(rowHeaderColumnDef, -100);
       },
 
 
@@ -1013,7 +1013,7 @@
         if ( grid.options.treeRowHeaderAlwaysVisible === false && grid.treeBase.numberLevels <= 0 ){
           newVisibility = false;
         }
-        if ( rowHeader.visible !== newVisibility ) {
+        if ( rowHeader  && rowHeader.visible !== newVisibility ) {
           rowHeader.visible = newVisibility;
           rowHeader.colDef.visible = newVisibility;
           grid.queueGridRefresh();

@@ -54,7 +54,7 @@ For an example using angular-translate to translate your headers, refer to http:
          <p>Using Filter:</p>
          <p>{{"groupPanel.description" | t}}</p>
 
-         <p>Click the header menu to see language. NOTE: TODO: header text does not change after grid is rendered. </p>
+         <p>Click the header menu to see language.</p>
 
          <div ui-grid="gridOptions" class="grid"></div>
       </div>

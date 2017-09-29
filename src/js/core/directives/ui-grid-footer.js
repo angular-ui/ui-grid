@@ -36,7 +36,7 @@
                     containerCtrl.footerViewport = footerViewport;
                   }
                 }
-              });
+              }).catch(angular.noop);
           },
 
           post: function ($scope, $elm, $attrs, controllers) {

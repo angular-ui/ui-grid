@@ -32,232 +32,215 @@ angular.module('ui.grid')
 
 .directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'i18nService',
 function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18nService) {
-  var defaultTemplate = 'ui-grid/uiGridMenu';
-
   var uiGridMenu = {
     priority: 0,
     scope: {
       // shown: '&',
       menuItems: '=',
-      autoHide: '=?',
-      templateUrl: '='
+      autoHide: '=?'
     },
     require: '?^uiGrid',
+    templateUrl: 'ui-grid/uiGridMenu',
     replace: false,
-    compile: function ($elm, $attrs) {
-      return {
-        pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-          if ( uiGridCtrl ) {
-              $scope.grid = uiGridCtrl.grid;
-          }
+    link: function ($scope, $elm, $attrs, uiGridCtrl) {
+      var parent = $elm.context.parentNode;
+      var grid;
+      if ( uiGridCtrl ) {
+        grid = uiGridCtrl.grid;
+      }
+      $scope.dynamicStyles = '';
+      if (uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options && uiGridCtrl.grid.options.gridMenuTemplate) {
+        var gridMenuTemplate = uiGridCtrl.grid.options.gridMenuTemplate;
+        gridUtil.getTemplate(gridMenuTemplate).then(function (contents) {
+          var template = angular.element(contents);
+          var newElm = $compile(template)($scope);
+          $elm.replaceWith(newElm);
+        }).catch(angular.noop);
+      }
 
-          var menuTemplate = $scope.templateUrl || defaultTemplate;
-          gridUtil.getTemplate(menuTemplate)
-            .then(function (contents) {
-              var template = angular.element(contents);
-              $elm.append(template);
-              $compile(template)($scope);
+      var setupHeightStyle = function(gridHeight) {
+        //menu appears under header row, so substract that height from it's total
+        // additional 20px for general padding
+        var gridMenuMaxHeight = gridHeight - uiGridCtrl.grid.headerHeight - 20;
+        $scope.dynamicStyles = [
+          '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
+          'max-height: ' + gridMenuMaxHeight + 'px;',
+          '}'
+        ].join(' ');
+      };
 
-              var newElm = $compile(template)($scope);
-              $elm.append(newElm);
+      if (uiGridCtrl) {
+        setupHeightStyle(uiGridCtrl.grid.gridHeight);
+        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
+          setupHeightStyle(newGridHeight);
+        });
+      }
+
+      $scope.i18n = {
+        close: i18nService.getSafeText('columnMenu.close')
+      };
+
+      // *** Show/Hide functions ******
+      $scope.showMenu = function(event, args) {
+        if ( !$scope.shown ){
+
+          /*
+            * In order to animate cleanly we remove the ng-if, wait a digest cycle, then
+            * animate the removal of the ng-hide.  We can't successfully (so far as I can tell)
+            * animate removal of the ng-if, as the menu items aren't there yet.  And we don't want
+            * to rely on ng-show only, as that leaves elements in the DOM that are needlessly evaluated
+            * on scroll events.
+            *
+            * Note when testing animation that animations don't run on the tutorials.  When debugging it looks
+            * like they do, but angular has a default $animate provider that is just a stub, and that's what's
+            * being called.  ALso don't be fooled by the fact that your browser has actually loaded the
+            * angular-translate.js, it's not using it.  You need to test animations in an external application.
+            */
+          $scope.shown = true;
+          if (parent.nodeType === 1){
+            var parentPos = parent.getBoundingClientRect();
+            angular.element($document.context.body).append($elm);
+            var width = $document.context.body.clientWidth;
+            // If the grid has a header, account for it when positioning the menu.
+            var headerHeight = (grid && grid.headerHeight) ? grid.headerHeight : 0;
+            angular.element($elm).css({
+              "position":"absolute",
+              "top": parseInt(parentPos.top + headerHeight) + "px"
             });
-        },
 
-        post: function ($scope, $elm, $attrs, uiGridCtrl) {
-          var parent = $elm.context.parentNode;
-          var grid;
-          if ( uiGridCtrl ) {
-            grid = uiGridCtrl.grid;
+            if (getComputedStyle(parent).direction === 'rtl'){
+              angular.element($elm).css({ "left": parseInt(parentPos.left) + "px" });
+            } else {
+              angular.element($elm).css({ "right": parseInt(width - parentPos.right) + "px" });
+            }
+            angular.element($elm).addClass("ui-grid");
           }
-          $scope.dynamicStyles = '';
+          $timeout( function() {
+            $scope.shownMid = true;
+            $scope.$emit('menu-shown');
+          });
+        } else if ( !$scope.shownMid ) {
+          // we're probably doing a hide then show, so we don't need to wait for ng-if
+          $scope.shownMid = true;
+          $scope.$emit('menu-shown');
+        }
 
-          var setupHeightStyle = function(gridHeight) {
-            //menu appears under header row, so substract that height from it's total
-            // additional 20px for general padding
-            var gridMenuMaxHeight = gridHeight - uiGridCtrl.grid.headerHeight - 20;
-            $scope.dynamicStyles = [
-              '.grid' + uiGridCtrl.grid.id + ' .ui-grid-menu-mid {',
-              'max-height: ' + gridMenuMaxHeight + 'px;',
-              '}'
-            ].join(' ');
-          };
+        var docEventType = 'click';
+        if (args && args.originalEvent && args.originalEvent.type && args.originalEvent.type === 'touchstart') {
+          docEventType = args.originalEvent.type;
+        }
 
-          if (uiGridCtrl) {
-            setupHeightStyle(uiGridCtrl.grid.gridHeight);
-            uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
-              setupHeightStyle(newGridHeight);
-            });
-          }
+        // Turn off an existing document click handler
+        angular.element(document).off('click touchstart', applyHideMenu);
+        $elm.off('keyup', checkKeyUp);
+        $elm.off('keydown', checkKeyDown);
 
-          $scope.i18n = {
-            close: i18nService.getSafeText('columnMenu.close')
-          };
+        // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
+        $timeout(function() {
+          angular.element(document).on(docEventType, applyHideMenu);
+          $elm.on('keyup', checkKeyUp);
+          $elm.on('keydown', checkKeyDown);
 
-          // *** Show/Hide functions ******
-          $scope.showMenu = function(event, args) {
-            if ( !$scope.shown ){
+        });
+        //automatically set the focus to the first button element in the now open menu.
+        gridUtil.focus.bySelector($elm, 'button[type=button]', true);
+      };
 
-              /*
-               * In order to animate cleanly we remove the ng-if, wait a digest cycle, then
-               * animate the removal of the ng-hide.  We can't successfully (so far as I can tell)
-               * animate removal of the ng-if, as the menu items aren't there yet.  And we don't want
-               * to rely on ng-show only, as that leaves elements in the DOM that are needlessly evaluated
-               * on scroll events.
-               *
-               * Note when testing animation that animations don't run on the tutorials.  When debugging it looks
-               * like they do, but angular has a default $animate provider that is just a stub, and that's what's
-               * being called.  ALso don't be fooled by the fact that your browser has actually loaded the
-               * angular-translate.js, it's not using it.  You need to test animations in an external application.
-               */
-              $scope.shown = true;
+
+      $scope.hideMenu = function(event) {
+        if ( $scope.shown ){
+          /*
+            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
+            * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
+            * callback on the addClass method, but it is very unreliable with unit tests for no discernable reason.
+            *
+            * The user may have clicked on the menu again whilst
+            * we're waiting, so we check that the mid isn't shown before applying the ng-if.
+            */
+          $scope.shownMid = false;
+          $timeout( function() {
+            if ( !$scope.shownMid ){
+              $scope.shown = false;
               if (parent.nodeType === 1){
-                var parentPos = parent.getBoundingClientRect();
-                angular.element($document.context.body).append($elm);
-                var width = $document.context.body.clientWidth;
-                // If the grid has a header, account for it when positioning the menu.
-                var headerHeight = (grid && grid.headerHeight) ? grid.headerHeight : 0;
-                angular.element($elm).css({
-                  "position":"absolute",
-                  "top": parseInt(parentPos.top + headerHeight) + "px"
-                });
-
-                if (getComputedStyle(parent).direction === 'rtl'){
-                  angular.element($elm).css({ "left": parseInt(parentPos.left) + "px" });
-                } else {
-                  angular.element($elm).css({ "right": parseInt(width - parentPos.right) + "px" });
-                }
-                angular.element($elm).addClass("ui-grid");
+                angular.element(parent).append($elm);
+                angular.element($elm).removeClass("ui-grid");
               }
-              $timeout( function() {
-                $scope.shownMid = true;
-                $scope.$emit('menu-shown');
-              });
-            } else if ( !$scope.shownMid ) {
-              // we're probably doing a hide then show, so we don't need to wait for ng-if
-              $scope.shownMid = true;
-              $scope.$emit('menu-shown');
+              $scope.$emit('menu-hidden');
             }
+          }, 200);
+        }
 
-            var docEventType = 'click';
-            if (args && args.originalEvent && args.originalEvent.type && args.originalEvent.type === 'touchstart') {
-              docEventType = args.originalEvent.type;
-            }
+        angular.element(document).off('click touchstart', applyHideMenu);
+        $elm.off('keyup', checkKeyUp);
+        $elm.off('keydown', checkKeyDown);
+      };
 
-            // Turn off an existing document click handler
-            angular.element(document).off('click touchstart', applyHideMenu);
-            $elm.off('keyup', checkKeyUp);
-            $elm.off('keydown', checkKeyDown);
+      $scope.$on('hide-menu', function (event, args) {
+        $scope.hideMenu(event, args);
+      });
 
-            // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
-            $timeout(function() {
-              angular.element(document).on(docEventType, applyHideMenu);
-              $elm.on('keyup', checkKeyUp);
-              $elm.on('keydown', checkKeyDown);
-
-            });
-            //automatically set the focus to the first button element in the now open menu.
-            gridUtil.focus.bySelector($elm, 'button[type=button]', true);
-          };
+      $scope.$on('show-menu', function (event, args) {
+        $scope.showMenu(event, args);
+      });
 
 
-          $scope.hideMenu = function(event) {
-            if ( $scope.shown ){
-              /*
-               * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
-               * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
-               * callback on the addClass method, but it is very unreliable with unit tests for no discernable reason.
-               *
-               * The user may have clicked on the menu again whilst
-               * we're waiting, so we check that the mid isn't shown before applying the ng-if.
-               */
-              $scope.shownMid = false;
-              $timeout( function() {
-                if ( !$scope.shownMid ){
-                  $scope.shown = false;
-                  if (parent.nodeType === 1){
-                    angular.element(parent).append($elm);
-                    angular.element($elm).removeClass("ui-grid");
-                  }
-                  $scope.$emit('menu-hidden');
-                }
-              }, 200);
-            }
-
-            angular.element(document).off('click touchstart', applyHideMenu);
-            $elm.off('keyup', checkKeyUp);
-            $elm.off('keydown', checkKeyDown);
-          };
-
-          $scope.$on('hide-menu', function (event, args) {
-            $scope.hideMenu(event, args);
+      // *** Auto hide when click elsewhere ******
+      var applyHideMenu = function(){
+        if ($scope.shown) {
+          $scope.$apply(function () {
+            $scope.hideMenu();
           });
-
-          $scope.$on('show-menu', function (event, args) {
-            $scope.showMenu(event, args);
-          });
-
-
-          // *** Auto hide when click elsewhere ******
-          var applyHideMenu = function(){
-            if ($scope.shown) {
-              $scope.$apply(function () {
-                $scope.hideMenu();
-              });
-            }
-          };
-
-          // close menu on ESC and keep tab cyclical
-          var checkKeyUp = function(event) {
-            if (event.keyCode === 27) {
-              $scope.hideMenu();
-            }
-          };
-
-          var checkKeyDown = function(event) {
-            var setFocus = function(elm) {
-              elm.focus();
-              event.preventDefault();
-              return false;
-            };
-            if (event.keyCode === 9) {
-              var firstMenuItem, lastMenuItem;
-              var menuItemButtons = $elm[0].querySelectorAll('button:not(.ng-hide)');
-              if (menuItemButtons.length > 0) {
-                firstMenuItem = menuItemButtons[0];
-                lastMenuItem = menuItemButtons[menuItemButtons.length - 1];
-                if (event.target === lastMenuItem && !event.shiftKey) {
-                  setFocus(firstMenuItem);
-                } else if (event.target === firstMenuItem && event.shiftKey) {
-                  setFocus(lastMenuItem);
-                }
-              }
-            }
-          };
-
-          if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
-            $scope.autoHide = true;
-          }
-
-          if ($scope.autoHide) {
-            angular.element($window).on('resize', applyHideMenu);
-          }
-
-          $scope.$on('$destroy', function () {
-            angular.element(document).off('click touchstart', applyHideMenu);
-          });
-
-
-          $scope.$on('$destroy', function() {
-            angular.element($window).off('resize', applyHideMenu);
-          });
-
-          if (uiGridCtrl) {
-           $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollBegin($scope, applyHideMenu ));
-          }
-
-          $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
         }
       };
+
+      // close menu on ESC and keep tab cyclical
+      var checkKeyUp = function(event) {
+        if (event.keyCode === 27) {
+          $scope.hideMenu();
+        }
+      };
+
+      var checkKeyDown = function(event) {
+        var setFocus = function(elm) {
+          elm.focus();
+          event.preventDefault();
+          return false;
+        };
+        if (event.keyCode === 9) {
+          var firstMenuItem, lastMenuItem;
+          var menuItemButtons = $elm[0].querySelectorAll('button:not(.ng-hide)');
+          if (menuItemButtons.length > 0) {
+            firstMenuItem = menuItemButtons[0];
+            lastMenuItem = menuItemButtons[menuItemButtons.length - 1];
+            if (event.target === lastMenuItem && !event.shiftKey) {
+              setFocus(firstMenuItem);
+            } else if (event.target === firstMenuItem && event.shiftKey) {
+              setFocus(lastMenuItem);
+            }
+          }
+        }
+      };
+
+      if (typeof($scope.autoHide) === 'undefined' || $scope.autoHide === undefined) {
+        $scope.autoHide = true;
+      }
+
+      if ($scope.autoHide) {
+        angular.element($window).on('resize', applyHideMenu);
+      }
+
+      $scope.$on('$destroy', function unbindEvents() {
+        angular.element($window).off('resize', applyHideMenu);
+        angular.element(document).off('click touchstart', applyHideMenu);
+        $elm.off('keyup', checkKeyUp);
+        $elm.off('keydown', checkKeyDown);
+      });
+
+      if (uiGridCtrl) {
+        $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollBegin($scope, applyHideMenu ));
+      }
+
+      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
     }
   };
 
@@ -265,7 +248,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 }])
 
 .directive('uiGridMenuItem', ['gridUtil', '$compile', 'i18nService', function (gridUtil, $compile, i18nService) {
-  var defaultTemplate = 'ui-grid/uiGridMenuItem';
   var uiGridMenuItem = {
     priority: 0,
     scope: {
@@ -280,17 +262,20 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       screenReaderOnly: '='
     },
     require: ['?^uiGrid'],
+    templateUrl: 'ui-grid/uiGridMenuItem',
     replace: false,
     compile: function() {
       return {
         pre: function ($scope, $elm) {
-          var menuItemTemplate = $scope.templateUrl || defaultTemplate;
-          gridUtil.getTemplate(menuItemTemplate)
-            .then(function (contents) {
-              var template = angular.element(contents);
-              $compile(template)($scope);
-              $elm.replaceWith(template);
-            });
+          if ($scope.templateUrl) {
+            gridUtil.getTemplate($scope.templateUrl)
+                .then(function (contents) {
+                  var template = angular.element(contents);
+
+                  var newElm = $compile(template)($scope);
+                  $elm.replaceWith(newElm);
+                }).catch(angular.noop);
+          }
         },
         post: function ($scope, $elm, $attrs, controllers) {
           var uiGridCtrl = controllers[0];
@@ -336,14 +321,20 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               if ( !$scope.leaveOpen ){
                 $scope.$emit('hide-menu');
               } else {
-                /*
-                 * XXX: Fix after column refactor
-                 * Ideally the focus would remain on the item.
-                 * However, since there are two menu items that have their 'show' property toggled instead. This is a quick fix.
-                 */
-                gridUtil.focus.bySelector(angular.element(gridUtil.closestElm($elm, ".ui-grid-menu-items")), 'button[type=button]', true);
+                // Maintain focus on the selected item
+                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
               }
             }
+          };
+
+          $scope.label = function(){
+            var toBeDisplayed = $scope.name;
+
+            if (typeof($scope.name) === 'function'){
+              toBeDisplayed = $scope.name.call();
+            }
+
+            return toBeDisplayed;
           };
 
           $scope.i18n = i18nService.get();

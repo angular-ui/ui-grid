@@ -54,6 +54,7 @@ describe('GridOptions factory', function () {
         menuTemplate: null,
         menuItemTemplate: null,
         rowTemplate: 'ui-grid/ui-grid-row',
+        gridMenuTemplate: 'ui-grid/uiGridMenu',
         appScopeProvider: null
       });
     });
@@ -102,6 +103,7 @@ describe('GridOptions factory', function () {
         menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       };
@@ -148,6 +150,7 @@ describe('GridOptions factory', function () {
         menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       });
@@ -197,6 +200,7 @@ describe('GridOptions factory', function () {
         menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -242,6 +246,7 @@ describe('GridOptions factory', function () {
         menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : null
       });

@@ -30,8 +30,8 @@ env:
 branches:
   only:
     - master
-    - /^3\.0$/
-    - /^3\.x$/
+    - /^4\.0$/
+    - /^4\.x$/
     - /^release-.*$/
 
 before_install:
@@ -62,4 +62,5 @@ after_failure:
   - ./travis_print_logs.sh
 
 after_script:
+  - killall -9 sc
   - ./travis_print_logs.sh

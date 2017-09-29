@@ -31,8 +31,36 @@
           // Register this viewport with its container
           containerCtrl.viewport = $elm;
 
-
-          $elm.on('scroll', scrollHandler);
+          /**
+           * @ngdoc function
+           * @name customScroller
+           * @methodOf ui.grid.class:GridOptions
+           * @description (optional) uiGridViewport.on('scroll', scrollHandler) by default.
+           * A function that allows you to provide your own scroller function. It is particularly helpful if you want to use third party scrollers
+           * as this allows you to do that.
+           *
+           * <div class="alert alert-info" role="alert"> <strong>NOTE:</strong> It is important to remember to always pass in an event object to
+           * the scrollHandler as the grid scrolling behavior will break without it.</div>
+           * <h5>Example</h5>
+           * <pre>
+           *   $scope.gridOptions = {
+           *       customScroller: function myScrolling(uiGridViewport, scrollHandler) {
+           *           uiGridViewport.on('scroll', function myScrollingOverride(event) {
+           *               // Do something here
+           *
+           *               scrollHandler(event);
+           *           });
+           *       }
+           *   };
+           * </pre>
+           * @param {object} uiGridViewport Element being scrolled. (this gets passed in by the grid).
+           * @param {function} scrollHandler Function that needs to be called when scrolling happens. (this gets passed in by the grid).
+           */
+          if (grid && grid.options && grid.options.customScroller) {
+            grid.options.customScroller($elm, scrollHandler);
+          } else {
+            $elm.on('scroll', scrollHandler);
+          }
 
           var ignoreScroll = false;
 
@@ -105,7 +133,9 @@
             }
           }
 
-
+          $scope.$on('$destroy', function unbindEvents() {
+            $elm.off();
+          });
         },
         controller: ['$scope', function ($scope) {
           this.rowStyle = function (index) {
@@ -114,12 +144,12 @@
 
             var styles = {};
 
-            if (index === 0 && rowContainer.currentTopRow !== 0) {
-              // The row offset-top is just the height of the rows above the current top-most row, which are no longer rendered
-              var hiddenRowWidth = (rowContainer.currentTopRow) * rowContainer.grid.options.rowHeight;
-
-              // return { 'margin-top': hiddenRowWidth + 'px' };
-              styles['margin-top'] = hiddenRowWidth + 'px';
+            if (rowContainer.currentTopRow !== 0){
+              //top offset based on hidden rows count
+              var translateY = "translateY("+ (rowContainer.currentTopRow * rowContainer.grid.options.rowHeight)  +"px)";
+              styles['transform'] = translateY;
+              styles['-webkit-transform'] = translateY;
+              styles['-ms-transform'] = translateY;
             }
 
             if (colContainer.currentFirstColumn !== 0) {

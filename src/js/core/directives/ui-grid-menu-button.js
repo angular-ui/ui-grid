@@ -326,7 +326,7 @@ angular.module('ui.grid')
           menuItem.title = successValue;
         }, function( errorValue ) {
           menuItem.title = errorValue;
-        });
+        }).catch(angular.noop);
       } else {
         gridUtil.logError('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
         menuItem.title = 'badconfig';

@@ -29,6 +29,9 @@ describe('ui-grid-menu', function() {
       {
         title: 'Blah 4',
         shown: function () { return false; }
+      },
+      {
+        title: function(){return 'Blah 5';}
       }
     ];
 
@@ -268,4 +271,52 @@ describe('ui-grid-menu', function() {
       expect(hideSpy).toHaveBeenCalled();
     });
   });
+
+  describe('custom gridMenu templates', function () {
+    var $timeout;
+    var customGridMenu = '<div ui-grid-menu-custom menu-items="items"></div>';
+
+    beforeEach(inject(function (_$timeout_) {
+      $timeout = _$timeout_;
+    }));
+    beforeEach( function() {
+      recompile = function () {
+        var element = angular.element('<div ui-grid="gridOptions"></div>');
+        $scope.gridOptions = {};
+        $scope.gridOptions.gridMenuTemplate = customGridMenu;
+        $scope.gridOptions.onRegisterApi = function(gridApi) {
+          $scope.grid = gridApi.grid;
+        };
+        $timeout(function () {
+          $compile(element)($scope);
+        });
+        $timeout.flush();
+      };
+
+      recompile();
+    });
+
+    it('should have gridMenuTemplate defined in grid options', function() {
+      expect($scope.grid.options.gridMenuTemplate).toEqual(customGridMenu);
+    });
+  });
+
+  describe('title displayed', function(){
+    beforeEach(function(){
+      $scope.$broadcast('show-menu');
+      $scope.$digest();
+    });
+
+    it('should accept to display some text directly', function(){
+      var item = menu.find('.ui-grid-menu-item').first();
+      expect(item.text().trim()).toBe('Blah 1');
+    });
+
+
+    it('should accept to display the return value of a called function', function(){
+      var item = menu.find('.ui-grid-menu-item').last();
+      expect(item.text().trim()).toBe('Blah 5');
+    });
+  });
 });
+

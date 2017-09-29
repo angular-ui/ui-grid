@@ -99,7 +99,8 @@ describe('uiGridCell', function () {
         columnDefs: [{ field: 'name', width: 100 }, { field: 'age', width: 50 }],
         data: [
           { name: 'Bob', age: 50 }
-        ]
+        ],
+        onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
       };
 
       // Create a grid elements
@@ -131,6 +132,9 @@ describe('uiGridCell', function () {
 
       // The column root classes should have changed
       expect(class2).not.toEqual(class1);
+
+      $scope.gridApi.grid.refresh();
+      $scope.$digest();
 
       // The first column should now be 50px wide
       expect(firstColAgain.outerWidth()).toEqual(50, 'first cell again is 50px, counting border');

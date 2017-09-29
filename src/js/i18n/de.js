@@ -21,6 +21,10 @@
           description: 'Ziehen Sie eine Spaltenüberschrift hierhin, um nach dieser Spalte zu gruppieren.'
         },
         search: {
+          aria: {
+            selected: 'Zeile markiert',
+            notSelected: 'Zeile nicht markiert'
+          },
           placeholder: 'Suche...',
           showingItems: 'Zeige Einträge:',
           selectedItems: 'Ausgewählte Einträge:',
@@ -88,7 +92,7 @@
             pageToLast: 'Zum Ende'
           },
           sizes: 'Einträge pro Seite',
-          totalItems: 'Einträge',
+          totalItems: 'Einträgen',
           through: 'bis',
           of: 'von'
         },

@@ -21,6 +21,10 @@
           description: 'Przeciągnij nagłówek kolumny tutaj, aby pogrupować według niej.'
         },
         search: {
+          aria: {
+            selected: 'Wiersz zaznaczony',
+            notSelected: 'Wiersz niezaznaczony'
+          },
           placeholder: 'Szukaj...',
           showingItems: 'Widoczne pozycje:',
           selectedItems: 'Zaznaczone pozycje:',
@@ -41,7 +45,7 @@
           remove: 'Wyłącz sortowanie'
         },
         column: {
-          hide: 'Ukryj kolumne'
+          hide: 'Ukryj kolumnę'
         },
         aggregation: {
           count: 'Razem pozycji: ',
@@ -60,7 +64,7 @@
         },
         gridMenu: {
           aria: {
-            buttonLabel: 'Menu Grida'
+            buttonLabel: 'Opcje tabeli'
           },
           columns: 'Kolumny:',
           importerTitle: 'Importuj plik',
