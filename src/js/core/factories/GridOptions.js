@@ -389,6 +389,15 @@ angular.module('ui.grid')
 
       /**
        * @ngdoc boolean
+       * @name showColumnMenuButtons
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When enabled, this setting displays a button within 
+       * each column header that displays the column menu.
+       */
+      baseOptions.showColumnMenuButtons = baseOptions.showColumnMenuButtons !== false; 
+
+      /**
+       * @ngdoc boolean
        * @name enableVerticalScrollbar
        * @propertyOf ui.grid.class:GridOptions
        * @description {@link ui.grid.service:uiGridConstants#properties_scrollbars uiGridConstants.scrollbars.ALWAYS} by default.
@@ -511,6 +520,8 @@ angular.module('ui.grid')
        * this property allows you to assign any reference you want to grid.appScope
        */
       baseOptions.appScopeProvider = baseOptions.appScopeProvider || null;
+
+      
 
       return baseOptions;
     }

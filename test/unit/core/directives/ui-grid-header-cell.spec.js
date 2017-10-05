@@ -164,6 +164,27 @@ describe('uiGridHeaderCell', function () {
         expect(headers.length).toEqual(2);
       });
     });
+    
+    describe('with showColumnMenuButtons off', function() {
+      it('should not be shown', function () {
+        $scope.gridOpts.showColumnMenuButtons = false;
+        recompile();
+
+        var headers = $(grid).find('.ui-grid-column-menu-button');
+        expect(headers.length).toEqual(0);
+      });
+    });
+
+    describe('with colDef.showColumnMenuButton false', function() {
+      it('should not be present', function () {
+        $scope.gridOpts.columnDefs[0].showColumnMenuButton = false;
+        recompile();
+
+        var headers = $(grid).find('.ui-grid-column-menu-button');
+        expect(headers.length).toEqual(2);
+      });
+    });
+
     // TODO(c0bra): Allow extra items to be added to a column menu through columnDefs
   });
 
