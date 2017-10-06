@@ -233,6 +233,26 @@
       NEVER: 0,
       ALWAYS: 1
       //WHEN_NEEDED: 2
+    },
+
+    /**
+     * @ngdoc object
+     * @name keyboardActions
+     * @propertyOf ui.grid.service:uiGridConstants
+     * @description Used with {@link ui.grid.class:GridOptions#properties_columnHeaderKeyDownAction GridOptions.columnHeaderKeyDownAction},
+     * {@link ui.grid.class:GridOptions#properties_columnHeaderSpaceAction GridOptions.columnHeaderSpaceAction} and
+     * {@link ui.grid.class:GridOptions#properties_columnHeaderReturnAction GridOptions.columnHeaderReturnAction}
+     * to specify  the action to be performed, when the space bar or the return key is pressed on a column header.
+     *
+     * Available options are:
+     * - `uiGridConstants.keyboardActions.NO_ACTION` - does nothing
+     * - `uiGridConstants.keyboardActions.SHOW_MENU` - shows the column menu
+     * - `uiGridConstants.keyboardActions.DO_SORT` - fires the click event on the column header
+     */
+    keyboardActions: {
+      NO_ACTION: 0,
+      SHOW_MENU: 1,
+      DO_SORT: 2
     }
   });
 

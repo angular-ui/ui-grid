@@ -163,9 +163,42 @@
               }
             };
 
+            $scope.spaceAction =  typeof($scope.col.grid.options.columnHeaderSpaceAction) !== "undefined" ? 
+              $scope.col.grid.options.columnHeaderSpaceAction : $scope.col.grid.options.columnHeaderKeyDownAction;
+            $scope.returnAction =  typeof($scope.col.grid.options.columnHeaderReturnAction) !== "undefined" ? 
+              $scope.col.grid.options.columnHeaderReturnAction : $scope.col.grid.options.columnHeaderKeyDownAction;
+
+            if ($scope.returnAction === uiGridConstants.keyboardActions.SHOW_MENU || 
+              $scope.spaceAction === uiGridConstants.keyboardActions.SHOW_MENU) {
+              $elm.find('.ui-grid-cell-contents').attr('aria-haspopup', 'true');
+            }
+
             $scope.handleKeyDown = function(event) {
-              if (event.keyCode === 32) {
+              
+              var performeKeyDownAction = function(action) {
+
                 event.preventDefault();
+
+                switch (action) {
+                  case uiGridConstants.keyboardActions.DO_SORT:
+                    if ($scope.sortable) {
+                      $scope.handleClick(event);
+                    }
+                    break;
+                  case uiGridConstants.keyboardActions.SHOW_MENU:
+                    if ($scope.col.grid.options.enableColumnMenus && $scope.col.colDef.enableColumnMenu !== false) {
+                      $scope.toggleMenu(event);
+                    }
+                    break;
+                  default:
+                    break;
+                }
+              };
+
+              if (event.keyCode === uiGridConstants.keymap.ENTER) {
+                performeKeyDownAction($scope.returnAction);
+              } else if (event.keyCode === uiGridConstants.keymap.SPACE) {
+                performeKeyDownAction($scope.spaceAction);
               }
             };
 
