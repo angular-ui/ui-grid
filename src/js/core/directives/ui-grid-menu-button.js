@@ -363,48 +363,44 @@ function ($compile, gridUtil, uiGridConstants, uiGridGridMenuService, i18nServic
   return {
     priority: 0,
     scope: true,
-    require: ['?^uiGrid'],
+    require: ['^uiGrid'],
     replace: true,
-    compile: function ($elm, $attrs) {
-        return {
-            pre: function($scope, $elm, $attrs, controllers) {
-              var uiGridCtrl = controllers[0];
-              var menuButtonTemplate = (uiGridCtrl.grid && uiGridCtrl.grid.options.menuButtonTemplate) ? uiGridCtrl.grid.options.menuButtonTemplate : defaultTemplate;
-              $scope.menuTemplate = uiGridCtrl.grid.options.menuTemplate;
-              gridUtil.getTemplate(menuButtonTemplate)
-                .then(function (contents) {
-                   var template = angular.element(contents);
-                   $elm.replaceWith(template);
-                   $compile(template)($scope);
-                });
-            },
-            post: function($scope, $elm, $attrs, controllers) {
-              // For the aria label
-              $scope.i18n = {
-                aria: i18nService.getSafeText('gridMenu.aria')
-              };
-              var uiGridCtrl = controllers[0];
-              uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
-              $scope.shown = false;
+    link: function ($scope, $elm, $attrs, controllers) {
+      var uiGridCtrl = controllers[0];
+      var menuButtonTemplate = (uiGridCtrl.grid && uiGridCtrl.grid.options.menuButtonTemplate) ? uiGridCtrl.grid.options.menuButtonTemplate : defaultTemplate;
+      gridUtil.getTemplate(menuButtonTemplate)
+        .then(function (contents) {
+            var template = angular.element(contents);
+            // Insert the template into the DOM first, so that when we compile it
+            // the ui-grid-menu will have the required uiGrid controller.
+            $elm.replaceWith(template);
+            $compile(template)($scope);
+        });
 
-              $scope.toggleMenu = function () {
-                if ( $scope.shown ){
-                  $scope.$broadcast('hide-menu');
-                  $scope.shown = false;
-                } else {
-                  $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
-                  $scope.$broadcast('show-menu');
-                  $scope.shown = true;
-                }
-              };
+        // For the aria label
+      $scope.i18n = {
+        aria: i18nService.getSafeText('gridMenu.aria')
+      };
 
-              $scope.$on('menu-hidden', function() {
-                $scope.shown = false;
-                gridUtil.focus.bySelector($elm, '.ui-grid-icon-container');
-              });
-            }
+      uiGridGridMenuService.initialize($scope, uiGridCtrl.grid);
 
-        };
+      $scope.shown = false;
+
+      $scope.toggleMenu = function () {
+        if ( $scope.shown ){
+          $scope.$broadcast('hide-menu');
+          $scope.shown = false;
+        } else {
+          $scope.menuItems = uiGridGridMenuService.getMenuItems( $scope );
+          $scope.$broadcast('show-menu');
+          $scope.shown = true;
+        }
+      };
+
+      $scope.$on('menu-hidden', function() {
+        $scope.shown = false;
+        gridUtil.focus.bySelector($elm, '.ui-grid-icon-container');
+      });
     }
   };
 

@@ -1716,7 +1716,7 @@ angular.module('ui.grid')
 
     //gridUtil.logDebug('viewPortHeight', viewPortHeight);
 
-    return (viewPortHeight > 0) ? viewPortHeight : 0;
+    return Math.max(0, viewPortHeight);
   };
 
   Grid.prototype.getViewportWidth = function getViewportWidth() {

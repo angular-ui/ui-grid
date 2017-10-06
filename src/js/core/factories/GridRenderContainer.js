@@ -229,7 +229,7 @@ angular.module('ui.grid')
 
     viewPortHeight = viewPortHeight + adjustment.height;
 
-    return (viewPortHeight > 0) ? viewPortHeight : 0;
+    return Math.max(0, viewPortHeight);
   };
 
   GridRenderContainer.prototype.getViewportWidth = function getViewportWidth() {

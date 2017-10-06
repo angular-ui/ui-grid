@@ -47,6 +47,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       var grid;
       if ( uiGridCtrl ) {
         grid = uiGridCtrl.grid;
+        $scope.grid = grid;
       }
       $scope.dynamicStyles = '';
       if (uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options && uiGridCtrl.grid.options.gridMenuTemplate) {
@@ -54,7 +55,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         gridUtil.getTemplate(gridMenuTemplate).then(function (contents) {
           var template = angular.element(contents);
           var newElm = $compile(template)($scope);
-          $elm.replaceWith(newElm);
+          // Empty then append the new element rather than replacing (.replaceWith)
+          // so that appending to body with an ngIf works nicely.
+          $elm.empty();
+          $elm.append(newElm);
         }).catch(angular.noop);
       }
 
