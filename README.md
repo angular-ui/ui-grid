@@ -29,7 +29,7 @@ Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/ang
 
 ```html
     <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
-    <script src="bower_components/angular-ui-grid/ui-grid.min.js">
+<script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
 ```
 
 ## NPM
