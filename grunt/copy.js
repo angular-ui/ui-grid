@@ -18,6 +18,34 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    font_dist: {
+      files: [
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.eot',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.svg',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.ttf',
+          dest: '<%= dist %>/release/'
+        },
+        {
+          expand: true,
+          cwd: 'src/font',
+          src: '**/*.woff',
+          dest: '<%= dist %>/release/'
+        }
+      ]
+    },
     less_customizer: {
       files: [
         {

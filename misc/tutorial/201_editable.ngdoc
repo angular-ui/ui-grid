@@ -44,7 +44,7 @@ __ColumnDef Options__:
 - `enableCellEdit` (default: `false` for columns of type `'object'`, `true` for all other columns) - `true` will enable
   editing and `false` will disable it.
 - `cellEditableCondition`  (default: `true`)  Can be set to a boolean or a function that will be called with the cellScope
-  to determine if the cell should be invoked in edit mode.
+  and triggerEvent to determine if the cell should be invoked in edit mode.
 - `type` (default: `'string'`) If set to `'number'`, `'boolean'` or `'date'` the default editor provided for editing will be numeric
   or boolean or date editor respectively.  If set to `'object'` the column will not be editable by default.  Be aware that this
   `type` column is also used for other purposes within ui-grid, including the sorting logic.

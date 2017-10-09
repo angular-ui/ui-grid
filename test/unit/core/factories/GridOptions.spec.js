@@ -51,9 +51,9 @@ describe('GridOptions factory', function () {
         footerTemplate: 'ui-grid/ui-grid-footer',
         gridFooterTemplate: 'ui-grid/ui-grid-grid-footer',
         menuButtonTemplate: null,
-        menuTemplate: null,
         menuItemTemplate: null,
         rowTemplate: 'ui-grid/ui-grid-row',
+        gridMenuTemplate: 'ui-grid/uiGridMenu',
         appScopeProvider: null
       });
     });
@@ -99,9 +99,9 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         menuButtonTemplate: 'testMenuButton',
-        menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       };
@@ -145,9 +145,9 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         menuButtonTemplate: 'testMenuButton',
-        menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       });
@@ -194,9 +194,9 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         menuButtonTemplate: 'testMenuButton',
-        menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -239,9 +239,9 @@ describe('GridOptions factory', function () {
         footerTemplate: 'testFooter',
         gridFooterTemplate: 'testGridFooter',
         menuButtonTemplate: 'testMenuButton',
-        menuTemplate: 'testMenu',
         menuItemTemplate: 'testMenuItem',
         rowTemplate: 'testRow',
+        gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
         appScopeProvider : null
       });

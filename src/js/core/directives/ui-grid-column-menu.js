@@ -162,7 +162,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     getDefaultMenuItems: function( $scope ){
       return [
         {
-          title: i18nService.getSafeText('sort.ascending'),
+          title: function(){return i18nService.getSafeText('sort.ascending');},
           icon: 'ui-grid-icon-sort-alt-up',
           action: function($event) {
             $event.stopPropagation();
@@ -176,7 +176,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
           }
         },
         {
-          title: i18nService.getSafeText('sort.descending'),
+          title: function(){return i18nService.getSafeText('sort.descending');},
           icon: 'ui-grid-icon-sort-alt-down',
           action: function($event) {
             $event.stopPropagation();
@@ -190,7 +190,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
           }
         },
         {
-          title: i18nService.getSafeText('sort.remove'),
+          title: function(){return i18nService.getSafeText('sort.remove');},
           icon: 'ui-grid-icon-cancel',
           action: function ($event) {
             $event.stopPropagation();
@@ -204,7 +204,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
           }
         },
         {
-          title: i18nService.getSafeText('column.hide'),
+          title: function(){return i18nService.getSafeText('column.hide');},
           icon: 'ui-grid-icon-cancel',
           shown: function() {
             return service.hideable( $scope );
@@ -430,7 +430,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           .then(function () {
             $scope.grid.refresh();
             $scope.hideMenu();
-          });
+          }).catch(angular.noop);
       };
 
       $scope.unsortColumn = function () {
@@ -484,7 +484,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 //The fallback action is to focus on the grid menu
                 return focusToGridMenu();
               }
-            });
+            }).catch(angular.noop);
           } else {
             // Fallback action to focus on the grid menu
             focusToGridMenu();

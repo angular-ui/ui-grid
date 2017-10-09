@@ -144,11 +144,11 @@
            *  @name cellEditableCondition
            *  @propertyOf  ui.grid.edit.api:GridOptions
            *  @description If specified, either a value or function to be used by all columns before editing.
-           *  If falsy, then editing of cell is not allowed.
+           *  If false, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope){
-           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *  function($scope, triggerEvent){
+           *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
            *  </pre>
@@ -209,8 +209,8 @@
            *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope){
-           *    //use $scope.row.entity and $scope.col.colDef to determine if editing is allowed
+           *  function($scope, triggerEvent){
+           *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
            *  </pre>
@@ -507,7 +507,11 @@
             });
 
 
-            $scope.$on( '$destroy', rowWatchDereg );
+            $scope.$on('$destroy', function destroyEvents() {
+              rowWatchDereg();
+              // unbind all jquery events in order to avoid memory leaks
+              $elm.off();
+            });
 
             function registerBeginEditEvents() {
               $elm.on('dblclick', beginEdit);
@@ -528,13 +532,13 @@
                   }
                 });
 
-                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol) {
+                cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     // Don't begin edit if the cell hasn't changed
                     if ((!oldRowCol || newRowCol.row !== oldRowCol.row || newRowCol.col !== oldRowCol.col) &&
                       newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
                       $timeout(function () {
-                        beginEdit();
+                        beginEdit(evt);
                       });
                     }
                   }
@@ -588,10 +592,10 @@
               }
             }
 
-            function shouldEdit(col, row) {
+            function shouldEdit(col, row, triggerEvent) {
               return !row.isSaving &&
                 ( angular.isFunction(col.colDef.cellEditableCondition) ?
-                    col.colDef.cellEditableCondition($scope) :
+                    col.colDef.cellEditableCondition($scope, triggerEvent) :
                     col.colDef.cellEditableCondition );
             }
 
@@ -728,7 +732,7 @@
                 return;
               }
 
-              if (!shouldEdit($scope.col, $scope.row)) {
+              if (!shouldEdit($scope.col, $scope.row, triggerEvent)) {
                 return;
               }
 
@@ -959,8 +963,11 @@
                   if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                     var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
                       if (uiGridEditService.isStartEditKey(evt)) {
-                        ngModel.$setViewValue(String.fromCharCode( typeof evt.which === 'number' ? evt.which : evt.keyCode), evt);
-                        ngModel.$render();
+                        var code = typeof evt.which === 'number' ? evt.which : evt.keyCode;
+                        if (code > 0) {
+                          ngModel.$setViewValue(String.fromCharCode(code), evt);
+                          ngModel.$render();
+                        }
                       }
                       viewPortKeyDownUnregister();
                     });
@@ -973,7 +980,7 @@
                     if ($elm[0].type === 'checkbox') {
                       $elm.off('blur', $scope.stopEdit);
                       $timeout(function() {
-                        $elm.focus();
+                        $elm[0].focus();
                         $elm.on('blur', $scope.stopEdit);
                       });
                     }
@@ -1041,6 +1048,11 @@
                   }
 
                   return true;
+                });
+
+                $scope.$on('$destroy', function unbindEvents() {
+                  // unbind all jquery events in order to avoid memory leaks
+                  $elm.off();
                 });
               }
             };
@@ -1185,6 +1197,11 @@
                   }
                   return true;
                 });
+
+                $scope.$on('$destroy', function unbindEvents() {
+                  // unbind jquery events to prevent memory leaks
+                  $elm.off();
+                });
               }
             };
           }
@@ -1277,7 +1294,7 @@
                   }
                 };
 
-                $elm[0].addEventListener('change', handleFileSelect, false);  // TODO: why the false on the end?  Google
+                $elm[0].addEventListener('change', handleFileSelect, false);
 
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
                   $elm[0].focus();
@@ -1287,11 +1304,15 @@
                     $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
                   });
                 });
+
+                $scope.$on('$destroy', function unbindEvents() {
+                  // unbind jquery events to prevent memory leaks
+                  $elm.off();
+                  $elm[0].removeEventListener('change', handleFileSelect, false);
+                });
               }
             };
           }
         };
       }]);
-
-
 })();

@@ -4,56 +4,56 @@
       $delegate.add('no', {
         headerCell: {
           aria: {
-            defaultFilterLabel: 'Filter for column',
-            removeFilter: 'Remove Filter',
-            columnMenuButtonLabel: 'Column Menu'
+            defaultFilterLabel: 'Filter for kolonne',
+            removeFilter: 'Fjern filter',
+            columnMenuButtonLabel: 'Kolonnemeny'
           },
-          priority: 'Priority:',
-          filterLabel: "Filter for column: "
+          priority: 'Prioritet:',
+          filterLabel: "Filter for kolonne: "
         },
         aggregate: {
-          label: 'items'
+          label: 'elementer'
         },
         groupPanel: {
-          description: 'Drag a column header here and drop it to group by that column.'
+          description: 'Trekk en kolonneoverskrift hit og slipp den for å gruppere etter den kolonnen.'
         },
         search: {
-          placeholder: 'Search...',
-          showingItems: 'Showing Items:',
-          selectedItems: 'Selected Items:',
-          totalItems: 'Total Items:',
-          size: 'Page Size:',
-          first: 'First Page',
-          next: 'Next Page',
-          previous: 'Previous Page',
-          last: 'Last Page'
+          placeholder: 'Søk...',
+          showingItems: 'Viste elementer:',
+          selectedItems: 'Valgte elementer:',
+          totalItems: 'Antall elementer:',
+          size: 'Sidestørrelse:',
+          first: 'Første side',
+          next: 'Neste side',
+          previous: 'Forrige side',
+          last: 'Siste side'
         },
         menu: {
-          text: 'Choose Columns:'
+          text: 'Velg kolonner:'
         },
         sort: {
-          ascending: 'Sort Ascending',
-          descending: 'Sort Descending',
-          none: 'Sort None',
-          remove: 'Remove Sort'
+          ascending: 'Sortere stigende',
+          descending: 'Sortere fallende',
+          none: 'Ingen sortering',
+          remove: 'Fjern sortering'
         },
         column: {
-          hide: 'Hide Column'
+          hide: 'Skjul kolonne'
         },
         aggregation: {
-          count: 'total rows: ',
+          count: 'antall rader: ',
           sum: 'total: ',
-          avg: 'avg: ',
-          min: 'min: ',
-          max: 'max: '
+          avg: 'gjennomsnitt: ',
+          min: 'minimum: ',
+          max: 'maksimum: '
         },
         pinning: {
-          pinLeft: 'Pin Left',
-          pinRight: 'Pin Right',
-          unpin: 'Unpin'
+          pinLeft: 'Fest til venstre',
+          pinRight: 'Fest til høyre',
+          unpin: 'Løsne'
         },
         columnMenu: {
-          close: 'Close'
+          close: 'Lukk'
         },
         gridMenu: {
           aria: {
@@ -70,34 +70,34 @@
           clearAllFilters: 'Clear all filters'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Kolonnenavn kunne ikke avledes. Har filen en overskrift?',
+          noObjects: 'Objekter kunne ikke avledes. Er der andre data i filen enn overskriften?',
+          invalidCsv: 'Filen kunne ikke behandles. Er den gyldig CSV?',
+          invalidJson: 'Filen kunne ikke behandles. Er den gyldig JSON?',
+          jsonNotArray: 'Importert JSON-fil må inneholde en liste. Avbryter.'
         },
         pagination: {
           aria: {
-            pageToFirst: 'Page to first',
-            pageBack: 'Page back',
-            pageSelected: 'Selected page',
-            pageForward: 'Page forward',
-            pageToLast: 'Page to last'
+            pageToFirst: 'Gå til første side',
+            pageBack: 'Gå til forrige side',
+            pageSelected: 'Valgte side',
+            pageForward: 'Gå til neste side',
+            pageToLast: 'Gå til siste side'
           },
-          sizes: 'items per page',
-          totalItems: 'items',
-          through: 'through',
-          of: 'of'
+          sizes: 'elementer per side',
+          totalItems: 'elementer',
+          through: 'til',
+          of: 'av'
         },
         grouping: {
-          group: 'Group',
-          ungroup: 'Ungroup',
-          aggregate_count: 'Agg: Count',
-          aggregate_sum: 'Agg: Sum',
-          aggregate_max: 'Agg: Max',
-          aggregate_min: 'Agg: Min',
-          aggregate_avg: 'Agg: Avg',
-          aggregate_remove: 'Agg: Remove'
+          group: 'Gruppere',
+          ungroup: 'Fjerne gruppering',
+          aggregate_count: 'Agr: Antall',
+          aggregate_sum: 'Agr: Sum',
+          aggregate_max: 'Agr: Maksimum',
+          aggregate_min: 'Agr: Minimum',
+          aggregate_avg: 'Agr: Gjennomsnitt',
+          aggregate_remove: 'Agr: Fjern'
         }
       });
       return $delegate;

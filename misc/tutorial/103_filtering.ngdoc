@@ -32,7 +32,7 @@ function myCustomSorter(searchTerm, cellValue, row, column) {
 }
 ```
 
-For an example of this, see the "phone" column below for an example of this; the custom filter condition makes sure to strip the phone number of everything
+For an example of how this is used, see the filter for the column definition for "phone" below; the custom filter condition strips the phone number of everything
 except digits to compare to the search term.
 
 You can also optionally create a custom filter condition that doesn't require a term to be provided by the user - for example if you're matching

@@ -479,7 +479,7 @@ angular.module('ui.grid')
        * total items at the bottom of the grid, and the selected items if selection is enabled.
        */
       baseOptions.gridFooterTemplate = baseOptions.gridFooterTemplate || 'ui-grid/ui-grid-grid-footer';
-   
+
       /**
        * @ngdoc string
        * @name menuButtonTemplate
@@ -490,17 +490,7 @@ angular.module('ui.grid')
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
       baseOptions.menuButtonTemplate = baseOptions.menuButtonTemplate || null;
-      /**
-       * @ngdoc string
-       * @name menuTemplate
-       * @propertyOf ui.grid.class:GridOptions
-       * @description (optional) Null by default. When provided, this setting uses a custom grid menu
-       * template. Can be set to either the name of a template file 'menu_template.html', inline html
-       * <pre>'<div class="ui-grid-menu" style="text-align: left">Custom Menu Header <ul><li ng-repeat="item in menuItems" ui-grid-menu-item></li></ul></div>'</pre>, or the id
-       * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
-       */
-      baseOptions.menuTemplate = baseOptions.menuTemplate || null;
-    
+
       /**
        * @ngdoc string
        * @name menuItemTemplate
@@ -511,7 +501,7 @@ angular.module('ui.grid')
        * of a precompiled template (TBD how to use this).  Refer to the custom footer tutorial for more information.
        */
       baseOptions.menuItemTemplate = baseOptions.menuItemTemplate || null;
-   
+
       /**
        * @ngdoc string
        * @name rowTemplate
@@ -525,6 +515,15 @@ angular.module('ui.grid')
        * </br>Refer to the custom row template tutorial for more information.
        */
       baseOptions.rowTemplate = baseOptions.rowTemplate || 'ui-grid/ui-grid-row';
+
+      /**
+      * @ngdoc string
+      * @name gridMenuTemplate
+      * @propertyOf ui.grid.class:GridOptions
+      * @description 'ui-grid/uiGridMenu' by default. When provided, this setting uses a
+      * custom grid menu template.
+      */
+      baseOptions.gridMenuTemplate = baseOptions.gridMenuTemplate || 'ui-grid/uiGridMenu';
 
       /**
        * @ngdoc object

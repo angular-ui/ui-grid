@@ -2,8 +2,7 @@
 @name Tutorial: 307 External Sorting
 @description
 
-Sometimes you want to sort data externally, either on the client using custom sort routines (that are over and
-above those you can achieve with {@link tutorial/xxxxxx custom sort functions}, or on the server as part of
+Sometimes you want to sort data externally, either on the client using custom sort routines or on the server as part of
 your data retrieve.
 
 UI-Grid provides two functions that support this, firstly a sortChanged event that tells you when a user has

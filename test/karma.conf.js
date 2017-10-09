@@ -31,14 +31,12 @@ module.exports = function(config) {
 
       'dist/release/ui-grid.css',
 
-      '.tmp/template.js' //templates
+      '.tmp/template.js' // templates
     ],
-
 
     // list of files to exclude
     exclude: [
     ],
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'

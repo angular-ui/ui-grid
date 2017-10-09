@@ -418,7 +418,7 @@
            *  <br/>Defaults to false
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
-          
+
           /**
            *  @ngdoc array
            *  @name keyDownOverrides
@@ -629,8 +629,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile', 'i18nService',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile, i18nService) {
       return {
         replace: true,
         priority: -150,
@@ -692,8 +692,8 @@
                   var newRowCol = new GridRowColumn(row, col);
 
                   if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col){
-                    grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol);
-                    grid.cellNav.lastRowCol = newRowCol;  
+                    grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol, originEvt);
+                    grid.cellNav.lastRowCol = newRowCol;
                   }
                   if (uiGridCtrl.grid.options.modifierKeysToMultiSelectCells && modifierDown) {
                     grid.cellNav.focusedCells.push(rowCol);
@@ -757,7 +757,7 @@
 
                   // Scroll to the new cell, if it's not completely visible within the render container's viewport
                   grid.scrollToIfNecessary(rowCol.row, rowCol.col).then(function () {
-                    uiGridCtrl.cellNav.broadcastCellNav(rowCol);
+                    uiGridCtrl.cellNav.broadcastCellNav(rowCol, null, evt);
                   });
 
 
@@ -771,6 +771,17 @@
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               var _scope = $scope;
               var grid = uiGridCtrl.grid;
+              var usesAria = true;
+
+              // Detect whether we are using ngAria
+              // (if ngAria module is not used then the stuff inside addAriaLiveRegion
+              // is not used and provides extra fluff)
+              try {
+                angular.module('ngAria');
+              }
+              catch (err) {
+                usesAria = false;
+              }
 
               function addAriaLiveRegion(){
                 // Thanks to google docs for the inspiration behind how to do this
@@ -781,7 +792,7 @@
                                            'id="' + grid.id +'-aria-speakable" ' +
                                            'class="ui-grid-a11y-ariascreenreader-speakable ui-grid-offscreen" ' +
                                            'aria-live="assertive" ' +
-                                           'role="region" ' +
+                                           'role="alert" ' +
                                            'aria-atomic="true" ' +
                                            'aria-hidden="false" ' +
                                            'aria-relevant="additions" ' +
@@ -803,7 +814,7 @@
                   if (originEvt && originEvt.type === 'focus'){return;}
 
                   function setNotifyText(text){
-                    if (text === ariaNotifier.text()){return;}
+                    if (text === ariaNotifier.text().trim()){return;}
                     ariaNotifier[0].style.clip = 'rect(0px,0px,0px,0px)';
                     /*
                      * This is how google docs handles clearing the div. Seems to work better than setting the text of the div to ''
@@ -822,17 +833,32 @@
                     }
                   }
 
+                  function getCellDisplayValue(currentRowColumn) {
+                    if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
+                      // This is the case when the 'selection' feature is used in the grid and the user has moved
+                      // to or inside of the left grid container which holds the checkboxes for selecting rows.
+                      // This is necessary for Accessibility. Without this a screen reader cannot determine if the row
+                      // is or is not currently selected.
+                        return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
+                      } else {
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentSelection[i].col);
+                      }
+                    }
+
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
+                    values.push(getCellDisplayValue(currentSelection[i]));
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
 
                 });
               }
-              addAriaLiveRegion();
+              // Only add the ngAria stuff it will be used
+              if (usesAria) {
+                addAriaLiveRegion();
+              }
             }
           };
         }
