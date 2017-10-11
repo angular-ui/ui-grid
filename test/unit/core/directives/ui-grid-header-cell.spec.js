@@ -1,5 +1,5 @@
 describe('uiGridHeaderCell', function () {
-  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, columnDefs;
+  var grid, $scope, $compile, $document, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, columnDefs, $httpBackend;
 
   var downEvent, upEvent, clickEvent;
 
@@ -25,7 +25,7 @@ describe('uiGridHeaderCell', function () {
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_, _gridUtil_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _$timeout_, _$window_, _$animate_, _uiGridConstants_, _gridUtil_, _$httpBackend_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
@@ -34,6 +34,7 @@ describe('uiGridHeaderCell', function () {
     $animate = _$animate_;
     uiGridConstants = _uiGridConstants_;
     gridUtil = _gridUtil_;
+    $httpBackend = _$httpBackend_;
 
     // Decide whether to use mouse or touch events based on which capabilities the browser has
     if (gridUtil.isTouchEnabled()) {
@@ -199,4 +200,21 @@ describe('uiGridHeaderCell', function () {
     });
   });
 
+  describe('should handle a URL-based template defined in headerCellTemplate', function () {
+    it('should handle', function () {
+      var el, url = 'http://www.a-really-fake-url.com/headerCellTemplate.html';
+
+      $scope.gridOpts.columnDefs[0].headerCellTemplate = url;
+
+      $httpBackend.expectGET(url).respond('<div class="headerCellTemplate">headerCellTemplate content</div>');
+      recompile();
+
+      el = $(grid).find('.headerCellTemplate');
+      expect(el.text()).toEqual('');
+
+      $httpBackend.flush();
+      el = $(grid).find('.headerCellTemplate');
+      expect(el.text()).toEqual('headerCellTemplate content');
+    });
+  });
 });
