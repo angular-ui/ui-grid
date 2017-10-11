@@ -19,8 +19,18 @@
       compile: function() {
         return {
           pre: function ($scope, $elm, $attrs) {
-            var cellHeader = $compile($scope.col.headerCellTemplate)($scope);
-            $elm.append(cellHeader);
+            var template = $scope.col.headerCellTemplate;
+            if (template === undefined && $scope.col.providedHeaderCellTemplate !== '') {
+              if ($scope.col.headerCellTemplatePromise) {
+                $scope.col.headerCellTemplatePromise.then(function () {
+                  template = $scope.col.headerCellTemplate;
+                  $elm.append($compile(template)($scope));
+                });
+              }
+            }
+            else {
+              $elm.append($compile(template)($scope));
+            }
           },
 
           post: function ($scope, $elm, $attrs, controllers) {
