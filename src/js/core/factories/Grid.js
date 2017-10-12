@@ -287,7 +287,7 @@ angular.module('ui.grid')
      * @description Scrolls the grid to make a certain row and column combo visible,
      *   in the case that it is not completely visible on the screen already.
      * @param {GridRow} gridRow row to make visible
-     * @param {GridCol} gridCol column to make visible
+     * @param {GridColumn} gridCol column to make visible
      * @returns {promise} a promise that is resolved when scrolling is complete
      *
      */
@@ -2337,7 +2337,7 @@ angular.module('ui.grid')
      * @description Scrolls the grid to make a certain row and column combo visible,
      *   in the case that it is not completely visible on the screen already.
      * @param {GridRow} gridRow row to make visible
-     * @param {GridCol} gridCol column to make visible
+     * @param {GridColumn} gridCol column to make visible
      * @returns {promise} a promise that is resolved when scrolling is complete
      */
     Grid.prototype.scrollToIfNecessary = function (gridRow, gridCol) {

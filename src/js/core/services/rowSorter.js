@@ -285,7 +285,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * that.
    *
    * @param {Grid} grid the grid to consider
-   * @param {GridCol} col the column to find a function for
+   * @param {GridColumn} col the column to find a function for
    * @param {array} rows an array of grid rows.  Currently unused, but presumably in future
    * we might inspect the rows themselves to decide what sort of data might be there
    * @returns {function} the sort function chosen for the column

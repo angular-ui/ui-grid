@@ -34,6 +34,4 @@ describe('i18nService', function () {
       expect(text).toBe('[MISSING]');
     });
   });
-
-
 });
