@@ -743,7 +743,7 @@
               else {
                 uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
               }
-            }
+            };
 
             if ($scope.grid.api.listeners.length > 0) {
               var beforeSelectionRegistered = false;
@@ -920,7 +920,7 @@
                 $timeout(function () {
                   $elm.on('touchend', touchEnd);
                 }, touchTimeout);
-              }
+              };
               if ($scope.grid.api.listeners.length > 0) {
                 var beforeSelectionRegistered = false;
                 $scope.grid.api.listeners.forEach(function (eventListener) {
