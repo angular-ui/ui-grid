@@ -265,7 +265,7 @@
 
       expandAllRows: function(grid, $scope) {
         grid.renderContainers.body.visibleRowCache.forEach( function(row) {
-          if (!row.isExpanded && !row.entity.subGridOptions.disableRowExpandable) {
+          if (!row.isExpanded && !(row.entity.subGridOptions && row.entity.subGridOptions.disableRowExpandable)) {
             service.toggleRowExpansion(grid, row);
           }
         });
