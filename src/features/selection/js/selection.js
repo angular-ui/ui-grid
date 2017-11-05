@@ -755,7 +755,7 @@
               if (beforeSelectionRegistered) {
                 $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
                   if (stopToggle) {
-                    console.log("do not continue to next row");
+                    //do not continue to next row
                     return;
                   }
                   makeChange();
@@ -793,17 +793,42 @@
           var self = $scope.col.grid;
 
           $scope.headerButtonClick = function (row, evt) {
-            if (self.selection.selectAll) {
-              uiGridSelectionService.clearSelectedRows(self, evt);
-              if (self.options.noUnselect) {
-                self.api.selection.selectRowByVisibleIndex(0, evt);
+
+            function makeChange() {
+              if (self.selection.selectAll) {
+                uiGridSelectionService.clearSelectedRows(self, evt);
+                if (self.options.noUnselect) {
+                  self.api.selection.selectRowByVisibleIndex(0, evt);
+                }
+                self.selection.selectAll = false;
+              } else {
+                if (self.options.multiSelect) {
+                  self.api.selection.selectAllVisibleRows(evt);
+                  self.selection.selectAll = true;
+                }
               }
-              self.selection.selectAll = false;
+            }
+
+            if ($scope.grid.api.listeners.length > 0) {
+              var beforeSelectionRegistered = false;
+              $scope.grid.api.listeners.forEach(function (eventListener) {
+                if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                  beforeSelectionRegistered = true;
+                }
+              });
+              if (beforeSelectionRegistered) {
+                $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                  if (stopToggle) {
+                    //do not continue to next row
+                    return;
+                  }
+                  makeChange();
+                });
+              } else {
+                makeChange();
+              }
             } else {
-              if (self.options.multiSelect) {
-                self.api.selection.selectAllVisibleRows(evt);
-                self.selection.selectAll = true;
-              }
+              makeChange();
             }
           };
         }
@@ -931,7 +956,7 @@
                 if (beforeSelectionRegistered) {
                   $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
                     if (stopToggle) {
-                      console.log("do not continue to next row");
+                      //do not continue to next row
                       return;
                     }
                     makeChange();
