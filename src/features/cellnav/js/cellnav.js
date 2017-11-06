@@ -945,7 +945,7 @@
                 });
                 var result = raiseViewPortKeyDown ? null : uiGridCtrl.cellNav.handleKeyDown(evt);
                 if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol, uiGridCtrl.cellNav.handleKeyDown);
                   viewPortKeyDownWasRaisedForRowCol = rowCol;
                 }
               });
