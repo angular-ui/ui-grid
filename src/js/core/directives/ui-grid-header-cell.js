@@ -163,6 +163,12 @@
               }
             };
 
+            $scope.handleKeyDown = function(event) {
+              if (event.keyCode === 32) {
+                event.preventDefault();
+              }
+            };
+
             $scope.moveFn = function( event ){
               // Chrome is known to fire some bogus move events.
               var changeValue = event.pageX - previousMouseX;
@@ -363,8 +369,15 @@
                 }).catch(angular.noop);
             };
 
+            $scope.headerCellArrowKeyDown = function(event) {
+              if (event.keyCode === 32 || event.keyCode === 13) {
+                event.preventDefault();
+                $scope.toggleMenu(event);
+              }
+            }; 
 
             $scope.toggleMenu = function(event) {
+
               event.stopPropagation();
 
               // If the menu is already showing...
