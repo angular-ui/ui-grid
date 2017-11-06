@@ -534,9 +534,7 @@
 
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
-                    // Don't begin edit if the cell hasn't changed
-                    if ((!oldRowCol || newRowCol.row !== oldRowCol.row || newRowCol.col !== oldRowCol.col) &&
-                      newRowCol.row === $scope.row && newRowCol.col === $scope.col) {
+                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col && evt && (evt.type === 'click' || evt.type === 'keydown')) {
                       $timeout(function () {
                         beginEdit(evt);
                       });
@@ -963,8 +961,11 @@
                   if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                     var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
                       if (uiGridEditService.isStartEditKey(evt)) {
-                        ngModel.$setViewValue(String.fromCharCode( typeof evt.which === 'number' ? evt.which : evt.keyCode), evt);
-                        ngModel.$render();
+                        var code = typeof evt.which === 'number' ? evt.which : evt.keyCode;
+                        if (code > 0) {
+                          ngModel.$setViewValue(String.fromCharCode(code), evt);
+                          ngModel.$render();
+                        }
                       }
                       viewPortKeyDownUnregister();
                     });

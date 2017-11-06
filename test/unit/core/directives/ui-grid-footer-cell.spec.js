@@ -1,5 +1,5 @@
 describe('uiGridFooterCell', function () {
-  var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants;
+  var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, $httpBackend;
 
   data = [
     { "name": "Bob", "age": 35 },
@@ -24,11 +24,12 @@ describe('uiGridFooterCell', function () {
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _uiGridConstants_) {
+  beforeEach(inject(function (_$compile_, $rootScope, _$document_, _uiGridConstants_, _$httpBackend_) {
     $scope = $rootScope;
     $compile = _$compile_;
     $document = _$document_;
     uiGridConstants = _uiGridConstants_;
+    $httpBackend = _$httpBackend_;
 
     $scope.gridOpts = {
       showColumnFooter: true,
@@ -84,6 +85,24 @@ describe('uiGridFooterCell', function () {
       expect(header).toBeDefined();
       expect(header.scope().grid.appScope).toBeDefined();
       expect(header.scope().grid.appScope.extScope).toBe('test');
+    });
+  });
+
+  describe('should handle a URL-based template defined in headerCellTemplate', function () {
+    it('should handle', function () {
+      var el, url = 'http://www.a-really-fake-url.com/footerCellTemplate.html';
+
+      $scope.gridOpts.columnDefs[0].footerCellTemplate = url;
+
+      $httpBackend.expectGET(url).respond('<div class="footerCellTemplate">footerCellTemplate content</div>');
+      recompile();
+
+      el = $(grid).find('.footerCellTemplate');
+      expect(el.text()).toEqual('');
+
+      $httpBackend.flush();
+      el = $(grid).find('.footerCellTemplate');
+      expect(el.text()).toEqual('footerCellTemplate content');
     });
   });
 });

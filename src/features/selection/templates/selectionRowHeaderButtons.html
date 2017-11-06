@@ -3,5 +3,7 @@
   ng-class="{'ui-grid-row-selected': row.isSelected}"
   ng-click="selectButtonClick(row, $event)"
   ng-keydown="selectButtonKeyDown(row, $event)">
+  role="checkbox"
+  ng-model="row.isSelected">
   &nbsp;
 </div>
