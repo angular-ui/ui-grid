@@ -14,13 +14,26 @@ module.exports = function( grunt ){
       background: false,
       singleRun: true,
       reporters: ['progress'],
-      reportSlowerThan: 200
+      reportSlowerThan: 200,
+      preprocessors: {
+        'src/**/*.js': ['coverage'],
+        '**/*.html': ['ng-html2js']
+      },
+      ngHtml2JsPreprocessor: {
+        moduleName: 'directives'
+      },
+      coverageReporter: {
+        reporters: [
+          {type: 'html', dir: 'modulescoverage/'},
+          {type: 'cobertura'}
+        ]
+      }
     },
 
     travis: {
       background: false,
       singleRun: true,
-      reporters: ['dots'],
+      reporters: ['dots']
     }
   };
 
