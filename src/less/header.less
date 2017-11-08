@@ -56,6 +56,40 @@
   position: relative
 }
 
+.ui-grid-header-cell-label {
+  max-width: 100%;
+  position: relative;
+  display: inline-block;
+
+  &.with-button-with-sort {
+    max-width: calc(~"100% - 30px") !important; 
+  }
+  
+  &.with-button-without-sort {
+    max-width: calc(~"100% - 22px") !important; 
+  }
+  
+  &.without-button-with-sort {
+    max-width: calc(~"100% - 19px") !important; 
+  }
+
+}
+
+.ui-grid-header-cell-label-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-grid-header-cell-sort-info {
+  position: absolute;
+  top: 0px;
+  right: -19px;
+}
+
+.ui-grid-header-cell-primary-focus {
+  text-overflow: unset !important;
+}
+
 .ui-grid-header-cell {
   position: relative;
   box-sizing: border-box;

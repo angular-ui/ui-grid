@@ -37,6 +37,7 @@
             var uiGridCtrl = controllers[0];
             var renderContainerCtrl = controllers[1];
 
+
             $scope.i18n = {
               headerCell: i18nService.getSafeText('headerCell'),
               sort: i18nService.getSafeText('sort')
@@ -61,6 +62,8 @@
             };
 
             $scope.grid = uiGridCtrl.grid;
+
+            $scope.showColMenuButton = $scope.grid.options.enableColumnMenus && !$scope.col.isRowHeader  && $scope.col.colDef.enableColumnMenu !== false;
 
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
 
