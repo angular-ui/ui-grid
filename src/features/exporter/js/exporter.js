@@ -666,8 +666,8 @@
         loadAllDataIfNeeded: function (grid, rowTypes, colTypes) {
           if ( rowTypes === uiGridExporterConstants.ALL && grid.rows.length !== grid.options.totalItems && grid.options.exporterAllDataFn) {
             return grid.options.exporterAllDataFn()
-              .then(function() {
-                grid.modifyRows(grid.options.data);
+              .then(function(allData) {
+                grid.modifyRows(allData);
               });
           } else {
             var deferred = $q.defer();
