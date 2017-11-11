@@ -1,3 +1,12 @@
+<a name="v4.0.10"></a>
+### v4.0.10 (2017-11-11)
+
+
+#### Features
+
+* **hidePin:** Added option to hide pinLeft or pinRight from pinning menu (#6334) ([145e3662](http://github.com/angular-ui/ng-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+* **tree-view:** Supports recursive expanding ([48434903](http://github.com/angular-ui/ng-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+
 <a name="v4.0.9"></a>
 ### v4.0.9 (2017-11-11)
 
