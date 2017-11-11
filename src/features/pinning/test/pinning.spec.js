@@ -20,6 +20,8 @@
               id: 512,
               registerColumnBuilder: jasmine.createSpy('registerColumnBuilder'),
               enablePinning: jasmine.createSpy('enablePinning'),
+              hidePinLeft: jasmine.createSpy('hidePinLeft'),
+              hidePinRight: jasmine.createSpy('hidePinRight'),
               registerStyleComputation: jasmine.createSpy('registerStyleComputation'),
               registerViewportAdjusters: jasmine.createSpy('registerViewportAdjusters'),
               renderingComplete: jasmine.createSpy('renderingComplete'),
@@ -57,6 +59,8 @@
 
       $scope.gridOpts = {
         enablePinning: true,
+        hidePinLeft: false,
+        hidePinRight: false,
         data: data
       };
 
