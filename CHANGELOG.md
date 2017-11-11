@@ -1,3 +1,19 @@
+<a name="v4.0.9"></a>
+### v4.0.9 (2017-11-11)
+
+#### Bug Fixes
+
+* **selection:** Adjust bug in checkbox for selection. (#6459) ([adfc83c](https://github.com/angular-ui/ui-grid/commit/adfc83c667c395e9bfee404270f8de5b212cfd91))
+* **exporterAllDataFn:** exporterAllDataFn results is no longer ignored. (#6163) ([f16cdb0](https://github.com/angular-ui/ui-grid/commit/f16cdb06860dcd416520a48586b49d0dd50a1966))
+* **resizing:** Fix zero delta on double click resizing. (#5362) ([8dd0359](https://github.com/angular-ui/ui-grid/commit/8dd035999054837b2a1f62fb4535542620ca4e59))
+
+
+#### Features
+
+* **tree-view:** Supports recursive expanding ([4843490](https://github.com/angular-ui/ui-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+* **hidePin:** Added option to hide pined containers from pinning menu. ([145e366](https://github.com/angular-ui/ui-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+
+
 <a name="v4.0.8"></a>
 ### v4.0.8 (2017-11-06)
 
