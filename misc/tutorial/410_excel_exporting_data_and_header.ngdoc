@@ -104,9 +104,12 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
                   };
             var formatterId = stylesheet.createFormat(aFormatDefn);
 
+            // excel cells start with A1 which is upper left corner
             sheet.mergeCells('B1', 'C1');
             var cols = [];
+            // push empty data
             cols.push({ value: '' });
+            // push data in B1 cell with metadata formatter
             cols.push({ value: 'My header that is long enough to wrap', metadata: {style: formatterId.id} });
             sheet.data.push(cols);
         },
