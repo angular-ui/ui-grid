@@ -45,7 +45,7 @@ describe('ui.grid.expandable', function () {
   it('expandAll and collapseAll should set and unset row.isExpanded', function () {
     scope.gridApi.expandable.expandAllRows();
     scope.grid.rows.forEach(function(row) {
-      expect(row.isExpanded).toBe(true);
+      expect(row.isExpanded || (row.entity.subGridOptions && row.entity.subGridOptions.disableRowExpandable)).toBe(true);
     });
     scope.gridApi.expandable.collapseAllRows();
     scope.grid.rows.forEach(function(row) {
@@ -56,7 +56,7 @@ describe('ui.grid.expandable', function () {
   it('toggleAllRows should set and unset row.isExpanded', function(){
     scope.gridApi.expandable.toggleAllRows();
     scope.grid.rows.forEach(function(row){
-      expect(row.isExpanded).toBe(true);
+      expect(row.isExpanded || (row.entity.subGridOptions && row.entity.subGridOptions.disableRowExpandable)).toBe(true);
     });
     scope.gridApi.expandable.toggleAllRows();
     scope.grid.rows.forEach(function(row){

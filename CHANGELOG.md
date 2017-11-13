@@ -1,3 +1,44 @@
+<a name="v4.0.10"></a>
+### v4.0.10 (2017-11-11)
+
+
+#### Features
+
+* **hidePin:** Added option to hide pinLeft or pinRight from pinning menu (#6334) ([145e3662](http://github.com/angular-ui/ng-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+* **tree-view:** Supports recursive expanding ([48434903](http://github.com/angular-ui/ng-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+
+<a name="v4.0.9"></a>
+### v4.0.9 (2017-11-11)
+
+#### Bug Fixes
+
+* **selection:** Adjust bug in checkbox for selection. (#6459) ([adfc83c](https://github.com/angular-ui/ui-grid/commit/adfc83c667c395e9bfee404270f8de5b212cfd91))
+* **exporterAllDataFn:** exporterAllDataFn results is no longer ignored. (#6163) ([f16cdb0](https://github.com/angular-ui/ui-grid/commit/f16cdb06860dcd416520a48586b49d0dd50a1966))
+* **resizing:** Fix zero delta on double click resizing. (#5362) ([8dd0359](https://github.com/angular-ui/ui-grid/commit/8dd035999054837b2a1f62fb4535542620ca4e59))
+
+
+#### Features
+
+* **tree-view:** Supports recursive expanding ([4843490](https://github.com/angular-ui/ui-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+* **hidePin:** Added option to hide pined containers from pinning menu. ([145e366](https://github.com/angular-ui/ui-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+
+
+<a name="v4.0.8"></a>
+### v4.0.8 (2017-11-06)
+
+
+#### Bug Fixes
+
+* **ARIA-Roles:** Improving accessibility of ui-grid. (#6341) ([6cf44b4b](http://github.com/angular-ui/ng-grid/commit/6cf44b4bea55e9e3883dc00ada9fe3593b538a4f))
+* **Grid.js:**
+  * add column header to text read by aria when user moves through grid with keyboar ([a6b52c2a](http://github.com/angular-ui/ng-grid/commit/a6b52c2a3e143fa36929ad0f850a026080656ea2))
+  * wrong  use in getCellDisplayValue ([57d258e9](http://github.com/angular-ui/ng-grid/commit/57d258e900fdfc1ac312edf1951edb3e04f48e76))
+* **core:** Fixes URL-based template loading for `header-cell`, `footer-cell`, `filter`. ([f0b2fa7d](http://github.com/angular-ui/ng-grid/commit/f0b2fa7d85b5e731e37f9b0ef7ab306f27bfdb3a))
+* **edit:** trigger edit when single click when set enableCellEditOnFocus with true ([bcbd8433](http://github.com/angular-ui/ng-grid/commit/bcbd8433dcb8e69d13ea4281f426febf226986aa))
+* **pagination:** remove unneeded height adjustment ([4c667e72](http://github.com/angular-ui/ng-grid/commit/4c667e721cd3273e4a34f5000bd75c8fecdec631))
+* **selection:** Prevent space bar scrolling (#6410) ([7dbf3955](http://github.com/angular-ui/ng-grid/commit/7dbf3955208496514ccf2d37d5af8e9f71ae8611))
+* **utils.js:** Update browser setting based on changes to SauceLabs. ([0cdf4e93](http://github.com/angular-ui/ng-grid/commit/0cdf4e9385423d0d6f02ca45e6dc40217cb66719))
+
 <a name="v4.0.7"></a>
 ### v4.0.7 (2017-09-27)
 

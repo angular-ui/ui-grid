@@ -718,6 +718,7 @@
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var self = uiGridCtrl.grid;
           $scope.selectButtonClick = selectButtonClick;
+          $scope.selectButtonKeyDown = selectButtonKeyDown;
 
           // On IE, prevent mousedowns on the select button from starting a selection.
           //   If this is not done and you shift+click on another row, the browser will select a big chunk of text
@@ -725,6 +726,12 @@
             $elm.on('mousedown', selectButtonMouseDown);
           }
 
+          function selectButtonKeyDown(row, evt) {
+            if (evt.keyCode === 32) {
+              evt.preventDefault();
+              selectButtonClick(row, evt);
+            }
+          }
 
           function selectButtonClick(row, evt) {
             evt.stopPropagation();
@@ -806,6 +813,13 @@
                   self.api.selection.selectAllVisibleRows(evt);
                   self.selection.selectAll = true;
                 }
+          $scope.headerButtonKeyDown = function (evt) {
+            if (evt.keyCode === 32 || evt.keyCode === 13) {
+              evt.preventDefault();
+              $scope.headerButtonClick(evt);
+            }
+          };
+
               }
             }
 
@@ -850,7 +864,7 @@
           priority: -200, // run after default  directive
           scope: false,
           compile: function ($elm, $attrs) {
-            var rowRepeatDiv = angular.element($elm.children().children()[0]);
+            var rowRepeatDiv = angular.element($elm[0].querySelector('.ui-grid-canvas:not(.ui-grid-empty-base-layer-container)').children[0]);
 
             var existingNgClass = rowRepeatDiv.attr("ng-class");
             var newNgClass = '';
@@ -904,6 +918,7 @@
                 }
 
                 if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
+                  evt.preventDefault();
                   uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
                   $scope.$apply();
                 }
