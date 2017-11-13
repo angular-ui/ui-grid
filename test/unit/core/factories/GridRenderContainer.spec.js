@@ -221,4 +221,36 @@ describe('GridRenderContainer factory', function () {
     });
   });
 
+  describe('needsHScrollbarPlaceholder ', function() {
+   var body, left;
+
+    beforeEach(function () {
+      body = new GridRenderContainer('bodyContainer', grid);
+      body.name = 'body';
+      left = new GridRenderContainer('leftContainer', grid);
+      left.name = 'left';
+      left.canvasWidth = 100;
+      body.canvasWidth = 200;
+      grid.gridWidth = 200;
+      grid.options.enableHorizontalScrollbar = true;
+      body.hasHScrollbar = true;
+      left.hasHScrollbar = false;
+    });
+	
+    it('should return false if the container does not have the horizontal scrollbar enabled', function(){
+      grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.NEVER;
+      expect(body.needsHScrollbarPlaceholder()).toBe(false);
+    });
+	
+    it('should return true if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is greater than the grid width', function(){
+      expect(left.needsHScrollbarPlaceholder()).toBe(true);
+    });
+	
+    it('should return false if another container does have a horizontal scrollbar and the current container does not have the horizontal scrollbar enabled AND the total canvas width is less than the grid width', function(){
+      grid.gridWidth = 400;
+      expect(left.needsHScrollbarPlaceholder()).toBe(false);
+    });
+	
+  });
+  
 });
