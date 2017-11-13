@@ -789,7 +789,7 @@
       };
     }]);
 
-  module.directive('uiGridSelectionSelectAllButtons', ['$templateCache', 'uiGridSelectionService',
+module.directive('uiGridSelectionSelectAllButtons', ['$templateCache', 'uiGridSelectionService',
     function ($templateCache, uiGridSelectionService) {
       return {
         replace: true,
@@ -799,6 +799,37 @@
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var self = $scope.col.grid;
 
+          $scope.headerButtonKeyDown = function (evt) {
+              var event = evt;
+              function makeChange() {
+                  if (event.keyCode === 32 || event.keyCode === 13) {
+                      evt.preventDefault();
+                      $scope.headerButtonClick(event);
+                  }
+              }
+              if ($scope.grid.api.listeners.length > 0) {
+                  var beforeSelectionRegistered = false;
+                  $scope.grid.api.listeners.forEach(function (eventListener) {
+                      if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                          beforeSelectionRegistered = true;
+                      }
+                  });
+                  if (beforeSelectionRegistered) {
+                      $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                          if (stopToggle) {
+                              //do not continue to next row
+                              return;
+                          }
+                          makeChange();
+                      });
+                  } else {
+                      makeChange();
+                  }
+              } else {
+                  makeChange();
+              }
+          };
+          
           $scope.headerButtonClick = function (row, evt) {
 
             function makeChange() {
@@ -813,14 +844,6 @@
                   self.api.selection.selectAllVisibleRows(evt);
                   self.selection.selectAll = true;
                 }
-
-          $scope.headerButtonKeyDown = function (evt) {
-            if (evt.keyCode === 32 || evt.keyCode === 13) {
-              evt.preventDefault();
-              $scope.headerButtonClick(evt);
-            }
-          };
-
               }
             }
 
