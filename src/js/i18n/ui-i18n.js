@@ -184,7 +184,7 @@
          * @name setCurrentLang
          * @methodOf ui.grid.i18n.service:i18nService
          * @description sets the current language to use in the application
-         * $broadcasts the Update_Event on the $rootScope
+         * $broadcasts the i18nConstants.UPDATE_EVENT on the $rootScope
          * @param {string} lang to set
          * @example
          * <pre>

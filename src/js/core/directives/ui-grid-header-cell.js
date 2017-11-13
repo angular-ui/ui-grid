@@ -19,8 +19,18 @@
       compile: function() {
         return {
           pre: function ($scope, $elm, $attrs) {
-            var cellHeader = $compile($scope.col.headerCellTemplate)($scope);
-            $elm.append(cellHeader);
+            var template = $scope.col.headerCellTemplate;
+            if (template === undefined && $scope.col.providedHeaderCellTemplate !== '') {
+              if ($scope.col.headerCellTemplatePromise) {
+                $scope.col.headerCellTemplatePromise.then(function () {
+                  template = $scope.col.headerCellTemplate;
+                  $elm.append($compile(template)($scope));
+                });
+              }
+            }
+            else {
+              $elm.append($compile(template)($scope));
+            }
           },
 
           post: function ($scope, $elm, $attrs, controllers) {
@@ -150,6 +160,12 @@
                 if ( $scope.sortable ){
                   $scope.handleClick(event);
                 }
+              }
+            };
+
+            $scope.handleKeyDown = function(event) {
+              if (event.keyCode === 32) {
+                event.preventDefault();
               }
             };
 
@@ -353,8 +369,15 @@
                 }).catch(angular.noop);
             };
 
+            $scope.headerCellArrowKeyDown = function(event) {
+              if (event.keyCode === 32 || event.keyCode === 13) {
+                event.preventDefault();
+                $scope.toggleMenu(event);
+              }
+            }; 
 
             $scope.toggleMenu = function(event) {
+
               event.stopPropagation();
 
               // If the menu is already showing...

@@ -1914,7 +1914,8 @@ angular.module('ui.grid')
       }
     }
 
-    return col.cellDisplayGetterCache(row);
+    var rowWithCol = angular.extend({}, row, {col: col});
+    return col.cellDisplayGetterCache(rowWithCol);
   };
 
 
@@ -2147,8 +2148,8 @@ angular.module('ui.grid')
         }
 
         if (container.header || container.headerCanvas) {
-          container.explicitHeaderHeight = container.explicitHeaderHeight || null;
-          container.explicitHeaderCanvasHeight = container.explicitHeaderCanvasHeight || null;
+          container.explicitHeaderHeight = null;
+          container.explicitHeaderCanvasHeight = null;
 
           containerHeadersToRecalc.push(container);
         }
