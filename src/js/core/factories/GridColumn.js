@@ -869,6 +869,15 @@ angular.module('ui.grid')
    * @description Removes column from the grid sorting
    */
   GridColumn.prototype.unsort = function () {
+    //Decrease priority for every col where priority is higher than the removed sort's priority.
+    var thisPriority = this.sort.priority;
+    
+    this.grid.columns.forEach(function (col) {
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority > thisPriority) {
+        col.sort.priority -= 1;
+      }
+    });
+    
     this.sort = {};
     this.grid.api.core.raise.sortChanged( this.grid, this.grid.getColumnSorting() );
   };
