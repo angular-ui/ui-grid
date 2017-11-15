@@ -22,12 +22,21 @@
     "test",
     "tests"
   ],
-  "main": ["./ui-grid.css", "./ui-grid.js"],
+  "main": [
+    "./ui-grid.css",
+    "./ui-grid.js"
+  ],
   "devDependencies": {
     "google-code-prettify": "~1.0.2",
     "jquery": "~1.8.0",
     "lodash": "~2.4.1",
     "pdfmake": "~0.1.8",
-    "csv-js": "https://github.com/c0bra/CSV-JS.git#~1.0.2"
+    "csv-js": "https://github.com/c0bra/CSV-JS.git#~1.0.2",
+    "excel-builder-js": "excelbuilder#^2.0.2",
+    "jszip": "~2.6.1"
+  },
+  "resolutions": {
+    "jszip": "2.6.1",
+    "lodash": "~2.4.1"
   }
 }

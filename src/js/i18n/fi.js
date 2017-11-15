@@ -54,6 +54,9 @@
           exporterAllAsPdf: 'Vie tiedot pdf-muodossa',
           exporterVisibleAsPdf: 'Vie näkyvä tieto pdf-muodossa',
           exporterSelectedAsPdf: 'Vie valittu tieto pdf-muodossa',
+          exporterAllAsExcel: 'Vie tiedot excel-muodossa',
+          exporterVisibleAsExcel: 'Vie näkyvä tieto excel-muodossa',
+          exporterSelectedAsExcel: 'Vie valittu tieto excel-muodossa',
           clearAllFilters: 'Puhdista kaikki suodattimet'
         },
         importer: {
