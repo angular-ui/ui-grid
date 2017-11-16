@@ -24,8 +24,7 @@
           return $elm[0].clientWidth;
         }, function(newVal, oldVal) {
           if (newVal !== oldVal) {
-            var newGridWidth = newVal;
-            uiGridCtrl.grid.gridWidth = newGridWidth;
+            uiGridCtrl.grid.gridWidth = newVal;
             uiGridCtrl.grid.refresh();
           }
         });
@@ -34,8 +33,7 @@
           return $elm[0].clientHeight;
         }, function(newVal, oldVal) {
           if (newVal !== oldVal) {
-            var newGridHeight = newVal;
-            uiGridCtrl.grid.gridHeight = newGridHeight;
+            uiGridCtrl.grid.gridHeight = newVal;
             uiGridCtrl.grid.refresh();
           }
         });
