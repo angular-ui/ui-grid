@@ -25,6 +25,6 @@ Not all of the tasks here are absolutely necessary for the update, but they shou
 - [ ] Convert core UI-Grid component to Angular 5
 - [ ] Convert _stable features*_ of UI-Grid to Angular 5
 - [ ] Convert all other features
-- [ ] Find a replacement for ng-templates that works with Angular 5 (potentially create an upgraded version ourselves).
+- [ ] Find a replacement for ng-docs that works with Angular 5 (potentially create an upgraded version ourselves).
 
 * stable features means feature that have both unit tests and running protractor test as well as features that have been tried and tested
