@@ -29,7 +29,7 @@ Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/ang
 
 ```html
     <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
-    <script src="bower_components/angular-ui-grid/ui-grid.min.js">
+<script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
 ```
 
 ## NPM
@@ -52,7 +52,7 @@ You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in t
 
 # Angular Compatibility
 
-UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.4.x.
+UI-Grid is currently compatible with Angular versions ranging from 1.4.x to 1.5.x.
 
 # Feature Stability
 

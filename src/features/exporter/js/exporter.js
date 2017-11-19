@@ -1,4 +1,5 @@
 /* global pdfMake */
+/* global ExcelBuilder */
 /* global console */
 
 (function () {
@@ -132,6 +133,21 @@
                  */
                 pdfExport: function (rowTypes, colTypes) {
                   service.pdfExport(grid, rowTypes, colTypes);
+                },
+                /**
+                 * @ngdoc function
+                 * @name excelExport
+                 * @methodOf  ui.grid.exporter.api:PublicApi
+                 * @description Exports rows from the grid in excel format,
+                 * the data exported is selected based on the provided options
+                 * @param {string} rowTypes which rows to export, valid values are
+                 * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+                 * uiGridExporterConstants.SELECTED
+                 * @param {string} colTypes which columns to export, valid values are
+                 * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE
+                 */
+                excelExport: function (rowTypes, colTypes) {
+                  service.excelExport(grid, rowTypes, colTypes);
                 }
               }
             }
@@ -422,6 +438,14 @@
 
           /**
            * @ngdoc object
+           * @name exporterMenuExcel
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Add excel export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
+           */
+          gridOptions.exporterMenuExcel = gridOptions.exporterMenuExcel !== undefined ? gridOptions.exporterMenuExcel : true;
+
+          /**
+           * @ngdoc object
            * @name exporterPdfCustomFormatter
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description A custom callback routine that changes the pdf document, adding any
@@ -508,6 +532,48 @@
 
           /**
            * @ngdoc function
+           * @name exporterFieldFormatCallback
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to call for each field before exporting it.  Allows
+           * general object to be return to modify the format of a cell in the case of
+           * excel exports
+           *
+           * The method is called once for each field exported, and provides the grid, the
+           * gridCol and the GridRow for you to use as context in massaging the data.
+           *
+           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {GridRow} row the row from which the data comes
+           * @param {GridCol} col the column from which the data comes
+           * @param {object} value the value for your massaging
+           * @returns {object} you must return the massaged value ready for exporting
+           *
+           * @example
+           * <pre>
+           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ){
+           *     if ( col.name === 'status' ){
+           *       value = decodeStatus( value );
+           *     }
+           *     return value;
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterFieldFormatCallback = gridOptions.exporterFieldFormatCallback ? gridOptions.exporterFieldFormatCallback : function( grid, row, col, value ) { return null; };
+
+          /**
+           * @ngdoc object
+           * @name exporterFieldApplyFilters
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description Defaults to false, which leads to filters being evaluated on export           *
+           *
+           * @example
+           * <pre>
+           *   gridOptions.exporterFieldApplyFilters = true;
+           * </pre>
+           */
+          gridOptions.exporterFieldApplyFilters = gridOptions.exporterFieldApplyFilters === true;
+
+          /**
+           * @ngdoc function
            * @name exporterAllDataFn
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description This promise is needed when exporting all rows,
@@ -540,7 +606,7 @@
            *   }
            * </pre>
            */
-          if ( gridOptions.exporterAllDataFn == null && gridOptions.exporterAllDataPromise ) {
+          if ( gridOptions.exporterAllDataFn === null && gridOptions.exporterAllDataPromise ) {
             gridOptions.exporterAllDataFn = gridOptions.exporterAllDataPromise;
           }
         },
@@ -617,6 +683,37 @@
                        ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
               order: grid.options.exporterMenuItemOrder + 5
+            },
+            {
+              title: i18nService.getSafeText('gridMenu.exporterAllAsExcel'),
+              action: function ($event) {
+                this.grid.api.exporter.excelExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuAllData;
+              },
+              order: grid.options.exporterMenuItemOrder + 6
+            },
+            {
+              title: i18nService.getSafeText('gridMenu.exporterVisibleAsExcel'),
+              action: function ($event) {
+                this.grid.api.exporter.excelExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuVisibleData;
+              },
+              order: grid.options.exporterMenuItemOrder + 7
+            },
+            {
+              title: i18nService.getSafeText('gridMenu.exporterSelectedAsExcel'),
+              action: function ($event) {
+                this.grid.api.exporter.excelExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+              },
+              shown: function() {
+                return this.grid.options.exporterMenuExcel && this.grid.options.exporterMenuSelectedData &&
+                  ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+              },
+              order: grid.options.exporterMenuItemOrder + 8
             }
           ]);
         },
@@ -666,8 +763,8 @@
         loadAllDataIfNeeded: function (grid, rowTypes, colTypes) {
           if ( rowTypes === uiGridExporterConstants.ALL && grid.rows.length !== grid.options.totalItems && grid.options.exporterAllDataFn) {
             return grid.options.exporterAllDataFn()
-              .then(function() {
-                grid.modifyRows(grid.options.data);
+              .then(function(allData) {
+                grid.modifyRows(allData);
               });
           } else {
             var deferred = $q.defer();
@@ -715,14 +812,16 @@
           }
 
           columns.forEach( function( gridCol, index ) {
-            if ( gridCol.colDef.exporterSuppressExport !== true &&
+            // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
+            if ( gridCol.colDef.exporterSuppressExport !== true  && gridCol.field !== '$$hashKey' &&
                  grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
-              headers.push({
+              var headerEntry = {
                 name: gridCol.field,
                 displayName: grid.options.exporterHeaderFilter ? ( grid.options.exporterHeaderFilterUseName ? grid.options.exporterHeaderFilter(gridCol.name) : grid.options.exporterHeaderFilter(gridCol.displayName) ) : gridCol.displayName,
                 width: gridCol.drawnWidth ? gridCol.drawnWidth : gridCol.width,
-                align: gridCol.colDef.type === 'number' ? 'right' : 'left'
-              });
+                align: gridCol.colDef.align ? gridCol.colDef.align : (gridCol.colDef.type === 'number' ? 'right' : 'left')
+              };
+              headers.push(headerEntry);
             }
           });
 
@@ -754,6 +853,63 @@
          * <br/>Defaults to true
          */
 
+
+        /**
+         * @ngdoc function
+         * @name getRowsFromNode
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Gets rows from a node. If the node is grouped it will
+         * recurse down into the children to get to the raw data element
+         * which is a row without children (a leaf).
+         * @param {Node} aNode the tree node on the grid
+         * @returns {Array} an array of leaf nodes
+         */
+        getRowsFromNode: function(aNode) {
+          var rows = [];
+          for (var i = 0; i<aNode.children.length; i++) {
+            if (aNode.children[i].children && aNode.children[i].children.length === 0) {
+              rows.push(aNode.children[i]);
+            } else {
+              var nodeRows = this.getRowsFromNode(aNode.children[i]);
+              rows = rows.concat(nodeRows);
+            }
+          }
+          return rows;
+        },
+
+        /**
+         * @ngdoc function
+         * @name getDataSorted
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Gets rows from a node. If the node is grouped it will
+         * recurse down into the children to get to the raw data element
+         * which is a row without children (a leaf). If the grid is not
+         * grouped this will return just the raw rows
+         * @param {Grid} grid the grid from which data should be exported
+         * @param {string} rowTypes which rows to export, valid values are
+         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+         * uiGridExporterConstants.SELECTED
+         * @param {string} colTypes which columns to export, valid values are
+         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+         * uiGridExporterConstants.SELECTED
+         * @param {boolean} applyCellFilters whether or not to get the display value or the raw value of the data
+         * @returns {Array} an array of leaf nodes
+         */
+        getDataSorted: function (grid, rowTypes, colTypes, applyCellFilters) {
+          if (!grid.treeBase || grid.treeBase.numberLevels === 0) {
+            return grid.rows;
+          }
+          var rows = [];
+
+          for (var i = 0; i< grid.treeBase.tree.length; i++) {
+            var nodeRows = this.getRowsFromNode(grid.treeBase.tree[i]);
+            for (var j = 0; j<nodeRows.length; j++) {
+              rows.push(nodeRows[j].row);
+            }
+          }
+          return rows;
+        },
+
         /**
          * @ngdoc function
          * @name getData
@@ -777,7 +933,7 @@
 
           switch ( rowTypes ) {
             case uiGridExporterConstants.ALL:
-              rows = grid.rows;
+              rows = this.getDataSorted(grid, rowTypes, colTypes, applyCellFilters);
               break;
             case uiGridExporterConstants.VISIBLE:
               rows = grid.getVisibleRows();
@@ -808,11 +964,16 @@
 
 
               columns.forEach( function( gridCol, index ) {
+              // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
               if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) &&
-                   gridCol.colDef.exporterSuppressExport !== true &&
+                   gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
                    grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
                   var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol );
                   var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) };
+                  var extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue );
+                  if (extension) {
+                    Object.assign(extractedField, extension);
+                  }
                   if ( gridCol.colDef.exporterPdfAlign ) {
                     extractedField.alignment = gridCol.colDef.exporterPdfAlign;
                   }
@@ -1230,6 +1391,10 @@
             returnVal = (field.value ? 'TRUE' : 'FALSE') ;
           } else if (typeof(field.value) === 'string') {
             returnVal = field.value.replace(/"/g,'""');
+          } else if (field.value instanceof Date) {
+            returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
+          } else if (typeof(field.value) === 'object') {
+            returnVal = field.value;
           } else {
             returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
           }
@@ -1239,7 +1404,161 @@
           }
 
           return returnVal;
+        },
+
+        /**
+         * @ngdoc function
+         * @name formatAsExcel
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Formats the column headers and data as a excel,
+         * and sends that data to the user
+         * @param {array} exportColumnHeaders an array of column headers,
+         * where each header is an object with name, width and maybe alignment
+         * @param {array} exportData an array of rows, where each row is
+         * an array of column data
+         * @param {string} separator a string that represents the separator to be used in the csv file
+         * @returns {string} csv the formatted excel as a string
+         */
+        formatAsExcel: function (exportColumnHeaders, exportData, workbook, sheet, docDefinition) {
+          var self = this;
+
+          var bareHeaders = exportColumnHeaders.map(function(header){return { value: header.displayName };});
+
+          var sheetData = [];
+          var headerData = [];
+          for (var i = 0; i < bareHeaders.length; i++) {
+            // TODO - probably need callback to determine header value and header styling
+            var exportStyle = 'header';
+            switch (exportColumnHeaders[i].align) {
+              case 'center':
+                exportStyle = 'headerCenter';
+                break;
+              case 'right':
+                exportStyle = 'headerRight';
+                break;
+            }
+            var metadata = (docDefinition.styles && docDefinition.styles[exportStyle]) ? {style: docDefinition.styles[exportStyle].id} : null;
+            headerData.push({value: bareHeaders[i].value, metadata: metadata});
+          }
+          sheetData.push(headerData);
+
+          var result = exportData.map(this.formatRowAsExcel(this, workbook, sheet));
+          for (var j = 0; j<result.length; j++) {
+            sheetData.push(result[j]);
+          }
+          return sheetData;
+        },
+
+        /**
+         * @ngdoc function
+         * @name formatRowAsExcel
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Renders a single field as a csv field, including
+         * quotes around the value
+         * @param {exporterService} exporter pass in exporter
+         * @param {array} row the row to be turned into a excel string
+         * @returns {array} array of cell objects (i.e. {value: x, metadata: y})
+         */
+        formatRowAsExcel: function (exporter, workbook, sheet) {
+          return function (row) {
+            var values = [];
+            for (var i = 0; i<row.length; i++) {
+              var value = exporter.formatFieldAsExcel(row[i], workbook, sheet);
+              values.push({value: value, metadata: row[i].metadata});
+            }
+            return values;
+          };
+        },
+
+        /**
+         * @ngdoc function
+         * @name formatFieldAsExcel
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description Renders a single field as a csv field, including
+         * quotes around the value
+         * @param {field} field the field to be turned into a csv string,
+         * may be of any type
+         * @returns {string} a excel-ified version of the field
+         */
+        formatFieldAsExcel: function (field, workbook, sheet, formatters) {
+          if (field.value == null) { // we want to catch anything null-ish, hence just == not ===
+            return '';
+          }
+          if (typeof(field.value) === 'number') {
+            return field.value;
+          }
+          if (typeof(field.value) === 'boolean') {
+            return (field.value ? 'TRUE' : 'FALSE') ;
+          }
+          if (typeof(field.value) === 'string') {
+            return field.value.replace(/"/g,'""');
+          }
+
+          return JSON.stringify(field.value);
+        },
+
+        prepareAsExcel: function(grid, workbook, sheet) {
+          var docDefinition = {
+            styles: {
+
+            }
+          };
+
+          if ( grid.options.exporterExcelCustomFormatters ){
+            docDefinition = grid.options.exporterExcelCustomFormatters( grid, workbook, docDefinition );
+          }
+          if ( grid.options.exporterExcelHeader ) {
+            var data = [];
+            if (angular.isFunction( grid.options.exporterExcelHeader )) {
+              grid.options.exporterExcelHeader(grid, workbook, sheet, docDefinition);
+            } else {
+              var headerText = grid.options.exporterExcelHeader.text;
+              var style = grid.options.exporterExcelHeader.style;
+              sheet.data.push([{value: headerText, metadata: {style: docDefinition.styles[style].id}}]);
+            }
+          }
+
+          return docDefinition;
+        },
+
+        excelExport: function (grid, rowTypes, colTypes) {
+          var self = this;
+          this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
+            var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
+
+            var workbook = new ExcelBuilder.Workbook();
+            var aName = grid.options.exporterExcelSheetName ? grid.options.exporterExcelSheetName : 'Sheet1';
+            var sheet = new ExcelBuilder.Worksheet({name: aName});
+            workbook.addWorksheet(sheet);
+            var docDefinition = self.prepareAsExcel(grid, workbook, sheet);
+
+            // The standard column width in Microsoft Excel 2000 is 8.43 characters based on fixed-width Courier font
+            // Width of 10 in excel is 75 pixels
+            var colWidths = [];
+            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : 0;
+            for (var i = startDataIndex; i < grid.columns.length; i++) {
+              colWidths.push({width: (grid.columns[i].drawnWidth / 75) * 10});
+            }
+            sheet.setColumns(colWidths);
+
+            var exportData = self.getData(grid, rowTypes, colTypes, grid.options.exporterFieldApplyFilters);
+
+            // set column widhths. See function called from prepareAsExcel method
+            //sheet.setColumns(docDefinition.columnWidths);
+
+            //for (var i=0; i< grid.treeBase.tree.length; i++) {
+            //  console.log(grid.treeBase.tree[i]);
+            //}
+            var excelContent = self.formatAsExcel(exportColumnHeaders, exportData, workbook, sheet, docDefinition);
+            sheet.setData(sheet.data.concat(excelContent));
+
+            ExcelBuilder.Builder.createFile(workbook, {type:"blob"}).then(function(result) {
+              self.downloadFile (grid.options.exporterExcelFilename, result, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
+            });
+
+          });
         }
+
       };
 
       return service;

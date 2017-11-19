@@ -67,6 +67,9 @@
           exporterAllAsPdf: 'Eksporter alle data som pdf',
           exporterVisibleAsPdf: 'Eksporter synlige data som pdf',
           exporterSelectedAsPdf: 'Eksporter utvalgte data som pdf',
+          exporterAllAsExcel: 'Eksporter alle data som excel',
+          exporterVisibleAsExcel: 'Eksporter synlige data som excel',
+          exporterSelectedAsExcel: 'Eksporter utvalgte data som excel',
           clearAllFilters: 'Clear all filters'
         },
         importer: {

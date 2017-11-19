@@ -51,6 +51,9 @@
           exporterAllAsPdf: 'Exportar todo como pdf',
           exporterVisibleAsPdf: 'Exportar vista como pdf',
           exporterSelectedAsPdf: 'Exportar selección como pdf',
+          exporterAllAsExcel: 'Exportar todo como excel',
+          exporterVisibleAsExcel: 'Exportar vista como excel',
+          exporterSelectedAsExcel: 'Exportar selección como excel',
           clearAllFilters: 'Limpiar todos los filtros'
         },
         importer: {

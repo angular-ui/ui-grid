@@ -6,6 +6,7 @@
   <div
       role="button"
       tabindex="0"
+    ng-keydown="handleKeyDown($event)"
       class="ui-grid-cell-contents ui-grid-header-cell-primary-focus"
       col-index="renderIndex"
       title="TOOLTIP">
@@ -39,6 +40,7 @@
       class="ui-grid-column-menu-button"
       ng-if="grid.options.enableColumnMenus && !col.isRowHeader  && col.colDef.enableColumnMenu !== false"
       ng-click="toggleMenu($event)"
+    ng-keydown="headerCellArrowKeyDown($event)"
       ng-class="{'ui-grid-column-menu-button-last-col': isLastCol && grid.options.enableGridMenu && !grid.options.enableColumnMenus}"
       ui-grid-one-bind-aria-label="i18n.headerCell.aria.columnMenuButtonLabel"
       aria-haspopup="true">

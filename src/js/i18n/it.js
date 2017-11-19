@@ -54,6 +54,9 @@
           exporterAllAsPdf: 'Esporta tutti i dati in PDF',
           exporterVisibleAsPdf: 'Esporta i dati visibili in PDF',
           exporterSelectedAsPdf: 'Esporta i dati selezionati in PDF',
+          exporterAllAsExcel: 'Esporta tutti i dati in excel',
+          exporterVisibleAsExcel: 'Esporta i dati visibili in excel',
+          exporterSelectedAsExcel: 'Esporta i dati selezionati in excel',
           clearAllFilters: 'Pulire tutti i filtri'
         },
         importer: {

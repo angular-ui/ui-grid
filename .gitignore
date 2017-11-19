@@ -199,4 +199,4 @@ Sauce-Connect.jar
 docs
 bower_components
 .grunt
-.bowerrc
+coverage/

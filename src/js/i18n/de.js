@@ -9,7 +9,8 @@
           aria: {
             defaultFilterLabel: 'Filter für Spalte',
             removeFilter: 'Filter löschen',
-            columnMenuButtonLabel: 'Spaltenmenü'
+            columnMenuButtonLabel: 'Spaltenmenü',
+            column: 'Spalte'
           },
           priority: 'Priorität:',
           filterLabel: "Filter für Spalte: "
@@ -74,6 +75,9 @@
           exporterAllAsPdf: 'Alle Daten als PDF exportieren',
           exporterVisibleAsPdf: 'sichtbare Daten als PDF exportieren',
           exporterSelectedAsPdf: 'markierte Daten als PDF exportieren',
+          exporterAllAsExcel: 'Alle Daten als Excel exportieren',
+          exporterVisibleAsExcel: 'sichtbare Daten als Excel exportiere',
+          exporterSelectedAsExcel: 'markierte Daten als Excel exportieren',
           clearAllFilters: 'Alle Filter zurücksetzen'
         },
         importer: {

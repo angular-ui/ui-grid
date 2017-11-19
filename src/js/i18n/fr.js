@@ -67,6 +67,9 @@
           exporterAllAsPdf: 'Exporter toutes les données en PDF',
           exporterVisibleAsPdf: 'Exporter les données visibles en PDF',
           exporterSelectedAsPdf: 'Exporter les données sélectionnées en PDF',
+          exporterAllAsExcel: 'Exporter toutes les données en Excel',
+          exporterVisibleAsExcel: 'Exporter les données visibles en Excel',
+          exporterSelectedAsExcel: 'Exporter les données sélectionnées en Excel',
           clearAllFilters: 'Nettoyez tous les filtres'
         },
         importer: {

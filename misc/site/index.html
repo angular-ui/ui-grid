@@ -159,9 +159,7 @@
           <div class="grid" ui-grid="gridOptionsSimple"></div>
 
           <h4 class="feature-heading">Complex Example</h4>
-          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
-
-          
+          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns ui-grid-pagination></div>          
           <label>Language: </label>
           <select ng-options="language for language in languages" ng-model="currentLanguage" ng-change="changeLanguage()"></select>
         </div>
@@ -188,7 +186,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-animate.js"></script>
   <script src="//ui-grid.info/release/ui-grid-unstable.min.js"></script>
   <script>
-    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns'])
+    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pagination'])
     .run(function($rootScope, uiGridConstants, i18nService) {
       $rootScope.gridOptionsSimple = {
         data: [
@@ -299,6 +297,8 @@
         enableFiltering: true,
         showGridFooter: true,
         showColumnFooter: true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
         columnDefs: [
           { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
           { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false,

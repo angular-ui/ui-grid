@@ -688,10 +688,10 @@
 
                 var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
 
-                if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
+                if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1 || (grid.cellNav.lastRowCol.col === col && grid.cellNav.lastRowCol.row === row)) {
                   var newRowCol = new GridRowColumn(row, col);
 
-                  if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col){
+                  if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col || grid.options.enableCellEditOnFocus){
                     grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol, originEvt);
                     grid.cellNav.lastRowCol = newRowCol;
                   }
@@ -833,6 +833,10 @@
                     }
                   }
 
+                  function getAppendedColumnHeaderText(col) {
+                    return ', ' + i18nService.getSafeText('headerCell.aria.column') + ' ' + col.displayName;
+                  }
+
                   function getCellDisplayValue(currentRowColumn) {
                     if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
                       // This is the case when the 'selection' feature is used in the grid and the user has moved
@@ -841,14 +845,15 @@
                       // is or is not currently selected.
                         return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
                       } else {
-                        return grid.getCellDisplayValue(currentRowColumn.row, currentSelection[i].col);
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
                       }
                     }
 
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(getCellDisplayValue(currentSelection[i]));
+                    var cellDisplayValue = getCellDisplayValue(currentSelection[i]) + getAppendedColumnHeaderText(currentSelection[i].col);
+                    values.push(cellDisplayValue);
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
@@ -945,7 +950,7 @@
                 });
                 var result = raiseViewPortKeyDown ? null : uiGridCtrl.cellNav.handleKeyDown(evt);
                 if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol, uiGridCtrl.cellNav.handleKeyDown);
                   viewPortKeyDownWasRaisedForRowCol = rowCol;
                 }
               });

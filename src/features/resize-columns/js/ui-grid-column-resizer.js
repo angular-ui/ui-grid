@@ -536,13 +536,14 @@
 
                 if (width > maxWidth) {
                   maxWidth = width;
-                  xDiff = maxWidth - width;
                 }
               });
             });
 
           // check we're not outside the allowable bounds for this column
-          col.width = constrainWidth(col, maxWidth);
+          var newWidth = constrainWidth(col, maxWidth);
+          xDiff = newWidth - col.drawnWidth;
+          col.width = newWidth;
           col.hasCustomWidth = true;
 
           refreshCanvas(xDiff);

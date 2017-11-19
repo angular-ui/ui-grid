@@ -91,7 +91,10 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: true,
         exporterMenuCsv: true,
         exporterMenuPdf: true,
+        exporterMenuExcel: true,
         exporterFieldCallback: jasmine.any(Function),
+        exporterFieldFormatCallback: jasmine.any(Function),
+        exporterFieldApplyFilters: false,
         exporterAllDataFn: null,
         exporterSuppressColumns: [],
         exporterMenuItemOrder: 200
@@ -123,9 +126,17 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
+        exporterMenuExcel: false,
         exporterFieldCallback: callback,
+        exporterFieldFormatCallback: callback,
+        exporterFieldApplyFilters: false,
         exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ],
+        exporterExcelCustomFormatters: callback,
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
+        exporterExcelHeader: "My Header",
+        exporterExcelFooter: "My Footer",
         exporterMenuItemOrder: 75
       };
       uiGridExporterService.defaultGridOptions(options);
@@ -152,11 +163,19 @@ describe('ui.grid.exporter uiGridExporterService', function () {
         exporterMenuSelectedData: false,
         exporterMenuCsv: false,
         exporterMenuPdf: false,
+        exporterMenuExcel: false,
         exporterFieldCallback: callback,
-        exporterAllDataFn: callback,
+        exporterFieldFormatCallback: callback,
+        exporterFieldApplyFilters: false,
         exporterAllDataPromise: callback,
         exporterSuppressColumns: [ 'buttons' ],
-        exporterMenuItemOrder: 75
+        exporterExcelCustomFormatters: callback,
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
+        exporterExcelHeader: "My Header",
+        exporterExcelFooter: "My Footer",
+        exporterMenuItemOrder: 75,
+        exporterAllDataFn: callback
       });
     });
   });

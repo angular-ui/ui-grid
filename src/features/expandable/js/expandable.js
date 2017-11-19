@@ -292,7 +292,7 @@
 
       expandAllRows: function (grid, $scope) {
         grid.renderContainers.body.visibleRowCache.forEach(function (row) {
-          if (!row.isExpanded) {
+          if (!row.isExpanded && !(row.entity.subGridOptions && row.entity.subGridOptions.disableRowExpandable)) {
             service.toggleRowExpansion(grid, row);
           }
         });
@@ -532,26 +532,27 @@
                    * Commented out @PaulL1.  This has no purpose that I can see, and causes #2964.  If this code needs to be reinstated for some
                    * reason it needs to use drawnWidth, not width, and needs to check column visibility.  It should really use render container
                    * visible column cache also instead of checking column.renderContainer.
-                   function updateRowContainerWidth() {
-                   var grid = $scope.grid;
-                   var colWidth = 0;
-                   grid.columns.forEach( function (column) {
-                   if (column.renderContainer === 'left') {
-                   colWidth += column.width;
-                   }
-                   });
-                   colWidth = Math.floor(colWidth);
-                   return '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id +
-                   ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name +
-                   ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + colWidth + 'px; }';
-                   }
-
-                   if ($scope.colContainer.name === 'left') {
-                   $scope.grid.registerStyleComputation({
-                   priority: 15,
-                   func: updateRowContainerWidth
-                   });
-                   }*/
+                   *    function updateRowContainerWidth() {
+                   *      var grid = $scope.grid;
+                   *      var colWidth = 0;
+                   *      grid.columns.forEach(function(column) {
+                   *        if ( column.renderContainer === 'left' ) {
+                   *          colWidth += column.width;
+                   *        }
+                   *      });
+                   *      colWidth = Math.floor(colWidth);
+                   *      return '.grid' + grid.id + ' .ui-grid-pinned-container-' + $scope.colContainer.name + ', .grid' + grid.id +
+                   *          ' .ui-grid-pinned-container-' + $scope.colContainer.name + ' .ui-grid-render-container-' + $scope.colContainer.name +
+                   *          ' .ui-grid-viewport .ui-grid-canvas .ui-grid-row { width: ' + colWidth + 'px; }';
+                   *    }
+                   *
+                   *    if ( $scope.colContainer.name === 'left' ) {
+                   *      $scope.grid.registerStyleComputation({
+                   *        priority: 15,
+                   *        func: updateRowContainerWidth
+                   *      });
+                   *    }
+                   */
 
                 },
                 post: function ($scope, $elm, $attrs, controllers) {}

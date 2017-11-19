@@ -39,11 +39,10 @@ describe('ui.grid.autoResizeGrid', function () {
     gridElm = null;
   });
 
-  describe('on grid element dimension change', function () {
+  describe('on grid element width change to greater', function () {
     var w;
     beforeEach(function (done) {
       w = $(viewportElm).width();
-      var h = $(viewportElm).height();
 
       $(gridElm).width(600);
       $scope.$digest();
@@ -55,15 +54,60 @@ describe('ui.grid.autoResizeGrid', function () {
     });
   });
 
-  // Rebuild the grid as having 100% width and being in a 400px wide container, then change the container width to 500px and make sure it adjusts
-  describe('on grid container dimension change', function () {
+  describe('on grid element height change to greater', function () {
+    var h;
+    beforeEach(function (done) {
+      h = $(viewportElm).height();
+
+      $(gridElm).height(400);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
+    it('adjusts the grid viewport size', function () {
+      var newH = $(viewportElm).height();
+      expect(newH).toBeGreaterThan(h);
+    });
+  });
+
+  describe('on grid element width change to smaller', function () {
+    var w;
+    beforeEach(function (done) {
+      w = $(viewportElm).width();
+
+      $(gridElm).width(400);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
+    it('adjusts the grid viewport size', function () {
+      var newW = $(viewportElm).width();
+      expect(newW).toBeLessThan(w);
+    });
+  });
+
+  describe('on grid element height change to smaller', function () {
+    var h;
+    beforeEach(function (done) {
+      h = $(viewportElm).height();
+
+      $(gridElm).height(200);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
+    it('adjusts the grid viewport size', function () {
+      var newH = $(viewportElm).height();
+      expect(newH).toBeLessThan(h);
+    });
+  });
+
+  // Rebuild the grid as having 100% width and 100% height and being in a 400px wide and 300px height container, then change the container width to 500px and make sure it adjusts
+  describe('on grid container width change to greater', function () {
     var gridContainerElm;
     var w;
 
     beforeEach(function (done) {
       angular.element(gridElm).remove();
 
-      gridContainerElm = angular.element('<div style="width: 400px"><div style="width: 100%; height: 300px" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
+      gridContainerElm = angular.element('<div style="width: 400px; height: 300px"><div style="width: 100%; height: 100%" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
       document.body.appendChild(gridContainerElm[0]);
       $compile(gridContainerElm)($scope);
       $scope.$digest();
@@ -73,7 +117,6 @@ describe('ui.grid.autoResizeGrid', function () {
       viewportElm = $(gridElm).find('.ui-grid-viewport');
 
       w = $(viewportElm).width();
-      var h = $(viewportElm).height();
 
       $(gridContainerElm).width(500);
       $scope.$digest();
@@ -86,5 +129,99 @@ describe('ui.grid.autoResizeGrid', function () {
       expect(newW).toBeGreaterThan(w);
     });
   });
+
+  // Rebuild the grid as having 100% width and 100% height and being in a 400px wide and 300px height container, then change the container height to 400px and make sure it adjusts
+  describe('on grid container height change to greater', function () {
+    var gridContainerElm;
+    var h;
+
+    beforeEach(function (done) {
+      angular.element(gridElm).remove();
+
+      gridContainerElm = angular.element('<div style="width: 400px; height: 300px"><div style="width: 100%; height: 100%" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
+      document.body.appendChild(gridContainerElm[0]);
+      $compile(gridContainerElm)($scope);
+      $scope.$digest();
+
+      gridElm = gridContainerElm.find('[ui-grid]');
+
+      viewportElm = $(gridElm).find('.ui-grid-viewport');
+
+      h = $(viewportElm).height();
+
+      $(gridContainerElm).height(400);
+      $scope.$digest();
+      setTimeout(done, 300);
+    });
+
+    it('adjusts the grid viewport size', function() {
+      var newH = $(viewportElm).width();
+
+      expect(newH).toBeGreaterThan(h);
+    });
+  });
+
+
+    // Rebuild the grid as having 100% width and 100% height and being in a 400px wide and 300px height container, then change the container width to 300px and make sure it adjusts
+    describe('on grid container width change to smaller', function () {
+      var gridContainerElm;
+      var w;
+
+      beforeEach(function (done) {
+        angular.element(gridElm).remove();
+
+        gridContainerElm = angular.element('<div style="width: 400px; height: 300px"><div style="width: 100%; height: 100%" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
+        document.body.appendChild(gridContainerElm[0]);
+        $compile(gridContainerElm)($scope);
+        $scope.$digest();
+
+        gridElm = gridContainerElm.find('[ui-grid]');
+
+        viewportElm = $(gridElm).find('.ui-grid-viewport');
+
+        w = $(viewportElm).width();
+
+        $(gridContainerElm).width(300);
+        $scope.$digest();
+        setTimeout(done, 300);
+      });
+
+      it('adjusts the grid viewport size', function() {
+        var newW = $(viewportElm).width();
+
+        expect(newW).toBeLessThan(w);
+      });
+    });
+
+    // Rebuild the grid as having 100% width and 100% height and being in a 400px wide and 300px height container, then change the container height to 200px and make sure it adjusts
+    describe('on grid container height change to smaller', function () {
+      var gridContainerElm;
+      var h;
+
+      beforeEach(function (done) {
+        angular.element(gridElm).remove();
+
+        gridContainerElm = angular.element('<div style="width: 400px; height: 300px"><div style="width: 100%; height: 100%" ui-grid="gridOpts" ui-grid-auto-resize></div></div>');
+        document.body.appendChild(gridContainerElm[0]);
+        $compile(gridContainerElm)($scope);
+        $scope.$digest();
+
+        gridElm = gridContainerElm.find('[ui-grid]');
+
+        viewportElm = $(gridElm).find('.ui-grid-viewport');
+
+        h = $(viewportElm).height();
+
+        $(gridContainerElm).height(200);
+        $scope.$digest();
+        setTimeout(done, 300);
+      });
+
+      it('adjusts the grid viewport size', function() {
+        var newH = $(viewportElm).height();
+
+        expect(newH).toBeLessThan(h);
+      });
+    });
 
 });

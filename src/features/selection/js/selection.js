@@ -759,6 +759,7 @@
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var self = uiGridCtrl.grid;
           $scope.selectButtonClick = selectButtonClick;
+          $scope.selectButtonKeyDown = selectButtonKeyDown;
 
           // On IE, prevent mousedowns on the select button from starting a selection.
           //   If this is not done and you shift+click on another row, the browser will select a big chunk of text
@@ -766,6 +767,12 @@
             $elm.on('mousedown', selectButtonMouseDown);
           }
 
+          function selectButtonKeyDown(row, evt) {
+            if (evt.keyCode === 32) {
+              evt.preventDefault();
+              selectButtonClick(row, evt);
+            }
+          }
           function selectButtonClick(row, evt) {
             evt.stopPropagation();
 
@@ -813,7 +820,14 @@
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var self = $scope.col.grid;
 
-          $scope.headerButtonClick = function (row, evt) {
+          $scope.headerButtonKeyDown = function (evt) {
+            if (evt.keyCode === 32 || evt.keyCode === 13) {
+              evt.preventDefault();
+              $scope.headerButtonClick(evt);
+            }
+          };
+
+          $scope.headerButtonClick = function (evt) {
             if (self.selection.selectAll) {
               uiGridSelectionService.clearSelectedRows(self, evt);
               if (self.options.noUnselect) {
@@ -897,11 +911,10 @@
                   }
 
                   if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
-                    uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
-                        ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect),
-                        $scope.grid.options.noUnselect);
-                    $scope.$apply();
-                  }
+                  evt.preventDefault();
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                  $scope.$apply();
+                }
 
                   //  uiGridCellNavService.scrollToIfNecessary(uiGridCtrl.grid, rowCol.row, rowCol.col);
                 });
