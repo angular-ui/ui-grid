@@ -123,13 +123,11 @@
               previousMouseX = event.pageX;
 
               $scope.mousedownStartTime = (new Date()).getTime();
-              $scope.mousedownTimeout = $timeout(function() { }, mousedownTimeout);
-
-              $scope.mousedownTimeout.then(function () {
+              $scope.mousedownTimeout = window.setTimeout(function() {
                 if ( $scope.colMenu ) {
                   uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
-              }).catch(angular.noop);
+              }, mousedownTimeout);
 
               uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
 
@@ -145,7 +143,7 @@
 
             $scope.upFn = function( event ){
               event.stopPropagation();
-              $timeout.cancel($scope.mousedownTimeout);
+              window.clearTimeout($scope.mousedownTimeout);
               $scope.offAllEvents();
               $scope.onDownEvents(event.type);
 
@@ -175,7 +173,7 @@
               if ( changeValue === 0 ){ return; }
 
               // we're a move, so do nothing and leave for column move (if enabled) to take over
-              $timeout.cancel($scope.mousedownTimeout);
+              window.clearTimeout($scope.mousedownTimeout);
               $scope.offAllEvents();
               $scope.onDownEvents(event.type);
             };
@@ -305,15 +303,21 @@
               }
 
               /**
-              * @ngdoc property
-              * @name enableColumnMenu
-              * @propertyOf ui.grid.class:GridOptions.columnDef
-              * @description if column menus are enabled, controls the column menus for this specific
-              * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
-              * using this option. If gridOptions.enableColumnMenus === false then you get no column
-              * menus irrespective of the value of this option ).  Defaults to true.
-              *
-              */
+               * @ngdoc property
+               * @name enableColumnMenu
+               * @propertyOf ui.grid.class:GridOptions.columnDef
+               * @description if column menus are enabled, controls the column menus for this specific
+               * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
+               * using this option. If gridOptions.enableColumnMenus === false then you get no column
+               * menus irrespective of the value of this option ).  Defaults to true.
+               * By default column menu's trigger is hidden before mouse over, but otherwise may change in css do:
+               *
+               * <pre>
+               *  .ui-grid-column-menu-button {
+               *    display: block;
+               *  }
+               * </pre>
+               */
               /**
               * @ngdoc property
               * @name enableColumnMenus

@@ -23,6 +23,7 @@ this column being hidden in the gridMenu (once it is finished and merged).  You 
 the column menu entirely using the `enableColumnMenu: false` columnDef option.
 
 You can disable all column menus using the `enableColumnMenus: false` grid option.
+You can always visible (by default is hide) column menus trigger set css: `.ui-grid-column-menu-button { display: block; }`.
 
 You can supply an icon class with the `icon` property.
 

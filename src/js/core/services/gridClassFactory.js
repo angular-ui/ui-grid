@@ -21,6 +21,7 @@
          */
         createGrid : function(options) {
           options = (typeof(options) !== 'undefined') ? options : {};
+          options.i18n = options.i18n || 'en';
           options.id = gridUtil.newId();
           var grid = new Grid(options);
 
@@ -28,7 +29,7 @@
           if (grid.options.rowTemplate) {
             var rowTemplateFnPromise = $q.defer();
             grid.getRowTemplateFn = rowTemplateFnPromise.promise;
-            
+
             gridUtil.getTemplate(grid.options.rowTemplate)
               .then(
                 function (template) {
@@ -102,11 +103,15 @@
               .then(
                 function (template) {
                   if ( angular.isFunction(template) ) { template = template(); }
-                  var tooltipCall = ( tooltipType === 'cellTooltip' ) ? 'col.cellTooltip(row,col)' : 'col.headerTooltip(col)';
+                  var tooltipCall = ( tooltipType === 'cellTooltip' )
+                      ? 'col.cellTooltip(row,col)'
+                      : 'col.headerTooltip(col)';
                   if ( tooltipType && col[tooltipType] === false ){
                     template = template.replace(uiGridConstants.TOOLTIP, '');
-                  } else if ( tooltipType && col[tooltipType] ){
-                    template = template.replace(uiGridConstants.TOOLTIP, 'title="{{' + tooltipCall + ' CUSTOM_FILTERS }}"');
+                  } else if ( tooltipType && col[tooltipType] ) {
+                    template = template.replace(uiGridConstants.TOOLTIP,
+                        uiGridConstants.TOOLTIPTPL.replace('TOOLTIP',
+                            '{{' + tooltipCall + ' CUSTOM_FILTERS }}'));
                   }
 
                   if ( filterType ){
@@ -195,7 +200,7 @@
               .then(function (template) {
                 // Compile the template
                 var rowTemplateFn = $compile(template);
-                
+
                 // Resolve the compiled template function promise
                 perRowTemplateFnPromise.resolve(rowTemplateFn);
               },

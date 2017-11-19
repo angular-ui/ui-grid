@@ -24,25 +24,25 @@ module.exports = function ( grunt ) {
           expand: true,
           cwd: 'src/font',
           src: '**/*.eot',
-          dest: '<%= dist %>/release/'
+          dest: '<%= dist %>/release/fonts/'
         },
         {
           expand: true,
           cwd: 'src/font',
           src: '**/*.svg',
-          dest: '<%= dist %>/release/'
+          dest: '<%= dist %>/release/fonts/'
         },
         {
           expand: true,
           cwd: 'src/font',
           src: '**/*.ttf',
-          dest: '<%= dist %>/release/'
+          dest: '<%= dist %>/release/fonts/'
         },
         {
           expand: true,
           cwd: 'src/font',
           src: '**/*.woff',
-          dest: '<%= dist %>/release/'
+          dest: '<%= dist %>/release/fonts/'
         }
       ]
     },

@@ -32,7 +32,7 @@ angular.module('ui.grid')
 
 .directive('uiGridMenu', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'i18nService',
 function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18nService) {
-  var uiGridMenu = {
+  return {
     priority: 0,
     scope: {
       // shown: '&',
@@ -46,14 +46,16 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       $scope.dynamicStyles = '';
       if (uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options && uiGridCtrl.grid.options.gridMenuTemplate) {
         var gridMenuTemplate = uiGridCtrl.grid.options.gridMenuTemplate;
-        gridUtil.getTemplate(gridMenuTemplate).then(function (contents) {
-          var template = angular.element(contents);
-          var newElm = $compile(template)($scope);
-          $elm.replaceWith(newElm);
-        }).catch(angular.noop);
+        gridUtil.getTemplate(gridMenuTemplate)
+            .then(function (contents) {
+              var template = angular.element(contents),
+                  newElm = $compile(template)($scope);
+              $elm.replaceWith(newElm);
+            })
+            .catch(angular.noop);
       }
 
-      var setupHeightStyle = function(gridHeight) {
+      var setupHeightStyle = function (gridHeight) {
         //menu appears under header row, so substract that height from it's total
         // additional 20px for general padding
         var gridMenuMaxHeight = gridHeight - uiGridCtrl.grid.headerHeight - 20;
@@ -66,7 +68,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
       if (uiGridCtrl) {
         setupHeightStyle(uiGridCtrl.grid.gridHeight);
-        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function(oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
+        uiGridCtrl.grid.api.core.on.gridDimensionChanged($scope, function (oldGridHeight, oldGridWidth, newGridHeight, newGridWidth) {
           setupHeightStyle(newGridHeight);
         });
       }
@@ -75,9 +77,9 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         close: i18nService.getSafeText('columnMenu.close')
       };
 
-    // *** Show/Hide functions ******
-      $scope.showMenu = function(event, args) {
-        if ( !$scope.shown ){
+      // *** Show/Hide functions ******
+      $scope.showMenu = function (event, args) {
+        if (!$scope.shown) {
 
           /*
            * In order to animate cleanly we remove the ng-if, wait a digest cycle, then
@@ -93,11 +95,11 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            */
           $scope.shown = true;
 
-          $timeout( function() {
+          $timeout(function () {
             $scope.shownMid = true;
             $scope.$emit('menu-shown');
           });
-        } else if ( !$scope.shownMid ) {
+        } else if (!$scope.shownMid) {
           // we're probably doing a hide then show, so we don't need to wait for ng-if
           $scope.shownMid = true;
           $scope.$emit('menu-shown');
@@ -114,7 +116,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         $elm.off('keydown', checkKeyDown);
 
         // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
-        $timeout(function() {
+        $timeout(function () {
           angular.element(document).on(docEventType, applyHideMenu);
           $elm.on('keyup', checkKeyUp);
           $elm.on('keydown', checkKeyDown);
@@ -124,9 +126,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         gridUtil.focus.bySelector($elm, 'button[type=button]', true);
       };
 
-
-      $scope.hideMenu = function(event) {
-        if ( $scope.shown ){
+      $scope.hideMenu = function (event) {
+        if ($scope.shown) {
           /*
            * In order to animate cleanly we animate the addition of ng-hide, then use a $timeout to
            * set the ng-if (shown = false) after the animation runs.  In theory we can cascade off the
@@ -136,8 +137,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            * we're waiting, so we check that the mid isn't shown before applying the ng-if.
            */
           $scope.shownMid = false;
-          $timeout( function() {
-            if ( !$scope.shownMid ){
+          $timeout(function () {
+            if (!$scope.shownMid) {
               $scope.shown = false;
               $scope.$emit('menu-hidden');
             }
@@ -157,9 +158,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         $scope.showMenu(event, args);
       });
 
-
-    // *** Auto hide when click elsewhere ******
-      var applyHideMenu = function(){
+      // *** Auto hide when click elsewhere ******
+      var applyHideMenu = function () {
         if ($scope.shown) {
           $scope.$apply(function () {
             $scope.hideMenu();
@@ -168,14 +168,14 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       };
 
       // close menu on ESC and keep tab cyclical
-      var checkKeyUp = function(event) {
+      var checkKeyUp = function (event) {
         if (event.keyCode === 27) {
           $scope.hideMenu();
         }
       };
 
-      var checkKeyDown = function(event) {
-        var setFocus = function(elm) {
+      var checkKeyDown = function (event) {
+        var setFocus = function (elm) {
           elm.focus();
           event.preventDefault();
           return false;
@@ -211,18 +211,16 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       });
 
       if (uiGridCtrl) {
-       $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollBegin($scope, applyHideMenu ));
+        $scope.$on('$destroy', uiGridCtrl.grid.api.core.on.scrollBegin($scope, applyHideMenu));
       }
 
-      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu ));
+      $scope.$on('$destroy', $scope.$on(uiGridConstants.events.ITEM_DRAGGING, applyHideMenu));
     }
   };
-
-  return uiGridMenu;
 }])
 
 .directive('uiGridMenuItem', ['gridUtil', '$compile', 'i18nService', function (gridUtil, $compile, i18nService) {
-  var uiGridMenuItem = {
+  return {
     priority: 0,
     scope: {
       name: '=',
@@ -238,7 +236,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     require: ['?^uiGrid'],
     templateUrl: 'ui-grid/uiGridMenuItem',
     replace: false,
-    compile: function() {
+    compile: function () {
       return {
         pre: function ($scope, $elm) {
           if ($scope.templateUrl) {
@@ -259,7 +257,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           //   throw new TypeError("$scope.shown is defined but not a function");
           // }
           if (typeof($scope.shown) === 'undefined' || $scope.shown === null) {
-            $scope.shown = function() { return true; };
+            $scope.shown = function () { return true; };
           }
 
           $scope.itemShown = function () {
@@ -275,7 +273,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             return $scope.shown.call(context);
           };
 
-          $scope.itemAction = function($event,title) {
+          $scope.itemAction = function ($event, title) {
             $event.stopPropagation();
 
             if (typeof($scope.action) === 'function') {
@@ -292,7 +290,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
               $scope.action.call(context, $event, title);
 
-              if ( !$scope.leaveOpen ){
+              if (!$scope.leaveOpen) {
                 $scope.$emit('hide-menu');
               } else {
                 // Maintain focus on the selected item
@@ -301,10 +299,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
             }
           };
 
-          $scope.label = function(){
+          $scope.label = function () {
             var toBeDisplayed = $scope.name;
 
-            if (typeof($scope.name) === 'function'){
+            if (typeof($scope.name) === 'function') {
               toBeDisplayed = $scope.name.call();
             }
 
@@ -316,8 +314,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       };
     }
   };
-
-  return uiGridMenuItem;
 }]);
 
 })();

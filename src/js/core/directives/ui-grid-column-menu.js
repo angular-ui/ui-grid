@@ -1,8 +1,8 @@
 (function(){
 
 angular.module('ui.grid')
-.service('uiGridColumnMenuService', [ 'i18nService', 'uiGridConstants', 'gridUtil',
-function ( i18nService, uiGridConstants, gridUtil ) {
+.service('uiGridColumnMenuService', [ 'i18nService', 'uiGridConstants', 'gridUtil', 'uiGridGridMenuService',
+function ( i18nService, uiGridConstants, gridUtil, uiGridGridMenuService ) {
 /**
  *  @ngdoc service
  *  @name ui.grid.service:uiGridColumnMenuService
@@ -62,6 +62,11 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         else {
           $scope.menuItems = $scope.defaultMenuItems;
         }
+        $scope.menuItems.sort(function (a, b) {
+          return (a.order || 0) === (b.order || 0)
+              ? 0
+              : (a.order || 0) > (b.order || 0) ? 1 : -1
+        });
       });
 
       $scope.$on( '$destroy', deregFunction );
@@ -84,12 +89,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      *
      */
     sortable: function( $scope ) {
-      if ( $scope.grid.options.enableSorting && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting) {
-        return true;
-      }
-      else {
-        return false;
-      }
+      return !!($scope.grid.options.enableSorting && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting);
     },
 
     /**
@@ -141,13 +141,9 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
      *
      */
-    hideable: function( $scope ) {
-      if (typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.enableHiding === false ) {
-        return false;
-      }
-      else {
-        return true;
-      }
+    hideable: function ($scope) {
+      return !(typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef
+          && $scope.col.colDef.enableHiding === false);
     },
 
 
@@ -159,62 +155,69 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
      *
      */
-    getDefaultMenuItems: function( $scope ){
-      return [
+    getDefaultMenuItems: function ($scope) {
+      var result = [
         {
-          title: function(){return i18nService.getSafeText('sort.ascending');},
+          title: function () {return i18nService.getSafeText('sort.ascending');},
           icon: 'ui-grid-icon-sort-alt-up',
-          action: function($event) {
+          action: function ($event) {
             $event.stopPropagation();
             $scope.sortColumn($event, uiGridConstants.ASC);
           },
           shown: function () {
-            return service.sortable( $scope );
+            return service.sortable($scope);
           },
-          active: function() {
-            return service.isActiveSort( $scope, uiGridConstants.ASC);
+          active: function () {
+            return service.isActiveSort($scope, uiGridConstants.ASC);
           }
         },
         {
-          title: function(){return i18nService.getSafeText('sort.descending');},
+          title: function () {return i18nService.getSafeText('sort.descending');},
           icon: 'ui-grid-icon-sort-alt-down',
-          action: function($event) {
+          action: function ($event) {
             $event.stopPropagation();
             $scope.sortColumn($event, uiGridConstants.DESC);
           },
-          shown: function() {
-            return service.sortable( $scope );
+          shown: function () {
+            return service.sortable($scope);
           },
-          active: function() {
-            return service.isActiveSort( $scope, uiGridConstants.DESC);
+          active: function () {
+            return service.isActiveSort($scope, uiGridConstants.DESC);
           }
         },
         {
-          title: function(){return i18nService.getSafeText('sort.remove');},
+          title: function () {return i18nService.getSafeText('sort.remove');},
           icon: 'ui-grid-icon-cancel',
           action: function ($event) {
             $event.stopPropagation();
             $scope.unsortColumn();
           },
-          shown: function() {
-            return service.sortable( $scope ) &&
-                   typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' &&
-                   typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null &&
-                  !service.suppressRemoveSort( $scope );
+          shown: function () {
+            return service.sortable($scope) &&
+                typeof($scope.col) !== 'undefined' && (typeof($scope.col.sort) !== 'undefined' &&
+                    typeof($scope.col.sort.direction) !== 'undefined') && $scope.col.sort.direction !== null &&
+                !service.suppressRemoveSort($scope);
           }
-        },
-        {
-          title: function(){return i18nService.getSafeText('column.hide');},
+        }
+      ];
+
+      if ($scope.grid.options.enableGridMenu) {
+        result = result.concat(uiGridGridMenuService.getMenuItems($scope));
+      } else {
+        result.push({
+          title: function () {return i18nService.getSafeText('column.hide');},
           icon: 'ui-grid-icon-cancel',
-          shown: function() {
-            return service.hideable( $scope );
+          shown: function () {
+            return service.hideable($scope);
           },
           action: function ($event) {
             $event.stopPropagation();
             $scope.hideColumn();
           }
-        }
-      ];
+        })
+      }
+
+      return result;
     },
 
 
@@ -225,7 +228,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * @description  gets the position information needed to place the column
      * menu below the column header
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
-     * @param {GridCol} column the column we want to position below
+     * @param {GridColumn} column the column we want to position below
      * @param {element} $columnElement the column element we want to position below
      * @returns {hash} containing left, top, offset, height, width
      *
@@ -257,7 +260,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      * (i.e. it's not currently visible) then we guess it's width at 100, we'll be called again
      * later to fix it
      * @param {$scope} $scope the $scope from the uiGridColumnMenu
-     * @param {GridCol} column the column we want to position below
+     * @param {GridColumn} column the column we want to position below
      * @param {hash} positionData a hash containing left, top, offset, height, width
      * @param {element} $elm the column menu element that we want to reposition
      * @param {element} $columnElement the column element that we want to reposition underneath
@@ -308,29 +311,28 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 }])
 
 
-.directive('uiGridColumnMenu', ['$timeout', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', '$document',
-function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $document) {
 /**
  * @ngdoc directive
  * @name ui.grid.directive:uiGridColumnMenu
  * @description  Provides the column menu framework, leverages uiGridMenu underneath
  *
  */
-
-  var uiGridColumnMenu = {
+.directive('uiGridColumnMenu', ['$timeout', 'gridUtil', 'uiGridConstants', 'uiGridColumnMenuService', '$document',
+function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $document) {
+  return {
     priority: 0,
     scope: true,
     require: '^uiGrid',
     templateUrl: 'ui-grid/uiGridColumnMenu',
     replace: true,
     link: function ($scope, $elm, $attrs, uiGridCtrl) {
-      uiGridColumnMenuService.initialize( $scope, uiGridCtrl );
+      uiGridColumnMenuService.initialize($scope, uiGridCtrl);
 
-      $scope.defaultMenuItems = uiGridColumnMenuService.getDefaultMenuItems( $scope );
+      $scope.defaultMenuItems = uiGridColumnMenuService.getDefaultMenuItems($scope);
 
       // Set the menu items for use with the column menu. The user can later add additional items via the watch
       $scope.menuItems = $scope.defaultMenuItems;
-      uiGridColumnMenuService.setColMenuItemWatch( $scope );
+      uiGridColumnMenuService.setColMenuItemWatch($scope);
 
 
       /**
@@ -342,15 +344,16 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
        * to the right place whilst hidden (it will make an assumption on menu width),
        * then it asks the menu to show (it will animate), then it repositions the menu again
        * once we can calculate it's size.
-       * @param {GridCol} column the column we want to position below
+       * @param {ui.grid.class:GridColumn} column the column we want to position below
        * @param {element} $columnElement the column element we want to position below
+       * @param {Event} event window.event
        */
-      $scope.showMenu = function(column, $columnElement, event) {
+      $scope.showMenu = function (column, $columnElement, event) {
         // Swap to this column
         $scope.col = column;
 
         // Get the position information for the column element
-        var colElementPosition = uiGridColumnMenuService.getColumnElementPosition( $scope, column, $columnElement );
+        var colElementPosition = uiGridColumnMenuService.getColumnElementPosition($scope, column, $columnElement);
 
         if ($scope.menuShown) {
           // we want to hide, then reposition, then show, but we want to wait for animations
@@ -359,14 +362,14 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           $scope.colElementPosition = colElementPosition;
           $scope.hideThenShow = true;
 
-          $scope.$broadcast('hide-menu', { originalEvent: event });
+          $scope.$broadcast('hide-menu', {originalEvent: event});
         } else {
           $scope.menuShown = true;
-          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
+          uiGridColumnMenuService.repositionMenu($scope, column, colElementPosition, $elm, $columnElement);
 
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
-          $scope.$broadcast('show-menu', { originalEvent: event });
+          $scope.$broadcast('show-menu', {originalEvent: event});
 
         }
       };
@@ -381,35 +384,35 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
        * from the menu itself - in which case don't broadcast again as we'll get
        * an infinite loop
        */
-      $scope.hideMenu = function( broadcastTrigger ) {
+      $scope.hideMenu = function (broadcastTrigger) {
         $scope.menuShown = false;
-        if ( !broadcastTrigger ){
+        if (!broadcastTrigger) {
           $scope.$broadcast('hide-menu');
         }
       };
 
 
-      $scope.$on('menu-hidden', function() {
-        if ( $scope.hideThenShow ){
+      $scope.$on('menu-hidden', function () {
+        if ($scope.hideThenShow) {
           delete $scope.hideThenShow;
 
-          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+          uiGridColumnMenuService.repositionMenu($scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement);
           $scope.$broadcast('show-menu');
 
           $scope.menuShown = true;
         } else {
-          $scope.hideMenu( true );
+          $scope.hideMenu(true);
 
           if ($scope.col) {
             //Focus on the menu button
-            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false);
+            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass() + ' .ui-grid-column-menu-button', $scope.col.grid, false);
           }
         }
       });
 
-      $scope.$on('menu-shown', function() {
-        $timeout( function() {
-          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+      $scope.$on('menu-shown', function () {
+        $timeout(function () {
+          uiGridColumnMenuService.repositionMenu($scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement);
           //Focus on the first item
           gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
           delete $scope.colElementPosition;
@@ -423,10 +426,10 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         event.stopPropagation();
 
         $scope.grid.sortColumn($scope.col, dir, true)
-          .then(function () {
-            $scope.grid.refresh();
-            $scope.hideMenu();
-          }).catch(angular.noop);
+            .then(function () {
+              $scope.grid.refresh();
+              $scope.hideMenu();
+            }).catch(angular.noop);
       };
 
       $scope.unsortColumn = function () {
@@ -437,15 +440,15 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
       };
 
       //Since we are hiding this column the default hide action will fail so we need to focus somewhere else.
-      var setFocusOnHideColumn = function(){
-        $timeout(function(){
+      var setFocusOnHideColumn = function () {
+        $timeout(function () {
           // Get the UID of the first
-          var focusToGridMenu = function(){
+          var focusToGridMenu = function () {
             return gridUtil.focus.byId('grid-menu', $scope.grid);
           };
 
           var thisIndex;
-          $scope.grid.columns.some(function(element, index){
+          $scope.grid.columns.some(function (element, index) {
             if (angular.equals(element, $scope.col)) {
               thisIndex = index;
               return true;
@@ -454,14 +457,14 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
           var previousVisibleCol;
           // Try and find the next lower or nearest column to focus on
-          $scope.grid.columns.some(function(element, index){
-            if (!element.visible){
+          $scope.grid.columns.some(function (element, index) {
+            if (!element.visible) {
               return false;
             } // This columns index is below the current column index
-            else if ( index < thisIndex){
+            else if (index < thisIndex) {
               previousVisibleCol = element;
             } // This elements index is above this column index and we haven't found one that is lower
-            else if ( index > thisIndex && !previousVisibleCol) {
+            else if (index > thisIndex && !previousVisibleCol) {
               // This is the next best thing
               previousVisibleCol = element;
               // We've found one so use it.
@@ -473,10 +476,10 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
             }
           });
           // If found then focus on it
-          if (previousVisibleCol){
+          if (previousVisibleCol) {
             var colClass = previousVisibleCol.getColClass();
-            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + colClass+ ' .ui-grid-header-cell-primary-focus', true).then(angular.noop, function(reason){
-              if (reason !== 'canceled'){ // If this is canceled then don't perform the action
+            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + colClass + ' .ui-grid-header-cell-primary-focus', true).then(angular.noop, function (reason) {
+              if (reason !== 'canceled') { // If this is canceled then don't perform the action
                 //The fallback action is to focus on the grid menu
                 return focusToGridMenu();
               }
@@ -494,14 +497,13 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
         $scope.grid.queueGridRefresh();
         $scope.hideMenu();
-        $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-        $scope.grid.api.core.raise.columnVisibilityChanged( $scope.col );
+        $scope.grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+        $scope.grid.api.core.raise.columnVisibilityChanged($scope.col);
 
         // We are hiding so the default action of focusing on the button that opened this menu will fail.
         setFocusOnHideColumn();
       };
     },
-
 
 
     controller: ['$scope', function ($scope) {
@@ -512,8 +514,6 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
       });
     }]
   };
-
-  return uiGridColumnMenu;
 
 }]);
 

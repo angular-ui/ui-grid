@@ -171,8 +171,14 @@ var uidPrefix = 'uiGrid-';
  */
 module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateCache', '$timeout', '$interval', '$injector', '$q', '$interpolate', 'uiGridConstants',
   function ($log, $window, $document, $http, $templateCache, $timeout, $interval, $injector, $q, $interpolate, uiGridConstants) {
-  var s = {
+    /**
+     * scrollBar width. Используется, чтобы не вычислять каждый раз ширину Скроля.
+     * @type {number}
+     * @private
+     */
+  var _scrollbarWidth = 0;
 
+  var s = {
     augmentWidthOrHeight: augmentWidthOrHeight,
 
     getStyles: getStyles,
@@ -459,28 +465,33 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     // Thanks to http://stackoverflow.com/a/13382873/888165
     getScrollbarWidth: function() {
-        var outer = document.createElement("div");
-        outer.style.visibility = "hidden";
-        outer.style.width = "100px";
-        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+      if(_scrollbarWidth) return _scrollbarWidth;
 
-        document.body.appendChild(outer);
+      var outer = document.createElement("div");
+      outer.style.visibility = "hidden";
+      outer.style.width = "100px";
+      outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
-        var widthNoScroll = outer.offsetWidth;
-        // force scrollbars
-        outer.style.overflow = "scroll";
+      document.body.appendChild(outer);
 
-        // add innerdiv
-        var inner = document.createElement("div");
-        inner.style.width = "100%";
-        outer.appendChild(inner);
+      var widthNoScroll = outer.offsetWidth;
+      // force scrollbars
+      outer.style.overflow = "scroll";
 
-        var widthWithScroll = inner.offsetWidth;
+      // add innerdiv
+      var inner = document.createElement("div");
+      inner.style.width = "100%";
+      outer.appendChild(inner);
 
-        // remove divs
-        outer.parentNode.removeChild(outer);
+      var widthWithScroll = inner.offsetWidth;
 
-        return widthNoScroll - widthWithScroll;
+      // remove divs
+      outer.parentNode.removeChild(outer);
+
+      outer.style.overflow = "auto";
+
+      _scrollbarWidth = widthNoScroll - widthWithScroll;
+      return _scrollbarWidth;
     },
 
     swap: function( elem, options, callback, args ) {
@@ -1170,16 +1181,16 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       };
       var callNow = immediate && !timeout;
       if (timeout) {
-        $timeout.cancel(timeout);
+        window.clearTimeout(timeout);
       }
-      timeout = $timeout(later, wait, false);
+      timeout = window.setTimeout(later, wait);
       if (callNow) {
         result = func.apply(context, args);
       }
       return result;
     }
     debounce.cancel = function () {
-      $timeout.cancel(timeout);
+      window.clearTimeout(timeout);
       timeout = null;
     };
     return debounce;
@@ -1192,7 +1203,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *
    * @param {function} func function to throttle
    * @param {number} wait milliseconds to delay after first trigger
-   * @param {Object} params to use in throttle.
+   * @param {Object} options to use in throttle.
    *
    * @returns {function} A function that can be executed as throttled function
    *
@@ -1222,7 +1233,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     function runFunc(endDate){
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){queued = null; }, 0, 1, false);
+      window.setTimeout(function(){queued = null; }, 0);
     }
 
     return function(){
@@ -1235,7 +1246,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           runFunc();
         }
         else if (options.trailing){
-          queued = $interval(runFunc, wait - sinceLast, 1, false);
+          queued = window.setTimeout(runFunc, wait - sinceLast);
         }
       }
     };
@@ -1254,9 +1265,11 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     };
   };
 
-  var mouseWheeltoBind = ( 'onwheel' in document || document.documentMode >= 9 ) ? ['wheel'] : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'],
-      nullLowestDeltaTimeout,
-      lowestDelta;
+    var mouseWheeltoBind = ( 'onwheel' in document || document.documentMode >= 9 )
+        ? ['wheel']
+        : ['mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'],
+        nullLowestDeltaTimeout,
+        lowestDelta;
 
   s.on.mousewheel = function (elm, fn) {
     if (!elm || !fn) { return; }

@@ -20,6 +20,15 @@ angular.module('ui.grid')
    */
   var Grid = function Grid(options) {
     var self = this;
+
+    /**
+     * @ngdoc property
+     * @name i18n
+     * @propertyOf ui.grid.class:Grid
+     * @description for use Locale just set this property: i18n: 'ru'
+     */
+    self.i18n = options.i18n;
+
     // Get the id out of the options, then remove it
     if (options !== undefined && typeof(options.id) !== 'undefined' && options.id) {
       if (!/^[_a-zA-Z0-9-]+$/.test(options.id)) {
@@ -287,7 +296,7 @@ angular.module('ui.grid')
      * @description Scrolls the grid to make a certain row and column combo visible,
      *   in the case that it is not completely visible on the screen already.
      * @param {GridRow} gridRow row to make visible
-     * @param {GridCol} gridCol column to make visible
+     * @param {GridColumn} gridCol column to make visible
      * @returns {promise} a promise that is resolved when scrolling is complete
      *
      */
@@ -926,12 +935,14 @@ angular.module('ui.grid')
   };
 
   Grid.prototype.preCompileCellTemplate = function(col) {
-    var self = this;
-    var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
-    html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
+    var self = this,
+        html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col)),
+        COL_FIELD = col.renderer
+            ? 'col.renderer(grid.getCellValue(row, col), row.entity)'
+            : 'grid.getCellValue(row, col)';
+    html = html.replace(uiGridConstants.COL_FIELD, COL_FIELD);
 
-    var compiledElementFn = $compile(html);
-    col.compiledElementFn = compiledElementFn;
+    col.compiledElementFn = $compile(html);
 
     if (col.compiledElementFnDefer) {
       col.compiledElementFnDefer.resolve(col.compiledElementFn);
@@ -1077,6 +1088,7 @@ angular.module('ui.grid')
    * @param {object} rowEntity the gridOptions.data array element instance
    * @param {array} lookInRows [optional] the rows to look in - if not provided then
    * looks in grid.rows
+   * @returns {GridRow|null} Return row or nothing
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
@@ -1888,6 +1900,7 @@ angular.module('ui.grid')
         col.cellValueGetterCache = $parse(row.getEntityQualifiedColField(col));
       }
 
+      //TODO: col.renderer(col.cellValueGetterCache(row))
       return col.cellValueGetterCache(row);
     }
   };
@@ -1902,15 +1915,16 @@ angular.module('ui.grid')
    */
   Grid.prototype.getCellDisplayValue = function getCellDisplayValue(row, col) {
     if ( !col.cellDisplayGetterCache ) {
-      var custom_filter = col.cellFilter ? " | " + col.cellFilter : "";
+      var custom_filter = col.cellFilter ? " | " + col.cellFilter : "",
+          renderer = col.renderer ? ' (' + col.renderer.toString() + ')() ' : '';
 
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
+        col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + renderer + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
         var colField = col.field.replace(/(')|(\\)/g, "\\$&");
-        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + custom_filter);
+        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + renderer + custom_filter);
       } else {
-        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
+        col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + renderer + custom_filter);
       }
     }
 
@@ -2175,7 +2189,7 @@ angular.module('ui.grid')
      */
     if (containerHeadersToRecalc.length > 0) {
       // Putting in a timeout as it's not calculating after the grid element is rendered and filled out
-      $timeout(function() {
+      window.setTimeout(function() {
         // var oldHeaderHeight = self.grid.headerHeight;
         // self.grid.headerHeight = gridUtil.outerElementHeight(self.header);
 
@@ -2266,13 +2280,13 @@ angular.module('ui.grid')
         }
 
         p.resolve();
-      });
+      }, 0);
     }
     else {
       // Timeout still needs to be here to trigger digest after styles have been rebuilt
-      $timeout(function() {
+      window.setTimeout(function() {
         p.resolve();
-      });
+      }, 0);
     }
 
     return p.promise;
@@ -2335,7 +2349,7 @@ angular.module('ui.grid')
      * @description Scrolls the grid to make a certain row and column combo visible,
      *   in the case that it is not completely visible on the screen already.
      * @param {GridRow} gridRow row to make visible
-     * @param {GridCol} gridCol column to make visible
+     * @param {GridColumn} gridCol column to make visible
      * @returns {promise} a promise that is resolved when scrolling is complete
      */
     Grid.prototype.scrollToIfNecessary = function (gridRow, gridCol) {

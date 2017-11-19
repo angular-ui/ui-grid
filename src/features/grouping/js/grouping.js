@@ -169,7 +169,7 @@
                * <pre>
                *      gridApi.grouping.on.aggregationChanged(scope,function(col){})
                * </pre>
-               * @param {gridCol} col the column which on which aggregation changed. The aggregation
+               * @param {GridColumn} col the column which on which aggregation changed. The aggregation
                * type is available as `col.treeAggregation.type`
                */
               aggregationChanged: {},
@@ -182,7 +182,7 @@
                * <pre>
                *      gridApi.grouping.on.groupingChanged(scope,function(col){})
                * </pre>
-               * @param {gridCol} col the column which on which grouping changed. The new grouping is
+               * @param {GridColumn} col the column which on which grouping changed. The new grouping is
                * available as `col.grouping`
                */
               groupingChanged: {}
@@ -384,7 +384,7 @@
        * @description Sets the grouping defaults based on the columnDefs
        *
        * @param {object} colDef columnDef we're basing on
-       * @param {GridCol} col the column we're to update
+       * @param {GridColumn} col the column we're to update
        * @param {object} gridOptions the options we should use
        * @returns {promise} promise for the builder - actually we do it all inline so it's immediately resolved
        */
@@ -663,7 +663,7 @@
        * move is handled in a columnProcessor, so gets called as part of refresh
        *
        * @param {Grid} grid grid object
-       * @param {GridCol} column the column we want to group
+       * @param {GridColumn} column the column we want to group
        */
       groupColumn: function( grid, column){
         if ( typeof(column.grouping) === 'undefined' ){
@@ -708,7 +708,7 @@
        * move is handled in a columnProcessor, so gets called as part of refresh
        *
        * @param {Grid} grid grid object
-       * @param {GridCol} column the column we want to ungroup
+       * @param {GridColumn} column the column we want to ungroup
        */
       ungroupColumn: function( grid, column){
         if ( typeof(column.grouping) === 'undefined' ){
@@ -740,7 +740,7 @@
        * column is currently grouped then it removes the grouping first.
        *
        * @param {Grid} grid grid object
-       * @param {GridCol} column the column we want to aggregate
+       * @param {GridColumn} column the column we want to aggregate
        * @param {string} one of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
        */
       aggregateColumn: function( grid, column, aggregationType){

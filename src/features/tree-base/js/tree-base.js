@@ -504,11 +504,11 @@
          *        label: (optional) string,
          *        aggregationFn: function( aggregation, fieldValue, numValue, row ){...},
          *        finalizerFn: (optional) function( aggregation ){...}
-       *        },
+         *      },
          *      mean: {
          *        label: 'mean',
          *        aggregationFn: function( aggregation, fieldValue, numValue ){
-       *            aggregation.count = (aggregation.count || 1) + 1;
+         *          aggregation.count = (aggregation.count || 1) + 1;
          *          aggregation.sum = (aggregation.sum || 0) + numValue;
          *        },
          *        finalizerFn: function( aggregation ){
@@ -546,7 +546,7 @@
        * @description Sets the tree defaults based on the columnDefs
        *
        * @param {object} colDef columnDef we're basing on
-       * @param {GridCol} col the column we're to update
+       * @param {GridColumn} col the column we're to update
        * @param {object} gridOptions the options we should use
        * @returns {promise} promise for the builder - actually we do it all inline so it's immediately resolved
        */
@@ -1545,7 +1545,7 @@
        * column footer aggregations.
        *
        * @param {rows} visible rows. not used, but accepted to match signature of GridColumn.aggregationType
-       * @param {gridColumn} the column we are finalizing
+       * @param {GridColumn} column the column we are finalizing
        */
       treeFooterAggregationType: function( rows, column ) {
         service.finaliseAggregation(undefined, column.treeFooterAggregation);

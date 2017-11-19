@@ -148,8 +148,8 @@
          * @name getSafeText
          * @methodOf ui.grid.i18n.service:i18nService
          * @description  returns the text specified in the path or a Missing text if text is not found
-         * @param {string} path property path to use for retrieving text from string map
-         * @param {string} lang to return.  If not specified, returns current language
+         * @param {String} path property path to use for retrieving text from string map
+         * @param {String} [lang] to return.  If not specified, returns current language
          * @returns {object} the translation for the path
          * @example
          * <pre>
@@ -157,7 +157,7 @@
          * </pre>
          */
         getSafeText: function (path, lang) {
-          var language = lang ? lang : service.getCurrentLang();
+          var language = lang || service.getCurrentLang();
           var trans = langCache.get(language);
 
           if (!trans) {
@@ -196,6 +196,7 @@
           if (lang) {
             langCache.setCurrent(lang);
             $rootScope.$broadcast(i18nConstants.UPDATE_EVENT);
+            $rootScope.$emit(i18nConstants.UPDATE_EVENT);
           }
         },
 
