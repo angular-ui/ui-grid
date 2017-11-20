@@ -1,3 +1,19 @@
+<a name="v4.0.11"></a>
+### v4.0.11 (2017-11-20)
+
+
+#### Bug Fixes
+
+* **sorting:** fixed the priority computing when unsorting using column menu action (#6427) ([97e0ffa5](http://github.com/angular-ui/ng-grid/commit/97e0ffa5005960bf0e1f5e933e028f0e93b78d23))
+* **uiGridAutoResize:** Replaced timeout checker with watcher (#6470) ([262dbdc8](http://github.com/angular-ui/ng-grid/commit/262dbdc89323790a4d8e87a6aeb9fa21b0b24b37))
+* **uiGridHeader:** stop preserving explicit header heights when styles are rebuilt. (#3705) ([76e18d6](https://github.com/angular-ui/ui-grid/commit/76e18d6faa9fff5bd866312e3bf1989528d6f9eb))
+* **uiGridGroupPanel:** Cleaning up dead code. (#4059) ([ded2c12](https://github.com/angular-ui/ui-grid/commit/ded2c127962d6cd3a21f0f8e25bc0118233bbb02))
+
+
+#### Features
+
+* **Excel export:**  Adds ability to export as Excel with the help of Excel-builder. ([dc7d773](https://github.com/angular-ui/ui-grid/commit/dc7d7733b3989eba372d4e912b0d3189b59d23ca))
+
 <a name="v4.0.10"></a>
 ### v4.0.10 (2017-11-11)
 
