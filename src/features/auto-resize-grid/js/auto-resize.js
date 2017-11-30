@@ -19,25 +19,23 @@
       require: 'uiGrid',
       scope: false,
       link: function($scope, $elm, $attrs, uiGridCtrl) {
-
-        $scope.$watch(function() {
-          return $elm[0].clientWidth;
-        }, function(newVal, oldVal) {
-          if (newVal !== oldVal) {
-            uiGridCtrl.grid.gridWidth = newVal;
-            uiGridCtrl.grid.refresh();
+        $scope.$watchGroup([
+          function() {
+            return gridUtil.elementWidth($elm);
+          },
+          function() {
+            return gridUtil.elementHeight($elm);
+          }], function(newValues, oldValues, scope) {
+          if (newValues.toString() !== oldValues.toString()) {
+            uiGridCtrl.grid.gridWidth = newValues[0];
+            uiGridCtrl.grid.gridHeight = newValues[1];
+            setTimeout(function(){
+              $scope.$apply(function(){
+                uiGridCtrl.grid.refresh();
+              });
+            },0);
           }
         });
-
-        $scope.$watch(function() {
-          return $elm[0].clientHeight;
-        }, function(newVal, oldVal) {
-          if (newVal !== oldVal) {
-            uiGridCtrl.grid.gridHeight = newVal;
-            uiGridCtrl.grid.refresh();
-          }
-        });
-
       }
     };
   }]);
