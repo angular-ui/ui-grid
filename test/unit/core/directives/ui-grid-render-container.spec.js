@@ -61,7 +61,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error).toEqual('No row render container name specified');
+					expect(error.message).toEqual('No row render container name specified');
 					grid.remove();
 					done();
 				}
@@ -71,7 +71,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error).toEqual('No column render container name specified');
+					expect(error.message).toEqual('No column render container name specified');
 					grid.remove();
 					done();
 				}
@@ -82,7 +82,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error).toEqual('Row render container \'mock\' is not registered.');
+					expect(error.message).toEqual('Row render container \'mock\' is not registered.');
 					grid.remove();
 					done();
 				}
@@ -93,7 +93,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error).toEqual('Column render container \'mock\' is not registered.');
+					expect(error.message).toEqual('Column render container \'mock\' is not registered.');
 					grid.remove();
 					done();
 				}
