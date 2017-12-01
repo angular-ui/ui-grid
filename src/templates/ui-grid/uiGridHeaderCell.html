@@ -38,7 +38,7 @@
     tabindex="0"
     ui-grid-one-bind-id-grid="col.uid + '-menu-button'"
     class="ui-grid-column-menu-button"
-    ng-if="grid.options.enableColumnMenus && !col.isRowHeader  && col.colDef.enableColumnMenu !== false"
+    ng-if="grid.options.enableColumnMenus && grid.options.showColumnMenuButtons && !col.isRowHeader  && col.colDef.enableColumnMenu !== false && col.colDef.showColumnMenuButton !== false"
     ng-click="toggleMenu($event)"
     ng-keydown="headerCellArrowKeyDown($event)"
     ng-class="{'ui-grid-column-menu-button-last-col': isLastCol}"

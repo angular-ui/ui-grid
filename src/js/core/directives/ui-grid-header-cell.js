@@ -323,6 +323,17 @@
               *
               */
 
+              /**
+              * @ngdoc property
+              * @name showColumnMenuButton
+              * @propertyOf ui.grid.class:GridOptions.columnDef
+              * @description if column menu buttons are displayed, controls the column menu buttons for this specific
+              * column (i.e. if gridOptions.showColumnMenusButtons, then you can control column menu buttons
+              * using this option. If gridOptions.showColumnMenuButtons === false then you get no column
+              * menu buttons shown irrespective of the value of this option ).  Defaults to true.
+              *
+              */
+
               $scope.offAllEvents();
 
               if ($scope.sortable || $scope.colMenu) {
