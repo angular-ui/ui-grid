@@ -563,14 +563,12 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 
 			expect(sortChanged).toHaveBeenCalledWith(jasmine.any(Object), []);
 		});
-		// TODO: this does not seem to work in angular 1.6.7
-		if (angular.version.major === 1 && angular.version.minor < 6) {
-			it('should raise the columnVisibilityChanged event when hide column is clicked', function() {
-				$($('.ui-grid-menu-item')[3]).click();
-				$timeout.flush();
 
-				expect(columnVisibilityChanged).toHaveBeenCalled();
-			});
-		}
+    it('should raise the columnVisibilityChanged event when hide column is clicked', function() {
+      $($('.ui-grid-menu-item')[3]).click();
+
+      expect(columnVisibilityChanged).toHaveBeenCalled();
+    });
+
 	});
 });
