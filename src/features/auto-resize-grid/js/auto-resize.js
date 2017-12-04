@@ -26,7 +26,7 @@
           function() {
             return gridUtil.elementHeight($elm);
           }], function(newValues, oldValues, scope) {
-          if (newValues.toString() !== oldValues.toString()) {
+          if (!angular.equals(newValues, oldValues)) {
             uiGridCtrl.grid.gridWidth = newValues[0];
             uiGridCtrl.grid.gridHeight = newValues[1];
             setTimeout(function(){
