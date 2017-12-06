@@ -19,21 +19,30 @@
       require: 'uiGrid',
       scope: false,
       link: function($scope, $elm, $attrs, uiGridCtrl) {
+        var timeout = null;
+
+        var debounce = function(width, height) {
+          if (timeout !== null) {
+            clearTimeout(timeout);
+          }
+          timeout = setTimeout(function() {
+            uiGridCtrl.grid.gridWidth = width;
+            uiGridCtrl.grid.gridHeight = height;
+            uiGridCtrl.grid.refresh();
+            timeout = null;
+          }, 400);
+        };
+
         $scope.$watchGroup([
           function() {
             return gridUtil.elementWidth($elm);
           },
           function() {
             return gridUtil.elementHeight($elm);
-          }], function(newValues, oldValues, scope) {
+          }
+        ], function(newValues, oldValues, scope) {
           if (!angular.equals(newValues, oldValues)) {
-            uiGridCtrl.grid.gridWidth = newValues[0];
-            uiGridCtrl.grid.gridHeight = newValues[1];
-            setTimeout(function(){
-              $scope.$apply(function(){
-                uiGridCtrl.grid.refresh();
-              });
-            },0);
+            debounce(newValues[0], newValues[1]);
           }
         });
       }
