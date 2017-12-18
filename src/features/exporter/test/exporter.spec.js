@@ -67,41 +67,6 @@ describe('ui.grid.exporter', function() {
       grid.columns[3].drawnWidth = 200;
     });
 
-    it('set all options to default', function() {
-      uiGridExporterService.defaultGridOptions(options);
-      expect( options ).toEqual({
-        exporterSuppressMenu: false,
-        exporterMenuLabel: 'Export',
-        exporterCsvColumnSeparator: ',',
-        exporterCsvFilename: 'download.csv',
-        exporterPdfFilename: 'download.pdf',
-        exporterOlderExcelCompatibility: false,
-        exporterIsExcelCompatible: false,
-        exporterPdfDefaultStyle : { fontSize : 11 },
-        exporterPdfTableStyle : { margin : [ 0, 5, 0, 15 ] },
-        exporterPdfTableHeaderStyle : { bold : true, fontSize : 12, color : 'black' },
-        exporterPdfHeader: null,
-        exporterPdfFooter: null,
-        exporterPdfOrientation : 'landscape',
-        exporterPdfPageSize : 'A4',
-        exporterPdfMaxGridWidth : 720,
-        exporterPdfCustomFormatter: jasmine.any(Function),
-        exporterHeaderFilterUseName: false,
-        exporterMenuAllData: true,
-        exporterMenuVisibleData: true,
-        exporterMenuSelectedData: true,
-        exporterMenuCsv: true,
-        exporterMenuPdf: true,
-        exporterMenuExcel: true,
-        exporterFieldCallback: jasmine.any(Function),
-        exporterFieldFormatCallback: jasmine.any(Function),
-        exporterFieldApplyFilters: false,
-        exporterAllDataFn: null,
-        exporterSuppressColumns: [],
-        exporterMenuItemOrder: 200
-      });
-        
-
     describe('initializeGrid', function() {
       beforeEach(function() {
         grid.api.registerEventsFromObject = jasmine.createSpy('registerEventsFromObject').and.callFake(function(events) {
@@ -117,9 +82,11 @@ describe('ui.grid.exporter', function() {
         grid.api.registerMethodsFromObject.calls.reset();
       });
       describe('public events', function() {
-        it('should define exporter public events as an empty object', function() {
+        it('should define exporter public events as an empty object', function () {
           expect(publicEvents.exporter).toEqual({});
         });
+      });
+
       describe('public methods', function() {
         it('should define exporter public methods', function() {
           expect(publicMethods.exporter).toBeDefined();
@@ -148,81 +115,46 @@ describe('ui.grid.exporter', function() {
       });
     });
 
-    it('set all options to non-default, including using deprecated exporterAllDataPromise', function() {
-      var callback = function() {};
-      options = {
-        exporterSuppressMenu: true,
-        exporterMenuLabel: 'custom export button',
-        exporterCsvColumnSeparator: ';',
-        exporterCsvFilename: 'myfile.csv',
-        exporterPdfFilename: 'myfile.pdf',
-        exporterOlderExcelCompatibility: true,
-        exporterIsExcelCompatible: true,
-        exporterPdfDefaultStyle : { fontSize : 12 },
-        exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
-        exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
-        exporterPdfHeader: "My Header",
-        exporterPdfFooter: "My Footer",
-        exporterPdfOrientation : 'portrait',
-        exporterPdfPageSize : 'LETTER',
-        exporterPdfMaxGridWidth : 670,
-        exporterPdfCustomFormatter: callback,
-        exporterHeaderFilterUseName: true,
-        exporterMenuAllData: false,
-        exporterMenuVisibleData: false,
-        exporterMenuSelectedData: false,
-        exporterMenuCsv: false,
-        exporterMenuPdf: false,
-        exporterMenuExcel: false,
-        exporterFieldCallback: callback,
-        exporterFieldFormatCallback: callback,
-        exporterFieldApplyFilters: false,
-        exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ],
-        exporterExcelCustomFormatters: callback,
-        exporterExcelFilename: 'myFile.xlsx',
-        exporterExcelSheetName: 'Sheet1',
-        exporterExcelHeader: "My Header",
-        exporterExcelFooter: "My Footer",
-        exporterMenuItemOrder: 75
-      };
-      uiGridExporterService.defaultGridOptions(options);
-      expect( options ).toEqual({
-        exporterSuppressMenu: true,
-        exporterMenuLabel: 'custom export button',
-        exporterCsvColumnSeparator: ';',
-        exporterCsvFilename: 'myfile.csv',
-        exporterPdfFilename: 'myfile.pdf',
-        exporterOlderExcelCompatibility: true,
-        exporterIsExcelCompatible: true,
-        exporterPdfDefaultStyle : { fontSize : 12 },
-        exporterPdfTableStyle : { margin : [ 15, 5, 15, 15 ] },
-        exporterPdfTableHeaderStyle : { bold : false, fontSize : 12, color : 'green' },
-        exporterPdfHeader: "My Header",
-        exporterPdfFooter: "My Footer",
-        exporterPdfOrientation : 'portrait',
-        exporterPdfPageSize : 'LETTER',
-        exporterPdfMaxGridWidth : 670,
-        exporterPdfCustomFormatter: callback,
-        exporterHeaderFilterUseName: true,
-        exporterMenuAllData: false,
-        exporterMenuVisibleData: false,
-        exporterMenuSelectedData: false,
-        exporterMenuCsv: false,
-        exporterMenuPdf: false,
-        exporterMenuExcel: false,
-        exporterFieldCallback: callback,
-        exporterFieldFormatCallback: callback,
-        exporterFieldApplyFilters: false,
-        exporterAllDataPromise: callback,
-        exporterSuppressColumns: [ 'buttons' ],
-        exporterExcelCustomFormatters: callback,
-        exporterExcelFilename: 'myFile.xlsx',
-        exporterExcelSheetName: 'Sheet1',
-        exporterExcelHeader: "My Header",
-        exporterExcelFooter: "My Footer",
-        exporterMenuItemOrder: 75,
-        exporterAllDataFn: callback
+    describe('defaultGridOptions', function() {
+      var options;
+
+      beforeEach(function () {
+        options = {};
+      });
+
+      it('set all options to default', function () {
+        uiGridExporterService.defaultGridOptions(options);
+        expect(options).toEqual({
+          exporterSuppressMenu: false,
+          exporterMenuLabel: 'Export',
+          exporterCsvColumnSeparator: ',',
+          exporterCsvFilename: 'download.csv',
+          exporterPdfFilename: 'download.pdf',
+          exporterOlderExcelCompatibility: false,
+          exporterIsExcelCompatible: false,
+          exporterPdfDefaultStyle: {fontSize: 11},
+          exporterPdfTableStyle: {margin: [0, 5, 0, 15]},
+          exporterPdfTableHeaderStyle: {bold: true, fontSize: 12, color: 'black'},
+          exporterPdfHeader: null,
+          exporterPdfFooter: null,
+          exporterPdfOrientation: 'landscape',
+          exporterPdfPageSize: 'A4',
+          exporterPdfMaxGridWidth: 720,
+          exporterPdfCustomFormatter: jasmine.any(Function),
+          exporterHeaderFilterUseName: false,
+          exporterMenuAllData: true,
+          exporterMenuVisibleData: true,
+          exporterMenuSelectedData: true,
+          exporterMenuCsv: true,
+          exporterMenuPdf: true,
+          exporterMenuExcel: true,
+          exporterFieldCallback: jasmine.any(Function),
+          exporterFieldFormatCallback: jasmine.any(Function),
+          exporterFieldApplyFilters: false,
+          exporterAllDataFn: null,
+          exporterSuppressColumns: [],
+          exporterMenuItemOrder: 200
+        });
       });
     });
 
