@@ -18,7 +18,11 @@ available through:
 <pre>  bower install lodash
   bower install jszip#2.6.1
   bower install excelbuilder  </pre>
+or
 
+<pre>  npm install lodash
+  npm install jszip@2.6.1
+  npm install excel-builder  </pre>
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}, and
 
 - {@link api/ui.grid.exporter.api:ColumnDef columnDef}
