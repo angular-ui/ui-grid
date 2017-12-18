@@ -1,6 +1,9 @@
 <div
   class="ui-grid-selection-row-header-buttons ui-grid-icon-ok"
   ng-class="{'ui-grid-row-selected': row.isSelected}"
-  ng-click="selectButtonClick(row, $event)">
+  ng-click="selectButtonClick(row, $event)"
+  ng-keydown="selectButtonKeyDown(row, $event)"
+  role="checkbox"
+  ng-model="row.isSelected">
   &nbsp;
 </div>

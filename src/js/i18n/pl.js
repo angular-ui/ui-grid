@@ -9,7 +9,8 @@
           aria: {
             defaultFilterLabel: 'Filtr dla kolumny',
             removeFilter: 'Usuń filtr',
-            columnMenuButtonLabel: 'Menu kolumny'
+            columnMenuButtonLabel: 'Menu kolumny',
+            column: 'Kolumna'
           },
           priority: 'Prioritet:',
           filterLabel: "Filtr dla kolumny: "
@@ -21,6 +22,10 @@
           description: 'Przeciągnij nagłówek kolumny tutaj, aby pogrupować według niej.'
         },
         search: {
+          aria: {
+            selected: 'Wiersz zaznaczony',
+            notSelected: 'Wiersz niezaznaczony'
+          },
           placeholder: 'Szukaj...',
           showingItems: 'Widoczne pozycje:',
           selectedItems: 'Zaznaczone pozycje:',

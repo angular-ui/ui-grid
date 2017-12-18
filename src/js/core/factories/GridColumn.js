@@ -18,8 +18,11 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name name
    * @propertyOf ui.grid.class:GridColumn
-   * @description (mandatory) each column should have a name, although for backward
-   * compatibility with 2.x name can be omitted if field is present
+   * @description (mandatory) Each column should have a name, although for backward
+   * compatibility with 2.x name can be omitted if field is present.
+   *
+   * Important - This must be unique to each column on a web page since it can
+   * be used as a key for retrieving information such as custom sort algorithms.
    *
    */
 
@@ -27,8 +30,11 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name name
    * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description (mandatory) each column should have a name, although for backward
-   * compatibility with 2.x name can be omitted if field is present
+   * @description (mandatory) Each column should have a name, although for backward
+   * compatibility with 2.x name can be omitted if field is present.
+   *
+   * Important - This must be unique to each column on a web page since it can
+   * be used as a key for retrieving information such as custom sort algorithms.
    *
    */
 
@@ -863,6 +869,15 @@ angular.module('ui.grid')
    * @description Removes column from the grid sorting
    */
   GridColumn.prototype.unsort = function () {
+    //Decrease priority for every col where priority is higher than the removed sort's priority.
+    var thisPriority = this.sort.priority;
+    
+    this.grid.columns.forEach(function (col) {
+      if (col.sort && col.sort.priority !== undefined && col.sort.priority > thisPriority) {
+        col.sort.priority -= 1;
+      }
+    });
+    
     this.sort = {};
     this.grid.api.core.raise.sortChanged( this.grid, this.grid.getColumnSorting() );
   };

@@ -9,7 +9,8 @@
           aria: {
             defaultFilterLabel: 'Filter for column',
             removeFilter: 'Remove Filter',
-            columnMenuButtonLabel: 'Column Menu'
+            columnMenuButtonLabel: 'Column Menu',
+            column: 'Column'
           },
           priority: 'Priority:',
           filterLabel: "Filter for column: "
@@ -21,6 +22,10 @@
           description: 'Drag a column header here and drop it to group by that column.'
         },
         search: {
+          aria: {
+            selected: 'Row selected',
+            notSelected: 'Row not selected'
+          },
           placeholder: 'Search...',
           showingItems: 'Showing Items:',
           selectedItems: 'Selected Items:',

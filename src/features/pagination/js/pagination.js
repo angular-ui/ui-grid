@@ -378,8 +378,8 @@
    *
    *  @description Panel for handling pagination
    */
-  module.directive('uiGridPager', ['uiGridPaginationService', 'uiGridConstants', 'gridUtil', 'i18nService',
-    function (uiGridPaginationService, uiGridConstants, gridUtil, i18nService) {
+  module.directive('uiGridPager', ['uiGridPaginationService', 'uiGridConstants', 'gridUtil', 'i18nService', 'i18nConstants',
+    function (uiGridPaginationService, uiGridConstants, gridUtil, i18nService, i18nConstants) {
       return {
         priority: -200,
         scope: true,
@@ -388,16 +388,26 @@
           var defaultFocusElementSelector = '.ui-grid-pager-control-input';
           $scope.aria = i18nService.getSafeText('pagination.aria'); //Returns an object with all of the aria labels
 
-          $scope.paginationApi = uiGridCtrl.grid.api.pagination;
-          $scope.sizesLabel = i18nService.getSafeText('pagination.sizes');
-          $scope.totalItemsLabel = i18nService.getSafeText('pagination.totalItems');
-          $scope.paginationOf = i18nService.getSafeText('pagination.of');
-          $scope.paginationThrough = i18nService.getSafeText('pagination.through');
+          var updateLabels = function(){
+            $scope.paginationApi = uiGridCtrl.grid.api.pagination;
+            $scope.sizesLabel = i18nService.getSafeText('pagination.sizes');
+            $scope.totalItemsLabel = i18nService.getSafeText('pagination.totalItems');
+            $scope.paginationOf = i18nService.getSafeText('pagination.of');
+            $scope.paginationThrough = i18nService.getSafeText('pagination.through');
+          };
+
+
+          updateLabels();
+
+          $scope.$on(i18nConstants.UPDATE_EVENT, updateLabels);
 
           var options = uiGridCtrl.grid.options;
 
+          
           uiGridCtrl.grid.renderContainers.body.registerViewportAdjuster(function (adjustment) {
-            adjustment.height = adjustment.height - gridUtil.elementHeight($elm, "padding");
+            if (options.enablePaginationControls) {
+              adjustment.height = adjustment.height - gridUtil.elementHeight($elm, "padding");
+            }
             return adjustment;
           });
 

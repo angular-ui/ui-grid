@@ -629,8 +629,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile) {
+  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile', 'i18nService',
+    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile, i18nService) {
       return {
         replace: true,
         priority: -150,
@@ -688,10 +688,10 @@
 
                 var rowColSelectIndex = uiGridCtrl.grid.api.cellNav.rowColSelectIndex(rowCol);
 
-                if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1) {
+                if (grid.cellNav.lastRowCol === null || rowColSelectIndex === -1 || (grid.cellNav.lastRowCol.col === col && grid.cellNav.lastRowCol.row === row)) {
                   var newRowCol = new GridRowColumn(row, col);
 
-                  if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col){
+                  if (grid.cellNav.lastRowCol === null || grid.cellNav.lastRowCol.row !== newRowCol.row || grid.cellNav.lastRowCol.col !== newRowCol.col || grid.options.enableCellEditOnFocus){
                     grid.api.cellNav.raise.navigate(newRowCol, grid.cellNav.lastRowCol, originEvt);
                     grid.cellNav.lastRowCol = newRowCol;
                   }
@@ -792,7 +792,7 @@
                                            'id="' + grid.id +'-aria-speakable" ' +
                                            'class="ui-grid-a11y-ariascreenreader-speakable ui-grid-offscreen" ' +
                                            'aria-live="assertive" ' +
-                                           'role="region" ' +
+                                           'role="alert" ' +
                                            'aria-atomic="true" ' +
                                            'aria-hidden="false" ' +
                                            'aria-relevant="additions" ' +
@@ -814,7 +814,7 @@
                   if (originEvt && originEvt.type === 'focus'){return;}
 
                   function setNotifyText(text){
-                    if (text === ariaNotifier.text()){return;}
+                    if (text === ariaNotifier.text().trim()){return;}
                     ariaNotifier[0].style.clip = 'rect(0px,0px,0px,0px)';
                     /*
                      * This is how google docs handles clearing the div. Seems to work better than setting the text of the div to ''
@@ -833,10 +833,27 @@
                     }
                   }
 
+                  function getAppendedColumnHeaderText(col) {
+                    return ', ' + i18nService.getSafeText('headerCell.aria.column') + ' ' + col.displayName;
+                  }
+
+                  function getCellDisplayValue(currentRowColumn) {
+                    if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
+                      // This is the case when the 'selection' feature is used in the grid and the user has moved
+                      // to or inside of the left grid container which holds the checkboxes for selecting rows.
+                      // This is necessary for Accessibility. Without this a screen reader cannot determine if the row
+                      // is or is not currently selected.
+                        return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
+                      } else {
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
+                      }
+                    }
+
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
+                    var cellDisplayValue = getCellDisplayValue(currentSelection[i]) + getAppendedColumnHeaderText(currentSelection[i].col);
+                    values.push(cellDisplayValue);
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
@@ -933,7 +950,7 @@
                 });
                 var result = raiseViewPortKeyDown ? null : uiGridCtrl.cellNav.handleKeyDown(evt);
                 if (result === null) {
-                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol);
+                  uiGridCtrl.grid.api.cellNav.raise.viewPortKeyDown(evt, rowCol, uiGridCtrl.cellNav.handleKeyDown);
                   viewPortKeyDownWasRaisedForRowCol = rowCol;
                 }
               });

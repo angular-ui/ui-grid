@@ -1136,6 +1136,7 @@ angular.module('ui.grid')
     var self = this;
     var oldRows = self.rows.slice(0);
     var oldRowHash = self.rowHashMap || self.createRowHashMap();
+    var allRowsSelected = true;
     self.rowHashMap = self.createRowHashMap();
     self.rows.length = 0;
 
@@ -1163,7 +1164,14 @@ angular.module('ui.grid')
 
       self.rows.push( newRow );
       self.rowHashMap.put( newEntity, newRow );
+      if (!newRow.isSelected) {
+        allRowsSelected = false;
+      }
     });
+
+    if (self.selection) {
+      self.selection.selectAll = allRowsSelected;
+    }
 
     self.assignTypes();
 
@@ -1371,7 +1379,9 @@ angular.module('ui.grid')
           else {
             finished.resolve(processedRows);
           }
-        }).catch(angular.noop);
+        }).catch(function(error) {
+          throw error;
+        });
     }
 
     // Start on the first processor
@@ -1899,13 +1909,15 @@ angular.module('ui.grid')
       if (typeof(row.entity['$$' + col.uid]) !== 'undefined') {
         col.cellDisplayGetterCache = $parse(row.entity['$$' + col.uid].rendered + custom_filter);
       } else if (this.options.flatEntityAccess && typeof(col.field) !== 'undefined') {
-        col.cellDisplayGetterCache = $parse('entity.' + col.field + custom_filter);
+        var colField = col.field.replace(/(')|(\\)/g, "\\$&");
+        col.cellDisplayGetterCache = $parse('entity[\'' + colField + '\']' + custom_filter);
       } else {
         col.cellDisplayGetterCache = $parse(row.getEntityQualifiedColField(col) + custom_filter);
       }
     }
 
-    return col.cellDisplayGetterCache(row);
+    var rowWithCol = angular.extend({}, row, {col: col});
+    return col.cellDisplayGetterCache(rowWithCol);
   };
 
 
@@ -2138,8 +2150,8 @@ angular.module('ui.grid')
         }
 
         if (container.header || container.headerCanvas) {
-          container.explicitHeaderHeight = container.explicitHeaderHeight || null;
-          container.explicitHeaderCanvasHeight = container.explicitHeaderCanvasHeight || null;
+          container.explicitHeaderHeight = null;
+          container.explicitHeaderCanvasHeight = null;
 
           containerHeadersToRecalc.push(container);
         }
@@ -2190,7 +2202,7 @@ angular.module('ui.grid')
           }
 
           if (container.header) {
-            var headerHeight = container.headerHeight = getHeight(container.headerHeight, parseInt(gridUtil.outerElementHeight(container.header), 10));
+            var headerHeight = container.headerHeight = getHeight(container.headerHeight, gridUtil.outerElementHeight(container.header));
 
             // Get the "inner" header height, that is the height minus the top and bottom borders, if present. We'll use it to make sure all the headers have a consistent height
             var topBorder = gridUtil.getBorderSize(container.header, 'top');
@@ -2394,7 +2406,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
         else if (pixelsToSeeRow > bottomBound) {
@@ -2404,7 +2418,9 @@ angular.module('ui.grid')
 
           // Turn the scroll position into a percentage and make it an argument for a scroll event
           percentage = scrollPixels / scrollLength;
-          scrollEvent.y = { percentage: percentage  };
+          if (percentage <= 1) {
+            scrollEvent.y = { percentage: percentage  };
+          }
         }
       }
 

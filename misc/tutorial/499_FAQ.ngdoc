@@ -55,7 +55,7 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
 
 ## What angular versions are supported by ui.grid
 
-  Our current testing uses angular 1.5.  We intend to remain compatible with all forward versions of 1.5.
+  Our current testing uses angular 1.6.  We intend to remain compatible with all forward versions of 1.6.
   Refer {@link 100_preReqs preReqs}
 
 ## How can I wrap text in a cell?

@@ -19,10 +19,10 @@ http://localhost:9003/docs/#/tutorial to browse each tutorial.
 <br/> no-e2e - eliminate protractor tests
 <br/> angular=n.n.n - specify a specify angular version to run unit tests against
 <br/> core - run only the tests for the core code, skip features
-<br/> fast - alias for --no-e2e --core --angular=1.3.6
+<br/> fast - alias for --no-e2e --core --angular=1.6.7
 
 ```
-grunt dev --no-e2e --angular=1.5.0
+grunt dev --no-e2e --angular=1.6.7
 ```
 
 # Code Structure
@@ -206,7 +206,7 @@ column and row builders (see below).  See ui.grid.edit unit tests on how to easi
             uiGridCtrl.grid.api.registerEventsFromObject(uiGridFeatureConstants.publicEvents);
             uiGridCtrl.grid.registerColumnBuilder(uiGridFeatureService.featureColumnBuilder);
             uiGridCtrl.grid.registerRowBuilder(uiGridFeatureService.featureRowBuilder);
-            uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
+            uiGridCtrl.grid.registerRowsProcessor(uiGridFeatureService.featureRowsProcessor);
             //do anything else you can safely do here
             //!! of course, don't stomp on core grid logic or data
           }
@@ -290,7 +290,7 @@ RowsProcessor allows your feature to affect the entire rows collections.  Gives 
         ....
 
         //from feature directive pre-link
-        uiGridCtrl.grid.RowsProcessor(uiGridFeatureService.featureRowsProcessor);
+        uiGridCtrl.grid.registerRowsProcessor(uiGridFeatureService.featureRowsProcessor);
 ```
 
 ## Public Methods and Events

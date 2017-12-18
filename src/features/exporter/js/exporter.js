@@ -763,8 +763,8 @@
         loadAllDataIfNeeded: function (grid, rowTypes, colTypes) {
           if ( rowTypes === uiGridExporterConstants.ALL && grid.rows.length !== grid.options.totalItems && grid.options.exporterAllDataFn) {
             return grid.options.exporterAllDataFn()
-              .then(function() {
-                grid.modifyRows(grid.options.data);
+              .then(function(allData) {
+                grid.modifyRows(allData);
               });
           } else {
             var deferred = $q.defer();
@@ -1391,6 +1391,10 @@
             returnVal = (field.value ? 'TRUE' : 'FALSE') ;
           } else if (typeof(field.value) === 'string') {
             returnVal = field.value.replace(/"/g,'""');
+          } else if (field.value instanceof Date) {
+            returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
+          } else if (typeof(field.value) === 'object') {
+            returnVal = field.value;
           } else {
             returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
           }

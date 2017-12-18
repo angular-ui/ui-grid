@@ -15,8 +15,18 @@
       compile: function compile(tElement, tAttrs, transclude) {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            var cellFooter = $compile($scope.col.footerCellTemplate)($scope);
-            $elm.append(cellFooter);
+            var template = $scope.col.footerCellTemplate;
+            if (template === undefined && $scope.col.providedFooterCellTemplate !== '') {
+              if ($scope.col.footerCellTemplatePromise) {
+                $scope.col.footerCellTemplatePromise.then(function () {
+                  template = $scope.col.footerCellTemplate;
+                  $elm.append($compile(template)($scope));
+                });
+              }
+            }
+            else {
+              $elm.append($compile(template)($scope));
+            }
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
             //$elm.addClass($scope.col.getColClass(false));

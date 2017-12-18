@@ -4,7 +4,9 @@
     class="ui-grid-cell-contents"
     col-index="renderIndex">
     <ui-grid-selection-select-all-buttons
-      ng-if="grid.options.enableSelectAll">
+      ng-if="grid.options.enableSelectAll"
+      role="checkbox"
+      ng-model="grid.selection.selectAll">
     </ui-grid-selection-select-all-buttons>
   </div>
 </div>

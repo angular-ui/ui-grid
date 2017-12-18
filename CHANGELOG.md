@@ -1,3 +1,132 @@
+<a name="v4.0.11"></a>
+### v4.0.11 (2017-11-20)
+
+
+#### Bug Fixes
+
+* **sorting:** fixed the priority computing when unsorting using column menu action (#6427) ([97e0ffa5](http://github.com/angular-ui/ng-grid/commit/97e0ffa5005960bf0e1f5e933e028f0e93b78d23))
+* **uiGridAutoResize:** Replaced timeout checker with watcher (#6470) ([262dbdc8](http://github.com/angular-ui/ng-grid/commit/262dbdc89323790a4d8e87a6aeb9fa21b0b24b37))
+* **uiGridHeader:** stop preserving explicit header heights when styles are rebuilt. (#3705) ([76e18d6](https://github.com/angular-ui/ui-grid/commit/76e18d6faa9fff5bd866312e3bf1989528d6f9eb))
+* **uiGridGroupPanel:** Cleaning up dead code. (#4059) ([ded2c12](https://github.com/angular-ui/ui-grid/commit/ded2c127962d6cd3a21f0f8e25bc0118233bbb02))
+
+
+#### Features
+
+* **Excel export:**  Adds ability to export as Excel with the help of Excel-builder. ([dc7d773](https://github.com/angular-ui/ui-grid/commit/dc7d7733b3989eba372d4e912b0d3189b59d23ca))
+
+<a name="v4.0.10"></a>
+### v4.0.10 (2017-11-11)
+
+
+#### Features
+
+* **hidePin:** Added option to hide pinLeft or pinRight from pinning menu (#6334) ([145e3662](http://github.com/angular-ui/ng-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+* **tree-view:** Supports recursive expanding ([48434903](http://github.com/angular-ui/ng-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+
+<a name="v4.0.9"></a>
+### v4.0.9 (2017-11-11)
+
+#### Bug Fixes
+
+* **selection:** Adjust bug in checkbox for selection. (#6459) ([adfc83c](https://github.com/angular-ui/ui-grid/commit/adfc83c667c395e9bfee404270f8de5b212cfd91))
+* **exporterAllDataFn:** exporterAllDataFn results is no longer ignored. (#6163) ([f16cdb0](https://github.com/angular-ui/ui-grid/commit/f16cdb06860dcd416520a48586b49d0dd50a1966))
+* **resizing:** Fix zero delta on double click resizing. (#5362) ([8dd0359](https://github.com/angular-ui/ui-grid/commit/8dd035999054837b2a1f62fb4535542620ca4e59))
+
+
+#### Features
+
+* **tree-view:** Supports recursive expanding ([4843490](https://github.com/angular-ui/ui-grid/commit/48434903937ce93bae208a026da9d4daa032c12d))
+* **hidePin:** Added option to hide pined containers from pinning menu. ([145e366](https://github.com/angular-ui/ui-grid/commit/145e36623f08dd7749ee54aad8eaa07c7318bcc4))
+
+
+<a name="v4.0.8"></a>
+### v4.0.8 (2017-11-06)
+
+
+#### Bug Fixes
+
+* **ARIA-Roles:** Improving accessibility of ui-grid. (#6341) ([6cf44b4b](http://github.com/angular-ui/ng-grid/commit/6cf44b4bea55e9e3883dc00ada9fe3593b538a4f))
+* **Grid.js:**
+  * add column header to text read by aria when user moves through grid with keyboar ([a6b52c2a](http://github.com/angular-ui/ng-grid/commit/a6b52c2a3e143fa36929ad0f850a026080656ea2))
+  * wrong  use in getCellDisplayValue ([57d258e9](http://github.com/angular-ui/ng-grid/commit/57d258e900fdfc1ac312edf1951edb3e04f48e76))
+* **core:** Fixes URL-based template loading for `header-cell`, `footer-cell`, `filter`. ([f0b2fa7d](http://github.com/angular-ui/ng-grid/commit/f0b2fa7d85b5e731e37f9b0ef7ab306f27bfdb3a))
+* **edit:** trigger edit when single click when set enableCellEditOnFocus with true ([bcbd8433](http://github.com/angular-ui/ng-grid/commit/bcbd8433dcb8e69d13ea4281f426febf226986aa))
+* **pagination:** remove unneeded height adjustment ([4c667e72](http://github.com/angular-ui/ng-grid/commit/4c667e721cd3273e4a34f5000bd75c8fecdec631))
+* **selection:** Prevent space bar scrolling (#6410) ([7dbf3955](http://github.com/angular-ui/ng-grid/commit/7dbf3955208496514ccf2d37d5af8e9f71ae8611))
+* **utils.js:** Update browser setting based on changes to SauceLabs. ([0cdf4e93](http://github.com/angular-ui/ng-grid/commit/0cdf4e9385423d0d6f02ca45e6dc40217cb66719))
+
+<a name="v4.0.7"></a>
+### v4.0.7 (2017-09-27)
+
+
+#### Bug Fixes
+
+* **build:** Cope with tags not conforming to semver format when building. (#6376) ([1248e5a3](http://github.com/angular-ui/ng-grid/commit/1248e5a3209595fc232de992880d5de9d6397201))
+* **i18n:** Fixed i18n typo in German language (#6262) ([02a6a68d](http://github.com/angular-ui/ng-grid/commit/02a6a68d52d064f5fa9cc0c2d47f1588ba71f912))
+* **rowEdit:** cancel rowEditSaveTimer on flushDirtyRows - may cause double row save ([6711c725](http://github.com/angular-ui/ng-grid/commit/6711c725f634a1a755316269ce840ec1633109cb))
+* **scrollEvent:** Prevent scrollEvent when scroll percentage is greater then 1. (#6241) ([43ffebba](http://github.com/angular-ui/ng-grid/commit/43ffebbad73d9d4b4c4bc982d15872fb2a378f6f))
+* **ui-grid.info:**
+  * Removing unknown broken link. ([2968158c](http://github.com/angular-ui/ng-grid/commit/2968158c5fec17576fe88f8be6e366ef7330fc98))
+  * Fix broken customizer url on homepage (#5976) ([209fc1d6](http://github.com/angular-ui/ng-grid/commit/209fc1d68769fe1918d88f3accf5cd6e48f64acb))
+
+
+#### Features
+
+* **cellnav:**
+  * output aria text for cells that come from selection feature - works on IE with J ([151f32b9](http://github.com/angular-ui/ng-grid/commit/151f32b904145893c9e6d51c8350814be70b5dc8))
+  * output aria text for cells that come from selection feature ([6d951b2a](http://github.com/angular-ui/ng-grid/commit/6d951b2a7ac33f53b8512a6f3ad5d5498cd079c9))
+* **gridEdit:** Pass triggerEvent to cellEditableCondition fn call ([219ea716](http://github.com/angular-ui/ng-grid/commit/219ea7165ff1f6030c7d125550020181fa1fc3ae))
+
+<a name="v4.0.6"></a>
+### v4.0.6 (2017-06-14)
+
+
+#### Bug Fixes
+
+* **5007:**
+  * Reduced the amount of digest cycles initiated by the grid. ([d0bc03d9](http://github.com/angular-ui/ng-grid/commit/d0bc03d960cf06a85f8819a1d227b47d1cedc527))
+  * Reduced the amount of digest cycles initiated by the grid. ([bd51855f](http://github.com/angular-ui/ng-grid/commit/bd51855fe00dac4e932f854c1d3d5116beef5678))
+  * Reduced the amount of digest cycles initiated by the grid. ([75f98c3e](http://github.com/angular-ui/ng-grid/commit/75f98c3eda3e46f14f9d924e6f5a6d6e35bcc2b5))
+* **6160:** Select childrens of row group (#6167) ([21819c57](http://github.com/angular-ui/ng-grid/commit/21819c57474bf4451f3126985cfccf294c4c01e2))
+* **build:**
+  * Fixing test expectations since removal of close button. ([5bf9400a](http://github.com/angular-ui/ng-grid/commit/5bf9400aed4520010cfc04b3bbe91b6183092884))
+  * Removing performance improvements from ui-grid-util.js and comma separated vars. ([738df91f](http://github.com/angular-ui/ng-grid/commit/738df91fd61642e2d31cec8a7381f0083dbfb338))
+  * Updating protractor and selenium dependencies. (#6034) ([ca0c0368](http://github.com/angular-ui/ng-grid/commit/ca0c03683878889a5d9c40b4f2cac7ff32ee5b64))
+* **protractor:** Fixing npm so protractor can be installed and run locally. ([724df352](http://github.com/angular-ui/ng-grid/commit/724df3520ccc1d5f585fcc42508a537935875da2))
+* **shell.js:** Adding windows support. ([5e438643](http://github.com/angular-ui/ng-grid/commit/5e438643ea06e06455e91f9d0368f0021b8ef9c8))
+* **sort:** Fixing sorting priority aria-label ([a364886f](http://github.com/angular-ui/ng-grid/commit/a364886f37a2685500643d5df05b4c936dcd42a5))
+
+
+#### Features
+
+* **saveState:** change restore() to return Promise created by refresh() (#6178) ([f380055b](http://github.com/angular-ui/ng-grid/commit/f380055b58e3a42ee922c36812aa316cfef34174))
+* **sorting:** Default sorting ([e629bc69](http://github.com/angular-ui/ng-grid/commit/e629bc695d4e98a04710478310729aabf53853a1))
+
+<a name="v4.0.5"></a>
+### v4.0.5 (2017-06-14)
+
+
+#### Bug Fixes
+
+* **5007:**
+  * Reduced the amount of digest cycles initiated by the grid. ([d0bc03d9](http://github.com/angular-ui/ng-grid/commit/d0bc03d960cf06a85f8819a1d227b47d1cedc527))
+  * Reduced the amount of digest cycles initiated by the grid. ([bd51855f](http://github.com/angular-ui/ng-grid/commit/bd51855fe00dac4e932f854c1d3d5116beef5678))
+  * Reduced the amount of digest cycles initiated by the grid. ([75f98c3e](http://github.com/angular-ui/ng-grid/commit/75f98c3eda3e46f14f9d924e6f5a6d6e35bcc2b5))
+* **6160:** Select childrens of row group (#6167) ([21819c57](http://github.com/angular-ui/ng-grid/commit/21819c57474bf4451f3126985cfccf294c4c01e2))
+* **build:**
+  * Fixing test expectations since removal of close button. ([5bf9400a](http://github.com/angular-ui/ng-grid/commit/5bf9400aed4520010cfc04b3bbe91b6183092884))
+  * Removing performance improvements from ui-grid-util.js and comma separated vars. ([738df91f](http://github.com/angular-ui/ng-grid/commit/738df91fd61642e2d31cec8a7381f0083dbfb338))
+  * Updating protractor and selenium dependencies. (#6034) ([ca0c0368](http://github.com/angular-ui/ng-grid/commit/ca0c03683878889a5d9c40b4f2cac7ff32ee5b64))
+* **protractor:** Fixing npm so protractor can be installed and run locally. ([724df352](http://github.com/angular-ui/ng-grid/commit/724df3520ccc1d5f585fcc42508a537935875da2))
+* **shell.js:** Adding windows support. ([5e438643](http://github.com/angular-ui/ng-grid/commit/5e438643ea06e06455e91f9d0368f0021b8ef9c8))
+* **sort:** Fixing sorting priority aria-label ([a364886f](http://github.com/angular-ui/ng-grid/commit/a364886f37a2685500643d5df05b4c936dcd42a5))
+
+
+#### Features
+
+* **saveState:** change restore() to return Promise created by refresh() (#6178) ([f380055b](http://github.com/angular-ui/ng-grid/commit/f380055b58e3a42ee922c36812aa316cfef34174))
+* **sorting:** Default sorting ([e629bc69](http://github.com/angular-ui/ng-grid/commit/e629bc695d4e98a04710478310729aabf53853a1))
+
 <a name="v4.0.4"></a>
 ### v4.0.4 (2017-04-04)
 

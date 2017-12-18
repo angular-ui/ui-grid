@@ -1,4 +1,6 @@
 describe('ui-grid', function() {
+  'use strict';
+
   var $compile, $document, $rootScope, $timeout, $q, element, scope, gridApi;
 
   function compileGrid(template, options) {

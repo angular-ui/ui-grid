@@ -30,17 +30,17 @@
 
             // Verify that the render container for this element exists
             if (!$scope.rowContainerName) {
-              throw "No row render container name specified";
+              throw new Error("No row render container name specified");
             }
             if (!$scope.colContainerName) {
-              throw "No column render container name specified";
+              throw new Error("No column render container name specified");
             }
 
             if (!grid.renderContainers[$scope.rowContainerName]) {
-              throw "Row render container '" + $scope.rowContainerName + "' is not registered.";
+              throw new Error("Row render container '" + $scope.rowContainerName + "' is not registered.");
             }
             if (!grid.renderContainers[$scope.colContainerName]) {
-              throw "Column render container '" + $scope.colContainerName + "' is not registered.";
+              throw new Error("Column render container '" + $scope.colContainerName + "' is not registered.");
             }
 
             var rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];

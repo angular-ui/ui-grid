@@ -29,7 +29,7 @@ Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/ang
 
 ```html
     <link rel="stylesheet" type="text/css" href="bower_components/angular-ui-grid/ui-grid.min.css">
-    <script src="bower_components/angular-ui-grid/ui-grid.min.js">
+<script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
 ```
 
 ## NPM
@@ -52,7 +52,7 @@ You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in t
 
 # Angular Compatibility
 
-UI-Grid is currently compatible with Angular versions ranging from 1.2.x to 1.4.x.
+UI-Grid is currently compatible with Angular versions ranging from 1.4.x to 1.6.x.
 
 # Feature Stability
 
@@ -88,20 +88,19 @@ like your plugin added to that list, please [edit the tutorial page](misc/tutori
 
 # Building
 
-Install dependencies
+The first step is to install dependencies. `git` is required and must be available from the command line. If you don't have it, install git and ensure that the executable is in your path. If you are new to git, the easiest way to install is by installing the github client. 
 
-    git must be on your path.  If you can't do 'git' from your terminal, then install git first and make sure you have access from the path.
-    Bower installs are dependent on git.
-
-    If you are a git noob, the easiest way to install is by installing the github client.
+The `grunt` command line utility is also required.
 
     # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
 
+With `git` and `grunt-cli` installed you simply run the following commands to install all dependencies. 
+
     > npm install
     > grunt install
 
-Default grunt task will test and build files into dist/
+The default grunt task will test and build files into `dist/`
 
     > grunt
 

@@ -1,54 +1,55 @@
-
 describe('ui.grid.style', function() {
+	'use strict';
 
+	beforeEach(function() {
+		module('ui.grid');
+		module(function($sceProvider) {
+			$sceProvider.enabled(true);
+		});
+	});
 
-  beforeEach(module('ui.grid'));
+	describe('ui-grid-style', function() {
+		var element, scope, compile, recompile;
 
-  beforeEach(module(function($sceProvider) {
-    $sceProvider.enabled(true);
-  }));
+		beforeEach(inject(function($compile, $rootScope) {
+			scope = $rootScope;
+			compile = $compile;
 
-  describe('ui-grid-style', function() {
-    var element, scope, compile, recompile;
+			recompile = function() {
+				compile(element)(scope);
+				scope.$digest();
+			};
+		}));
 
-    beforeEach(inject(function($compile, $rootScope) {
-      scope = $rootScope;
-      compile = $compile;
+		it('allows style elements to have expressions', function() {
+			element = angular.element('<style ui-grid-style>{{ foo }}</style>');
+			scope.foo = '.bar { color: red }';
+			recompile();
 
-      recompile = function() {
-        compile(element)(scope);
-        scope.$digest();
-      };
-    }));
+			expect(element.text()).toEqual(scope.foo);
+		});
 
-    it('allows style elements to have expressions', function() {
-      element = angular.element('<style ui-grid-style>{{ foo }}</style>');
-      scope.foo = '.bar { color: red }';
-      recompile();
+		it('does not create useless <br>s', function() {
+			element = angular.element('<style ui-grid-style>{{ foo }}</style>');
+			scope.foo = '\n.bar { color: red }\n';
+			recompile();
 
-      expect(element.text()).toEqual(scope.foo);
-    });
+			expect(element.html()).toEqual(scope.foo);
+		});
 
-    // Disable as angular 1.3.0 allows expressions in <style> blocks
-    // it("doesn't affect style elements without the directive", function () {
-    //   element = angular.element('<style>{{ foo }}</style>');
-    //   recompile();
-    //   expect(element.text()).toEqual('{{ foo }}');
-    // });
+		it('works when mixing text and expressions', function() {
+			element = angular.element('<style ui-grid-style>.blah { color: {{ color }}; }</style>');
+			scope.color = 'black';
+			recompile();
 
-    it('does not create useless <br>s', function() {
-      element = angular.element("<style ui-grid-style>{{ foo }}</style>");
-      scope.foo = '\n.bar { color: red }\n';
-      recompile();
-      expect(element.html()).toEqual(scope.foo);
-    });
+			expect(element.html()).toEqual('.blah { color: black; }');
+		});
 
-     it('works when mixing text and expressions', function() {
-      element = angular.element("<style ui-grid-style>.blah { color: {{ color }}; }</style>");
-      scope.color = 'black';
-      recompile();
-      expect(element.html()).toEqual('.blah { color: black; }');
-    });
-  });
+		it('does not add styles when there are no styles to interpolate', function() {
+			element = angular.element('<style ui-grid-style></style>');
+			recompile();
 
+			expect(element.html()).toEqual('');
+		});
+	});
 });
