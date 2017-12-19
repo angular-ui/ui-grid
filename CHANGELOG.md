@@ -1,3 +1,17 @@
+<a name="v4.1.0"></a>
+## v4.1.0 (2017-12-18)
+
+
+#### Bug Fixes
+
+* **exporter:**
+  * fix issue #6019 errors while opening grid menu with exporter service ([18547eb6](http://github.com/angular-ui/ng-grid/commit/18547eb6db79d62d3eb6594ac281ac9c462acd75))
+  * Excel export with npm instructions, fix error on menu and more examples ([88f5525](https://github.com/angular-ui/ui-grid/commit/bc37cb4d63f00ef3e49e2a8f14b6efad11107be0))
+
+#### Features
+
+* **chore:** Support Angular 1.6. ([56d3c5f](https://github.com/angular-ui/ui-grid/commit/56d3c5f529f171d82873d4bd1c172d82d0a32ac0))
+
 <a name="v4.0.11"></a>
 ### v4.0.11 (2017-11-20)
 
