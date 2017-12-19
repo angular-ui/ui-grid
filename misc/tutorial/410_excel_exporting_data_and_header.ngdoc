@@ -17,6 +17,13 @@ available through:
   bower install jszip#2.6.1
   bower install excelbuilder  </pre>
 
+or
+
+<pre>  npm install lodash
+  npm install jszip@2.6.1
+  npm install excel-builder  </pre>
+
+
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}, and
 
 - {@link api/ui.grid.exporter.api:ColumnDef columnDef}
@@ -48,7 +55,9 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
         columnDefs: [
           { field: 'name' },
           { field: 'gender', visible: false},
-          { field: 'company' }
+          { field: 'company' },
+          { field: 'member' },
+          { field: 'total' }
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -74,8 +83,14 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
         exporterExcelCustomFormatters: function ( grid, workbook, docDefinition ) {
 
           var stylesheet = workbook.getStyleSheet();
+          var stdStyle = stylesheet.createFontStyle({
+            size: 9, fontName: 'Calibri'
+          });
+          var boldStyle = stylesheet.createFontStyle({
+            size: 9, fontName: 'Calibri', bold: true
+          });
           var aFormatDefn = {
-            "font": { "size": 9, "fontName": "Calibri", "bold": true },
+            "font": boldStyle.id,
             "alignment": { "wrapText": true }
           };
           var formatter = stylesheet.createFormat(aFormatDefn);
@@ -83,9 +98,13 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
           $scope.formatters['bold'] = formatter;
 
           aFormatDefn = {
-            "font": { "size": 9, "fontName": "Calibri" },
+            "font": stdStyle.id,
             "fill": { "type": "pattern", "patternType": "solid", "fgColor": "FFFFC7CE" },
             "alignment": { "wrapText": true }
+          };
+          var singleDefn = {
+            font: stdStyle.id,
+            format: '#,##0.0'
           };
           formatter = stylesheet.createFormat(aFormatDefn);
           // save the formatter
@@ -99,14 +118,17 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
             // this can be defined outside this method
             var stylesheet = workbook.getStyleSheet();
             var aFormatDefn = {
-                    "font": { "size": 9, "fontName": "Calibri", "bold": true },
-                    "alignment": { "wrapText": true }
-                  };
+              "font": { "size": 11, "fontName": "Calibri", "bold": true },
+              "alignment": { "wrapText": true }
+            };
             var formatterId = stylesheet.createFormat(aFormatDefn);
 
+            // excel cells start with A1 which is upper left corner
             sheet.mergeCells('B1', 'C1');
             var cols = [];
+            // push empty data
             cols.push({ value: '' });
+            // push data in B1 cell with metadata formatter
             cols.push({ value: 'My header that is long enough to wrap', metadata: {style: formatterId.id} });
             sheet.data.push(cols);
         },
@@ -114,7 +136,7 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
          // set metadata on export data to set format id. See exportExcelHeader config above for example of creating
          // a formatter and obtaining the id
          var formatterId = null;
-         if (cellValue && cellValue.startsWith('W')) {
+         if (cellValue && typeof cellValue === 'string' && cellValue.startsWith('W')) {
            formatterId = $scope.formatters['red'].id;
          }
 
@@ -131,6 +153,10 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
 
       $http.get('/data/100.json')
       .success(function(data) {
+        for (var i=0; i < data.length; i++) {
+          data[i].member = false;
+          data[i].total = i + 0.1;
+        }
         $scope.gridOptions.data = data;
       });
 
