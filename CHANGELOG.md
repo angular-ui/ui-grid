@@ -1,3 +1,11 @@
+<a name="v4.1.1"></a>
+### v4.1.1 (2017-12-20)
+
+
+#### Bug Fixes
+
+* **ui-grid.info:** Updating ui-grid.info to support angular 1.6.7 ([99819cc2](http://github.com/angular-ui/ng-grid/commit/99819cc2a3a9d442e734892ec9e09847e0bd88f7))
+
 <a name="v4.1.0"></a>
 ## v4.1.0 (2017-12-18)
 
