@@ -609,7 +609,8 @@ angular.module('ui.grid')
         asteriskNum = 0,
         usedWidthSum = 0,
         ret = '',
-        pinRightColumn = false;
+        pinRightColumn = false,
+        percentageArray = [];
 
     // Get the width of the viewport
     var availableWidth = self.grid.getViewportWidth() - self.grid.scrollbarWidth;
@@ -656,6 +657,8 @@ angular.module('ui.grid')
 
         usedWidthSum = usedWidthSum + width;
         column.drawnWidth = width;
+        
+        percentageArray.push(column);
       } else if (angular.isString(column.width) && column.width.indexOf('*') !== -1) {
         // is an asterisk column, the gridColumn already checked the string consists only of '****'
         asteriskNum = asteriskNum + column.width.length;
@@ -687,46 +690,57 @@ angular.module('ui.grid')
         column.drawnWidth = width;
       });
     }
-
-    // If the grid width didn't divide evenly into the column widths and we have pixels left over, or our
-    // calculated widths would have the grid narrower than the available space,
-    // dole the remainder out one by one to make everything fit
-    var processColumnUpwards = function(column){
-      if ( column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
-        column.drawnWidth++;
-        usedWidthSum++;
-        leftoverWidth--;
-        columnsToChange = true;
-      }
-    };
-
-    var leftoverWidth = availableWidth - usedWidthSum;
-    var columnsToChange = true;
-
-    while (leftoverWidth > 0 && columnsToChange) {
-      columnsToChange = false;
-      asterisksArray.forEach(processColumnUpwards);
+    
+    // If there are no columns with asterisk widths then check if there are any with % widths and 
+    // use them as a fallback for adjusting column widths up or down if we have remaining grid width
+    // or need to claw some width back
+    var variableWidthColumnArray;
+    if (asterisksArray.length > 0) {
+        variableWidthColumnArray = asterisksArray;
+    } else if (percentageArray.length > 0) {
+        variableWidthColumnArray = percentageArray;
     }
 
-    // We can end up with too much width even though some columns aren't at their max width, in this situation
-    // we can trim the columns a little
-    var processColumnDownwards = function(column){
-      if ( column.drawnWidth > column.minWidth && excessWidth > 0) {
-        column.drawnWidth--;
-        usedWidthSum--;
-        excessWidth--;
-        columnsToChange = true;
+    if (!angular.isUndefined(variableWidthColumnArray)) {
+      // If the grid width didn't divide evenly into the column widths and we have pixels left over, or our
+      // calculated widths would have the grid narrower than the available space,
+      // dole the remainder out one by one to make everything fit
+      var processColumnUpwards = function(column){
+        if ( column.drawnWidth < column.maxWidth && leftoverWidth > 0) {
+          column.drawnWidth++;
+          usedWidthSum++;
+          leftoverWidth--;
+          columnsToChange = true;
+        }
+      };
+
+      var leftoverWidth = availableWidth - usedWidthSum;
+      var columnsToChange = true;
+
+      while (leftoverWidth > 0 && columnsToChange) {
+        columnsToChange = false;
+        variableWidthColumnArray.forEach(processColumnUpwards);
       }
-    };
 
-    var excessWidth =  usedWidthSum - availableWidth;
-    columnsToChange = true;
+      // We can end up with too much width even though some columns aren't at their max width, in this situation
+      // we can trim the columns a little
+      var processColumnDownwards = function(column){
+        if ( column.drawnWidth > column.minWidth && excessWidth > 0) {
+          column.drawnWidth--;
+          usedWidthSum--;
+          excessWidth--;
+          columnsToChange = true;
+        }
+      };
 
-    while (excessWidth > 0 && columnsToChange) {
-      columnsToChange = false;
-      asterisksArray.forEach(processColumnDownwards);
+      var excessWidth =  usedWidthSum - availableWidth;
+      columnsToChange = true;
+
+      while (excessWidth > 0 && columnsToChange) {
+        columnsToChange = false;
+        variableWidthColumnArray.forEach(processColumnDownwards);
+      }
     }
-
 
     // all that was across all the renderContainers, now we need to work out what that calculation decided for
     // our renderContainer
