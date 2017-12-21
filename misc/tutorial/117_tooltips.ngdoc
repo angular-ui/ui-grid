@@ -7,7 +7,7 @@ You can set a tooltip (actually, a title) to pop up when a user hovers over a ce
 This tooltip can be simply the cell contents, in which case set the columnDef to have
 `cellTooltip: true`.
 
-Or it can be a function that returns a value derived from the 
+Or it can be a function that returns a value derived from the
 current column and row - for example:
 
 ```
@@ -40,10 +40,10 @@ Tooltips respect the cellFilter, so if you define a cellFilter it will also be u
         enableSorting: true,
         columnDefs: [
           { field: 'name', cellTooltip: 'Custom string', headerTooltip: 'Custom header string' },
-          { field: 'company', cellTooltip: 
+          { field: 'company', cellTooltip:
             function( row, col ) {
               return 'Name: ' + row.entity.name + ' Company: ' + row.entity.company;
-            }, headerTooltip: 
+            }, headerTooltip:
             function( col ) {
               return 'Header: ' + col.displayName;
             }
@@ -59,7 +59,8 @@ Tooltips respect the cellFilter, so if you define a cellFilter it will also be u
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           data.forEach( function setGender( row, index ){
             row.gender = row.gender==='male' ? '1' : '2';
           });

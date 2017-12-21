@@ -23,12 +23,12 @@ their own sizes, therefore there is an available space to write the aggregation 
 2.  You create a custom column that references the same field as an existing column but has it's own
 column name.  The aggregations are visible in this column, and you work some magic with the cellTemplates
 to make this work as you desire
-3.  You write a custom cellTemplate that shows both the value for that non-leaf node and the aggregated value in 
-the same cell.  These values are in different places in the entity - the original value is in `entity.fieldName`, 
+3.  You write a custom cellTemplate that shows both the value for that non-leaf node and the aggregated value in
+the same cell.  These values are in different places in the entity - the original value is in `entity.fieldName`,
 the aggregated value is in `entity.$$colUid.value` (refer to the treeBase documentation to get more details from
 the aggregation such as the label or the rendered value).  You can write a cellTemplate that displays both of these.
 4.  You set the `treeAggregationUpdateEntity` flag on the colDef.  The data will then be left in `row.treeNode.aggregations`
-in an array form.  You need to process that array to get the data out.  You might use this if you're building 
+in an array form.  You need to process that array to get the data out.  You might use this if you're building
 a graph behind the scenes, or something similar.  If so, you'd probably look to get the aggregation data out
 of grid.treeBase.tree, rather than extracting it from the rows.  You can access the subtree under a given
 row (if you're building a graph for the selected row) through `row.treeNode`.
@@ -87,7 +87,8 @@ that shows both the value for that row as well as the aggregated value.
       };
 
      $http.get('/data/500_complex.json')
-     .success(function(data) {
+     .then(function(res) {
+       var data = res.data;
        for ( var i = 0; i < data.length; i++ ){
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }
@@ -100,7 +101,7 @@ that shows both the value for that row as well as the aggregated value.
        data[51].$$treeLevel = 0;
        $scope.gridOptions.data = data;
      });
- 
+
       $scope.expandAll = function(){
         $scope.gridApi.treeBase.expandAllRows();
       };
@@ -130,5 +131,5 @@ that shows both the value for that row as well as the aggregated value.
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '215 tree view', function() {
     });
-  </file>  
+  </file>
 </example>

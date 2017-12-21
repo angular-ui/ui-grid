@@ -99,8 +99,8 @@ our validators do (`oldValue`, `newValue`, `rowEntity`, `colDef`);
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(res) {
+          $scope.gridOptions.data = res.data;
         });
     }]);
   });

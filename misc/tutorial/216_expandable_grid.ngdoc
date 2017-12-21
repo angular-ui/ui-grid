@@ -63,7 +63,8 @@ appears when you quickly scroll through the grid.
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           for(i = 0; i < data.length; i++){
             data[i].subGridOptions = {
               columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
@@ -101,7 +102,8 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
+            .then(function(res) {
+              var data = res.data;
               for(i = 0; i < data.length; i++){
                 data[i].subGridOptions = {
                   columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
@@ -127,8 +129,8 @@ appears when you quickly scroll through the grid.
                       ]};
 
                       $http.get('/data/100.json')
-                        .success(function(data) {
-                          row.entity.subGridOptions.data = data;
+                        .then(function(res) {
+                          row.entity.subGridOptions.data = res.data;
                         });
                     }
                 });
@@ -143,8 +145,8 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
-              $scope.gridOptions.data = data;
+            .then(function(res) {
+              $scope.gridOptions.data = res.data;
             });
         }]);
     app.controller('FourthCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
@@ -162,7 +164,8 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
+            .then(function(res) {
+              var data = res.data;
               for(i = 0; i < data.length; i++){
                 data[i].subGridOptions = {
                   columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],

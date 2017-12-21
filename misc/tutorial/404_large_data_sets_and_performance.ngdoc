@@ -13,12 +13,12 @@ to render additional rows or columns.  Rather than adding new rows or columns to
 it instead shuffles which data elements the current rows and columns point to, and then adjusts the scroll to provide the illusion
 that you are smoothly scrolling the grid.  If it weren't for the fact that the values inside each of the visible cells were being
 changed rapidly, what you'd actually see is the same DOM cells scrolling to the left, then jumping back to the right as another column
-comes into view, then scrolling smoothly to the left again.  
+comes into view, then scrolling smoothly to the left again.
 
 As you might expect, this can be quite computationally expensive.  Additionally, some operations such as sorting and filtering, must
 work against the entire data set, not just those currently visible.
 
-A different area of complexity in the grid is the provision of complex binding methods (refer {@link 106_binding the binding tutorial}).  
+A different area of complexity in the grid is the provision of complex binding methods (refer {@link 106_binding the binding tutorial}).
 These binding methods add noticable overhead to every access to a cell value.  The combination of large data sets and these
 binding methods can result in noticeable performance degradation.
 
@@ -30,7 +30,7 @@ entities in that array (i.e. the way we think 90% of people use the grid), then 
 and the grid will run faster.
 
 The option for this is `flatEntityAccess`.  The below grid provides a toggle on this value so you can see the difference it makes
-with a data set of 640,000 rows. 
+with a data set of 640,000 rows.
 
 Further, the grid watches the data and the column defs to determine if anything has changed.  Watches get called very frequently in
 angularJS (on every digest cycle, which can be many times per second), and watching each row of a large data collection can be expensive.
@@ -44,7 +44,7 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
 
     app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
-      $scope.gridOptions = {  
+      $scope.gridOptions = {
         enableFiltering: true,
         flatEntityAccess: true,
         showGridFooter: true,
@@ -57,15 +57,17 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
         {name:'gender'},
         {field:'age'}
       ];
-    
-      $http.get('/data/10000_complex.json')
-      .success(function(data) {
-        for( var i=0; i<6; i++){
-          data = data.concat(data);
+
+      $http.get('/data/10000_complex.json').then(
+        function(res) {
+          var data = res.data;
+          for( var i=0; i<6; i++){
+            data = data.concat(data);
+          }
+          $scope.gridOptions.data = data;
         }
-        $scope.gridOptions.data = data;
-      });
-      
+      );
+
       $scope.toggleFlat = function() {
         $scope.gridOptions.flatEntityAccess = !$scope.gridOptions.flatEntityAccess;
       }
@@ -84,5 +86,5 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
     }
   </file>
   <file name="scenario.js">
-  </file>  
+  </file>
 </example>

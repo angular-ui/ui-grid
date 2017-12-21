@@ -49,10 +49,11 @@ Documentation for the custom scrolling feature is provided in the api documentat
         { name:'friends[2].name', displayName:'3rd friend', width:150 },
       ];
 
-      $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-        });
+      $http.get('/data/500_complex.json').then(
+        function(res) {
+          $scope.gridOptions.data = res.data;
+        }
+      );
     }]);
   </file>
   <file name="index.html">

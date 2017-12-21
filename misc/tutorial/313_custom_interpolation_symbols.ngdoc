@@ -32,8 +32,8 @@ you're expecting to use `{{` or `}}` to signify something in your custom-interpo
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(res) {
+          $scope.gridOptions.data = res.data;
         });
     }]);
   </file>

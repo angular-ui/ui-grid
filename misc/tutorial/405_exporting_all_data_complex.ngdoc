@@ -6,7 +6,7 @@ When using built in pagination, the data is fully loaded before export.
 
 For external pagination, use the `exportAllDataPromise` function to load all grid data.  If you get all the
 data (for the purposes of exporting), then it makes sense to turn off external pagination and external sorting,
-as all the data is now present within AngularJS  
+as all the data is now present within AngularJS
 
 @example
 This shows combined external pagination and sorting.
@@ -75,12 +75,13 @@ This shows combined external pagination and sorting.
           }
 
           var _scope = $scope;
-          return $http.get(url)
-          .success(function (data) {
-            var firstRow = (curPage - 1) * pageSize;
-            $scope.gridOptions.totalItems = 100;
-            $scope.gridOptions.data = data.slice(firstRow, firstRow + pageSize)
-          });
+          return $http.get(url).then(
+            function (res) {
+              var firstRow = (curPage - 1) * pageSize;
+              $scope.gridOptions.totalItems = 100;
+              $scope.gridOptions.data = res.data.slice(firstRow, firstRow + pageSize)
+            }
+          );
         };
 
         getPage(1, $scope.gridOptions.paginationPageSize);

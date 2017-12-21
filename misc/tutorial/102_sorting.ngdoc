@@ -117,7 +117,8 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
       };
 
      $http.get('/data/100.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           $scope.gridOptions1.data = data;
           $scope.gridOptions2.data = data;
         });

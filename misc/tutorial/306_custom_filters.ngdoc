@@ -13,7 +13,7 @@ insert those multiple selections into a regex that is used by the filter logic.
 
 You can bind to any of the information within the filters object within your template/directive.
 
-In this example we do both of those things: we create a directive that pops up a modal window and 
+In this example we do both of those things: we create a directive that pops up a modal window and
 allows selection of one or more from a list of values (using an embedded ng-grid), and we implement
 a bootstrap dropdown.
 
@@ -26,7 +26,7 @@ a bootstrap dropdown.
       var today = new Date();
       var nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
-    
+
       $scope.gridOptions = {
         enableFiltering: true,
         onRegisterApi: function(gridApi){
@@ -35,12 +35,12 @@ a bootstrap dropdown.
         columnDefs: [
           { field: 'name' },
           { field: 'gender',
-            filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-dropdown></div></div>', 
-            filter: { 
+            filterHeaderTemplate: '<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters"><div my-custom-dropdown></div></div>',
+            filter: {
               term: 1,
-              options: [ {id: 1, value: 'male'}, {id: 2, value: 'female'}]     // custom attribute that goes with custom directive above 
-            }, 
-            cellFilter: 'mapGender' },                               
+              options: [ {id: 1, value: 'male'}, {id: 2, value: 'female'}]     // custom attribute that goes with custom directive above
+            },
+            cellFilter: 'mapGender' },
           { field: 'company', enableFiltering: false },
           { field: 'email', enableFiltering: false },
           { field: 'phone', enableFiltering: false },
@@ -52,7 +52,8 @@ a bootstrap dropdown.
       };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           $scope.gridOptions.data = data;
           $scope.gridOptions.data[0].age = -5;
 
@@ -78,78 +79,78 @@ a bootstrap dropdown.
         }
       };
     })
-    
+
     .directive('myCustomDropdown', function() {
       return {
         template: '<select class="form-control" ng-model="colFilter.term" ng-options="option.id as option.value for option in colFilter.options"></select>'
       };
     })
-    
+
     .controller('myCustomModalCtrl', function( $scope, $compile, $timeout ) {
       var $elm;
-      
+
       $scope.showAgeModal = function() {
         $scope.listOfAges = [];
-        
+
         $scope.col.grid.appScope.gridOptions.data.forEach( function ( row ) {
           if ( $scope.listOfAges.indexOf( row.age ) === -1 ) {
             $scope.listOfAges.push( row.age );
           }
         });
         $scope.listOfAges.sort();
-        
-        $scope.gridOptions = { 
+
+        $scope.gridOptions = {
           data: [],
           enableColumnMenus: false,
           onRegisterApi: function( gridApi) {
             $scope.gridApi = gridApi;
-            
+
             if ( $scope.colFilter && $scope.colFilter.listTerm ){
               $timeout(function() {
                 $scope.colFilter.listTerm.forEach( function( age ) {
                   var entities = $scope.gridOptions.data.filter( function( row ) {
                     return row.age === age;
-                  }); 
-                  
+                  });
+
                   if( entities.length > 0 ) {
                     $scope.gridApi.selection.selectRow(entities[0]);
                   }
                 });
               });
             }
-          } 
+          }
         };
-        
+
         $scope.listOfAges.forEach(function( age ) {
           $scope.gridOptions.data.push({age: age});
         });
-        
+
         var html = '<div class="modal" ng-style="{display: \'block\'}"><div class="modal-dialog"><div class="modal-content"><div class="modal-header">Filter Ages</div><div class="modal-body"><div id="grid1" ui-grid="gridOptions" ui-grid-selection class="modalGrid"></div></div><div class="modal-footer"><button id="buttonClose" class="btn btn-primary" ng-click="close()">Filter</button></div></div></div></div>';
         $elm = angular.element(html);
         angular.element(document.body).prepend($elm);
 
         $compile($elm)($scope);
-        
+
       };
-      
+
       $scope.close = function() {
         var ages = $scope.gridApi.selection.getSelectedRows();
         $scope.colFilter.listTerm = [];
-        
+
         ages.forEach( function( age ) {
           $scope.colFilter.listTerm.push( age.age );
         });
-        
+
         $scope.colFilter.term = $scope.colFilter.listTerm.join(', ');
         $scope.colFilter.condition = new RegExp($scope.colFilter.listTerm.join('|'));
-        
+
         if ($elm) {
           $elm.remove();
         }
       };
     })
-    
-    
+
+
     .directive('myCustomModal', function() {
       return {
         template: '<label>{{colFilter.term}}</label><button ng-click="showAgeModal()">...</button>',
@@ -179,5 +180,5 @@ a bootstrap dropdown.
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-  </file>  
+  </file>
 </example>

@@ -166,7 +166,8 @@ $scope.gridOptions.columnDefs = [
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           for(i = 0; i < data.length; i++){
             data[i].registered = new Date(data[i].registered);
             data[i].gender = data[i].gender==='male' ? 1 : 2;
@@ -197,7 +198,7 @@ $scope.gridOptions.columnDefs = [
         }
       };
     })
-    
+
     .filter('mapStatus', function() {
       var genderHash = {
         1: 'Bachelor',
