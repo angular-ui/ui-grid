@@ -10,7 +10,7 @@
     }
 
     .grid{{ grid.id }} .ui-grid-row:last-child .ui-grid-cell {
-      border-bottom-width: {{ ((grid.getTotalRowHeight() < grid.getViewportHeight()) && '1') || '0' }}px;
+      border-bottom-width: {{ (((grid.getVisibleRowCount() * grid.options.rowHeight) < grid.getViewportHeight()) && '1') || '0' }}px;
     }
 
     {{ grid.verticalScrollbarStyles }}
