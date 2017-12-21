@@ -46,7 +46,8 @@ using {@link 212_infinite_scroll infinite scroll}, which also retrieves data in 
       }
 
       $http.get('/data/100.json')
-      .success(function (data) {
+      .then(function (res) {
+        var data = res.data;
         $scope.gridOptions1.data = data;
         $scope.gridOptions2.data = data;
       });

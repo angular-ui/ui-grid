@@ -151,14 +151,16 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
         }
       };
 
-      $http.get('/data/100.json')
-      .success(function(data) {
-        for (var i=0; i < data.length; i++) {
-          data[i].member = false;
-          data[i].total = i + 0.1;
+      $http.get('/data/100.json').then(
+        function(res) {
+          var data = res.data;
+          for (var i=0; i < data.length; i++) {
+            data[i].member = false;
+            data[i].total = i + 0.1;
+          }
+          $scope.gridOptions.data = data;
         }
-        $scope.gridOptions.data = data;
-      });
+      );
 
     }]);
   </file>

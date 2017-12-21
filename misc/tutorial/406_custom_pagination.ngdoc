@@ -53,19 +53,22 @@ This shows custom pagination.
         }
       };
 
-      $http.get('/data/100_ASC.json')
-      .success(function (data) {
-        $scope.gridOptions1.data = data;
-        $scope.gridOptions1.paginationPageSizes = calculatePageSizes(data);
-      });
+      $http.get('/data/100_ASC.json').then(
+        function (res) {
+          $scope.gridOptions1.data = res.data;
+          $scope.gridOptions1.paginationPageSizes = calculatePageSizes(res.data);
+        }
+      );
 
-      $http.get('/data/100.json')
-      .success(function (data) {
-        $scope.grid2data = data;
-        $scope.gridOptions2.totalItems = 0;//data.length;
-        $scope.gridOptions2.paginationPageSizes = calculatePageSizes(data);
-        $scope.gridOptions2.data = getPage($scope.grid2data, 1);
-      });
+      $http.get('/data/100.json').then(
+        function (res) {
+          var data = res.data;
+          $scope.grid2data = data;
+          $scope.gridOptions2.totalItems = 0;//data.length;
+          $scope.gridOptions2.paginationPageSizes = calculatePageSizes(data);
+          $scope.gridOptions2.data = getPage($scope.grid2data, 1);
+        }
+      );
 
 
       function calculatePageSizes(data) {

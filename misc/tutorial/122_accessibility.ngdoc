@@ -147,7 +147,8 @@ You can visualize the accessibility roles that have been applied to the grid usi
       angular.extend($scope.paginationGridOptions, $scope.virtualGridOptions);
 
       $http.get('/data/100.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           data.forEach(setGender);
           $scope.virtualGridOptions.data = data;
           $scope.paginationGridOptions.data = data;

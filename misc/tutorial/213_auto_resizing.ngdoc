@@ -36,8 +36,8 @@ To use, include the `'ui.grid.autoResize'` module in your angular app's dependen
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(res) {
+          $scope.gridOptions.data = res.data;
         });
 
       $scope.randomSize = function () {

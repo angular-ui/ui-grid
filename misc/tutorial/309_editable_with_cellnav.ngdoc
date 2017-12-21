@@ -23,11 +23,11 @@ of combining cellNav and edit to give a more spreadsheet-like experience.
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
         { name: 'age', displayName: 'Age' , type: 'number', width: '10%' },
-        { name: 'gender', displayName: 'Gender', editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%', 
+        { name: 'gender', displayName: 'Gender', editableCellTemplate: 'ui-grid/dropdownEditor', width: '20%',
           cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
-          { id: 1, gender: 'male' }, 
-          { id: 2, gender: 'female' } 
-        ] }, 
+          { id: 1, gender: 'male' },
+          { id: 2, gender: 'female' }
+        ] },
         { name: 'registered', displayName: 'Registered' , type: 'date', cellFilter: 'date:"yyyy-MM-dd"', width: '20%' },
         { name: 'address', displayName: 'Address', type: 'object', cellFilter: 'address', width: '30%' },
         { name: 'address.city', displayName: 'Address (even rows editable)', width: '20%',
@@ -52,7 +52,8 @@ of combining cellNav and edit to give a more spreadsheet-like experience.
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           for(i = 0; i < data.length; i++){
             data[i].registered = new Date(data[i].registered);
             data[i].gender = data[i].gender==='male' ? 1 : 2;
@@ -66,7 +67,7 @@ of combining cellNav and edit to give a more spreadsheet-like experience.
         1: 'male',
         2: 'female'
       };
-      
+
       return function(input) {
         if (!input){
           return '';

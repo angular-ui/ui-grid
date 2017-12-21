@@ -2,7 +2,7 @@
 @name Tutorial: 308 External Filtering
 @description
 
-Sometimes you want to filter data externally, either on the client using custom filter routines, or on 
+Sometimes you want to filter data externally, either on the client using custom filter routines, or on
 the server as part of your data retrieve.
 
 UI-Grid provides two functions that support this, firstly a filterChanged event that tells you when a user has
@@ -10,10 +10,10 @@ changed their requested filter using the grid ui, and secondly a useExternalFilt
 the grid native filtering.
 
 @example
-In this example we suppress the internal filtering, and emulate an external filter by picking one of three 
-json files to show - one filtered by gender 'male', one filtered by gender 'female', and one not sorted.  
+In this example we suppress the internal filtering, and emulate an external filter by picking one of three
+json files to show - one filtered by gender 'male', one filtered by gender 'female', and one not sorted.
 
-To further illustrate that this is using external sorting, the external filter routine (consisting of me manually 
+To further illustrate that this is using external sorting, the external filter routine (consisting of me manually
 editing json files) got bored of filtering after the first 10 or so rows, and deleted all other rows in the file.
 
 <example module="app">
@@ -36,29 +36,29 @@ editing json files) got bored of filtering after the first 10 or so rows, and de
               var grid = this.grid;
               if( grid.columns[1].filters[0].term === 'male' ) {
                 $http.get('/data/100_male.json')
-                .success(function(data) {
-                  $scope.gridOptions.data = data;
+                .then(function(res) {
+                  $scope.gridOptions.data = res.data;
                 });
               } else if ( grid.columns[1].filters[0].term === 'female' ) {
                 $http.get('/data/100_female.json')
-                .success(function(data) {
-                  $scope.gridOptions.data = data;
+                .then(function(res) {
+                  $scope.gridOptions.data = res.data;
                 });
               } else {
                 $http.get('/data/100.json')
-                .success(function(data) {
-                  $scope.gridOptions.data = data;
+                .then(function(res) {
+                  $scope.gridOptions.data = res.data;
                 });
               }
             });
         }
       };
-      
+
       $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions.data = data;
+      .then(function(res) {
+        $scope.gridOptions.data = res.data;
       });
-      
+
     }]);
   </file>
   <file name="index.html">

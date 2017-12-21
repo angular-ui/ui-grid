@@ -29,8 +29,8 @@
       };
 
       $http.get('/data/5.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(res) {
+          $scope.gridOptions.data = res.data;
         });
     }]);
   </file>

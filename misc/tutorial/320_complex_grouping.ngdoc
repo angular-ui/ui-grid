@@ -55,7 +55,7 @@ children of the selected rowHeader.
             cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
               { id: 1, gender: 'male' },
               { id: 2, gender: 'female' }
-            ] 
+            ]
           },
           { field: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '10%' },
           { field: 'age', displayName: 'Age (common)', customTreeAggregationFn: stats.aggregator.mode, width: '10%' },
@@ -117,8 +117,9 @@ children of the selected rowHeader.
       };
 
       $http.get('/data/500_complex.json')
-      .success(function(data) {
-        for ( var i = 0; i < data.length; i++ ){
+      .then(function(res) {
+        var data = res.data;
+        for (var i = 0; i < data.length; i++ ){
           data[i].state = data[i].address.state;
           data[i].gender = data[i].gender === 'male' ? 1: 2;
           data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
@@ -269,14 +270,14 @@ children of the selected rowHeader.
       return service;
     });
   </file>
-  
+
   <file name="index.html">
     <div ng-controller="MainCtrl">
       <p ng-show="lastChange">Last grouping change: {{ lastChange }}</p>
       <div id="grid1" ui-grid="gridOptions" ui-grid-grouping ui-grid-edit ui-grid-selection class="grid" style="width:100%;"></div>
     </div>
   </file>
-  
+
   <file name="main.css">
     .grid {
       width: 500px;
@@ -287,5 +288,5 @@ children of the selected rowHeader.
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '209 grouping', function() {
     });
-  </file>  
+  </file>
 </example>

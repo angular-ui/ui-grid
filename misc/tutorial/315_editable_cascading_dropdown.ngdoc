@@ -3,7 +3,7 @@
 @description
 
 It is possible to use the edit feature and the dropdown options array to build a cascading
-dropdown setup, where the options in the second dropdown depend on the selection in the 
+dropdown setup, where the options in the second dropdown depend on the selection in the
 first dropdown.  Thanks to @ajain27 for the sample code.
 
 @example
@@ -20,13 +20,13 @@ first dropdown.  Thanks to @ajain27 for the sample code.
           cellFilter: 'mapGender', editDropdownValueLabel: 'gender', editDropdownOptionsArray: [
             { id: 1, gender: 'male' },
             { id: 2, gender: 'female' }
-          ] 
+          ]
         },
         { name: 'company', displayName: 'Company', width: '30%' },
         { name: 'size', displayName: 'Clothes Size', width: '20%', editableCellTemplate: 'ui-grid/dropdownEditor',
           cellFilter: 'mapSize', editDropdownValueLabel: 'size', editDropdownRowEntityOptionsArrayPath: 'sizeOptions' }
       ];
-      
+
       $scope.maleSizeDropdownOptions = [
         { id: 1, size: 'SM' },
         { id: 2, size: 'M' },
@@ -58,7 +58,8 @@ first dropdown.  Thanks to @ajain27 for the sample code.
       };
 
       $http.get('/data/100.json')
-      .success(function(data) {
+      .then(function(res) {
+        var data = res.data;
         // massage the default data to give us a coded gender and a size
         for(i = 0; i < data.length; i++){
           if ( data[i].gender === 'male' ) {

@@ -72,7 +72,8 @@ resulting export.
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
+        .then(function(res) {
+          var data = res.data;
           data.forEach( function( row, index ) {
             if( row.gender === 'female' ){
               row.gender = 1;
