@@ -131,7 +131,9 @@ function will stop working), and writes them to the console.
       };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for ( var i = 0; i < data.length; i++ ){
             var registeredDate = new Date( data[i].registered );
             data[i].state = data[i].address.state;

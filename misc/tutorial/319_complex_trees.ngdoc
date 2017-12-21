@@ -87,7 +87,9 @@ that shows both the value for that row as well as the aggregated value.
       };
 
      $http.get('/data/500_complex.json')
-     .success(function(data) {
+     .then(function(response) {
+       var data = response.data;
+
        for ( var i = 0; i < data.length; i++ ){
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }

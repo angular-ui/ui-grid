@@ -56,8 +56,8 @@ def properties), and call the notifyDataChange api to force an update.
       }
     
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>

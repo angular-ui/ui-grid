@@ -166,14 +166,14 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
       };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
           $scope.gridOptions.data[0].age = -5;
 
-          data.forEach( function addDates( row, index ){
+          response.data.forEach( function addDates( row, index ){
             row.mixedDate = new Date();
             row.mixedDate.setDate(today.getDate() + ( index % 14 ) );
-            row.gender = row.gender==='male' ? '1' : '2';
+            row.gender = row.gender === 'male' ? '1' : '2';
           });
         });
 

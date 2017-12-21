@@ -78,8 +78,8 @@ auto-selects the first row once the data is loaded.
       $scope.gridOptions.multiSelect = true;
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
           $timeout(function() {
             if($scope.gridApi.selection.selectRow){
               $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);

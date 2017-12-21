@@ -54,13 +54,17 @@ This shows custom pagination.
       };
 
       $http.get('/data/100_ASC.json')
-      .success(function (data) {
+      .then(function (response) {
+        var data = response.data;
+
         $scope.gridOptions1.data = data;
         $scope.gridOptions1.paginationPageSizes = calculatePageSizes(data);
       });
 
       $http.get('/data/100.json')
-      .success(function (data) {
+      .then(function (response) {
+        var data = response.data;
+
         $scope.grid2data = data;
         $scope.gridOptions2.totalItems = 0;//data.length;
         $scope.gridOptions2.paginationPageSizes = calculatePageSizes(data);

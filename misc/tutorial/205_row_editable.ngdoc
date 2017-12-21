@@ -109,7 +109,9 @@ each save will take 3 seconds to complete.  Any row saved with a gender of "male
       };
 
       $http.get('/data/500_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for(i = 0; i < data.length; i++){
           data[i].registered = new Date(data[i].registered);
         }

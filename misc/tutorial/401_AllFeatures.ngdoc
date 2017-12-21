@@ -76,7 +76,9 @@ All features are enabled to get an idea of performance
           $scope.callsPending++;
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
+            .then(function(response) {
+              var data = response.data;
+
               $scope.callsPending--;
 
               data.forEach(function(row){

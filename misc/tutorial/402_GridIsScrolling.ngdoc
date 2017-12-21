@@ -35,8 +35,8 @@ You can reference a property to see if grid is in a scroll event.
               };
 
       $http.get('/data/10000_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>

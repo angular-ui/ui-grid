@@ -65,7 +65,9 @@ You can override the default grid footer template with gridOptions.footerTemplat
     };
 
     $http.get('/data/500_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         data.forEach( function(row) {
           row.registered = Date.parse(row.registered);
         });

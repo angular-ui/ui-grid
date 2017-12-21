@@ -92,8 +92,8 @@ In this example we use the native grid menu buttons, and we show both the pdf an
       };
 
       $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions.data = data;
+      .then(function(response) {
+        $scope.gridOptions.data = response.data;
       });
 
     }]);

@@ -75,7 +75,9 @@ This shows combined external pagination and sorting.
         }
 
         $http.get(url)
-        .success(function (data) {
+        .then(function (response) {
+          var data = response.data;
+
           $scope.gridOptions.totalItems = 100;
           var firstRow = (paginationOptions.pageNumber - 1) * paginationOptions.pageSize;
           $scope.gridOptions.data = data.slice(firstRow, firstRow + paginationOptions.pageSize);

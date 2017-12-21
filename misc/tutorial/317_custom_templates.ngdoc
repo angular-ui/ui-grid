@@ -59,7 +59,9 @@ may want to test for `ng-if="colContainer.name === \'body\'"`
       $scope.waiting = 'Waiting for row template...';
 
       $http.get('/data/100.json')
-        .success(function (data) {
+        .then(function (response) {
+          var data = response.data;
+
           data.forEach( function(row, index) {
             row.widgets = index % 10;
           });

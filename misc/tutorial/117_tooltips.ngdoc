@@ -59,12 +59,12 @@ Tooltips respect the cellFilter, so if you define a cellFilter it will also be u
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          data.forEach( function setGender( row, index ){
-            row.gender = row.gender==='male' ? '1' : '2';
+        .then(function(response) {
+          response.data.forEach( function setGender( row, index ){
+            row.gender = row.gender === 'male' ? '1' : '2';
           });
 
-          $scope.gridOptions.data = data;
+          $scope.gridOptions.data = response.data;
         });
     }])
     .filter('mapGender', function() {
