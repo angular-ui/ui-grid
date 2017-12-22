@@ -72,6 +72,10 @@
       F11: 122,
       F12: 123
     },
+    keyCombination: { 
+      SHIFT: 1, 
+      CTRL: 2
+    }, 
      /**
      * @ngdoc object
      * @name ASC

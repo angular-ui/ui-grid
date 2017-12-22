@@ -355,9 +355,12 @@
             $scope.$on( '$destroy', dataChangeDereg );
 
             $scope.handleClick = function(event) {
-              // If the shift key is being held down, add this column to the sort
+              // If the a specific key is being held down, add this column to the sort
               var add = false;
-              if (event.shiftKey) {
+              var useShift = uiGridCtrl.grid.options.keyToAddSortColumns & uiGridConstants.keyCombination.SHIFT;
+              var useCtrl = uiGridCtrl.grid.options.keyToAddSortColumns & uiGridConstants.keyCombination.CTRL;
+
+              if ((event.shiftKey && useShift) || (event.ctrlKey && useCtrl)) {
                 add = true;
               }
 

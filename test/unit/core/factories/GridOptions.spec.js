@@ -52,7 +52,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'ui-grid/ui-grid-grid-footer',
         rowTemplate: 'ui-grid/ui-grid-row',
         gridMenuTemplate: 'ui-grid/uiGridMenu',
-        appScopeProvider: null
+        appScopeProvider: null,
+        keyToAddSortColumns: 1 
       });
     });
 
@@ -99,7 +100,8 @@ describe('GridOptions factory', function () {
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
-        appScopeProvider : 'anotherRef'
+        appScopeProvider : 'anotherRef',
+        keyToAddSortColumns: 3
       };
       expect( GridOptions.initialize(options) ).toEqual({
         onRegisterApi: testFunction,
@@ -143,7 +145,8 @@ describe('GridOptions factory', function () {
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
-        appScopeProvider : 'anotherRef'
+        appScopeProvider : 'anotherRef',
+        keyToAddSortColumns: 3
       });
     });
 
@@ -189,7 +192,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
-        extraOption: 'testExtraOption'
+        extraOption: 'testExtraOption',
+        keyToAddSortColumns: 1
       };
       expect( GridOptions.initialize(options) ).toEqual({
         onRegisterApi: testFunction,
@@ -233,7 +237,8 @@ describe('GridOptions factory', function () {
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
         extraOption: 'testExtraOption',
-        appScopeProvider : null
+        appScopeProvider : null,
+        keyToAddSortColumns: 1
       });
     });
   });
