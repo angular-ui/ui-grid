@@ -21,6 +21,7 @@ Not all of the tasks here are absolutely necessary for the update, but they shou
 - [ ] Update UI-Grid styles to modernize it a bit, i.e. issue #3210
 
 ## Phase 3 - Angular Upgrade
+Note: For this, we will do our best to follow the instructions laid out by the angular team in the following document: https://angular.io/guide/upgrade
 
 - [ ] Convert core UI-Grid component to Angular 5
 - [ ] Convert _stable features*_ of UI-Grid to Angular 5
