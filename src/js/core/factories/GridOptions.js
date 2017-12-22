@@ -512,6 +512,30 @@ angular.module('ui.grid')
        */
       baseOptions.appScopeProvider = baseOptions.appScopeProvider || null;
 
+      /**
+       * @ngdoc object
+       * @name columnHeaderKeyDownAction
+       * @propertyOf ui.grid.class:GridOptions
+       * @description this option specifies the action to be performed, when the space bar or the return key is 
+       * pressed on a column header. This option takes a value of the enum uiGridConstants.keyboardActions.
+       * This option can be overwritten by the options columnHeaderSpaceAction and columnHeaderReturnAction
+       */
+      baseOptions.columnHeaderKeyDownAction = typeof(baseOptions.columnHeaderKeyDownAction) !== "undefined" ? baseOptions.columnHeaderKeyDownAction : uiGridConstants.keyboardActions.DO_SORT;
+
+      /**
+       * @ngdoc object
+       * @name columnHeaderSpaceAction
+       * @propertyOf ui.grid.class:GridOptions
+       * @description this options overwrites the columnHeaderKeyDownAction option for the space bar.
+       */
+
+      /**
+       * @ngdoc object
+       * @name columnHeaderReturnAction
+       * @propertyOf ui.grid.class:GridOptions
+       * @description this options overwrites the columnHeaderKeyDownAction option for the return key.
+       */
+
       return baseOptions;
     }
   };
