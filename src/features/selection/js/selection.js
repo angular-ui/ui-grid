@@ -122,6 +122,16 @@
           var publicApi = {
             events: {
               selection: {
+                 /**
+                 * @ngdoc event
+                 * @name beforeSelectionChanged
+                 * @eventOf  ui.grid.selection.api:PublicApi
+                 * @description  is raised after the row.isSelected state is changed before the toggle happens
+                 * @param {GridRow} row the row that was selected/deselected
+                 * @param {Event} event object if raised from an event
+                 * @param {callback} callback function that deside wheather to continue the toggle or stop the selection
+                 */
+                beforeSelectionChanged: function(scope, row, evt, callback) {},
                 /**
                  * @ngdoc event
                  * @name rowSelectionChanged
@@ -725,20 +735,43 @@
 
           function selectButtonClick(row, evt) {
             evt.stopPropagation();
-
-            if (evt.shiftKey) {
-              uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
-            }
-            else if (evt.ctrlKey || evt.metaKey) {
-              uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
-            }
-            else if (row.groupHeader) {
-              for (var i = 0; i < row.treeNode.children.length; i++) {
-                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+            var makeChange = function () {
+              if (evt.shiftKey) {
+                uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
               }
-            }
-            else {
-              uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
+              else if (evt.ctrlKey || evt.metaKey) {
+                uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
+              }
+              else if (row.groupHeader) {
+                for (var i = 0; i < row.treeNode.children.length; i++) {
+                  uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+                }
+              }
+              else {
+                uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
+              }
+            };
+
+            if ($scope.grid.api.listeners.length > 0) {
+              var beforeSelectionRegistered = false;
+              $scope.grid.api.listeners.forEach(function (eventListener) {
+                if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                  beforeSelectionRegistered = true;
+                }
+              });
+              if (beforeSelectionRegistered) {
+                $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                  if (stopToggle) {
+                    //do not continue to next row
+                    return;
+                  }
+                  makeChange();
+                });
+              } else {
+                makeChange();
+              }
+            } else {
+              makeChange();
             }
           }
 
@@ -756,7 +789,7 @@
       };
     }]);
 
-  module.directive('uiGridSelectionSelectAllButtons', ['$templateCache', 'uiGridSelectionService',
+module.directive('uiGridSelectionSelectAllButtons', ['$templateCache', 'uiGridSelectionService',
     function ($templateCache, uiGridSelectionService) {
       return {
         replace: true,
@@ -767,24 +800,73 @@
           var self = $scope.col.grid;
 
           $scope.headerButtonKeyDown = function (evt) {
-            if (evt.keyCode === 32 || evt.keyCode === 13) {
-              evt.preventDefault();
-              $scope.headerButtonClick(evt);
-            }
+              var event = evt;
+              function makeChange() {
+                  if (event.keyCode === 32 || event.keyCode === 13) {
+                      evt.preventDefault();
+                      $scope.headerButtonClick(event);
+                  }
+              }
+              if ($scope.grid.api.listeners.length > 0) {
+                  var beforeSelectionRegistered = false;
+                  $scope.grid.api.listeners.forEach(function (eventListener) {
+                      if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                          beforeSelectionRegistered = true;
+                      }
+                  });
+                  if (beforeSelectionRegistered) {
+                      $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                          if (stopToggle) {
+                              //do not continue to next row
+                              return;
+                          }
+                          makeChange();
+                      });
+                  } else {
+                      makeChange();
+                  }
+              } else {
+                  makeChange();
+              }
           };
+          
+          $scope.headerButtonClick = function (row, evt) {
 
-          $scope.headerButtonClick = function (evt) {
-            if (self.selection.selectAll) {
-              uiGridSelectionService.clearSelectedRows(self, evt);
-              if (self.options.noUnselect) {
-                self.api.selection.selectRowByVisibleIndex(0, evt);
+            function makeChange() {
+              if (self.selection.selectAll) {
+                uiGridSelectionService.clearSelectedRows(self, evt);
+                if (self.options.noUnselect) {
+                  self.api.selection.selectRowByVisibleIndex(0, evt);
+                }
+                self.selection.selectAll = false;
+              } else {
+                if (self.options.multiSelect) {
+                  self.api.selection.selectAllVisibleRows(evt);
+                  self.selection.selectAll = true;
+                }
               }
-              self.selection.selectAll = false;
+            }
+
+            if ($scope.grid.api.listeners.length > 0) {
+              var beforeSelectionRegistered = false;
+              $scope.grid.api.listeners.forEach(function (eventListener) {
+                if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                  beforeSelectionRegistered = true;
+                }
+              });
+              if (beforeSelectionRegistered) {
+                $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                  if (stopToggle) {
+                    //do not continue to next row
+                    return;
+                  }
+                  makeChange();
+                });
+              } else {
+                makeChange();
+              }
             } else {
-              if (self.options.multiSelect) {
-                self.api.selection.selectAllVisibleRows(evt);
-                self.selection.selectAll = true;
-              }
+              makeChange();
             }
           };
         }
@@ -877,30 +959,54 @@
             //});
 
             var selectCells = function (evt) {
-              // if you click on expandable icon doesn't trigger selection
-              if (evt.target.className === "ui-grid-icon-minus-squared" || evt.target.className === "ui-grid-icon-plus-squared") {
-                return;
+              var makeChange = function () {
+                // if you click on expandable icon doesn't trigger selection
+                if (evt.target.className === "ui-grid-icon-minus-squared" || evt.target.className === "ui-grid-icon-plus-squared") {
+                  return;
+                }
+
+                // if we get a click, then stop listening for touchend
+                $elm.off('touchend', touchEnd);
+
+                if (evt.shiftKey) {
+                  uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
+                }
+                else if (evt.ctrlKey || evt.metaKey) {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
+                }
+                else {
+                  uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
+                }
+                $scope.$apply();
+
+                // don't re-enable the touchend handler for a little while - some devices generate both, and it will
+                // take a little while to move your hand from the mouse to the screen if you have both modes of input
+                $timeout(function () {
+                  $elm.on('touchend', touchEnd);
+                }, touchTimeout);
+              };
+              if ($scope.grid.api.listeners.length > 0) {
+                var beforeSelectionRegistered = false;
+                $scope.grid.api.listeners.forEach(function (eventListener) {
+                  if (eventListener.eventId.indexOf("beforeSelectionChanged") > -1) {
+                    beforeSelectionRegistered = true;
+                  }
+                });
+                if (beforeSelectionRegistered) {
+                  $scope.grid.api.selection.raise.beforeSelectionChanged($scope.row, evt, function (stopToggle) {
+                    if (stopToggle) {
+                      //do not continue to next row
+                      return;
+                    }
+                    makeChange();
+                  });
+                } else {
+                  makeChange();
+                }
+              } else {
+                makeChange();
               }
 
-              // if we get a click, then stop listening for touchend
-              $elm.off('touchend', touchEnd);
-
-              if (evt.shiftKey) {
-                uiGridSelectionService.shiftSelect($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect);
-              }
-              else if (evt.ctrlKey || evt.metaKey) {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
-              }
-              else {
-                uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
-              }
-              $scope.$apply();
-
-              // don't re-enable the touchend handler for a little while - some devices generate both, and it will
-              // take a little while to move your hand from the mouse to the screen if you have both modes of input
-              $timeout(function () {
-                $elm.on('touchend', touchEnd);
-              }, touchTimeout);
             };
 
             var touchStart = function (evt) {
