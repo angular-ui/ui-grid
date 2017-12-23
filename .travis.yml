@@ -2,7 +2,7 @@ language: node_js
 sudo: false # defaults to sending build to container-based infrastructure on Travis
 
 node_js:
-  - 4
+  - 6
 
 notifications:
   webhooks:
