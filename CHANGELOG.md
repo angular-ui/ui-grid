@@ -1,3 +1,14 @@
+<a name="v4.1.3"></a>
+### v4.1.3 (2017-12-23)
+
+
+#### Bug Fixes
+
+* **protractor:** Improving reliability of protractor tests and ensuring they can run at a basic l ([44396d22](http://github.com/angular-ui/ng-grid/commit/44396d22cf89efb6f0039e0e1bc5d1c8a19570b5))
+* **uiGridAutoResize:** Changed [0].clientHeight to gridUtil.elementHe… (#6490) ([fef9552e](http://github.com/angular-ui/ng-grid/commit/fef9552e1dc82693ee4182b694d7f3c8e893a282))
+* **GridRenderContainer.js:** Fix bug of space to the right of the last column (#6371) ([a2f2fd5](https://github.com/angular-ui/ui-grid/commit/a2f2fd518de3d88100da6ad44ec970cb53262e66))
+* **ui-grid.html:** Fix bug with template for last row's bottom border (#4413) ([faa8ece](https://github.com/angular-ui/ui-grid/commit/faa8ece144231a50d9fa771187275088b28dd3eb))
+
 <a name="v4.1.2"></a>
 ### v4.1.2 (2017-12-21)
 
