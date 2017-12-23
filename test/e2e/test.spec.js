@@ -1,3 +1,0 @@
-describe('angularjs homepage', function() {
-  
-});
