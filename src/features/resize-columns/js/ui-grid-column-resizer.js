@@ -536,6 +536,7 @@
                   width = width + menuButtonWidth;
                 }
 
+                width = Math.ceil(width);
                 if (width > maxWidth) {
                   maxWidth = width;
                   xDiff = maxWidth - width;
