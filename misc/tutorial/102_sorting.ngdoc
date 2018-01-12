@@ -44,10 +44,15 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
+    angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid'])
+      .controller('MainCtrl', MainCtrl);
 
-    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
-      $scope.gridOptions1 = {
+    MainCtrl.$inject = ['$http', 'uiGridConstants'];
+
+    function MainCtrl($http, uiGridConstants) {
+      var vm = this;
+
+      vm.gridOptions1 = {
         enableSorting: true,
         columnDefs: [
           { field: 'name' },
@@ -55,23 +60,23 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           { field: 'company', enableSorting: false }
         ],
         onRegisterApi: function( gridApi ) {
-          $scope.grid1Api = gridApi;
+          vm.grid1Api = gridApi;
         }
       };
 
-      $scope.toggleGender = function() {
-        if( $scope.gridOptions1.data[64].gender === 'male' ) {
-          $scope.gridOptions1.data[64].gender = 'female';
+      vm.toggleGender = function() {
+        if( vm.gridOptions1.data[64].gender === 'male' ) {
+          vm.gridOptions1.data[64].gender = 'female';
         } else {
-          $scope.gridOptions1.data[64].gender = 'male';
+          vm.gridOptions1.data[64].gender = 'male';
         };
-        $scope.grid1Api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
+        vm.grid1Api.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
       };
 
-       $scope.gridOptions2 = {
+       vm.gridOptions2 = {
         enableSorting: true,
         onRegisterApi: function( gridApi ) {
-          $scope.grid2Api = gridApi;
+          vm.grid2Api = gridApi;
         },
         columnDefs: [
           {
@@ -89,7 +94,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
             },
             suppressRemoveSort: true,
             sortingAlgorithm: function(a, b, rowA, rowB, direction) {
-              var nulls = $scope.grid2Api.core.sortHandleNulls(a, b);
+              var nulls = vm.grid2Api.core.sortHandleNulls(a, b);
               if( nulls !== null ) {
                 return nulls;
               } else {
@@ -118,13 +123,13 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
      $http.get('/data/100.json')
         .then(function(response) {
-          $scope.gridOptions1.data = response.data;
-          $scope.gridOptions2.data = response.data;
+          vm.gridOptions1.data = response.data;
+          vm.gridOptions2.data = response.data;
         });
-    }]);
+    }
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as main">
       Click on a column header to sort by that column. (The third column has sorting disabled.)
       To demonstrate the live sorting we provide a button that toggles the gender of Alexander Foley.
       Sort by gender (ASC - so click twice) then name (using shift click), so that Alexander is at the top of the grid,
@@ -132,8 +137,8 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
       <br>
       <br>
-      <button id='toggleGender' ng-click='toggleGender()' class="btn btn-success" >Toggle Gender</button>
-      <div id="grid1" ui-grid="gridOptions1" class="grid"></div>
+      <button id='toggleGender' ng-click='main.toggleGender()' class="btn btn-success" >Toggle Gender</button>
+      <div id="grid1" ui-grid="main.gridOptions1" class="grid"></div>
 
       <br>
       You can set an initial sort state for the grid by defining the `sort` property on your column definitions.
@@ -142,7 +147,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
       <br>
       <br>
 
-      <div id="grid2" ui-grid="gridOptions2" class="grid"></div>
+      <div id="grid2" ui-grid="main.gridOptions2" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -152,25 +157,25 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
     }
   </file>
   <file name="scenario.js">
-    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
-    var grid1 = new GridObjectTest('grid1');
-    var grid2 = new GridObjectTest('grid2');
+    var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js'),
+      GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js'),
+      grid1 = new GridObjectTest('grid1'),
+      grid2 = new GridObjectTest('grid2');
 
     describe('first grid on the page, no default sort', function() {
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      it('header values should be as expected', function () {
+      it('header values should be as expected', function() {
         grid1.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
       });
 
-      it('grid should be unsorted by default', function () {
+      it('grid should be unsorted by default', function() {
         grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
         grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
       });
 
-      it('sort by name by clicking header', function () {
+      it('sort by name by clicking header', function() {
         grid1.clickHeaderCell( 0 )
           .then(function () {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
@@ -178,26 +183,26 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
           });
       });
 
-      it('reverse sort by name by clicking header', function () {
+      it('reverse sort by name by clicking header', function() {
         grid1.clickHeaderCell( 0 )
           .then(function () {
             return grid1.clickHeaderCell( 0 );
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
             grid1.expectCellValueMatch( 1, 0, 'Woods Key' );
           });
       });
 
-      it('return to original sort by name by clicking header', function () {
+      it('return to original sort by name by clicking header', function() {
         grid1.clickHeaderCell( 0 )
-          .then(function () {
+          .then(function() {
             return grid1.clickHeaderCell( 0 );
           })
-          .then(function () {
+          .then(function() {
             return grid1.clickHeaderCell( 0 );
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
@@ -205,7 +210,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
       it('sort asc by clicking menu', function() {
         grid1.clickColumnMenuSortAsc( 0 )
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
             grid1.expectCellValueMatch( 1, 0, 'Alisha Myers' );
           });
@@ -213,15 +218,15 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
       it('sort desc by clicking menu, then remove sort', function() {
         grid1.clickColumnMenuSortDesc( 0 )
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
             grid1.expectCellValueMatch( 1, 0, 'Woods Key' );
             return true;
           })
-          .then(function () {
+          .then(function() {
             return grid1.clickColumnMenuRemoveSort( 0 );
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
@@ -229,10 +234,10 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
       it('sort two columns, gender then name, by shift clicking', function() {
         grid1.clickHeaderCell( 1 )
-          .then(function () {
+          .then(function() {
             return grid1.shiftClickHeaderCell( 0 );
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Alisha Myers' );
             grid1.expectCellValueMatch( 1, 0, 'Beryl Rice' );
           });
@@ -240,7 +245,7 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
 
       it('sort disabled on last column', function() {
         grid1.clickHeaderCell( 2 )
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Ethel Price' );
             grid1.expectCellValueMatch( 1, 0, 'Claudine Neal' );
           });
@@ -254,61 +259,58 @@ columnDef option will cause sorting to be applied after the `cellFilters` are ap
       it('toggle gender, expect Alexander Foley to move around', function() {
         // sort gender asc, then name
         grid1.clickHeaderCell( 1 )
-          .then(function () {
+          .then(function() {
             return grid1.clickHeaderCell( 1 );
           })
-          .then(function () {
+          .then(function() {
             return grid1.shiftClickHeaderCell( 0 );
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
           })
-          .then(function () {
+          .then(function() {
             return gridTestUtils.click(element(by.id('toggleGender')));
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Anthony Joyner' );
           })
-          .then(function () {
+          .then(function() {
             return gridTestUtils.click(element(by.id('toggleGender')));
           })
-          .then(function () {
+          .then(function() {
             grid1.expectCellValueMatch( 0, 0, 'Alexander Foley' );
           });
       });
-
     });
 
-
     describe('second grid on the page, has default sort', function() {
-      it('header values should be as expected', function () {
+      it('header values should be as expected', function() {
         grid2.expectHeaderColumns( [ 'Name', 'Gender', 'Company' ] );
       });
 
-      it('grid should be sorted by default', function () {
+      it('grid should be sorted by default', function() {
         grid2.expectCellValueMatch( 0, 0, 'Yvonne Parsons' );
         grid2.expectCellValueMatch( 1, 0, 'Velma Fry' );
       });
 
-      it('sort on second column can\'t be removed when cycle through header clicks', function () {
+      it('sort on second column can\'t be removed when cycle through header clicks', function() {
         grid2.clickHeaderCell( 0 )
-          .then(function () {
+          .then(function() {
             grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
           })
-          .then(function () {
+          .then(function() {
             return grid2.clickHeaderCell( 1 );
           })
-          .then(function () {
+          .then(function() {
             grid2.expectCellValueMatch( 0, 0, 'Wilder Gonzales' );
           })
-          .then(function () {
+          .then(function() {
             return grid2.clickHeaderCell( 1 );
           })
-          .then(function () {
+          .then(function() {
             grid2.expectCellValueMatch( 0, 0, 'Ethel Price' );
           });
       });
     });
-
   </file>
 </example>
