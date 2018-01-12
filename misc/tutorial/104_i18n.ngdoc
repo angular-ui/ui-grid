@@ -23,13 +23,18 @@ For an example using angular-translate to translate your headers, refer to http:
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+    angular.module('app', ['ngTouch', 'ui.grid'])
+      .controller('MainCtrl', MainCtrl);
 
-    app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
-      $scope.langs = i18nService.getAllLangs();
-      $scope.lang = 'nl';
+    MainCtrl.$inject = ['i18nService', '$http'];
 
-      $scope.gridOptions = {
+    function MainCtrl(i18nService, $http) {
+      var vm = this;
+
+      vm.langs = i18nService.getAllLangs();
+      vm.lang = 'nl';
+
+      vm.gridOptions = {
         columnDefs: [
           { field: 'name' },
           { field: 'gender' },
@@ -38,16 +43,16 @@ For an example using angular-translate to translate your headers, refer to http:
       };
 
       $http.get('/data/100.json')
-      .then(function(response) {
-        $scope.gridOptions.data = response.data;
-      });
-    }]);
+        .then(function(response) {
+          vm.gridOptions.data = response.data;
+        });
+    }
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <select ng-model="lang" ng-options="l for l in langs"></select><br>
+    <div ng-controller="MainCtrl as $ctrl">
+      <select id="langDropdown" ng-model="$ctrl.lang" ng-options="l for l in $ctrl.langs"></select><br>
 
-      <div ui-i18n="{{lang}}">
+      <div ui-i18n="{{$ctrl.lang}}">
          <p>Using attribute:</p>
          <p ui-t="groupPanel.description"></p>
          <br/>
@@ -56,9 +61,8 @@ For an example using angular-translate to translate your headers, refer to http:
 
          <p>Click the header menu to see language.</p>
 
-         <div ui-grid="gridOptions" class="grid"></div>
+         <div id="i18nGrid" ui-grid="$ctrl.gridOptions" class="grid"></div>
       </div>
-
     </div>
   </file>
   <file name="main.css">
@@ -66,5 +70,19 @@ For an example using angular-translate to translate your headers, refer to http:
       width: 500px;
       height: 250px;
     }
+  </file>
+  <file name="scenario.js">
+      var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
+      describe('104 i18n', function() {
+        gridTestUtils.firefoxReload();
+
+        it('should default to nl for the language', function() {
+          expect(element(by.id('langDropdown')).element(by.css('option:checked')).getText()).toEqual('nl');
+        });
+        it('should have three visible columns', function() {
+          gridTestUtils.expectHeaderColumnCount( 'i18nGrid', 3 );
+        });
+      });
   </file>
 </example>
