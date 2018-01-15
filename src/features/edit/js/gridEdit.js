@@ -535,7 +535,7 @@
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     if (newRowCol.row === $scope.row && newRowCol.col === $scope.col && evt && (evt.type === 'click' || evt.type === 'keydown')) {
-                      $timeout(function () {
+                      $scope.$applyAsync(function () {
                         beginEdit(evt);
                       });
                     }
@@ -834,8 +834,8 @@
               });
 
               $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT, triggerEvent);
-              $timeout(function () {
-                //execute in a timeout to give any complex editor templates a cycle to completely render
+              $scope.$applyAsync(function () {
+                // execute in a apply async to give any complex editor templates a cycle to completely render
                 $scope.grid.api.edit.raise.beginCellEdit($scope.row.entity, $scope.col.colDef, triggerEvent);
               });
             }
@@ -935,7 +935,7 @@
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function (evt,triggerEvent) {
-                  $timeout(function () {
+                  $scope.$applyAsync(function () {
                     $elm[0].focus();
                     //only select text if it is not being replaced below in the cellNav viewPortKeyPress
                     if ($elm[0].select && ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav))) {
@@ -1005,7 +1005,7 @@
                 $elm.on('click', function (evt) {
                   if ($elm[0].type !== 'checkbox') {
                     $scope.deepEdit = true;
-                    $timeout(function () {
+                    $scope.$applyAsync(function () {
                       $scope.grid.disableScrolling = true;
                     });
                   }
@@ -1136,8 +1136,8 @@
    *
    */
   module.directive('uiGridEditDropdown',
-    ['uiGridConstants', 'uiGridEditConstants', '$timeout',
-      function (uiGridConstants, uiGridEditConstants, $timeout) {
+    ['uiGridConstants', 'uiGridEditConstants',
+      function (uiGridConstants, uiGridEditConstants) {
         return {
           require: ['?^uiGrid', '?^uiGridRenderContainer'],
           scope: true,
@@ -1152,7 +1152,7 @@
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  $timeout(function(){
+                  $scope.$applyAsync(function(){
                     $elm[0].focus();
                   });
 
