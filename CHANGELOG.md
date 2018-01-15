@@ -1,3 +1,19 @@
+<a name="v4.2.0"></a>
+## v4.2.0 (2018-01-15)
+
+
+#### Bug Fixes
+
+* **build:** Fixing build failure due to poor updates. ([9382312d](http://github.com/angular-ui/ng-grid/commit/9382312d71308a2276956822918e3699491a6e8f))
+* **cellnav:** Replace $timeout with $applyAsync. ([be18d09e](http://github.com/angular-ui/ng-grid/commit/be18d09e06c36df23c017380e217bec9264d7986))
+* **docs:** Fix broken docs. ([10c3100](https://github.com/angular-ui/ui-grid/commit/10c310030730fca98d2b9a9ff4f3d02fb5d2fa62))
+* **edit:** Replace $timeout with $applyAsync. ([2d409557](http://github.com/angular-ui/ng-grid/commit/2d409557f17ef10f7ccac89f313ed16e57513c87))
+* **infinite-scroll:** Replace $timeout with $applyAsync. ([30af7e9b](http://github.com/angular-ui/ng-grid/commit/30af7e9b2d53effcb959de67cb80fc3ae68c656b))
+* **lang:** Update Polish translations. ([2999817](https://github.com/angular-ui/ui-grid/commit/299981767161b6f989af13847333eea069cdbc9a))
+* **move-columns:** Replace $timeout with $applyAsync. ([f77df14c](http://github.com/angular-ui/ng-grid/commit/f77df14c6aef34d8a938acd437ffdf92f51df7db))
+* **resize-columns:** Replace $timeout with $applyAsync. ([b77ddc36](http://github.com/angular-ui/ng-grid/commit/b77ddc362ef207ca9b89ed0fda1cecf0538330d1))
+* **tutorial:** Updating some tutorial examples. ([804fce72](http://github.com/angular-ui/ng-grid/commit/804fce72f621ca9abac75c1de0deca3c6bed2fd2))
+
 <a name="v4.1.3"></a>
 ### v4.1.3 (2017-12-23)
 
