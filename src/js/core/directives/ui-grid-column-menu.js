@@ -438,7 +438,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
       //Since we are hiding this column the default hide action will fail so we need to focus somewhere else.
       var setFocusOnHideColumn = function(){
-        $timeout(function(){
+        $scope.$applyAsync(function() {
           // Get the UID of the first
           var focusToGridMenu = function(){
             return gridUtil.focus.byId('grid-menu', $scope.grid);
