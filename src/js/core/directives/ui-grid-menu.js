@@ -93,7 +93,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            */
           $scope.shown = true;
 
-          $timeout( function() {
+          $scope.$applyAsync(function() {
             $scope.shownMid = true;
             $scope.$emit('menu-shown');
           });
@@ -118,7 +118,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           angular.element(document).on(docEventType, applyHideMenu);
           $elm.on('keyup', checkKeyUp);
           $elm.on('keydown', checkKeyDown);
-
         });
         //automatically set the focus to the first button element in the now open menu.
         gridUtil.focus.bySelector($elm, 'button[type=button]', true);
