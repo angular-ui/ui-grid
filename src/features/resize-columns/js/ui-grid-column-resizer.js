@@ -14,8 +14,8 @@
    */
   var module = angular.module('ui.grid.resizeColumns', ['ui.grid']);
 
-  module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$timeout',
-    function (gridUtil, $q, $timeout) {
+  module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$rootScope',
+    function (gridUtil, $q, $rootScope) {
 
       var service = {
         defaultGridOptions: function(gridOptions){
@@ -103,7 +103,7 @@
         },
 
         fireColumnSizeChanged: function (grid, colDef, deltaChange) {
-          $timeout(function () {
+          $rootScope.$applyAsync(function () {
             if ( grid.api.colResizable ){
               grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
             } else {
@@ -190,7 +190,7 @@
   }]);
 
   // Extend the uiGridHeaderCell directive
-  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', 'uiGridResizeColumnsService', 'uiGridConstants', '$timeout', function (gridUtil, $templateCache, $compile, $q, uiGridResizeColumnsService, uiGridConstants, $timeout) {
+  module.directive('uiGridHeaderCell', ['gridUtil', '$templateCache', '$compile', '$q', 'uiGridResizeColumnsService', 'uiGridConstants', function (gridUtil, $templateCache, $compile, $q, uiGridResizeColumnsService, uiGridConstants) {
     return {
       // Run after the original uiGridHeaderCell
       priority: -10,
@@ -244,8 +244,8 @@
 
               displayResizers();
 
-              var waitDisplay = function(){
-                $timeout(displayResizers);
+              var waitDisplay = function() {
+                $scope.$applyAsync(displayResizers);
               };
 
               var dataChangeDereg = grid.registerDataChangeCallback( waitDisplay, [uiGridConstants.dataChange.COLUMN] );
