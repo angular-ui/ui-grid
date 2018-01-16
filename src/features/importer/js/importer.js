@@ -722,28 +722,42 @@
       return {
         replace: true,
         priority: 0,
-        require: '^uiGrid',
+        require: '?^uiGrid',
         scope: false,
         templateUrl: 'ui-grid/importerMenuItem',
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
+          var grid;
+
           var handleFileSelect = function( event ){
             var target = event.srcElement || event.target;
 
             if (target && target.files && target.files.length === 1) {
               var fileObject = target.files[0];
-              uiGridImporterService.importThisFile( grid, fileObject );
-              target.form.reset();
+
+              // Define grid if the uiGrid controller is present
+              if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
+                grid = uiGridCtrl.grid;
+
+                uiGridImporterService.importThisFile( grid, fileObject );
+                target.form.reset();
+              } else {
+                gridUtil.logError('Could not import file because UI Grid was not found.');
+              }
             }
           };
 
           var fileChooser = $elm[0].querySelectorAll('.ui-grid-importer-file-chooser');
-          var grid = uiGridCtrl.grid;
 
           if ( fileChooser.length !== 1 ){
             gridUtil.logError('Found > 1 or < 1 file choosers within the menu item, error, cannot continue');
           } else {
-            fileChooser[0].addEventListener('change', handleFileSelect, false);  // TODO: why the false on the end?  Google
+            fileChooser[0].addEventListener('change', handleFileSelect, false);
           }
+
+          $scope.$on('$destroy', function unbindEvents() {
+            // unbind jquery events to prevent memory leaks
+            fileChooser[0].removeEventListener('change', handleFileSelect, false);
+          });
         }
       };
     }

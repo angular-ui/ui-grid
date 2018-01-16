@@ -59,24 +59,26 @@ illustrates that doing so is not mandatory).
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.importer']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+    app.controller('MainCtrl', function ($scope, $http, $interval) {
+      var vm = this;
+
       $scope.data = [];
-      $scope.gridOptions = {
+      vm.gridOptions = {
         enableGridMenu: true,
         data: 'data',
         importerDataAddCallback: function ( grid, newObjects ) {
           $scope.data = $scope.data.concat( newObjects );
         },
         onRegisterApi: function(gridApi){
-          $scope.gridApi = gridApi;
+          vm.gridApi = gridApi;
         }
       };
-    }]);
+    });
   </file>
 
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" ui-grid-importer class="grid"></div>
+    <div ng-controller="MainCtrl as $ctrl">
+      <div ui-grid="$ctrl.gridOptions" ui-grid-importer class="grid"></div>
     </div>
   </file>
 
