@@ -780,11 +780,9 @@
                 self.api.selection.selectRowByVisibleIndex(0, evt);
               }
               self.selection.selectAll = false;
-            } else {
-              if (self.options.multiSelect) {
-                self.api.selection.selectAllVisibleRows(evt);
-                self.selection.selectAll = true;
-              }
+            } else if (self.options.multiSelect) {
+              self.api.selection.selectAllVisibleRows(evt);
+              self.selection.selectAll = true;
             }
           };
         }
