@@ -535,7 +535,8 @@
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
                     // Don't begin edit if the cell hasn't changed
-                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col && evt && (evt.type === 'click' || evt.type === 'keydown')) {
+                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col &&
+                      (!evt || (evt && (evt.type === 'click' || evt.type === 'keydown')))) {
                       $timeout(function() {
                         beginEdit(evt);
                       });
@@ -545,7 +546,6 @@
               }
 
               $scope.beginEditEventsWired = true;
-
             }
 
             function touchStart(event) {
@@ -896,7 +896,6 @@
               }
               return object;
             }
-
           }
         };
       }]);
