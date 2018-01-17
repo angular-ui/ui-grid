@@ -39,8 +39,9 @@ describe('ui.grid.importer uiGridImporterMenuItem', function() {
 		expect(uiGridImporterMenuItem.hasClass('ui-grid-menu-item')).toBe(true);
 	});
 	it('should do nothing when a change event is fired and there are no files selected', function() {
-		var event = new Event('change');
+		var event = document.createEvent('HTMLEvents'); // DOM event must be used for IE
 
+		event.initEvent('change', false, true);
 		fileChooser[0].dispatchEvent(event);
 
 		expect(gridUtil.logError).not.toHaveBeenCalled();
