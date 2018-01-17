@@ -1,3 +1,14 @@
+<a name="v4.2.1"></a>
+### v4.2.1 (2018-01-17)
+
+
+#### Bug Fixes
+
+* **GridRenderContainer:** Fixing scrollbar styles. ([c36be957](http://github.com/angular-ui/ng-grid/commit/c36be957b8943110ffe4f10de8783acf8d706127))
+* **gridEdit:** Fixing issues with focus and grid edit. ([924cd9b4](http://github.com/angular-ui/ng-grid/commit/924cd9b45f7f83a620fa77bfb39a4fc8d4d1ca2d))
+* **importer:** Fix console error on opening grid menu. ([01dee3c5](http://github.com/angular-ui/ng-grid/commit/01dee3c5d5bc4f25278f58bbaab00f8e62be45e5))
+* **menus:** Switching applyAsync for timeout. ([136335fc](http://github.com/angular-ui/ng-grid/commit/136335fcba88fa0f202be90480a54c69cd90abae))
+
 <a name="v4.2.0"></a>
 ## v4.2.0 (2018-01-15)
 
