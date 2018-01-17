@@ -1,3 +1,11 @@
+<a name="v4.2.2"></a>
+### v4.2.2 (2018-01-17)
+
+
+#### Bug Fixes
+
+* **gridEdit:** Fixing scrollToFocus issues. ([cc8144ca](http://github.com/angular-ui/ng-grid/commit/cc8144ca8b9138dfd08fffbe8cd4382f853c76e2))
+
 <a name="v4.2.1"></a>
 ### v4.2.1 (2018-01-17)
 
