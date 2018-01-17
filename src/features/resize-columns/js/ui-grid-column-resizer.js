@@ -524,12 +524,21 @@
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
               }
 
+              //text becomes bold when font weight = 600
+              //this needs to be checked here because the fakeElement doesn't contain the font weight
+              var textIsBold = parseInt(angular.element(cell).css('font-weight')) > 500; 
+
               gridUtil.fakeElement(cell, {}, function(newElm) {
                 // Make the element float since it's a div and can expand to fill its container
                 var e = angular.element(newElm);
                 e.attr('style', 'float: left');
-
                 var width = gridUtil.elementWidth(e);
+                
+                if (textIsBold) {
+                  //1.05 is the smallest reasonable multiplier that prevents bold text from being truncated
+                  var boldTextOffsetMultiplier = 1.05;
+                  width = width * boldTextOffsetMultiplier;
+                }
 
                 if (menuButton) {
                   var menuButtonWidth = gridUtil.elementWidth(menuButton);
