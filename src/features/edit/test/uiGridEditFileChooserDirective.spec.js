@@ -43,24 +43,27 @@ describe('ui.grid.edit uiGridEditFileChooser', function() {
 		}
 		describe('when no target exists', function() {
 			beforeEach(function() {
-				var event = new Event('change', {target: null});
+				var event = document.createEvent('HTMLEvents');
 
+				event.initEvent('change', false, true);
 				fileChooser[0].dispatchEvent(event);
 			});
 			testNegativeScenario();
 		});
 		describe('when no target files exists', function() {
 			beforeEach(function() {
-				var event = new Event('change', {target: {}});
+				var event = document.createEvent('HTMLEvents');
 
+				event.initEvent('change', false, true);
 				fileChooser[0].dispatchEvent(event);
 			});
 			testNegativeScenario();
 		});
 		describe('when there are 0 target files', function() {
 			beforeEach(function() {
-				var event = new Event('change', {target: {files: []}});
+				var event = document.createEvent('HTMLEvents');
 
+				event.initEvent('change', false, true);
 				fileChooser[0].dispatchEvent(event);
 			});
 			testNegativeScenario();
@@ -83,8 +86,9 @@ describe('ui.grid.edit uiGridEditFileChooser', function() {
 			expect(fileChooser[0].select).toHaveBeenCalled();
 		});
 		it('should emit an end cell edit event on blur', function() {
-			var event = new Event('blur');
+			var event = document.createEvent('HTMLEvents');
 
+			event.initEvent('blur', false, true);
 			spyOn($scope, '$emit').and.callFake(angular.noop);
 			fileChooser.triggerHandler(event);
 
