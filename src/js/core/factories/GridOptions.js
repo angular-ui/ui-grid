@@ -129,11 +129,21 @@ angular.module('ui.grid')
        *
        */
 
+      /**
+       * @ngdoc object
+       * @name enableGridMenu
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Takes a boolean that adds a settings icon in the top right of the grid, which floats above
+       * the column header, when true. The menu by default gives access to show/hide columns, but can be
+       * customised to show additional actions.
+       *
+       * See the {@link #!/tutorial/121_grid_menu Grid Menu tutorial} for more detailed information.
+       */
 
       /**
        * @ngdoc array
        * @name excludeProperties
-       * @propertyOf  ui.grid.class:GridOptions
+       * @propertyOf ui.grid.class:GridOptions
        * @description Array of property names in data to ignore when auto-generating column names.  Provides the
        * inverse of columnDefs - columnDefs is a list of columns to include, excludeProperties is a list of columns
        * to exclude.

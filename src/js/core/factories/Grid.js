@@ -425,8 +425,13 @@ angular.module('ui.grid')
      * the columnDef and you'd like headerCellClasses to be re-evaluated.
      * @param {string} type one of the
      * {@link ui.grid.service:uiGridConstants#properties_dataChange uiGridConstants.dataChange}
-     * values (ALL, ROW, EDIT, COLUMN), which tells us which refreshes to fire.
+     * values (ALL, ROW, EDIT, COLUMN, OPTIONS), which tells us which refreshes to fire.
      *
+     * - ALL: listeners fired on any of these events, fires listeners on all events.
+     * - ROW: fired when a row is added or removed.
+     * - EDIT: fired when the data in a cell is edited.
+     * - COLUMN: fired when the column definitions are modified.
+     * - OPTIONS: fired when the grid options are modified.
      */
     self.api.registerMethod( 'core', 'notifyDataChange', this.notifyDataChange );
 
@@ -612,7 +617,13 @@ angular.module('ui.grid')
    * api for users to tell us when they've changed data or some other event that
    * our watches cannot pick up
    * @param {string} type the type of event that occurred - one of the
-   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN)
+   * uiGridConstants.dataChange values (ALL, ROW, EDIT, COLUMN, OPTIONS)
+   *
+   * - ALL: listeners fired on any of these events, fires listeners on all events.
+   * - ROW: fired when a row is added or removed.
+   * - EDIT: fired when the data in a cell is edited.
+   * - COLUMN: fired when the column definitions are modified.
+   * - OPTIONS: fired when the grid options are modified.
    */
   Grid.prototype.notifyDataChange = function notifyDataChange(type) {
     var constants = uiGridConstants.dataChange;
@@ -2283,7 +2294,7 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
-   * @name redrawCanvas
+   * @name redrawInPlace
    * @methodOf ui.grid.class:Grid
    * @description Redraw the rows and columns based on our current scroll position
    * @param {boolean} [rowsAdded] Optional to indicate rows are added and the scroll percentage must be recalculated
