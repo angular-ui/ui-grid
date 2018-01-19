@@ -515,30 +515,29 @@
           // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
           var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.uid + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
-              // Get the cell width
-              // gridUtil.logDebug('width', gridUtil.elementWidth(cell));
 
               // Account for the menu button if it exists
               var menuButton;
               if (angular.element(cell).parent().hasClass('ui-grid-header-cell')) {
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
               }
+              // Make the element float since it's a div and can expand to fill its container
+              // include the cell's font properties since they affect the width
+              var cellElement = angular.element(cell);
 
-              //text becomes bold when font weight = 600
-              //this needs to be checked here because the fakeElement doesn't contain the font weight
-              var textIsBold = parseInt(angular.element(cell).css('font-weight')) > 500; 
+              var cellStyle = window.getComputedStyle(cellElement[0]);
 
-              gridUtil.fakeElement(cell, {}, function(newElm) {
-                // Make the element float since it's a div and can expand to fill its container
-                var e = angular.element(newElm);
-                e.attr('style', 'float: left');
-                var width = gridUtil.elementWidth(e);
-                
-                if (textIsBold) {
-                  //1.05 is the smallest reasonable multiplier that prevents bold text from being truncated
-                  var boldTextOffsetMultiplier = 1.05;
-                  width = width * boldTextOffsetMultiplier;
+              var style = {'float':'left'};
+              for ( var i in cellStyle ) {
+                if(i.startsWith('font')){
+                  style[i] = cellStyle[i];
                 }
+              }
+
+              gridUtil.fakeElement(cell, style, function(newElm) {
+                
+                var e = angular.element(newElm);
+                var width = gridUtil.elementWidth(newElm);
 
                 if (menuButton) {
                   var menuButtonWidth = gridUtil.elementWidth(menuButton);
