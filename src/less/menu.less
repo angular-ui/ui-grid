@@ -4,25 +4,28 @@
   right: 0;
   top: 0;
   background: @headerBackgroundColor;
-  border: @gridBorderWidth solid @borderColor;
+  border: 0;
+  border-left: @gridBorderWidth solid @borderColor;
+  border-bottom: @gridBorderWidth solid @borderColor;
   cursor: pointer;
-  height: 31px;
+  height: 32px;
   font-weight: normal;
 }
 
 .ui-grid-menu-button .ui-grid-icon-container {
-  margin-top: 3px;
+  margin-top: 5px;
+  margin-left: 2px;
 }
 
 .ui-grid-menu-button .ui-grid-menu {
   right: 0;
   .ui-grid-menu-mid {
     overflow: scroll;
-    border: @gridBorderWidth solid @borderColor;
   }
 }
 
 .ui-grid-menu {
+  max-width: 320px;
   z-index: 2; // So it shows up over grid canvas
   position: absolute;
   padding: 0 10px 20px 10px;
@@ -30,14 +33,20 @@
   box-sizing: border-box;
 }
 
+.ui-grid-menu-item {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ui-grid-menu .ui-grid-menu-inner {
-  background: @headerBackgroundColor;
+  background: @menuBackgroundColor;
   border: @gridBorderWidth solid @borderColor;
   position: relative;
   white-space: nowrap;
 
   .rounded(@gridBorderRadius);
-  .box-shadow(e("0 10px 20px rgba(0, 0, 0, 0.2), inset 0 12px 12px -14px rgba(0, 0, 0, 0.2)"));
 }
 
 .ui-grid-menu .ui-grid-menu-inner ul {
@@ -48,6 +57,7 @@
   li {
     padding: 0px;
     button {
+      color: @menuTextColor;
       min-width: 100%;
       padding: 8px;
       text-align: left;
@@ -57,12 +67,10 @@
       // Show a shadow when hovering over a menu item
       &:hover,
       &:focus {
-        // background-color: negation(@headerBackgroundColor, #fff);
-        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
+        background-color: @menuHoverColor;
       }
       &.ui-grid-menu-item-active {
-        .inner-shadow(@vertical: 0, @blur: 14px, @alpha: 0.2);
-        background-color: @selectedColor;
+        background-color: @menuSelectedColor;
       }
     }
   }
