@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 299 Third Party Features
+@name Tutorial: 498 Third Party Features
 @description
 
 ## Features maintained outside UI Grid Repository ##
@@ -23,3 +23,7 @@ Auto scrolls when new data is added to the grid
 ### **ui-grid-custom-scroller** ###
 The custom scroller takes over the default scrolling logic in order to ensure that grid scrolling works without a lag on devices.
 <br>https://github.com/mportuga/ui-grid-custom-scroller
+
+### **ui-grid-custom-cell-select** ###
+Allows for copy and paste of cell contents with CTRL+C or CMD+C, and CTRL+V or CMD+V
+<br>https://github.com/Atmos206/ui-grid-custom-cell-select
