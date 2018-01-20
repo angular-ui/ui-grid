@@ -68,7 +68,7 @@ describe('uiGridHeaderCell', function() {
 			$compile(grid)($scope);
 			$document[0].body.appendChild(grid[0]);
 
-			$scope.$digest();
+			$scope.$apply();
 		};
 
 		recompile();
@@ -191,6 +191,15 @@ describe('uiGridHeaderCell', function() {
 			$scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
 			expect(headerCell2.hasClass('funcCellClass')).toBe(false);
 		}));
+	});
+
+	describe('isLastCol', function() {
+		it('should not add a last col class to the last column when the grid menu is disabled', function() {
+			expect($(grid).find('.ui-grid-header-cell:nth(2) .sortable').hasClass('ui-grid-header-cell-last-col')).toBe(false);
+		});
+		it('should not add a last col class to a column that is not the last column', function() {
+			expect($(grid).find('.ui-grid-header-cell:nth(1) .sortable').hasClass('ui-grid-header-cell-last-col')).toBe(false);
+		});
 	});
 
 	describe('externalScope', function() {

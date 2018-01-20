@@ -1,6 +1,6 @@
 <div
   role="columnheader"
-  ng-class="{ 'sortable': sortable }"
+  ng-class="{ 'sortable': sortable, 'ui-grid-header-cell-last-col': isLastCol }"
   ui-grid-one-bind-aria-labelledby-grid="col.uid + '-header-text ' + col.uid + '-sortdir-text'"
   aria-sort="{{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending' : (!col.sort.direction ? 'none' : 'other'))}}">
   <div
@@ -41,7 +41,6 @@
     ng-if="grid.options.enableColumnMenus && !col.isRowHeader  && col.colDef.enableColumnMenu !== false"
     ng-click="toggleMenu($event)"
     ng-keydown="headerCellArrowKeyDown($event)"
-    ng-class="{'ui-grid-column-menu-button-last-col': isLastCol}"
     ui-grid-one-bind-aria-label="i18n.headerCell.aria.columnMenuButtonLabel"
     aria-haspopup="true">
     <i
