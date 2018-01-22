@@ -522,22 +522,32 @@
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
               }
               // Make the element float since it's a div and can expand to fill its container
-              // include the cell's font properties since they affect the width
-              var cellElement = angular.element(cell);
+              // include the cell's font properties since they affect the width.
+              var cellElement = angular.element(cell);            
 
-              var cellStyle = window.getComputedStyle(cellElement[0]);
-
-              var style = {'float':'left'};
-              for ( var i in cellStyle ) {
-                if(i.startsWith('font')){
-                  style[i] = cellStyle[i];
-                }
-              }
+              var style = {
+                  'float':'left',
+                  'font': cellElement.css('font'),
+                  'fontDisplay': cellElement.css('fontDisplay'),
+                  'fontFamily': cellElement.css('fontFamily'),
+                  'fontFeatureSettings': cellElement.css('fontFeatureSettings'),
+                  'fontKerning': cellElement.css('fontKerning'),
+                  'fontSize': cellElement.css('fontSize'),
+                  'fontStretch': cellElement.css('fontStretch'),
+                  'fontStyle': cellElement.css('fontStyle'),
+                  'fontVariant': cellElement.css('fontVariant'),
+                  'fontVariantCaps': cellElement.css('fontVariantCaps'),
+                  'fontVariantEastAsian': cellElement.css('fontVariantEastAsian'),
+                  'fontVariantLigatures': cellElement.css('fontVariantLigatures'),
+                  'fontVariantNumeric': cellElement.css('fontVariantNumeric'),
+                  'fontVariationSettings': cellElement.css('fontVariationSettings'),
+                  'fontWeight': cellElement.css('fontWeight')
+                };
 
               gridUtil.fakeElement(cell, style, function(newElm) {
-                
+      
                 var e = angular.element(newElm);
-                var width = gridUtil.elementWidth(newElm);
+                var width = gridUtil.elementWidth(e);
 
                 if (menuButton) {
                   var menuButtonWidth = gridUtil.elementWidth(menuButton);
@@ -558,7 +568,8 @@
 
           refreshCanvas(xDiff);
 
-          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);        };
+          uiGridResizeColumnsService.fireColumnSizeChanged(uiGridCtrl.grid, col.colDef, xDiff);        
+        };
         $elm.on('dblclick', dblClickFn);
 
         $elm.on('$destroy', function() {
