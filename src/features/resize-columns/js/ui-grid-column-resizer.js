@@ -515,20 +515,35 @@
           // Get the cell contents so we measure correctly. For the header cell we have to account for the sort icon and the menu buttons, if present
           var cells = renderContainerElm.querySelectorAll('.' + uiGridConstants.COL_CLASS_PREFIX + col.uid + ' .ui-grid-cell-contents');
           Array.prototype.forEach.call(cells, function (cell) {
-              // Get the cell width
-              // gridUtil.logDebug('width', gridUtil.elementWidth(cell));
 
               // Account for the menu button if it exists
               var menuButton;
               if (angular.element(cell).parent().hasClass('ui-grid-header-cell')) {
                 menuButton = angular.element(cell).parent()[0].querySelectorAll('.ui-grid-column-menu-button');
               }
+              // Make the element float since it's a div and can expand to fill its container
+              // include the cell's font properties since they affect the width. 
+              var style = angular.element(cell).css([
+                'font',
+                'fontDisplay',
+                'fontFamily',
+                'fontFeatureSettings',
+                'fontKerning',
+                'fontSize',
+                'fontStretch',
+                'fontStyle',
+                'fontVariant',
+                'fontVariantCaps',
+                'fontVariantEastAsian',
+                'fontVariantLigatures',
+                'fontVariantNumeric',
+                'fontVariationSettings',
+                'fontWeight']);
+              style.float = 'left';
 
-              gridUtil.fakeElement(cell, {}, function(newElm) {
-                // Make the element float since it's a div and can expand to fill its container
+              gridUtil.fakeElement(cell, style, function(newElm) {
+                
                 var e = angular.element(newElm);
-                e.attr('style', 'float: left');
-
                 var width = gridUtil.elementWidth(e);
 
                 if (menuButton) {
