@@ -30,8 +30,8 @@ Demonstrates the following:
 
       var canceler = $q.defer();
       $http.get('/data/10000_complex.json', {timeout: canceler.promise})
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
       $scope.$on('$destroy', function(){

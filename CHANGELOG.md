@@ -1,3 +1,44 @@
+<a name="v4.1.3"></a>
+### v4.1.3 (2017-12-23)
+
+
+#### Bug Fixes
+
+* **protractor:** Improving reliability of protractor tests and ensuring they can run at a basic l ([44396d22](http://github.com/angular-ui/ng-grid/commit/44396d22cf89efb6f0039e0e1bc5d1c8a19570b5))
+* **uiGridAutoResize:** Changed [0].clientHeight to gridUtil.elementHe… (#6490) ([fef9552e](http://github.com/angular-ui/ng-grid/commit/fef9552e1dc82693ee4182b694d7f3c8e893a282))
+* **GridRenderContainer.js:** Fix bug of space to the right of the last column (#6371) ([a2f2fd5](https://github.com/angular-ui/ui-grid/commit/a2f2fd518de3d88100da6ad44ec970cb53262e66))
+* **ui-grid.html:** Fix bug with template for last row's bottom border (#4413) ([faa8ece](https://github.com/angular-ui/ui-grid/commit/faa8ece144231a50d9fa771187275088b28dd3eb))
+
+<a name="v4.1.2"></a>
+### v4.1.2 (2017-12-21)
+
+
+#### Bug Fixes
+
+* **tutorial:** Replacing .success with .then due to angular upgrade. ([07cbe8a8](http://github.com/angular-ui/ng-grid/commit/07cbe8a8c3315e638704ded07e49b677896ab3d0))
+
+<a name="v4.1.1"></a>
+### v4.1.1 (2017-12-20)
+
+
+#### Bug Fixes
+
+* **ui-grid.info:** Updating ui-grid.info to support angular 1.6.7 ([99819cc2](http://github.com/angular-ui/ng-grid/commit/99819cc2a3a9d442e734892ec9e09847e0bd88f7))
+
+<a name="v4.1.0"></a>
+## v4.1.0 (2017-12-18)
+
+
+#### Bug Fixes
+
+* **exporter:**
+  * fix issue #6019 errors while opening grid menu with exporter service ([18547eb6](http://github.com/angular-ui/ng-grid/commit/18547eb6db79d62d3eb6594ac281ac9c462acd75))
+  * Excel export with npm instructions, fix error on menu and more examples ([88f5525](https://github.com/angular-ui/ui-grid/commit/bc37cb4d63f00ef3e49e2a8f14b6efad11107be0))
+
+#### Features
+
+* **chore:** Support Angular 1.6. ([56d3c5f](https://github.com/angular-ui/ui-grid/commit/56d3c5f529f171d82873d4bd1c172d82d0a32ac0))
+
 <a name="v4.0.11"></a>
 ### v4.0.11 (2017-11-20)
 

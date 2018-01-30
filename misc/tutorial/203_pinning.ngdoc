@@ -40,8 +40,8 @@ It is also possible to disable pinning on column level. Note the 'id' column def
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>
@@ -87,8 +87,8 @@ Below example will hide Pin Right option from id column [by setting hidePinRight
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>

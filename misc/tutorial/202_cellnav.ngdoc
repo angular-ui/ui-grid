@@ -54,8 +54,8 @@ while still allowing the right arrow to be handled by the grid.
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
         $scope.info = {};

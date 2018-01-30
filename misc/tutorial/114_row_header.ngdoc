@@ -23,9 +23,8 @@ You can add a row header column, which goes into the left pinned container
       };
       
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-          console.log(data)
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>

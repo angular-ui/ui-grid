@@ -14,13 +14,13 @@ Using multiple grids on a single page
       $scope.gridOptions2 = {};
 
       $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions1.data = data;
+      .then(function(response) {
+        $scope.gridOptions1.data = response.data;
       });
 
       $http.get('/data/500.json')
-      .success(function(data) {
-        $scope.gridOptions2.data = data;
+      .then(function(response) {
+        $scope.gridOptions2.data = response.data;
       });
     }]);
   </file>

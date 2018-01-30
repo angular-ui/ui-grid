@@ -63,7 +63,9 @@ appears when you quickly scroll through the grid.
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for(i = 0; i < data.length; i++){
             data[i].subGridOptions = {
               columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
@@ -101,7 +103,9 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
+            .then(function(response) {
+              var data = response.data;
+
               for(i = 0; i < data.length; i++){
                 data[i].subGridOptions = {
                   columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
@@ -127,8 +131,8 @@ appears when you quickly scroll through the grid.
                       ]};
 
                       $http.get('/data/100.json')
-                        .success(function(data) {
-                          row.entity.subGridOptions.data = data;
+                        .then(function(response) {
+                          row.entity.subGridOptions.data = response.data;
                         });
                     }
                 });
@@ -143,8 +147,8 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
-              $scope.gridOptions.data = data;
+            .then(function(response) {
+              $scope.gridOptions.data = response.data;
             });
         }]);
     app.controller('FourthCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
@@ -162,7 +166,9 @@ appears when you quickly scroll through the grid.
           ];
 
           $http.get('/data/500_complex.json')
-            .success(function(data) {
+            .then(function(response) {
+              var data = response.data;
+
               for(i = 0; i < data.length; i++){
                 data[i].subGridOptions = {
                   columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],

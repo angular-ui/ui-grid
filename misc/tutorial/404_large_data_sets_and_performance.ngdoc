@@ -59,7 +59,9 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
       ];
     
       $http.get('/data/10000_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for( var i=0; i<6; i++){
           data = data.concat(data);
         }

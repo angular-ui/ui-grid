@@ -26,17 +26,9 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 60000,
+    defaultTimeoutInterval: 10000,
 
     // Don't show the stack trace, it's mostly useless
     includeStackTrace: false
-  },
-
-  plugins: [{
-    chromeA11YDevTools: {
-      // Since the site has some serious element contrast issues this is needed.
-      treatWarningsAsFailures: false
-    },
-    package: 'protractor-accessibility-plugin'
-  }]
+  }
 };

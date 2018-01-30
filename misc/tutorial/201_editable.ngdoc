@@ -166,7 +166,9 @@ $scope.gridOptions.columnDefs = [
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for(i = 0; i < data.length; i++){
             data[i].registered = new Date(data[i].registered);
             data[i].gender = data[i].gender==='male' ? 1 : 2;

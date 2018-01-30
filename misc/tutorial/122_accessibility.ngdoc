@@ -147,10 +147,10 @@ You can visualize the accessibility roles that have been applied to the grid usi
       angular.extend($scope.paginationGridOptions, $scope.virtualGridOptions);
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          data.forEach(setGender);
-          $scope.virtualGridOptions.data = data;
-          $scope.paginationGridOptions.data = data;
+        .then(function(response) {
+          response.data.forEach(setGender);
+          $scope.virtualGridOptions.data = response.data;
+          $scope.paginationGridOptions.data = response.data;
         });
     }])
     .filter('mapGender', function() {
@@ -218,10 +218,10 @@ You can visualize the accessibility roles that have been applied to the grid usi
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      var expectToBeFocused = function(element){
-        return expect(element.getInnerHtml()).
-          toBe(browser.driver.switchTo().activeElement().getInnerHtml());
-      };
+      function expectToBeFocused(element){
+        return expect(gridTestUtils.getInnerHtml(element)).
+          toBe(gridTestUtils.getInnerHtml(browser.driver.switchTo().activeElement()));
+      }
 
       describe('first grid on page, no virtual data.', function(){
         describe('when column menu clicked', function(){

@@ -305,15 +305,22 @@
               }
 
               /**
-              * @ngdoc property
-              * @name enableColumnMenu
-              * @propertyOf ui.grid.class:GridOptions.columnDef
-              * @description if column menus are enabled, controls the column menus for this specific
-              * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
-              * using this option. If gridOptions.enableColumnMenus === false then you get no column
-              * menus irrespective of the value of this option ).  Defaults to true.
-              *
-              */
+               * @ngdoc property
+               * @name enableColumnMenu
+               * @propertyOf ui.grid.class:GridOptions.columnDef
+               * @description if column menus are enabled, controls the column menus for this specific
+               * column (i.e. if gridOptions.enableColumnMenus, then you can control column menus
+               * using this option. If gridOptions.enableColumnMenus === false then you get no column
+               * menus irrespective of the value of this option ).  Defaults to true.
+               *
+               * By default column menu's trigger is hidden before mouse over, but you can always force it to be visible with CSS:
+               *
+               * <pre>
+               *  .ui-grid-column-menu-button {
+               *    display: block;
+               *  }
+               * </pre>
+               */
               /**
               * @ngdoc property
               * @name enableColumnMenus

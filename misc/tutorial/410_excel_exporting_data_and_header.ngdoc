@@ -136,7 +136,7 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
          // set metadata on export data to set format id. See exportExcelHeader config above for example of creating
          // a formatter and obtaining the id
          var formatterId = null;
-         if (cellValue && typeof cellValue === 'string' && cellValue.startsWith('W')) {
+         if (cellValue && cellValue.startsWith('W')) {
            formatterId = $scope.formatters['red'].id;
          }
 
@@ -152,7 +152,9 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
       };
 
       $http.get('/data/100.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for (var i=0; i < data.length; i++) {
           data[i].member = false;
           data[i].total = i + 0.1;

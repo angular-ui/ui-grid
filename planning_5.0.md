@@ -15,12 +15,13 @@ Before moving to the new version of Angular, it is in our best interest to updat
 Not all of the tasks here are absolutely necessary for the update, but they should help with a smoother transition to the new version and provide an improved experience for consumers of the grid.
 
 - [ ] Update dev dependencies to the latest versions (MUST)
-- [ ] Merge/decline all outstanding Pull Requests (MUST)
+- [x] Merge/decline all outstanding Pull Requests (MUST)
 - [ ] Clean up issues board of all non-issues, i.e. questions or issues for older versions that are no longer reproducible
 - [ ] Update UI-Grid build system to publish multiple files separated by features, i.e. issue #5802 (MUST)
 - [ ] Update UI-Grid styles to modernize it a bit, i.e. issue #3210
 
 ## Phase 3 - Angular Upgrade
+Note: For this, we will do our best to follow the instructions laid out by the angular team in the following document: https://angular.io/guide/upgrade
 
 - [ ] Convert core UI-Grid component to Angular 5
 - [ ] Convert _stable features*_ of UI-Grid to Angular 5

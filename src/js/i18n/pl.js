@@ -9,10 +9,10 @@
           aria: {
             defaultFilterLabel: 'Filtr dla kolumny',
             removeFilter: 'Usuń filtr',
-            columnMenuButtonLabel: 'Menu kolumny',
+            columnMenuButtonLabel: 'Opcje kolumny',
             column: 'Kolumna'
           },
-          priority: 'Prioritet:',
+          priority: 'Priorytet:',
           filterLabel: "Filtr dla kolumny: "
         },
         aggregate: {
@@ -75,14 +75,17 @@
           exporterAllAsPdf: 'Eksportuj wszystkie dane do pdf',
           exporterVisibleAsPdf: 'Eksportuj widoczne dane do pdf',
           exporterSelectedAsPdf: 'Eksportuj zaznaczone dane do pdf',
+          exporterAllAsExcel: 'Eksportuj wszystkie dane do excel',
+          exporterVisibleAsExcel: 'Eksportuj widoczne dane do excel',
+          exporterSelectedAsExcel: 'Eksportuj zaznaczone dane do excel',
           clearAllFilters: 'Wyczyść filtry'
         },
         importer: {
           noHeaders: 'Nie udało się wczytać nazw kolumn. Czy plik posiada nagłówek?',
-          noObjects: 'Nie udalo się wczytać pozycji. Czy plik zawiera dane??',
-          invalidCsv: 'Nie udało się przetworzyć pliku, jest to prawidlowy plik CSV??',
-          invalidJson: 'Nie udało się przetworzyć pliku, jest to prawidlowy plik Json?',
-          jsonNotArray: 'Importowany plik json musi zawierać tablicę, importowanie przerwane.'
+          noObjects: 'Nie udalo się wczytać pozycji. Czy plik zawiera dane?',
+          invalidCsv: 'Nie udało się przetworzyć pliku. Czy to prawidłowy plik CSV?',
+          invalidJson: 'Nie udało się przetworzyć pliku. Czy to prawidłowy plik JSON?',
+          jsonNotArray: 'Importowany plik JSON musi zawierać tablicę. Importowanie przerwane.'
         },
         pagination: {
           aria: {

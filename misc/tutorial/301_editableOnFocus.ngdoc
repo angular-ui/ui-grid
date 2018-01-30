@@ -25,8 +25,8 @@ See api docs for both cellNav and edit for default navigation keys and how you c
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
         $scope.currentFocused = "";

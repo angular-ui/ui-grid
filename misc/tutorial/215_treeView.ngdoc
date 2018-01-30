@@ -92,7 +92,9 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
       };
 
      $http.get('/data/500_complex.json')
-     .success(function(data) {
+     .then(function(response) {
+       var data = response.data;
+
        for ( var i = 0; i < data.length; i++ ){
          data[i].state = data[i].address.state;
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );

@@ -384,6 +384,13 @@ angular.module('ui.grid')
        * @propertyOf ui.grid.class:GridOptions
        * @description True by default. When enabled, this setting displays a column
        * menu within each column.
+       * By default column menu's trigger is hidden before mouse over, but you can always force it to be visible with CSS:
+       *
+       * <pre>
+       *  .ui-grid-column-menu-button {
+       *    display: block;
+       *  }
+       * </pre>
        */
       baseOptions.enableColumnMenus = baseOptions.enableColumnMenus !== false;
 

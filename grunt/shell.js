@@ -1,8 +1,8 @@
 module.exports = function() {
-  var webdriverManagerPath = './node_modules/protractor/bin/webdriver-manager';
-  var bowerPath = './node_modules/bower/bin/bower';
+  var webdriverManagerPath = './node_modules/protractor/bin/webdriver-manager',
+    bowerPath = './node_modules/bower/bin/bower';
 
-  if(process.platform === 'win32') {
+  if (process.platform === 'win32') {
     webdriverManagerPath = '.\\node_modules\\protractor\\bin\\webdriver-manager';
     bowerPath = '.\\node_modules\\bower\\bin\\bower';
   }

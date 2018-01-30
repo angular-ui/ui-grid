@@ -109,7 +109,7 @@ The default grunt task will test and build files into `dist/`
 Development "watch" task. This will automatically rebuild from source on changes, reload Gruntfile.js if you change it, and rebuild the docs.
 
 1. A server on localhost:9002 serving whichever directory you checked out, with livereload. Navigate to http://localhost:9002/misc/demo to see the [demo files](http://localhost:9002/misc/demo/grid-directive.html).
-2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with a custom grunt-ngdocs that should work with Angular 1.2.x.
+2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with a custom grunt-ngdocs that should work with Angular 1.6.x.
 
 
 
@@ -117,9 +117,9 @@ Development "watch" task. This will automatically rebuild from source on changes
 
 By default `grunt dev` will start several karma background watchers that will run the tests against multiple versions of angular. You may specify the version(s) you want to use with the `--angular` flag:
 
-    > grunt dev --angular=1.2.21
+    > grunt dev --angular=1.6.7
 
-    > grunt dev --angular=1.2.20,1.2.21
+    > grunt dev --angular=1.5.11,1.6.7
 
 You can also use the `--browsers` specify what browsers to test with (PhantomJS is the default).
 
@@ -148,14 +148,14 @@ The `karmangular` task runs tests serially against multiple browsers (it is used
     > grunt karmangular --browsers=Chrome
 
     # Run tests with a couple versions of Angular against the default PhantomJS browser
-    > grunt karmangular --angular=1.2.20,1.2.21
+    > grunt karmangular --angular=1.5.11,1.6.7
 
 ## SauceLabs
 
 ui-grid is set up to run against SauceLabs. You must have the `SAUCE_ACCESS_KEY` environment variable set.
 
     # Execute tests for a couple versions of angular on IE8
-    > grunt karmangular --angular=1.2.20,1.2.21 --browsers=SL_IE_8
+    > grunt karmangular --angular=1.5.11,1.6.7 --browsers=SL_IE_8
 
     # Run the watch tasks against IE10
     > grunt dev --browsers=SL_IE10

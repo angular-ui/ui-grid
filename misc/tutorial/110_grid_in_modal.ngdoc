@@ -33,8 +33,8 @@ In a sense this is similar to what the auto-resize feature does, but it only doe
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $rootScope.gridOptions.data = data;
+        .then(function(response) {
+          $rootScope.gridOptions.data = response.data;
         });
 
       $scope.showModal = function() {
