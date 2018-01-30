@@ -166,7 +166,6 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
 
          if (gridCol.field === 'updatedDate') {
            formatterId = $scope.formatters['date'].id;
-           return {metadata: {style: formatterId, type: 'date'}};
          }
 
          if (formatterId) {
