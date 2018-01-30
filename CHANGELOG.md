@@ -153,6 +153,12 @@
   * output aria text for cells that come from selection feature ([6d951b2a](http://github.com/angular-ui/ng-grid/commit/6d951b2a7ac33f53b8512a6f3ad5d5498cd079c9))
 * **gridEdit:** Pass triggerEvent to cellEditableCondition fn call ([219ea716](http://github.com/angular-ui/ng-grid/commit/219ea7165ff1f6030c7d125550020181fa1fc3ae))
 
+
+#### Breaking Changes
+
+* Menu Items's title should now be a function
+ ([df10da91](https://github.com/angular-ui/ui-grid/commit/df10da916eb52ffe5636041b56eb88242ecfdd0d#diff-3baddc9493adec1550b73c74401d4b46))
+
 <a name="v4.0.6"></a>
 ### v4.0.6 (2017-06-14)
 
