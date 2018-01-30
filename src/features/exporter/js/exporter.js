@@ -1535,7 +1535,7 @@
             // The standard column width in Microsoft Excel 2000 is 8.43 characters based on fixed-width Courier font
             // Width of 10 in excel is 75 pixels
             var colWidths = [];
-            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : 0;
+            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : (grid.enableRowSelection !== false ? 1 : 0);
             for (var i = startDataIndex; i < grid.columns.length; i++) {
               colWidths.push({width: (grid.columns[i].drawnWidth / 75) * 10});
             }
