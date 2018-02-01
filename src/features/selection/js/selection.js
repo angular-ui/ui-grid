@@ -517,7 +517,7 @@
 
             grid.api.selection.raise.rowSelectionChanged(row, evt);
 
-            toggleParentHeaders(grid, row, event, multiSelect, noUnselect);
+            toggleParentHeaders(grid, row, evt, multiSelect, noUnselect);
           }
         },
         /**
