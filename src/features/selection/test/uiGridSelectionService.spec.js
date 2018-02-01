@@ -55,7 +55,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
     it('should not toggle selected with enableSelection: false', function () {
       grid.rows[0].enableSelection = false;
       uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true);
-      expect(grid.rows[0].isSelected).toBe(undefined);
+      expect(grid.rows[0].isSelected).toBe(false);
     });
 
     it('should toggle selected with noUnselect', function () {
@@ -124,7 +124,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       uiGridSelectionService.shiftSelect(grid, grid.rows[5], null, true);
       expect(grid.rows[2].isSelected).toBe(true);
       expect(grid.rows[3].isSelected).toBe(true);
-      expect(grid.rows[4].isSelected).toBe(undefined);
+      expect(grid.rows[4].isSelected).toBe(false);
       expect(grid.rows[5].isSelected).toBe(true);
     });
 
@@ -173,21 +173,21 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[4].isSelected).toBe(false);
     });
   });
-  
+
   describe('setSelected function', function() {
     it('select row and check the selected count is correct', function() {
-      
+
       expect(grid.selection.selectedCount).toBe(0);
-      
+
       grid.rows[0].setSelected(true);
       expect(grid.rows[0].isSelected).toBe(true);
       expect(grid.selection.selectedCount).toBe(1);
-    
+
       // the second setSelected(true) should have no effect
       grid.rows[0].setSelected(true);
       expect(grid.rows[0].isSelected).toBe(true);
       expect(grid.selection.selectedCount).toBe(1);
-      
+
       grid.rows[0].setSelected(false);
       expect(grid.rows[0].isSelected).toBe(false);
       expect(grid.selection.selectedCount).toBe(0);
@@ -265,7 +265,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[4].isSelected).toBe(true);
       expect(grid.rows[6].isSelected).toBe(false);
       expect(grid.rows[7].isSelected).toBe(true);
-      expect(grid.rows[8].isSelected).toBe(undefined);
+      expect(grid.rows[8].isSelected).toBe(false);
       expect(grid.rows[9].isSelected).toBe(true);
       expect(grid.selection.selectAll).toBe(true);
       expect(grid.selection.selectedCount).toBe(8);
@@ -285,7 +285,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
 
       grid.rows[3].enableSelection = false;
       grid.api.selection.selectRowByVisibleIndex(2);
-      expect(grid.rows[3].isSelected).toBe(undefined);
+      expect(grid.rows[3].isSelected).toBe(false);
     });
   });
 
