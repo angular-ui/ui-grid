@@ -728,7 +728,7 @@
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
           var grid;
 
-          var handleFileSelect = function( event ){
+          function handleFileSelect(event) {
             var target = event.srcElement || event.target;
 
             if (target && target.files && target.files.length === 1) {
@@ -744,7 +744,7 @@
                 gridUtil.logError('Could not import file because UI Grid was not found.');
               }
             }
-          };
+          }
 
           var fileChooser = $elm[0].querySelectorAll('.ui-grid-importer-file-chooser');
 
@@ -753,11 +753,6 @@
           } else {
             fileChooser[0].addEventListener('change', handleFileSelect, false);
           }
-
-          $scope.$on('$destroy', function unbindEvents() {
-            // unbind jquery events to prevent memory leaks
-            fileChooser[0].removeEventListener('change', handleFileSelect, false);
-          });
         }
       };
     }

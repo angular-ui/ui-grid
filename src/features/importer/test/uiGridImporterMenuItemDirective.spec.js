@@ -54,16 +54,4 @@ describe('ui.grid.importer uiGridImporterMenuItem', function() {
 
 		expect(gridUtil.logError).toHaveBeenCalledWith('Found > 1 or < 1 file choosers within the menu item, error, cannot continue');
 	});
-	describe('on $destroy', function() {
-		beforeEach(function() {
-			spyOn(fileChooser[0], 'removeEventListener').and.callThrough();
-			$scope.$broadcast('$destroy');
-		});
-		afterEach(function() {
-			fileChooser[0].removeEventListener.calls.reset();
-		});
-		it('should remove all event handlers', function() {
-			expect(fileChooser[0].removeEventListener).toHaveBeenCalled();
-		});
-	});
 });
