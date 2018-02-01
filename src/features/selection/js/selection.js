@@ -210,6 +210,23 @@
                 },
                 /**
                  * @ngdoc function
+                 * @name unSelectRowByVisibleIndex
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Unselect the specified row by visible index (i.e. if you
+                 * specify row 0 you'll get the first visible row unselected).  In this context
+                 * visible means of those rows that are theoretically visible (i.e. not filtered),
+                 * rather than rows currently rendered on the screen.
+                 * @param {number} index index within the rowsVisible array
+                 * @param {Event} event object if raised from an event
+                 */
+                unSelectRowByVisibleIndex: function (rowNum, evt) {
+                  var row = grid.renderContainers.body.visibleRowCache[rowNum];
+                  if (row !== null && typeof (row) !== 'undefined' && row.isSelected) {
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                  }
+                },
+                /**
+                 * @ngdoc function
                  * @name selectAllRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Selects all rows.  Does nothing if multiSelect = false
@@ -238,26 +255,32 @@
                  * @param {Event} event object if raised from an event
                  */
                 selectAllVisibleRows: function (evt) {
-                  if (grid.options.multiSelect === false) {
-                    return;
-                  }
-
-                  var changedRows = [];
-                  grid.rows.forEach(function (row) {
-                    if (row.visible) {
-                      if (!row.isSelected && row.enableSelection !== false) {
-                        row.setSelected(true);
-                        service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
-                      }
+                  if (grid.options.multiSelect !== false) {
+                    var changedRows = [];
+                    var rowCache = [];
+                    if (grid.treeBase && grid.treeBase.tree) {
+                      rowCache = getAllTreeRows(grid.treeBase.tree);
                     } else {
-                      if (row.isSelected) {
-                        row.setSelected(false);
-                        service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
+                      rowCache = grid.rows;
+                    }
+
+                    for (var i = 0; i<rowCache.length; i++) {
+                      var row = rowCache[i];
+                      if (row.visible) {
+                        if (!row.isSelected && row.enableSelection !== false) {
+                          row.setSelected(true);
+                          service.decideRaiseSelectionEvent(grid, row, changedRows, event);
+                        }
+                      } else {
+                        if (row.isSelected) {
+                          row.setSelected(false);
+                          service.decideRaiseSelectionEvent(grid, row, changedRows, event);
+                        }
                       }
                     }
-                  });
-                  service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
-                  grid.selection.selectAll = true;
+                    service.decideRaiseSelectionBatchEvent(grid, changedRows, event);
+                    grid.selection.selectAll = true;
+                  }
                 },
                 /**
                  * @ngdoc function
@@ -493,6 +516,8 @@
             grid.selection.selectAll = grid.rows.length === selectedRows.length;
 
             grid.api.selection.raise.rowSelectionChanged(row, evt);
+
+            toggleParentHeaders(grid, row, event, multiSelect, noUnselect);
           }
         },
         /**
@@ -540,9 +565,20 @@
          * @param {Grid} grid grid object
          */
         getSelectedRows: function (grid) {
-          return grid.rows.filter(function (row) {
-            return row.isSelected;
-          });
+          var rows;
+          if (grid.treeBase && grid.treeBase.tree) {
+            rows = getAllTreeRows(grid.treeBase.tree);
+          } else {
+            rows = grid.rows;
+          }
+
+          var selectedRows = [];
+          for (var i = 0; i<rows.length; i++) {
+            if (rows[i].isSelected) {
+              selectedRows.push(rows[i]);
+            }
+          }
+          return selectedRows;
         },
 
         /**
@@ -605,6 +641,30 @@
 
       return service;
 
+      function toggleParentHeaders(grid, row, event, multiSelect, noUnselect){
+        if (row.treeNode &&row.treeNode.parentRow) {
+          var parentRow = row.treeNode.parentRow;
+          var siblingSelectedStatus = [];
+          for (var i = 0; i < parentRow.treeNode.children.length; i++) {
+            siblingSelectedStatus.push(parentRow.treeNode.children[i].row.isSelected);
+          }
+          var allSiblingsSelected = siblingSelectedStatus.indexOf(false) === -1;
+
+          if (parentRow.isSelected !== allSiblingsSelected) {
+            service.toggleRowSelection(grid, parentRow, event, multiSelect, noUnselect);
+          }
+        }
+      }
+
+      function getAllTreeRows(rowTree){
+        var selectedRows = [];
+        for (var i = 0; i<rowTree.length; i++) {
+          var node = rowTree[i];
+          selectedRows.push(node.row);
+          selectedRows = selectedRows.concat(getAllTreeRows(node.children));
+        }
+        return selectedRows;
+      }
     }]);
 
   /**
@@ -726,18 +786,25 @@
           function selectButtonClick(row, evt) {
             evt.stopPropagation();
 
+            if (row.groupHeader) {
+              selectByKeyState(row, evt);
+              var selectionState = row.isSelected;
+              for (var i = 0; i < row.treeNode.children.length; i++) {
+                if (row.treeNode.children[i].row.isSelected !== selectionState) {
+                  selectButtonClick(row.treeNode.children[i].row, evt);
+                }
+              }
+            }else {
+              selectByKeyState(row, evt);
+            }
+          }
+
+          function selectByKeyState(row, evt){
             if (evt.shiftKey) {
               uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
-            }
-            else if (evt.ctrlKey || evt.metaKey) {
+            } else if (evt.ctrlKey || evt.metaKey) {
               uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
-            }
-            else if (row.groupHeader) {
-              for (var i = 0; i < row.treeNode.children.length; i++) {
-                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
-              }
-            }
-            else {
+            } else {
               uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
           }
