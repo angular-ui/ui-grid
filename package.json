@@ -81,7 +81,8 @@
     "semver": "~5.4.1",
     "shelljs": "~0.6.0",
     "time-grunt": "~1.1.0",
-    "validate-commit-message": "^3.0.1"
+    "validate-commit-message": "^3.0.1",
+    "webdriver-manager": "^11.1.1"
   },
   "config": {
     "commitizen": {
