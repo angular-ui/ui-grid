@@ -254,7 +254,7 @@
                  * @description Selects all visible rows.  Does nothing if multiSelect = false
                  * @param {Event} event object if raised from an event
                  */
-                selectAllVisibleRows: function (evt) {
+                selectAllVisibleRows: function (event) {
                   if (grid.options.multiSelect !== false) {
                     var changedRows = [];
                     var rowCache = [];
