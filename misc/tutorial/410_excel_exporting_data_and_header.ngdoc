@@ -51,13 +51,35 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
 
       $scope.formatters = {};
 
+      $scope.randomDate = function randomDate(start, end) {
+        var diff =  end.getTime() - start.getTime();
+        var new_diff = diff * Math.random();
+        var date = new Date(start.getTime() + new_diff);
+        return date;
+      };
+
       $scope.gridOptions = {
         columnDefs: [
           { field: 'name' },
           { field: 'gender', visible: false},
           { field: 'company' },
           { field: 'member' },
-          { field: 'total' }
+          { field: 'total' },
+          { field: 'updatedDate', displayName: 'Date', cellFilter: 'date:\'yyyy-MM-dd\'', width: 150,
+            sortingAlgorithm: function (aDate, bDate) {
+                 var a=new Date(aDate);
+                 var b=new Date(bDate);
+                 if (a < b) {
+                   return -1;
+                 }
+                 else if (a > b) {
+                   return 1;
+                 }
+                 else {
+                   return 0;
+                 }
+               }
+          }
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -96,6 +118,8 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
           var formatter = stylesheet.createFormat(aFormatDefn);
           // save the formatter
           $scope.formatters['bold'] = formatter;
+          var dateFormatter = stylesheet.createSimpleFormatter('date');
+          $scope.formatters['date'] = dateFormatter;
 
           aFormatDefn = {
             "font": stdStyle.id,
@@ -136,8 +160,12 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
          // set metadata on export data to set format id. See exportExcelHeader config above for example of creating
          // a formatter and obtaining the id
          var formatterId = null;
-         if (cellValue && typeof cellValue === 'string' && cellValue.startsWith('W')) {
+         if (gridCol.field === 'name' && cellValue && cellValue.startsWith('W')) {
            formatterId = $scope.formatters['red'].id;
+         }
+
+         if (gridCol.field === 'updatedDate') {
+           formatterId = $scope.formatters['date'].id;
          }
 
          if (formatterId) {
@@ -145,7 +173,8 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
          } else {
            return null;
          }
-       },
+        },
+        exporterFieldApplyFilters: true,
         onRegisterApi: function(gridApi){
           $scope.gridApi = gridApi;
         }
@@ -158,9 +187,11 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
         for (var i=0; i < data.length; i++) {
           data[i].member = false;
           data[i].total = i + 0.1;
+          data[i].updatedDate = $scope.randomDate(new Date('09-11-2008'), new Date());
         }
         $scope.gridOptions.data = data;
       });
+
     }]);
   </file>
 
