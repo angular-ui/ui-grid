@@ -47,6 +47,21 @@
 
         /**
          *  @ngdoc object
+         *  @name showExpandAllButton
+         *  @propertyOf  ui.grid.expandable.api:GridOptions
+         *  @description Whether or not to display the expand all button, allows you to hide expand all button on specific grids
+         *  within your application, or in specific modes on _this_ grid. Defaults to true.
+         *  @example
+         *  <pre>
+         *    $scope.gridOptions = {
+         *      showExpandAllButton: false
+         *    }
+         *  </pre>
+         */
+        grid.options.showExpandAllButton = grid.options.showExpandAllButton !== false;
+
+        /**
+         *  @ngdoc object
          *  @name expandableRowHeight
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Height in pixels of the expanded subgrid.  Defaults to
@@ -62,7 +77,7 @@
 
         /**
          *  @ngdoc object
-         *  @name
+         *  @name expandableRowHeaderWidth
          *  @propertyOf  ui.grid.expandable.api:GridOptions
          *  @description Width in pixels of the expandable column. Defaults to 40
          *  @example
