@@ -301,6 +301,8 @@
                 getSelectedRows: function () {
                   return service.getSelectedRows(grid).map(function (gridRow) {
                     return gridRow.entity;
+                  }).filter(function (entity) {
+                    return entity.hasOwnProperty('$$hashKey');
                   });
                 },
                 /**
