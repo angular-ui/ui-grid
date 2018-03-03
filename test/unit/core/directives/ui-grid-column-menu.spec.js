@@ -461,14 +461,13 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 				renderContainerElm.querySelectorAll.calls.reset();
 				$elm.css.calls.reset();
 			});
-			describe('when the current column has a lastMenuWidth and lastMenuPaddingRight defined', function() {
+			describe('when the current column has a lastMenuPaddingRight defined', function() {
 				beforeEach(function() {
 					column = {
-						lastMenuWidth: 100,
 						lastMenuPaddingRight: 150
 					};
 					left = positionData.left + renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left -
-						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width - column.lastMenuWidth +
+						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width +
 						column.lastMenuPaddingRight;
 				});
 				it('should use them to calculate the left position of the element', function() {
@@ -476,12 +475,11 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 					expect($elm.css).toHaveBeenCalledWith('left', left + 'px');
 				});
 			});
-			describe('when the current column does not have lastMenuWidth and lastMenuPaddingRight defined, but $scope does', function() {
+			describe('when the current column does not have lastMenuPaddingRight defined, but $scope does', function() {
 				beforeEach(function() {
-					$scope.lastMenuWidth = 100;
 					$scope.lastMenuPaddingRight = 150;
 					left = positionData.left + renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left -
-						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width - $scope.lastMenuWidth +
+						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width +
 						$scope.lastMenuPaddingRight;
 				});
 				it('should use them to calculate the left position of the element', function() {
@@ -491,10 +489,9 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 			});
 			describe('when the left position is less the postion data offset', function() {
 				beforeEach(function() {
-					$scope.lastMenuWidth = 100;
 					$scope.lastMenuPaddingRight = 150;
 					left = positionData.left + renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left -
-						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width - $scope.lastMenuWidth +
+						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width +
 						$scope.lastMenuPaddingRight;
 					positionData.offset = left + 10;
 				});
@@ -508,13 +505,12 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 					$elm[0].querySelectorAll.and.returnValue([{
 						querySelectorAll: jasmine.createSpy('querySelectorAll').and.returnValue('<div></div>')
 					}]);
-					$scope.lastMenuWidth = 100;
 					$scope.lastMenuPaddingRight = 150;
 					left = positionData.left + renderContainerElm.getBoundingClientRect().left - $scope.grid.element[0].getBoundingClientRect().left -
-						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width - gridUtil.elementWidth() +
+						renderContainerElm.querySelectorAll()[0].scrollLeft + positionData.parentLeft + positionData.width +
 						gridUtil.getStyles().paddingRight;
 				});
-				it('should use the position menu width and right padding to calculate the left position of the element', function() {
+				it('should use the position and right padding to calculate the left position of the element', function() {
 					uiGridColumnMenuService.repositionMenu($scope, column, positionData, $elm, $columnElement);
 					expect($elm.css).toHaveBeenCalledWith('left', left + 'px');
 				});
