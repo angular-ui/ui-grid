@@ -1,6 +1,6 @@
 <div
   class="ui-grid-menu"
-  ng-if="shown">
+  ng-show="shown">
   <style ui-grid-style>
     {{dynamicStyles}}
   </style>
@@ -8,7 +8,8 @@
     class="ui-grid-menu-mid"
     ng-show="shownMid">
     <div
-    class="ui-grid-menu-inner">
+    class="ui-grid-menu-inner"
+    ng-if="shown">
       <ul
         role="menu"
         class="ui-grid-menu-items">

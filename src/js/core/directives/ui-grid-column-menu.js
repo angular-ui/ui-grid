@@ -274,17 +274,11 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 
       var containerScrollLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
-      // default value the last width for _this_ column, otherwise last width for _any_ column, otherwise default to 170
-      var myWidth = column.lastMenuWidth ? column.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
       var paddingRight = column.lastMenuPaddingRight ? column.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
 
       if ( menu.length !== 0 ){
         var mid = menu[0].querySelectorAll('.ui-grid-menu-mid');
-        if ( mid.length !== 0 && !angular.element(mid).hasClass('ng-hide') ) {
-          myWidth = gridUtil.elementWidth(menu, true);
-          $scope.lastMenuWidth = myWidth;
-          column.lastMenuWidth = myWidth;
-
+        if ( mid.length !== 0 ) {
           // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
           // Get the column menu right padding
           paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
@@ -293,7 +287,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         }
       }
 
-      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width - myWidth + paddingRight;
+      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width + paddingRight;
       if (left < positionData.offset){
         left = positionData.offset;
       }
@@ -409,12 +403,11 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
       $scope.$on('menu-shown', function() {
         $timeout( function() {
-          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
-          //Focus on the first item
+          //automatically set the focus to the first button element in the now open menu.
           gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
           delete $scope.colElementPosition;
           delete $scope.columnElement;
-        }, 200);
+        });
       });
 
 
