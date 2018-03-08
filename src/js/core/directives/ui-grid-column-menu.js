@@ -274,6 +274,9 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 
       var containerScrollLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
+      // repositionMenu is now always called after it's visible in the DOM,
+      // allowing us to simply get the width every time the menu is opened
+      var myWidth = gridUtil.elementWidth(menu, true);
       var paddingRight = column.lastMenuPaddingRight ? column.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
 
       if ( menu.length !== 0 ){
@@ -288,8 +291,9 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       }
 
       var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width + paddingRight;
-      if (left < positionData.offset){
-        left = positionData.offset;
+
+      if (left < positionData.offset + myWidth) {
+        left = Math.max(positionData.left - containerScrollLeft + positionData.parentLeft - paddingRight + myWidth, positionData.offset + myWidth);
       }
 
       $elm.css('left', left + 'px');
@@ -356,7 +360,6 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           $scope.$broadcast('hide-menu', { originalEvent: event });
         } else {
           $scope.menuShown = true;
-          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
 
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
@@ -384,10 +387,11 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
 
       $scope.$on('menu-hidden', function() {
+        $elm[0].removeAttribute('style');
+
         if ( $scope.hideThenShow ){
           delete $scope.hideThenShow;
 
-          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
           $scope.$broadcast('show-menu');
 
           $scope.menuShown = true;
@@ -403,6 +407,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
       $scope.$on('menu-shown', function() {
         $timeout( function() {
+          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
+
           //automatically set the focus to the first button element in the now open menu.
           gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
           delete $scope.colElementPosition;

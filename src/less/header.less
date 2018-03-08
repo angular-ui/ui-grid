@@ -53,7 +53,6 @@
 
 .ui-grid-header-cell-row {
   display: table-row;
-  position: relative
 }
 
 .ui-grid-header-cell {
@@ -130,13 +129,8 @@
 
 /* Slide up/down animations */
 .ui-grid-column-menu .ui-grid-menu .ui-grid-menu-mid {
-  &.ng-hide-add {
+  &.ng-hide-add, &.ng-hide-remove {
     .transition(all, 0.04s, linear);
-    display: block !important;
-  }
-
-  &.ng-hide-remove {
-    .transition(all, 0.02s, linear);
     display: block !important;
   }
 
@@ -153,13 +147,8 @@
 
 /* Slide up/down animations */
 .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
-  &.ng-hide-add {
+  &.ng-hide-add, &.ng-hide-remove {
     .transition(all, 0.04s, linear);
-    display: block !important;
-  }
-
-  &.ng-hide-remove {
-    .transition(all, 0.02s, linear);
     display: block !important;
   }
 

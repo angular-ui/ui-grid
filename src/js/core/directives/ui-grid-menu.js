@@ -139,7 +139,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               $scope.shown = false;
               $scope.$emit('menu-hidden');
             }
-          }, 200);
+          }, 40);
         }
 
         angular.element(document).off('click touchstart', applyHideMenu);
