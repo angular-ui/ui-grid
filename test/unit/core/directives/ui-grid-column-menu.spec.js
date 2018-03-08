@@ -422,7 +422,7 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 		});
 
 		describe('repositionMenu: ', function() {
-			var column, left, positionData, renderContainerElm, $elm, $columnElement;
+			var column, left, positionData, renderContainerElm, $elm, $columnElement, myWidth;
 
 			beforeEach(function() {
 				column = {};
@@ -452,6 +452,8 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 				spyOn(gridUtil, 'closestElm').and.returnValue(renderContainerElm);
 				spyOn(gridUtil, 'elementWidth').and.returnValue(100);
 				spyOn(gridUtil, 'getStyles').and.returnValue({paddingRight: 30});
+
+				myWidth = gridUtil.elementWidth();
 			});
 			afterEach(function() {
 				gridUtil.closestElm.calls.reset();
@@ -497,7 +499,7 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 				});
 				it('should use the position data offset to calculate the left position of the element', function() {
 					uiGridColumnMenuService.repositionMenu($scope, column, positionData, $elm, $columnElement);
-					expect($elm.css).toHaveBeenCalledWith('left', positionData.offset + 'px');
+					expect($elm.css).toHaveBeenCalledWith('left', positionData.offset + myWidth + 'px');
 				});
 			});
 			describe('when ui-grid-menu-mid is defined and visible', function() {
