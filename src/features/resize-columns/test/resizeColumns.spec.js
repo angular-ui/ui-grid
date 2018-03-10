@@ -45,7 +45,7 @@ describe('ui.grid.resizeColumns', function () {
       grid = angular.element('<div style="width: 500px; height: 300px" ui-grid="gridOpts" ui-grid-resize-columns></div>');
       document.body.appendChild(grid[0]);
       $compile(grid)($scope);
-      $scope.$digest();
+      $scope.$apply();
       gridScope = $(grid).isolateScope();
     };
 
@@ -138,7 +138,7 @@ describe('ui.grid.resizeColumns', function () {
 
       firstResizer.trigger('dblclick');
 
-      $scope.$digest();
+      $scope.$apply();
 
       var newColWidth = $(grid).find('.' + uiGridConstants.COL_CLASS_PREFIX + '0').first().width();
 
@@ -152,7 +152,7 @@ describe('ui.grid.resizeColumns', function () {
       var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
       firstResizer.trigger(downEvent);
-      $scope.$digest();
+      $scope.$apply();
 
       var overlay = $(grid).find('.ui-grid-resize-overlay');
 
@@ -175,7 +175,7 @@ describe('ui.grid.resizeColumns', function () {
         initialX = firstResizer.position().left;
 
         $(firstResizer).simulate(downEvent, { clientX: initialX });
-        $scope.$digest();
+        $scope.$apply();
 
         // Get the overlay
         overlay = $(grid).find('.ui-grid-resize-overlay');
@@ -183,7 +183,7 @@ describe('ui.grid.resizeColumns', function () {
 
         xDiff = 100;
         $(document).simulate(moveEvent, { clientX: initialX + xDiff });
-        $scope.$digest();
+        $scope.$apply();
       });
 
       it('should add the column-resizing class to the grid', function () {
@@ -205,7 +205,7 @@ describe('ui.grid.resizeColumns', function () {
       describe('then releasing the mouse', function () {
         beforeEach(function () {
           $(document).simulate(upEvent, { clientX: initialX + xDiff });
-          $scope.$digest();
+          $scope.$apply();
         });
 
         it('should cause the column to resize by the amount change in the X axis', function () {
@@ -261,10 +261,10 @@ describe('ui.grid.resizeColumns', function () {
         initialX = firstResizer.position().left;
 
         $(firstResizer).simulate(downEvent, { clientX: initialX });
-        $scope.$digest();
+        $scope.$apply();
 
         $(document).simulate(upEvent, { clientX: initialX - minWidth });
-        $scope.$digest();
+        $scope.$apply();
       });
 
       it('should not go below the minWidth less border', function () {
@@ -299,7 +299,7 @@ describe('ui.grid.resizeColumns', function () {
           var firstResizer = $(grid).find('[ui-grid-column-resizer]').first();
 
           $(firstResizer).simulate('dblclick');
-          $scope.$digest();
+          $scope.$apply();
 
           var firstColumnUid = gridScope.grid.columns[0].uid;
 
@@ -317,10 +317,10 @@ describe('ui.grid.resizeColumns', function () {
           initialX = firstResizer.position().left;
 
           $(firstResizer).simulate(downEvent, { clientX: initialX });
-          $scope.$digest();
+          $scope.$apply();
 
           $(document).simulate(upEvent, { clientX: initialX + maxWidth });
-          $scope.$digest();
+          $scope.$apply();
         });
 
         it('should not go above the maxWidth', function () {

@@ -19,7 +19,7 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
     document.body.appendChild(elm[0]);
     $compile(elm)(parentScope);
     $timeout.flush();
-    parentScope.$digest();
+    parentScope.$apply();
 
     return elm;
   }
@@ -89,7 +89,7 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
       parentScope.options.enableFiltering = false;
       elm.controller('uiGrid').grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       $timeout.flush();
-      parentScope.$digest();
+      parentScope.$apply();
 
       var noFilteringHeight = $(elm).find('.ui-grid-header').height();
 
