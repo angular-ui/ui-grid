@@ -127,8 +127,9 @@
                  * @name rowSelectionChanged
                  * @eventOf  ui.grid.selection.api:PublicApi
                  * @description  is raised after the row.isSelected state is changed
+                 * @param {object} scope the scope associated with the grid
                  * @param {GridRow} row the row that was selected/deselected
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 rowSelectionChanged: function (scope, row, evt) {
                 },
@@ -140,8 +141,9 @@
                  * in bulk, if the `enableSelectionBatchEvent` option is set to true
                  * (which it is by default).  This allows more efficient processing
                  * of bulk events.
+                 * @param {object} scope the scope associated with the grid
                  * @param {array} rows the rows that were selected/deselected
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 rowSelectionChangedBatch: function (scope, rows, evt) {
                 }
@@ -155,7 +157,7 @@
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Toggles data row as selected or unselected
                  * @param {object} rowEntity gridOptions.data[] array instance
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
@@ -169,7 +171,7 @@
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Select the data row
                  * @param {object} rowEntity gridOptions.data[] array instance
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
@@ -185,8 +187,8 @@
                  * specify row 0 you'll get the first visible row selected).  In this context
                  * visible means of those rows that are theoretically visible (i.e. not filtered),
                  * rather than rows currently rendered on the screen.
-                 * @param {number} index index within the rowsVisible array
-                 * @param {Event} event object if raised from an event
+                 * @param {number} rowNum index within the rowsVisible array
+                 * @param {Event} evt object if raised from an event
                  */
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
@@ -200,7 +202,7 @@
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description UnSelect the data row
                  * @param {object} rowEntity gridOptions.data[] array instance
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 unSelectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
@@ -216,8 +218,8 @@
                  * specify row 0 you'll get the first visible row unselected).  In this context
                  * visible means of those rows that are theoretically visible (i.e. not filtered),
                  * rather than rows currently rendered on the screen.
-                 * @param {number} index index within the rowsVisible array
-                 * @param {Event} event object if raised from an event
+                 * @param {number} rowNum index within the rowsVisible array
+                 * @param {Event} evt object if raised from an event
                  */
                 unSelectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
@@ -230,7 +232,7 @@
                  * @name selectAllRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Selects all rows.  Does nothing if multiSelect = false
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 selectAllRows: function (evt) {
                   if (grid.options.multiSelect === false) {
@@ -252,33 +254,23 @@
                  * @name selectAllVisibleRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Selects all visible rows.  Does nothing if multiSelect = false
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
-                selectAllVisibleRows: function (event) {
+                selectAllVisibleRows: function (evt) {
                   if (grid.options.multiSelect !== false) {
                     var changedRows = [];
-                    var rowCache = [];
-                    if (grid.treeBase && grid.treeBase.tree) {
-                      rowCache = getAllTreeRows(grid.treeBase.tree);
-                    } else {
-                      rowCache = grid.rows;
-                    }
-
-                    for (var i = 0; i<rowCache.length; i++) {
-                      var row = rowCache[i];
+                    grid.rows.forEach(function(row) {
                       if (row.visible) {
                         if (!row.isSelected && row.enableSelection !== false) {
                           row.setSelected(true);
-                          service.decideRaiseSelectionEvent(grid, row, changedRows, event);
+                          service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
                         }
-                      } else {
-                        if (row.isSelected) {
-                          row.setSelected(false);
-                          service.decideRaiseSelectionEvent(grid, row, changedRows, event);
-                        }
+                      } else if (row.isSelected) {
+                        row.setSelected(false);
+                        service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
                       }
-                    }
-                    service.decideRaiseSelectionBatchEvent(grid, changedRows, event);
+                    });
+                    service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
                     grid.selection.selectAll = true;
                   }
                 },
@@ -287,7 +279,7 @@
                  * @name clearSelectedRows
                  * @methodOf  ui.grid.selection.api:PublicApi
                  * @description Unselects all rows
-                 * @param {Event} event object if raised from an event
+                 * @param {Event} evt object if raised from an event
                  */
                 clearSelectedRows: function (evt) {
                   service.clearSelectedRows(grid, evt);
@@ -518,8 +510,6 @@
             grid.selection.selectAll = grid.rows.length === selectedRows.length;
 
             grid.api.selection.raise.rowSelectionChanged(row, evt);
-
-            toggleParentHeaders(grid, row, evt, multiSelect, noUnselect);
           }
         },
         /**
@@ -567,20 +557,9 @@
          * @param {Grid} grid grid object
          */
         getSelectedRows: function (grid) {
-          var rows;
-          if (grid.treeBase && grid.treeBase.tree) {
-            rows = getAllTreeRows(grid.treeBase.tree);
-          } else {
-            rows = grid.rows;
-          }
-
-          var selectedRows = [];
-          for (var i = 0; i<rows.length; i++) {
-            if (rows[i].isSelected) {
-              selectedRows.push(rows[i]);
-            }
-          }
-          return selectedRows;
+          return grid.rows.filter(function (row) {
+            return row.isSelected;
+          });
         },
 
         /**
@@ -589,7 +568,7 @@
          * @methodOf  ui.grid.selection.service:uiGridSelectionService
          * @description Clears all selected rows
          * @param {Grid} grid grid object
-         * @param {Event} event object if raised from an event
+         * @param {Event} evt object if raised from an event
          */
         clearSelectedRows: function (grid, evt) {
           var changedRows = [];
@@ -612,7 +591,7 @@
          * @param {Grid} grid grid object
          * @param {GridRow} row row that has changed
          * @param {array} changedRows an array to which we can append the changed
-         * @param {Event} event object if raised from an event
+         * @param {Event} evt object if raised from an event
          * row if we're doing batch events
          */
         decideRaiseSelectionEvent: function (grid, row, changedRows, evt) {
@@ -631,7 +610,7 @@
          * raises it if we do.
          * @param {Grid} grid grid object
          * @param {array} changedRows an array of changed rows, only populated
-         * @param {Event} event object if raised from an event
+         * @param {Event} evt object if raised from an event
          * if we're doing batch events
          */
         decideRaiseSelectionBatchEvent: function (grid, changedRows, evt) {
@@ -643,30 +622,6 @@
 
       return service;
 
-      function toggleParentHeaders(grid, row, event, multiSelect, noUnselect){
-        if (row.treeNode &&row.treeNode.parentRow) {
-          var parentRow = row.treeNode.parentRow;
-          var siblingSelectedStatus = [];
-          for (var i = 0; i < parentRow.treeNode.children.length; i++) {
-            siblingSelectedStatus.push(parentRow.treeNode.children[i].row.isSelected);
-          }
-          var allSiblingsSelected = siblingSelectedStatus.indexOf(false) === -1;
-
-          if (parentRow.isSelected !== allSiblingsSelected) {
-            service.toggleRowSelection(grid, parentRow, event, multiSelect, noUnselect);
-          }
-        }
-      }
-
-      function getAllTreeRows(rowTree){
-        var selectedRows = [];
-        for (var i = 0; i<rowTree.length; i++) {
-          var node = rowTree[i];
-          selectedRows.push(node.row);
-          selectedRows = selectedRows.concat(getAllTreeRows(node.children));
-        }
-        return selectedRows;
-      }
     }]);
 
   /**
@@ -788,25 +743,18 @@
           function selectButtonClick(row, evt) {
             evt.stopPropagation();
 
-            if (row.groupHeader) {
-              selectByKeyState(row, evt);
-              var selectionState = row.isSelected;
-              for (var i = 0; i < row.treeNode.children.length; i++) {
-                if (row.treeNode.children[i].row.isSelected !== selectionState) {
-                  selectButtonClick(row.treeNode.children[i].row, evt);
-                }
-              }
-            }else {
-              selectByKeyState(row, evt);
-            }
-          }
-
-          function selectByKeyState(row, evt){
             if (evt.shiftKey) {
               uiGridSelectionService.shiftSelect(self, row, evt, self.options.multiSelect);
-            } else if (evt.ctrlKey || evt.metaKey) {
+            }
+            else if (evt.ctrlKey || evt.metaKey) {
               uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
-            } else {
+            }
+            else if (row.groupHeader) {
+              for (var i = 0; i < row.treeNode.children.length; i++) {
+                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+              }
+            }
+            else {
               uiGridSelectionService.toggleRowSelection(self, row, evt, (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
             }
           }
