@@ -1,3 +1,30 @@
+<a name="v4.3.0"></a>
+## v4.3.0 (2018-03-14)
+
+
+#### Bug Fixes
+
+* **build:** Remove Safari 7 from tests and switch $digest to "$apply" to add $$hashKey to da ([323fa956](http://github.com/angular-ui/ng-grid/commit/323fa956e26aa858a022449b71d5d79beaac6205))
+* **menus:**
+  * streamline menu positioning ([a83df5bc](http://github.com/angular-ui/ng-grid/commit/a83df5bcec80a38e8566a5385a2639173b7cd00e), closes [#5396](http://github.com/angular-ui/ng-grid/issues/5396), [#5990](http://github.com/angular-ui/ng-grid/issues/5990), [#6085](http://github.com/angular-ui/ng-grid/issues/6085))
+  * Fix menu positioning/animation ([25dbd2ec](http://github.com/angular-ui/ng-grid/commit/25dbd2ec3823e20d5d458903260caf3beed83920), closes [#3436](http://github.com/angular-ui/ng-grid/issues/3436), [#3921](http://github.com/angular-ui/ng-grid/issues/3921), [#3978](http://github.com/angular-ui/ng-grid/issues/3978), [#6587](http://github.com/angular-ui/ng-grid/issues/6587))
+* **selection.js:** Allow selection to work with grouping. ([b21096b2](http://github.com/angular-ui/ng-grid/commit/b21096b2c275e365e561a39a7987a3e290b3ee59))
+* **utils.js:** Remove IE9 from supported browsers list. ([f14da2fc](http://github.com/angular-ui/ng-grid/commit/f14da2fc9995d60bed26fd00ad5c271fd7eac470), closes [#2273](http://github.com/angular-ui/ng-grid/issues/2273), [#2552](http://github.com/angular-ui/ng-grid/issues/2552), [#3593](http://github.com/angular-ui/ng-grid/issues/3593), [#3854](http://github.com/angular-ui/ng-grid/issues/3854), [#4439](http://github.com/angular-ui/ng-grid/issues/4439))
+
+
+#### Features
+
+* **GridRenderContainer:** Added WHEN_NEEDED option back to ui-grid. ([1c1ea72e](http://github.com/angular-ui/ng-grid/commit/1c1ea72e60ac082ce1c746414cb63a469462cc13))
+* **uglify/concat:** Publish multiple files separated by features. ([6d26274](https://github.com/angular-ui/ui-grid/commit/6d26274024a6925a6b89fcaab4ded6173d68169f))
+
+
+#### Breaking Changes
+
+* IE9 and Safari 7 are no longer officially supported.
+
+Closes #2273, #2552, #3593, #3854, #4439
+ ([f14da2fc](http://github.com/angular-ui/ng-grid/commit/f14da2fc9995d60bed26fd00ad5c271fd7eac470))
+
 <a name="v4.2.4"></a>
 ### v4.2.4 (2018-02-07)
 
