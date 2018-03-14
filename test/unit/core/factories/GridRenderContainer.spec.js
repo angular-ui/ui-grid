@@ -57,6 +57,18 @@ describe('GridRenderContainer factory', function() {
 			expect(r.getViewportStyle()).toEqual({'overflow-x': 'hidden', 'overflow-y': 'scroll'});
 		});
 
+		it('should have a vert scrollbar only when needed', function() {
+			r.name = 'body';
+			grid.options.enableVerticalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
+			expect(r.getViewportStyle()).toEqual({'overflow-x': 'scroll', 'overflow-y': 'auto'});
+		});
+
+		it('should have a horiz scrollbar only when needed', function() {
+			r.name = 'body';
+			grid.options.enableHorizontalScrollbar = uiGridConstants.scrollbars.WHEN_NEEDED;
+			expect(r.getViewportStyle()).toEqual({'overflow-x': 'auto', 'overflow-y': 'scroll'});
+		});
+
 		it('left should have a no scrollbar when not rtl', function() {
 			r.name = 'left';
 			expect(r.getViewportStyle()).toEqual({'overflow-x': 'hidden', 'overflow-y': 'hidden'});

@@ -770,6 +770,10 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getViewportStyle = function () {
     var self = this;
     var styles = {};
+    var scrollbarVisibility = {};
+
+    scrollbarVisibility[uiGridConstants.scrollbars.ALWAYS] = 'scroll';
+    scrollbarVisibility[uiGridConstants.scrollbars.WHEN_NEEDED] = 'auto';
 
     self.hasHScrollbar = false;
     self.hasVScrollbar = false;
@@ -800,8 +804,8 @@ angular.module('ui.grid')
       self.hasVScrollbar = !self.grid.isRTL() ? self.grid.options.enableVerticalScrollbar !== uiGridConstants.scrollbars.NEVER : false;
     }
 
-    styles['overflow-x'] = self.hasHScrollbar ? 'scroll' : 'hidden';
-    styles['overflow-y'] = self.hasVScrollbar ? 'scroll' : 'hidden';
+    styles['overflow-x'] = self.hasHScrollbar ? scrollbarVisibility[self.grid.options.enableHorizontalScrollbar] : 'hidden';
+    styles['overflow-y'] = self.hasVScrollbar ? scrollbarVisibility[self.grid.options.enableVerticalScrollbar] : 'hidden';
 
     return styles;
   };
