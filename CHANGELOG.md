@@ -1,3 +1,8 @@
+<a name="v4.3.1"></a>
+### v4.3.1 (2018-03-15)
+
+* **release:** Released UI-Grid to NPM and bower ([e90a837](https://github.com/angular-ui/ui-grid/commit/e90a837b7e2414f456a3ec7b5482afe7697f4e29))
+
 <a name="v4.3.0"></a>
 ## v4.3.0 (2018-03-14)
 
