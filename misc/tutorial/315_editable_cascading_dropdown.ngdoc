@@ -6,6 +6,12 @@ It is possible to use the edit feature and the dropdown options array to build a
 dropdown setup, where the options in the second dropdown depend on the selection in the 
 first dropdown.  Thanks to @ajain27 for the sample code.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

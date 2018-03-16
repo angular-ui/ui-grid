@@ -26,6 +26,11 @@ In the cellTemplate you have access to `grid`, `row` and `column`, which allows 
 Note that the footerTemplate is rendered once for each renderContainer.  If using a custom footer template you
 may want to test for `ng-if="colContainer.name === \'body\'"`
 
+For better performance with the following example, you can choose to load the ui-grid.core.js instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

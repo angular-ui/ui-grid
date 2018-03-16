@@ -54,6 +54,13 @@ $scope.gridOptions = {
 };
 </pre>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.resize-columns.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

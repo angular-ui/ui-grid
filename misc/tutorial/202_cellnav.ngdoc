@@ -30,6 +30,14 @@ extract values of selected cells.
 
 Provides an example of utilizing the keyDownOverrides to add a custom Ctrl + Right to focus the last column in the row,
 while still allowing the right arrow to be handled by the grid.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

@@ -21,6 +21,12 @@ Columns can be repositioned by either dragging and dropping them to specific pos
 `gridApi.colMovable.moveColumn(oldPosition, newPosition)` can also be used to move columns. The column position ranging from 0
 (in the leftmost) up to number of visible columns in the grid (in the rightmost).
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

@@ -40,6 +40,14 @@ SubGrid nesting can be done upto multiple levels.
 In addition to the above configuration, 'scrollFillerClass' is also available and can be used to style the scroll filler. The scroll filler
 appears when you quickly scroll through the grid.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.expandable.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

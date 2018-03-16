@@ -50,6 +50,11 @@ You may sometimes remove data, for example if you're keeping 10 pages of data in
 from the top as you add data to the bottom.  You can use the `dataRemovedTop` and `dataRemovedBottom` to tell
 us that you've discarded data, and we'll aim to set the scroll back to where it was before you removed that data.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.infinite-scroll.min.js"></script>
+</pre>
 
 @example
 In this example we have a data set that starts at page 2 of a 5 page data set.  Each page is 100 records, so we start at

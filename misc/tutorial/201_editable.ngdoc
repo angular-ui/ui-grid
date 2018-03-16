@@ -82,6 +82,11 @@ $scope.gridOptions.columnDefs = [
 ]
 </pre>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+</pre>
 
 @example
 <example module="app">

@@ -6,7 +6,7 @@
 
 <div class="alert alert-warning" role="alert">
 <strong>Beta</strong> This feature is ready for testing, but it either hasn't
-seen a lot of useor has some known bugs.
+seen a lot of use or has some known bugs.
 </div>
 
 <div class="alert alert-warning" role="alert">
@@ -107,6 +107,11 @@ Tuning the way aggregations work can be done through defining a columnsProcessor
 priority than the groupingColumnProcessor (so higher than 400), and that looks for grouped or aggregated columns
 and changes things like the treeAggregationFn, or the customTreeAggregationFinalizerFn.  See tutorial 320 for an example.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.grouping.min.js"></script>
+</pre>
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for
