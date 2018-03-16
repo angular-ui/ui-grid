@@ -10,8 +10,8 @@ Prerequisites:
 <ul>
  <li>Include angular-aria (Angular 1.3.0+).
   <pre>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.js"></script>
       <link rel="styleSheet" href="release/ui-grid-unstable.css"/>
       <script src="/release/ui-grid-unstable.js"></script>
   </pre>
@@ -68,7 +68,7 @@ For better performance with the following example, you can choose to load the ui
 </pre>
 
 @example
-<example module="app" deps="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-aria.js">
+<example module="app" deps="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.js">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ngAria', 'ui.grid', 'ui.grid.pagination', 'ui.grid.cellNav']);
 
