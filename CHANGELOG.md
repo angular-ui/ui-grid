@@ -1,3 +1,13 @@
+<a name="v4.4.1"></a>
+### v4.4.1 (2018-03-16)
+
+
+#### Bug Fixes
+
+* **122_accessibility.ngdoc:** Update angular-aria version. ([faa17fba](http://github.com/angular-ui/ng-grid/commit/faa17fbaea083e9e80d823601c22b81fc4899f14))
+* **pagination.less:** Remove unnecessary underline from pagination styles. ([f3a4086d](http://github.com/angular-ui/ng-grid/commit/f3a4086d8e9509dea5490105b9fbb73ceb96611d))
+* **ui-grid.core.js:** Add missing i18nService to ui-grid.core.js ([06f53d91](http://github.com/angular-ui/ng-grid/commit/06f53d91be8c4219e0dad2027b8717eeb6183f79))
+
 <a name="v4.4.0"></a>
 ## v4.4.0 (2018-03-15)
 
