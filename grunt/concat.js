@@ -7,7 +7,7 @@ const getLanguages = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p,
 function getFiles() {
 	const files = {
 		'<%= dist %>/release/<%= pkg.name %>.js': ['src/js/core/bootstrap.js', 'src/js/**/*.js', 'src/features/*/js/**/*.js', '.tmp/template.js'],
-		'<%= dist %>/release/<%= pkg.name %>.base.js': ['src/js/core/bootstrap.js', 'src/js/core/**/*.js', 'src/js/i18n/ui-18n.js',
+		'<%= dist %>/release/<%= pkg.name %>.core.js': ['src/js/core/bootstrap.js', 'src/js/core/**/*.js', 'src/js/i18n/ui-18n.js',
 			'src/js/i18n/en.js', '.tmp/template.js']
 	};
 	const features = getDirectories('src/features/');
