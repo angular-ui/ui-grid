@@ -8,7 +8,12 @@ although if/when the column move feature arrives the end user will be able to al
 that default.
 
 You can dynamically change the display name on a column (along with some other column
-def properties), and call the notifyDataChange api to force an update. 
+def properties), and call the notifyDataChange api to force an update.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
 
 @example
 <example module="app">

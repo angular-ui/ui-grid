@@ -41,6 +41,13 @@ In the meantime, you can override the height to fit with your application in you
   }
 </pre>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.exporter.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

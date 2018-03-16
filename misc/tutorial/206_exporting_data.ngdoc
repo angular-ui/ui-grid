@@ -51,6 +51,13 @@ minified.  If you have this problem it is recommended to instead include pdfmake
 as assets (or the equivalent minified versions), and then include them as a script in your application
 rather than as part of a minification of your entire javascript library.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.exporter.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
 

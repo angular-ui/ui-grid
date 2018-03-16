@@ -42,6 +42,11 @@ The sorting algorithm function takes 'a' and 'b' parameters like any normal sort
 By default the sorting algorithm will be applied to the row value before any `cellFilters` are applied. The {@link api/ui.grid.class:GridOptions.columnDef#sortCellFiltered sortCellFiltered}
 columnDef option will cause sorting to be applied after the `cellFilters` are applied. For an example of this see the "Month Joined" column in the {@link 401_AllFeatures AllFeatures tutorial}.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 <example module="app">
   <file name="app.js">
     angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid'])

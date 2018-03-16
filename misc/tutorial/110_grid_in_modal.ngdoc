@@ -12,6 +12,11 @@ so the currently recommended approach is to use $interval, and to call every 500
 
 In a sense this is similar to what the auto-resize feature does, but it only does it for a short period after modal opening.
 
+$ctrlFor better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+     <pre>
+       <script src="/release/ui-grid.core.min.js"></script>
+     </pre>
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);

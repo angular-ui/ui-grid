@@ -45,6 +45,18 @@ default:
 - saveTreeView
 - saveSelection
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.save-state.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+  <script src="/release/ui-grid.resize-columns.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+  <script src="/release/ui-grid.grouping.min.js"></script>
+</pre>
+
 @example
 In this example we provide a button to save the grid state.  You can then modify the grid layout
 to something different, and use the restore button to set the grid back the way it was.

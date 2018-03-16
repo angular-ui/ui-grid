@@ -27,7 +27,7 @@ Steps:
       <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
       <script src="/release/ui-grid.min.js"></script>
       <!-- Or the following if you don't want to use all features -->
-      <!-- <script src="/release/ui-grid.base.min.js"></script> -->
+      <!-- <script src="/release/ui-grid.core.min.js"></script> -->
   </pre>
  </li>
  <li>Include ui.grid module as a dependency in your app
