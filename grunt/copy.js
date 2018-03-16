@@ -46,6 +46,16 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    i18n_cut_release: {
+      files: [
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/i18n',
+          src: '**/*.js',
+          dest: '<%= dist %>/release/' + currentTag + '/i18n'
+        }
+      ]
+    },
     less_customizer: {
       files: [
         {
