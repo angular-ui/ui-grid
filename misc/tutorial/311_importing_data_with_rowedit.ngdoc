@@ -18,6 +18,7 @@ as the grid menu.
 For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
 <pre>
   <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
   <script src="/release/ui-grid.edit.min.js"></script>
   <script src="/release/ui-grid.importer.min.js"></script>
   <script src="/release/ui-grid.row-edit.min.js"></script>
