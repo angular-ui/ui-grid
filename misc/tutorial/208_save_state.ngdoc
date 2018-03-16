@@ -49,12 +49,14 @@ For better performance with the following example, you can choose to load the ui
 <pre>
   <script src="/release/ui-grid.core.min.js"></script>
   <script src="/release/ui-grid.cellnav.min.js"></script>
-  <script src="/release/ui-grid.save-state.min.js"></script>
   <script src="/release/ui-grid.selection.min.js"></script>
   <script src="/release/ui-grid.resize-columns.min.js"></script>
   <script src="/release/ui-grid.move-columns.min.js"></script>
   <script src="/release/ui-grid.pinning.min.js"></script>
+  <script src="/release/ui-grid.tree-base.min.js"></script>
+  <script src="/release/ui-grid.tree-view.min.js"></script>
   <script src="/release/ui-grid.grouping.min.js"></script>
+  <script src="/release/ui-grid.save-state.min.js"></script>
 </pre>
 
 @example
