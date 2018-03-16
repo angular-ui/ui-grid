@@ -3,6 +3,7 @@ module.exports = {
     cleanup: true,
     keepUnstable: false,
     stableTasks: [
+      'copy:i18n_cut_release',
       'copy:less_cut_release'
     ]
   },
