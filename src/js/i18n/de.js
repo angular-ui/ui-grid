@@ -70,14 +70,14 @@
           columns: 'Spalten:',
           importerTitle: 'Datei importieren',
           exporterAllAsCsv: 'Alle Daten als CSV exportieren',
-          exporterVisibleAsCsv: 'sichtbare Daten als CSV exportieren',
-          exporterSelectedAsCsv: 'markierte Daten als CSV exportieren',
+          exporterVisibleAsCsv: 'Sichtbare Daten als CSV exportieren',
+          exporterSelectedAsCsv: 'Markierte Daten als CSV exportieren',
           exporterAllAsPdf: 'Alle Daten als PDF exportieren',
-          exporterVisibleAsPdf: 'sichtbare Daten als PDF exportieren',
-          exporterSelectedAsPdf: 'markierte Daten als PDF exportieren',
+          exporterVisibleAsPdf: 'Sichtbare Daten als PDF exportieren',
+          exporterSelectedAsPdf: 'Markierte Daten als PDF exportieren',
           exporterAllAsExcel: 'Alle Daten als Excel exportieren',
-          exporterVisibleAsExcel: 'sichtbare Daten als Excel exportiere',
-          exporterSelectedAsExcel: 'markierte Daten als Excel exportieren',
+          exporterVisibleAsExcel: 'Sichtbare Daten als Excel exportieren',
+          exporterSelectedAsExcel: 'Markierte Daten als Excel exportieren',
           clearAllFilters: 'Alle Filter zurücksetzen'
         },
         importer: {
@@ -91,7 +91,7 @@
           aria: {
             pageToFirst: 'Zum Anfang',
             pageBack: 'Seite zurück',
-            pageSelected: 'Ausgwählte Seite',
+            pageSelected: 'Ausgewählte Seite',
             pageForward: 'Seite vor',
             pageToLast: 'Zum Ende'
           },
