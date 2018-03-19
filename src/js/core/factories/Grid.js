@@ -190,11 +190,11 @@ angular.module('ui.grid')
 
     self.scrollbarHeight = 0;
     self.scrollbarWidth = 0;
-    if (self.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+    if (self.options.enableHorizontalScrollbar !== uiGridConstants.scrollbars.NEVER) {
       self.scrollbarHeight = gridUtil.getScrollbarWidth();
     }
 
-    if (self.options.enableVerticalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+    if (self.options.enableVerticalScrollbar !== uiGridConstants.scrollbars.NEVER) {
       self.scrollbarWidth = gridUtil.getScrollbarWidth();
     }
 
