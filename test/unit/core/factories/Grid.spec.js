@@ -1,10 +1,12 @@
 describe('Grid factory', function () {
-  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants, gridClassFactory;
+  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants,
+    gridClassFactory, gridUtil;
 
   beforeEach(function() {
     module('ui.grid');
 
-    inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
+    inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_,
+                     _gridClassFactory_, _gridUtil_) {
       $timeout = _$timeout_;
       $q = _$q_;
       $scope = _$rootScope_;
@@ -13,6 +15,7 @@ describe('Grid factory', function () {
       GridColumn = _GridColumn_;
       uiGridConstants = _uiGridConstants_;
       gridClassFactory = _gridClassFactory_;
+      gridUtil = _gridUtil_;
     });
     grid = new Grid({ id: 1 });
     rows = [
@@ -47,9 +50,9 @@ describe('Grid factory', function () {
     var canvasWidth = 100;
 
     beforeEach(function() {
-      renderContainers = { 
-        body: { 
-          visibleRowCache: null, 
+      renderContainers = {
+        body: {
+          visibleRowCache: null,
           visibleColumnCache: null,
           prevScrollTop: prevScrollTop,
           headerHeight: 30,
@@ -99,7 +102,7 @@ describe('Grid factory', function () {
       });
 
       $scope.$apply();
-    });    
+    });
   });
 
   describe('constructor', function() {
@@ -122,6 +125,32 @@ describe('Grid factory', function () {
       catch (e) {
         expect(e).toMatch(/It must follow CSS selector syntax rules/);
       }
+    });
+    describe('scrollbarHeight and scrollbarWidth', function() {
+      describe('when enableHorizontalScrollbar not equal to NEVER', function() {
+        it('should set scrollbarHeight and scrollbarWidth', function() {
+          var grid = new Grid({
+            id: 1,
+            enableHorizontalScrollbar: uiGridConstants.scrollbars.ALWAYS,
+            enableVerticalScrollbar: uiGridConstants.scrollbars.ALWAYS
+          });
+
+          expect(grid.scrollbarHeight).not.toEqual(0);
+          expect(grid.scrollbarWidth).not.toEqual(0);
+        });
+      });
+      describe('when enableHorizontalScrollbar is equal to NEVER', function() {
+        it('should set scrollbarHeight and scrollbarWidth to 0', function() {
+          var grid = new Grid({
+            id: 1,
+            enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
+            enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER
+          });
+
+          expect(grid.scrollbarHeight).toEqual(0);
+          expect(grid.scrollbarWidth).toEqual(0);
+        });
+      });
     });
   });
 
@@ -277,8 +306,6 @@ describe('Grid factory', function () {
 
 
   });
-
-
 
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
