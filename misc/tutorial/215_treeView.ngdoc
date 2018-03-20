@@ -50,7 +50,7 @@ Options to watch out for include:
 
 - `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
   level gets deeper.  Larger values look nicer
-- `treeRowHeaderWidth`: the width of the tree row header
+- `treeRowHeaderBaseWidth`: the base width of the tree row header (default 30)
 - `showTreeExpandNoChildren`: defaults to true.  Shows the + even if there are no children, allows
   you to dynamically load children.  If set to false there'll be no + if there are no children
 
