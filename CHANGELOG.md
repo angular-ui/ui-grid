@@ -1,3 +1,12 @@
+<a name="v4.4.2"></a>
+### v4.4.2 (2018-03-20)
+
+
+#### Bug Fixes
+
+* **GridRenderContainer.js:** needsHScrollbarPlaceholder accounts for WHEN_NEEDED ([403bf3ee](http://github.com/angular-ui/ng-grid/commit/403bf3ee145be349ca783f5e5cf86a5420b638bf))
+* **i18n:** change some strings in de.js due to typos ([9ebe1168](https://github.com/angular-ui/ui-grid/commit/9ebe116808ff2d56e18bc3623355121a934de080))
+
 <a name="v4.4.1"></a>
 ### v4.4.1 (2018-03-16)
 
