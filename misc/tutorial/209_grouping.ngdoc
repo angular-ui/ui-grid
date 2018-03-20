@@ -28,7 +28,7 @@ a number of things have changed as grouping and treeView move to a shared code b
   saved states may not reload cleanly
 - groupLevel is now treeLevel
 - groupingSuppressAggregationText is now handled via customTreeAggregationFinalizerText
-- groupingRowHeaderWidth is now treeRowHeaderWidth
+- groupingRowHeaderWidth is now treeRowHeaderBaseWidth
 - groupingIndent is now treeIndent
 - groupingRowHeaderAlwaysVisible is now treeRowHeaderAlwaysVisible, and default has changed to true
 **_
@@ -89,7 +89,7 @@ Options to watch out for include:
 
 - `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
   level gets deeper.  Larger values look nicer, but take up more space
-- `treeRowHeaderWidth`: the base width of the grouping row header
+- `treeRowHeaderBaseWidth`: the base width of the grouping row header (default 30)
 - `customTreeAggregationFinalizerFn`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx')
    usually breaks the cellFilter.  You can define a custom aggregation finalizer that handles this text differently,
    either applying the filter in code, or skipping the inclusion of the aggregation text.  This can also be used
