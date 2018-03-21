@@ -127,6 +127,12 @@ describe('Grid factory', function () {
       }
     });
     describe('scrollbarHeight and scrollbarWidth', function() {
+      beforeEach(function() {
+        spyOn(gridUtil, 'getScrollbarWidth').and.returnValue(100);
+      });
+      afterEach(function() {
+        gridUtil.getScrollbarWidth.calls.reset();
+      });
       describe('when enableHorizontalScrollbar not equal to NEVER', function() {
         it('should set scrollbarHeight and scrollbarWidth', function() {
           var grid = new Grid({
@@ -135,8 +141,8 @@ describe('Grid factory', function () {
             enableVerticalScrollbar: uiGridConstants.scrollbars.ALWAYS
           });
 
-          expect(grid.scrollbarHeight).not.toEqual(0);
-          expect(grid.scrollbarWidth).not.toEqual(0);
+          expect(grid.scrollbarHeight).toEqual(100);
+          expect(grid.scrollbarWidth).toEqual(100);
         });
       });
       describe('when enableHorizontalScrollbar is equal to NEVER', function() {

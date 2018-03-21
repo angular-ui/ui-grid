@@ -45,7 +45,7 @@ describe('GridOptions factory', function () {
         enableVerticalScrollbar: 1,
         enableHorizontalScrollbar: 1,
         enableMinHeightCheck: true,
-        minimumColumnSize: 10,
+        minimumColumnSize: 30,
         rowEquality: jasmine.any(Function),
         headerTemplate: null,
         footerTemplate: 'ui-grid/ui-grid-footer',
@@ -238,4 +238,3 @@ describe('GridOptions factory', function () {
     });
   });
 });
-
