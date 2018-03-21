@@ -410,7 +410,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
 
           //automatically set the focus to the first button element in the now open menu.
-          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
+          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
           delete $scope.colElementPosition;
           delete $scope.columnElement;
         });
