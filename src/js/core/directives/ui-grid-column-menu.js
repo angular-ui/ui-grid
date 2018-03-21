@@ -414,6 +414,9 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           delete $scope.colElementPosition;
           delete $scope.columnElement;
         });
+        $timeout(function() {
+          addKeydownHandlers(getVisibleMenuItems());
+        }, 0, false);
       });
 
 
@@ -434,6 +437,30 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         $scope.grid.refresh();
         $scope.hideMenu();
       };
+
+      function addKeydownHandlers(menuItems) {
+        // Add escape keydown to every item.
+        // Loop focus on last item
+        // loop focus on first item Shift + tab
+        menuItems[0].onkeydown = function(event) {
+          alert('hello');
+        };
+      }
+
+      function getVisibleMenuItems() {
+        var menuItems = angular.element($elm[0].querySelector('.ui-grid-menu-items')),
+          visibleMenuItems = [];
+
+        if (menuItems[0]) {
+          angular.forEach(menuItems[0].children, function(item) {
+            if (item.offsetParent !== null && !item.firstChild.className.includes('ng-hide')) {
+              this.push(item);
+            }
+          }, visibleMenuItems);
+
+          return visibleMenuItems;
+        }
+      }
 
       // Since we are hiding this column the default hide action will fail so we need to focus somewhere else.
       var setFocusOnHideColumn = function(){
