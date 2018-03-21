@@ -387,6 +387,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
 
       $scope.$on('menu-hidden', function() {
+        var menuItems = angular.element($elm[0].querySelector('.ui-grid-menu-items'))[0];
+
         $elm[0].removeAttribute('style');
 
         if ( $scope.hideThenShow ){
@@ -403,6 +405,13 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
             gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false);
           }
         }
+
+        if (menuItems) {
+          menuItems.onkeydown = null;
+          angular.forEach(menuItems.children, function removeHandlers(item) {
+            item.onkeydown = null;
+          });
+        }
       });
 
       $scope.$on('menu-shown', function() {
@@ -413,10 +422,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
           delete $scope.colElementPosition;
           delete $scope.columnElement;
+          addKeydownHandlersToMenu();
         });
-        $timeout(function() {
-          addKeydownHandlers(getVisibleMenuItems());
-        }, 0, false);
       });
 
 
@@ -438,27 +445,51 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         $scope.hideMenu();
       };
 
-      function addKeydownHandlers(menuItems) {
-        // Add escape keydown to every item.
-        // Loop focus on last item
-        // loop focus on first item Shift + tab
-        menuItems[0].onkeydown = function(event) {
-          alert('hello');
-        };
-      }
-
-      function getVisibleMenuItems() {
-        var menuItems = angular.element($elm[0].querySelector('.ui-grid-menu-items')),
+      function addKeydownHandlersToMenu() {
+        var menu = angular.element($elm[0].querySelector('.ui-grid-menu-items'))[0],
+          menuItems,
           visibleMenuItems = [];
 
-        if (menuItems[0]) {
-          angular.forEach(menuItems[0].children, function(item) {
-            if (item.offsetParent !== null && !item.firstChild.className.includes('ng-hide')) {
+        if (menu) {
+          menu.onkeydown = function closeMenu(event) {
+            if (event.keyCode === uiGridConstants.keymap.ESC) {
+              event.preventDefault();
+              $scope.hideMenu();
+            }
+          };
+
+          menuItems = menu.querySelectorAll('.ui-grid-menu-item:not(.ng-hide)');
+          angular.forEach(menuItems, function filterVisibleItems(item) {
+            if (item.offsetParent !== null) {
               this.push(item);
             }
           }, visibleMenuItems);
 
-          return visibleMenuItems;
+          if (visibleMenuItems.length) {
+            if (visibleMenuItems.length === 1) {
+              visibleMenuItems[0].onkeydown = function singleItemHandler(event) {
+                circularFocusHandler(event, true);
+              };
+            } else {
+              visibleMenuItems[0].onkeydown = function firstItemHandler(event) {
+                circularFocusHandler(event, false, event.shiftKey, visibleMenuItems.length - 1);
+              };
+              visibleMenuItems[visibleMenuItems.length - 1].onkeydown = function lastItemHandler(event) {
+                circularFocusHandler(event, false, !event.shiftKey, 0);
+              };
+            }
+          }
+        }
+
+        function circularFocusHandler(event, isSingleItem, shiftKeyStatus, index) {
+          if (event.keyCode === uiGridConstants.keymap.TAB) {
+            if (isSingleItem) {
+              event.preventDefault();
+            } else if (shiftKeyStatus) {
+              event.preventDefault();
+              visibleMenuItems[index].focus();
+            }
+          }
         }
       }
 
