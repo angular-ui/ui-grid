@@ -438,9 +438,11 @@ angular.module('ui.grid')
        * @ngdoc boolean
        * @name minimumColumnSize
        * @propertyOf ui.grid.class:GridOptions
-       * @description Columns can't be smaller than this, defaults to 10 pixels
+       * @description Sets the default minimum column width, in other words,
+       * it defines the default value for a column minWidth attribute if that is not otherwise specified.
+       * Should be a number. Defaults to 30 pixels.
        */
-      baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 10;
+      baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 30;
 
       /**
        * @ngdoc function

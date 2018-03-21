@@ -262,7 +262,8 @@ angular.module('ui.grid')
    * @ngdoc property
    * @name minWidth
    * @propertyOf ui.grid.class:GridOptions.columnDef
-   * @description sets the minimum column width.  Should be a number.
+   * @description Sets the minimum column width.  Should be a number.
+   * Defaults to gridOptions.minimumColumnSize if minWidth is not provided.
    * @example
    * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', minWidth: 100}]; </pre>
    *
@@ -502,12 +503,21 @@ angular.module('ui.grid')
       }
     }
 
+    function isValidWidthValue(value) {
+      return angular.isString(value) || angular.isNumber(value);
+    }
+
     ['minWidth', 'maxWidth'].forEach(function (name) {
       var minOrMaxWidth = colDef[name];
       var parseErrorMsg = "Cannot parse column " + name + " '" + minOrMaxWidth + "' for column named '" + colDef.name + "'";
 
-      if (!angular.isString(minOrMaxWidth) && !angular.isNumber(minOrMaxWidth)) {
-        //Sets default minWidth and maxWidth values
+      // default minWidth to the minimumColumnSize
+      if (name === 'minWidth' && !isValidWidthValue(minOrMaxWidth) && angular.isDefined(self.grid.options.minimumColumnSize)) {
+        minOrMaxWidth = self.grid.options.minimumColumnSize;
+      }
+
+      if (!isValidWidthValue(minOrMaxWidth)) {
+        // Sets default minWidth and maxWidth values
         self[name] = ((name === 'minWidth') ? 30 : 9000);
       } else if (angular.isString(minOrMaxWidth)) {
         if (minOrMaxWidth.match(/^(\d+)$/)) {
@@ -871,13 +881,13 @@ angular.module('ui.grid')
   GridColumn.prototype.unsort = function () {
     //Decrease priority for every col where priority is higher than the removed sort's priority.
     var thisPriority = this.sort.priority;
-    
+
     this.grid.columns.forEach(function (col) {
       if (col.sort && col.sort.priority !== undefined && col.sort.priority > thisPriority) {
         col.sort.priority -= 1;
       }
     });
-    
+
     this.sort = {};
     this.grid.api.core.raise.sortChanged( this.grid, this.grid.getColumnSorting() );
   };
