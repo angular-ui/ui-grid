@@ -72,7 +72,7 @@
     </div>
   </div>
 
-  <div ng-cloak class="container-fluid" id="customizerApp" ng-controller='Main'>
+  <div ng-cloak class="container-fluid" id="customizerApp" ng-controller='Main as $ctrl'>
     <br>
 
     <h1 class="text-center">Grid Customizer</h2>
@@ -140,7 +140,9 @@
               {{ css }}
             </style>
 
-            <div class="grid" ui-grid="gridOptions" ui-grid-cellNav ui-grid-selection></div>
+            <div class="grid" ui-grid="$ctrl.gridOptions" ui-grid-cellNav ui-grid-edit
+            ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns
+            ui-grid-importer ui-grid-exporter ui-grid-grouping></div>
           </div>
         </div>
         <div class="col-xs-6 col-md-8">
@@ -218,7 +220,7 @@
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <!--  <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script> -->
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
 
   <script>
     var s = document.createElement('script');

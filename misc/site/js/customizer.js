@@ -1,6 +1,9 @@
 (function() {
 
-var app = angular.module('customizer', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.selection']);
+var app = angular.module('customizer', ['ui.grid', 'ui.grid.cellNav', 'ui.grid.edit',
+'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns',
+'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping'
+]);
 
 app.run(function($log, $rootScope, $http) {
 });
@@ -16,8 +19,8 @@ app.constant('DIRECTORIES', {
   BOOTSTRAP: './../../bootstrap'
 });
 
-app.controller('Main', function($log, $http, $scope, less, Theme, FILES) {
-  // Create grid
+app.controller('Main', function($log, $http, $scope, uiGridConstants, less, Theme, FILES) {
+  var vm = this;
 
   function updateCSS(compress) {
     $scope.compress = compress;
@@ -39,27 +42,31 @@ app.controller('Main', function($log, $http, $scope, less, Theme, FILES) {
       );
   }
 
-  $scope.gridOptions = {
+  vm.gridOptions = {
+    showGridFooter: true,
+    showColumnFooter: true,
     enableFiltering: true,
-    enableGridMenu: true
+    enableGridMenu: true,
+    flatEntityAccess: true,
+    fastWatch: true,
+    enableHorizontalScrollbar: uiGridConstants.scrollbars.WHEN_NEEDED
   };
   $http.get(FILES.DATA_100)
-    .success(function(data) {
-      $scope.gridOptions.data = data;
+    .then(function(response) {
+      vm.gridOptions.data = response.data;
     });
 
   //Fetch initial less file
   $http.get(FILES.LESS_MAIN)
-    .success(function (data) {
-      $scope.source = data;
+    .then(function (response) {
+      $scope.source = response.data;
     });
 
   $http.get(FILES.LESS_VARIABLES)
-    .success(function (data) {
-      $scope.variables = less.parseVariables(data);
+    .then(function (response) {
+      $scope.variables = less.parseVariables(response.data);
       $scope.trueDefaultVariables = angular.copy($scope.variables);
       $scope.defaultVariables = angular.copy($scope.trueDefaultVariables);
-      console.log($scope.variables);
     });
 
   // function() { return { a: $scope.source, b: $scope.compress }; }
@@ -128,13 +135,13 @@ app.service('Theme', function($q, $http, FILES) {
       var p = $q.defer();
 
       $http.get(FILES.JSON_THEMES)
-        .success(function (themeList) {
+        .then(function (themeList) {
           var promises = [];
           var themes = {};
-          angular.forEach(themeList, function(theme) {
+          angular.forEach(themeList.data, function(theme) {
             var tp = $http.get('/customizer/themes/' + theme + '.json');
-            tp.success(function (data) {
-              themes[theme] = data;
+            tp.then(function (response) {
+              themes[theme] = response.data;
             });
             promises.push(tp);
           });
@@ -142,7 +149,7 @@ app.service('Theme', function($q, $http, FILES) {
           $q.all(promises)
             .then(function() {
               p.resolve({
-                themeList: themeList,
+                themeList: themeList.data,
                 themeHash: themes
               });
             });
@@ -208,11 +215,10 @@ app.service('less', function($log, $q, FILES, DIRECTORIES) {
          modifyVars: modifyVars
        })
         .then(function( output) {
-          console.log(output);
           return output.css;
         })
         .catch(function(error){
-          console.error(error);
+          $log.error(error);
         });
     }
   };
