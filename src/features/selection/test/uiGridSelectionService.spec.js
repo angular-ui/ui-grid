@@ -223,8 +223,14 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       }
       expect(grid.selection.selectAll).toBe(false);
 
+      grid.options.isRowSelectable = function(row) {
+        return row.isRowSelectable !== false;
+      };
+
+      grid.rows[6].isRowSelectable = false;
       grid.rows[8].enableSelection = false;
       grid.api.selection.selectAllRows();
+      expect(grid.rows[6].isSelected).toBe(false);
       expect(grid.rows[7].isSelected).toBe(true);
       expect(grid.rows[8].isSelected).toBe(false);
     });
@@ -244,7 +250,7 @@ describe('ui.grid.selection uiGridSelectionService', function () {
   });
 
   describe('selectAllVisibleRows function', function() {
-    it('should select all visible rows', function () {
+    it('should select all visible and selectable rows', function () {
       grid.api.selection.selectRow(grid.rows[4].entity);
       expect(grid.rows[4].isSelected).toBe(true);
 
@@ -252,10 +258,14 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[4].isSelected).toBe(true);
       expect(grid.rows[6].isSelected).toBe(true);
 
+      grid.options.isRowSelectable = function(row) {
+        return row.isRowSelectable !== false;
+      };
       grid.rows[3].visible = true;
       grid.rows[4].visible = true;
       grid.rows[6].visible = false;
       grid.rows[7].visible = true;
+      grid.rows[7].isRowSelectable = false;
       grid.rows[8].enableSelection = false;
       grid.rows[9].visible = true;
       expect(grid.selection.selectAll).toBe(false);
@@ -264,11 +274,11 @@ describe('ui.grid.selection uiGridSelectionService', function () {
       expect(grid.rows[3].isSelected).toBe(true);
       expect(grid.rows[4].isSelected).toBe(true);
       expect(grid.rows[6].isSelected).toBe(false);
-      expect(grid.rows[7].isSelected).toBe(true);
+      expect(grid.rows[7].isSelected).toBe(false);
       expect(grid.rows[8].isSelected).toBe(false);
       expect(grid.rows[9].isSelected).toBe(true);
       expect(grid.selection.selectAll).toBe(true);
-      expect(grid.selection.selectedCount).toBe(8);
+      expect(grid.selection.selectedCount).toBe(7);
     });
   });
 
