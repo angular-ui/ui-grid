@@ -530,6 +530,39 @@ describe('Grid factory', function () {
     });
   });
 
+  describe('selection', function() {
+    var grid;
+
+    beforeEach(function() {
+      grid = new Grid({ id: 1, enableRowHashing: false });
+      spyOn(grid, 'getRow').and.callFake(function(newEntity) {
+        return newEntity;
+      });
+
+      grid.rows = [];
+      grid.selection = {selectAll: false};
+    });
+    afterEach(function() {
+      grid.getRow.calls.reset();
+    });
+
+    it('should enable selectAll if a new row is added that is already selected', function() {
+      grid.modifyRows([{isSelected: true}]);
+
+      expect(grid.selection.selectAll).toBe(true);
+    });
+    it('should disable selectAll if a new row is added that is not selected', function() {
+      grid.modifyRows([{isSelected: false}]);
+
+      expect(grid.selection.selectAll).toBe(false);
+    });
+    it('should not update selectAll if there are no rows', function() {
+      grid.modifyRows([]);
+
+      expect(grid.selection.selectAll).toBe(false);
+    });
+  });
+
   describe('follow source array', function() {
     var dataRows, grid;
 
