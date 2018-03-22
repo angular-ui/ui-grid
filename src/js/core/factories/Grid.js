@@ -1180,7 +1180,7 @@ angular.module('ui.grid')
       }
     });
 
-    if (self.selection) {
+    if (self.selection && self.rows.length) {
       self.selection.selectAll = allRowsSelected;
     }
 
