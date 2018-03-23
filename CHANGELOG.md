@@ -5,7 +5,6 @@
 #### Bug Fixes
 
 * **GridColumn:** Respect minimumColumnSize when a valid minWidth is not present ([89c43ef3](http://github.com/angular-ui/ng-grid/commit/89c43ef34f01249c6025f535519ad3899daa0049))
-* **GridRenderContainer.js:** needsHScrollbarPlaceholder accounts for WHEN_NEEDED ([403bf3ee](http://github.com/angular-ui/ng-grid/commit/403bf3ee145be349ca783f5e5cf86a5420b638bf))
 * **pagination.html:** Limits pagination page number to integers only ([d7eca115](http://github.com/angular-ui/ng-grid/commit/d7eca115da85b0273688855706975eb231c54e6d))
 * **selection.js:** enableFullRowSelection allows enableRowHeaderSelection. ([f77a5b3f](http://github.com/angular-ui/ng-grid/commit/f77a5b3f5092fdc4a3f5d1717855af405acb0d81))
 * **ui-grid-column-menu.js:** Focus on first item in column menu on open. ([43b313fc](http://github.com/angular-ui/ng-grid/commit/43b313fc281a13236c6e6ed3e471a0eb3bf3257f))
