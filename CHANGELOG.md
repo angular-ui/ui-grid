@@ -1,3 +1,19 @@
+<a name="v4.4.4"></a>
+### v4.4.4 (2018-03-23)
+
+
+#### Bug Fixes
+
+* **Grid.js:** Select All button should be disabled when no data is present. ([08ec049a](http://github.com/angular-ui/ng-grid/commit/08ec049af25e8ef6f953955a2b2e2f570b29a4b6))
+* **column-resizer:** Disable text selection while resizing columns. ([2cf3e02a](http://github.com/angular-ui/ng-grid/commit/2cf3e02a8a1fe9762b09604cc3dff8bd079bc86d))
+* **filter:** Filter input fits in column without bootstrap ([a63e1f1a](http://github.com/angular-ui/ng-grid/commit/a63e1f1a3daae51feefab9f2b467ddfd922628d0))
+* **pagination.less:** Pagination footer no longer overlaps last row. ([713d3ea9](http://github.com/angular-ui/ng-grid/commit/713d3ea9caadaaa6e24f98ef31a43821bf9065e3))
+* **selection:**
+  * SelectAllRows pays attention to isRowSelectable function. ([0b7304f4](http://github.com/angular-ui/ng-grid/commit/0b7304f40d97343c2f7c249abb82050af7ef40dd))
+  * Center checkmarx in selection row header. ([3f8758aa](http://github.com/angular-ui/ng-grid/commit/3f8758aa76f523fc3a23762e9772095a963d7a65))
+* **styles:** Removed div. from LESS files. ([5a7dabd6](http://github.com/angular-ui/ng-grid/commit/5a7dabd60d13405f4f9a585b45ddf2c660225b82))
+* **ui-grid-column-menu.js:** Added keyboard navigation to column menu (#6629) ([df429208](http://github.com/angular-ui/ng-grid/commit/df4292083397d498594e893746d5975c4998105b))
+
 <a name="v4.4.3"></a>
 ### v4.4.3 (2018-03-21)
 
