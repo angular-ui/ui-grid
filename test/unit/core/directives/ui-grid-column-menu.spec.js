@@ -1,18 +1,25 @@
 describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 	'use strict';
 
-	var uiGridColumnMenuService, gridClassFactory, gridUtil, grid, $rootScope, $scope;
+  var $rootScope,
+    $scope,
+    grid,
+    gridClassFactory,
+    gridUtil,
+    uiGridColumnMenuService,
+    uiGridConstants;
 
-	beforeEach(function() {
-		module('ui.grid');
+  beforeEach(function() {
+    module('ui.grid');
 
-		inject(function(_uiGridColumnMenuService_, _gridClassFactory_, _gridUtil_, _$rootScope_) {
-			uiGridColumnMenuService = _uiGridColumnMenuService_;
-			gridClassFactory = _gridClassFactory_;
-			gridUtil = _gridUtil_;
-			$rootScope = _$rootScope_;
-		});
-	});
+    inject(function( _$rootScope_, _gridClassFactory_, _gridUtil_, _uiGridColumnMenuService_, _uiGridConstants_) {
+      $rootScope = _$rootScope_;
+      gridClassFactory = _gridClassFactory_;
+      gridUtil = _gridUtil_;
+      uiGridColumnMenuService = _uiGridColumnMenuService_;
+      uiGridConstants = _uiGridConstants_;
+    });
+  });
 
 	describe('uiGridColumnMenuService', function() {
 		beforeEach(function() {
@@ -520,53 +527,181 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 		});
 	});
 
-	describe('uiGridColumnMenu directive', function() {
-		var $compile, $timeout, element, uiGrid,
-			columnVisibilityChanged, sortChanged;
+  describe('uiGridColumnMenu directive', function() {
+    var $compile, $timeout, element, uiGrid,
+      columnVisibilityChanged, sortChanged;
 
-		beforeEach(function() {
-			inject(function(_$compile_, _$timeout_) {
-				$compile = _$compile_;
-				$timeout = _$timeout_;
-			});
-			$scope = $rootScope.$new();
+    beforeEach(function() {
+      inject(function(_$compile_, _$timeout_) {
+        $compile = _$compile_;
+        $timeout = _$timeout_;
+      });
+      $scope = $rootScope.$new();
 
-			$scope.gridOpts = {
-				enableSorting: true,
-				data: [{ name: 'Bob' }, {name: 'Mathias'}, {name: 'Fred'}],
-				onRegisterApi: function(gridApi) {
-					columnVisibilityChanged = jasmine.createSpy('columnVisibilityChanged');
-					gridApi.core.on.columnVisibilityChanged($scope, columnVisibilityChanged);
+      $scope.gridOpts = {
+        enableSorting: true,
+        data: [{ name: 'Bob' }, {name: 'Mathias'}, {name: 'Fred'}],
+        columnDefs: [
+          {
+            field: 'multipleMenuItems'
+          },
+          {
+            field: 'singleMenuItem',
+            enableSorting: false
+          }
+        ],
+        onRegisterApi: function(gridApi) {
+          columnVisibilityChanged = jasmine.createSpy('columnVisibilityChanged');
+          gridApi.core.on.columnVisibilityChanged($scope, columnVisibilityChanged);
 
-					sortChanged = jasmine.createSpy('sortChanged');
-					gridApi.core.on.sortChanged($scope, sortChanged);
-				}
-			};
+          sortChanged = jasmine.createSpy('sortChanged');
+          gridApi.core.on.sortChanged($scope, sortChanged);
+        }
+      };
 
-			element = angular.element('<div ui-grid="gridOpts"></div>');
+      element = angular.element('<div ui-grid="gridOpts"></div>');
 
-			uiGrid = $compile(element)($scope);
-			$scope.$apply();
-
-			$('body').append(uiGrid);
-			$('.ui-grid-column-menu-button').click();
-		});
-		afterEach(function() {
-			$scope.$destroy();
-			uiGrid.remove();
-		});
-		it('should raise the sortChanged event when unsort is clicked', function() {
-			$($('.ui-grid-menu-item')[2]).click();
-			$timeout.flush();
-
-			expect(sortChanged).toHaveBeenCalledWith(jasmine.any(Object), []);
-		});
-
-    it('should raise the columnVisibilityChanged event when hide column is clicked', function() {
-      $($('.ui-grid-menu-item')[3]).click();
-
-      expect(columnVisibilityChanged).toHaveBeenCalled();
+      spyOn(uiGridColumnMenuService, 'repositionMenu').and.callFake(angular.noop);
+    });
+    afterEach(function() {
+      uiGridColumnMenuService.repositionMenu.calls.reset();
     });
 
-	});
+    describe('when the menu has multiple menu items', function() {
+      beforeEach(function() {
+        uiGrid = $compile(element)($scope);
+        $scope.$apply();
+
+        $('body').append(uiGrid);
+        $('.ui-grid-column-menu-button').first().click();
+      });
+      afterEach(function() {
+        $scope.$destroy();
+        uiGrid.remove();
+      });
+      it('should raise the sortChanged event when unsort is clicked', function() {
+        $($('.ui-grid-menu-item')[2]).click();
+        $timeout.flush();
+
+        expect(sortChanged).toHaveBeenCalledWith(jasmine.any(Object), []);
+      });
+
+      it('should raise the columnVisibilityChanged event when hide column is clicked', function() {
+        $($('.ui-grid-menu-item')[3]).click();
+
+        expect(columnVisibilityChanged).toHaveBeenCalled();
+      });
+
+      describe('uiGridMenu keydown handlers', function() {
+        beforeEach(function() {
+          $timeout.flush();
+        });
+
+        it('should add keydown handler to ui-grid-menu', function() {
+          var menu = $('.ui-grid-menu-items')[0];
+
+          expect(menu.onkeydown).not.toBe(null);
+        });
+        it('should add keydown handlers to first and last visible menu-items', function() {
+          var items = $('.ui-grid-menu-item');
+
+          for (var i = 0; i < items.length; i++) {
+            if (i === 0 || i === items.length - 1) {
+              expect(items[i].onkeydown).not.toBe(null);
+            } else {
+              expect(items[i].onkeydown).toBe(null);
+            }
+          }
+        });
+        describe('menu keydown handler', function() {
+          it('should close menu when escape key is pressed', function() {
+            var menu = $('.ui-grid-menu-items'),
+              event = jQuery.Event('keydown', {keyCode: uiGridConstants.keymap.ESC});
+
+            expect(menu[0].onkeydown).not.toBe(null);
+            menu.trigger(event);
+            $timeout.flush();
+            expect(menu[0].onkeydown).toBe(null);
+          });
+        });
+        describe('menu-item keydown handler', function() {
+          it('should focus on last visible item when shift tab is pressed on first visible item', function() {
+            var event = jQuery.Event('keydown', {keyCode: uiGridConstants.keymap.TAB, shiftKey: true}),
+              items = $('.ui-grid-menu-item');
+
+            spyOn(items[items.length - 1], 'focus');
+            items[0].onkeydown(event);
+            expect(items[items.length - 1].focus).toHaveBeenCalled();
+          });
+          it('should focus on first visible item when tab is pressed on last visible item', function() {
+            var event = jQuery.Event('keydown', {keyCode: uiGridConstants.keymap.TAB, shiftKey: false}),
+              items = $('.ui-grid-menu-item');
+
+            spyOn(items[0], 'focus');
+            items[items.length - 1].onkeydown(event);
+            expect(items[0].focus).toHaveBeenCalled();
+          });
+        });
+        describe('closing ui-grid-column-menu', function() {
+          it('should remove keydown handlers from menu-items', function() {
+            var menu = $('.ui-grid-menu-items'),
+              items = $('.ui-grid-menu-item'),
+              event = jQuery.Event('keydown', {keyCode: uiGridConstants.keymap.ESC});
+
+            expect(menu[0].onkeydown).not.toBe(null);
+            expect(items[0].onkeydown).not.toBe(null);
+            expect(items[items.length - 1].onkeydown).not.toBe(null);
+
+            menu.trigger(event);
+            $timeout.flush();
+
+            expect(menu[0].onkeydown).toBe(null);
+            angular.forEach($('.ui-grid-menu-item'), function(item) {
+              expect(item.onkeydown).toBe(null);
+            });
+          });
+        });
+      });
+    });
+    describe('when the menu has a single item', function() {
+      beforeEach(function() {
+        uiGrid = $compile(element)($scope);
+        $scope.$apply();
+
+        $('body').append(uiGrid);
+        $($('.ui-grid-column-menu-button')[1]).click();
+      });
+      afterEach(function() {
+        $scope.$destroy();
+        uiGrid.remove();
+      });
+      describe('uiGridMenu keydown handlers', function() {
+        beforeEach(function () {
+          $timeout.flush();
+        });
+
+        it('should add keydown handler to ui-grid-menu', function () {
+          var menu = $('.ui-grid-menu-items')[0];
+
+          expect(menu.onkeydown).not.toBe(null);
+        });
+        describe('menu-item keydown handler', function() {
+          it('should focus on last visible item when shift tab is pressed on first visible item', function() {
+            var event = jQuery.Event('keydown', {keyCode: uiGridConstants.keymap.TAB, shiftKey: true}),
+              items = $('.ui-grid-menu-item:not(.ng-hide)');
+
+            spyOn(event, 'preventDefault').and.callThrough();
+            spyOn(items[0], 'focus');
+
+            items[0].onkeydown(event);
+            expect(items[0].focus).not.toHaveBeenCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
+
+            event.preventDefault.calls.reset();
+            items[0].focus.calls.reset();
+          });
+        });
+      });
+    });
+  });
 });
