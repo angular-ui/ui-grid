@@ -4,7 +4,7 @@ angular.module('ui.grid')
 .service('uiGridGridMenuService', [ 'gridUtil', 'i18nService', 'uiGridConstants', function( gridUtil, i18nService, uiGridConstants ) {
   /**
    *  @ngdoc service
-   *  @name ui.grid.gridMenuService
+   *  @name ui.grid.uiGridGridMenuService
    *
    *  @description Methods for working with the grid menu
    */
@@ -12,7 +12,7 @@ angular.module('ui.grid')
   var service = {
     /**
      * @ngdoc method
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @name initialize
      * @description Sets up the gridMenu. Most importantly, sets our
      * scope onto the grid object as grid.gridMenuScope, allowing us
@@ -78,7 +78,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name addToGridMenu
-     * @propertyOf ui.grid.gridMenuService
+     * @propertyOf ui.grid.uiGridGridMenuService
      * @description add items to the grid menu.  Used by features
      * to add their menu items if they are enabled, can also be used by
      * end users to add menu items.  This method has the advantage of allowing
@@ -86,7 +86,7 @@ angular.module('ui.grid')
      * in the menu when.  (Noting that in most cases the shown and active functions
      * provide a better way to handle visibility of menu items)
      * @param {Grid} grid the grid on which we are acting
-     * @param {array} items menu items in the format as described in the tutorial, with
+     * @param {array} menuItems menu items in the format as described in the tutorial, with
      * the added note that if you want to use remove you must also specify an `id` field,
      * which is provided when you want to remove an item.  The id should be unique.
      *
@@ -108,7 +108,7 @@ angular.module('ui.grid')
     /**
      * @ngdoc function
      * @name removeFromGridMenu
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @description Remove an item from the grid menu based on a provided id.  Assumes
      * that the id is unique, removes only the last instance of that id.  Does nothing if
      * the specified id is not found.  If there is no gridMenuScope or registeredMenuItems
@@ -162,7 +162,7 @@ angular.module('ui.grid')
      */
     /**
      * @ngdoc method
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @name getMenuItems
      * @description Decides the menu items to show in the menu.  This is a
      * combination of:
@@ -236,7 +236,7 @@ angular.module('ui.grid')
      */
     /**
      * @ngdoc method
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @name showHideColumns
      * @description Adds two menu items for each of the columns in columnDefs.  One
      * menu item for hide, one menu item for show.  Each is visible when appropriate
@@ -301,7 +301,7 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc method
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @name setMenuItemTitle
      * @description Handles the response from gridMenuTitleFilter, adding it directly to the menu
      * item if it returns a string, otherwise waiting for the promise to resolve or reject then
@@ -332,7 +332,7 @@ angular.module('ui.grid')
 
     /**
      * @ngdoc method
-     * @methodOf ui.grid.gridMenuService
+     * @methodOf ui.grid.uiGridGridMenuService
      * @name toggleColumnVisibility
      * @description Toggles the visibility of an individual column.  Expects to be
      * provided a context that has on it a gridColumn, which is the column that
