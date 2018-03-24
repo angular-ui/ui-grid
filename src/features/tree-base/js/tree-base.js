@@ -1580,6 +1580,7 @@
       link: function($scope, $elm, $attrs, uiGridCtrl) {
         var self = uiGridCtrl.grid;
         $scope.treeButtonClick = function(row, evt) {
+          evt.stopPropagation();
           uiGridTreeBaseService.toggleRowTreeState(self, row, evt);
         };
       }
