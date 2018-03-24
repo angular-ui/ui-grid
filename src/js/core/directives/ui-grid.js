@@ -280,7 +280,7 @@ function uiGridDirective($window, gridUtil, uiGridConstants) {
             grid.gridHeight = $scope.gridHeight = gridUtil.elementHeight($elm);
 
             // If the grid isn't tall enough to fit a single row, it's kind of useless. Resize it to fit a minimum number of rows
-            if (grid.gridHeight <= grid.options.rowHeight && grid.options.enableMinHeightCheck) {
+            if (grid.gridHeight - grid.scrollbarHeight <= grid.options.rowHeight && grid.options.enableMinHeightCheck) {
               autoAdjustHeight();
             }
 
