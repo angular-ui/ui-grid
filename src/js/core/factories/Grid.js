@@ -941,8 +941,7 @@ angular.module('ui.grid')
     var html = col.cellTemplate.replace(uiGridConstants.MODEL_COL_FIELD, self.getQualifiedColField(col));
     html = html.replace(uiGridConstants.COL_FIELD, 'grid.getCellValue(row, col)');
 
-    var compiledElementFn = $compile(html);
-    col.compiledElementFn = compiledElementFn;
+    col.compiledElementFn = $compile(html);
 
     if (col.compiledElementFnDefer) {
       col.compiledElementFnDefer.resolve(col.compiledElementFn);
@@ -1250,7 +1249,7 @@ angular.module('ui.grid')
    * @description registered a styleComputation function
    *
    * If the function returns a value it will be appended into the grid's `<style>` block
-   * @param {function($scope)} styleComputation function
+   * @param {function($scope)} styleComputationInfo function
    */
   Grid.prototype.registerStyleComputation = function registerStyleComputation(styleComputationInfo) {
     this.styleComputations.push(styleComputationInfo);
@@ -1291,7 +1290,7 @@ angular.module('ui.grid')
    * to alter the set of rows (sorting, etc) as long as the count is not
    * modified.
    *
-   * @param {function(renderedRowsToProcess, columns )} processorFunction rows processor function, which
+   * @param {function(renderedRowsToProcess, columns )} processor rows processor function, which
    * is run in the context of the grid (i.e. this for the function will be the grid), and must
    * return the updated rows list, which is passed to the next processor in the chain
    * @param {number} priority the priority of this processor.  In general we try to do them in 100s to leave room
@@ -1315,7 +1314,7 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name removeRowsProcessor
    * @methodOf ui.grid.class:Grid
-   * @param {function(renderableRows)} rows processor function
+   * @param {function(renderableRows)} processor processor function
    * @description Remove a registered rows processor
    */
   Grid.prototype.removeRowsProcessor = function removeRowsProcessor(processor) {
@@ -1335,8 +1334,7 @@ angular.module('ui.grid')
    * Private Undocumented Method
    * @name processRowsProcessors
    * @methodOf ui.grid.class:Grid
-   * @param {Array[GridRow]} The array of "renderable" rows
-   * @param {Array[GridColumn]} The array of columns
+   * @param {Array[GridRow]} renderableRows The array of "renderable" rows
    * @description Run all the registered rows processors on the array of renderable rows
    */
   Grid.prototype.processRowsProcessors = function processRowsProcessors(renderableRows) {
@@ -1436,7 +1434,7 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name registerColumnsProcessor
    * @methodOf ui.grid.class:Grid
-   * @param {function(renderedColumnsToProcess, rows)} columnProcessor column processor function, which
+   * @param {function(renderedColumnsToProcess, rows)} processor column processor function, which
    * is run in the context of the grid (i.e. this for the function will be the grid), and
    * which must return an updated renderedColumnsToProcess which can be passed to the next processor
    * in the chain
