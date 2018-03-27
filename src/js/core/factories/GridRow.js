@@ -4,13 +4,14 @@ angular.module('ui.grid')
 .factory('GridRow', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
 
    /**
+   * @class GridRow
    * @ngdoc function
    * @name ui.grid.class:GridRow
    * @description GridRow is the viewModel for one logical row on the grid.  A grid Row is not necessarily a one-to-one
    * relation to gridOptions.data.
    * @param {object} entity the array item from GridOptions.data
    * @param {number} index the current position of the row in the array
-   * @param {Grid} reference to the parent grid
+   * @param {Grid} grid reference to the parent grid
    */
   function GridRow(entity, index, grid) {
 
@@ -64,7 +65,7 @@ angular.module('ui.grid')
     /**
      *  @ngdoc object
      *  @name height
-     *  @propertyOf  ui.grid.class:GridRow
+     *  @propertyOf ui.grid.class:GridRow
      *  @description height of each individual row. changing the height will flag all
      *  row renderContainers to recalculate their canvas height
      */
@@ -86,7 +87,7 @@ angular.module('ui.grid')
    * @methodOf ui.grid.class:GridRow
    * @description returns the qualified field name as it exists on scope
    * ie: row.entity.fieldA
-   * @param {GridCol} col column instance
+   * @param {GridColumn} col column instance
    * @returns {string} resulting name that can be evaluated on scope
    */
     GridRow.prototype.getQualifiedColField = function(col) {
@@ -99,7 +100,7 @@ angular.module('ui.grid')
      * @methodOf ui.grid.class:GridRow
      * @description returns the qualified field name minus the row path
      * ie: entity.fieldA
-     * @param {GridCol} col column instance
+     * @param {GridColumn} col column instance
      * @returns {string} resulting name that can be evaluated against a row
      */
   GridRow.prototype.getEntityQualifiedColField = function(col) {
