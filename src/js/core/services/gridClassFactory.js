@@ -50,10 +50,10 @@
           grid.registerRowsProcessor(function allRowsVisible(rows) {
             rows.forEach(function (row) {
               row.evaluateRowVisibility( true );
-            }, 50);
+            });
 
             return rows;
-          });
+          }, 50);
 
           grid.registerColumnsProcessor(function applyColumnVisibility(columns) {
             columns.forEach(function (column) {
