@@ -125,6 +125,7 @@ For better performance with the following example, you can choose to load the ui
       <button type="button" class="btn btn-success" ng-click="$ctrl.scrollTo(20,0)">Scroll To Row 20</button>
       <button type="button" class="btn btn-success" ng-click="$ctrl.scrollTo(0,7)">Scroll To Balance</button>
       <button type="button" class="btn btn-success" ng-click="$ctrl.scrollTo(50,7)">Scroll To Row 50, Balance</button>
+      <button type="button" class="btn btn-success" ng-click="$ctrl.scrollTo(499,7)">Scroll To Row 499, Balance</button>
       <button type="button" class="btn btn-success" ng-click="$ctrl.scrollToFocus(50,7)">Focus Row 50, Balance</button>
       <br>
       <br>

@@ -2339,6 +2339,14 @@ angular.module('ui.grid')
       return this.hasRightContainer() && this.renderContainers.right.renderedColumns.length > 0;
     };
 
+    // Turn the scroll position into a percentage and make it an argument for a scroll event
+    function getScrollPercentage(scrollPixels, scrollLength) {
+      var percentage = scrollPixels / scrollLength;
+
+      // if the percentage is greater than 1, set it to 1
+      return percentage <= 1 ? percentage : 1;
+    }
+
     /**
      * @ngdoc method
      * @methodOf  ui.grid.class:Grid
@@ -2405,7 +2413,7 @@ angular.module('ui.grid')
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
 
-        var scrollPixels, percentage;
+        var scrollPixels;
 
         // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
         if (pixelsToSeeRow < topBound) {
@@ -2413,11 +2421,7 @@ angular.module('ui.grid')
           //   to get the full position we need
           scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
 
-          // Turn the scroll position into a percentage and make it an argument for a scroll event
-          percentage = scrollPixels / scrollLength;
-          if (percentage <= 1) {
-            scrollEvent.y = { percentage: percentage  };
-          }
+          scrollEvent.y = { percentage: getScrollPercentage(scrollPixels, scrollLength) };
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
         else if (pixelsToSeeRow > bottomBound) {
@@ -2425,11 +2429,7 @@ angular.module('ui.grid')
           //   to get the full position we need
           scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
 
-          // Turn the scroll position into a percentage and make it an argument for a scroll event
-          percentage = scrollPixels / scrollLength;
-          if (percentage <= 1) {
-            scrollEvent.y = { percentage: percentage  };
-          }
+          scrollEvent.y = { percentage: getScrollPercentage(scrollPixels, scrollLength) };
         }
       }
 
