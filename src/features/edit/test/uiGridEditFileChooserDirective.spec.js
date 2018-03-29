@@ -96,16 +96,4 @@ describe('ui.grid.edit uiGridEditFileChooser', function() {
 			$scope.$emit.calls.reset();
 		});
 	});
-	describe('on $destroy', function() {
-		beforeEach(function() {
-			spyOn(fileChooser[0], 'removeEventListener').and.callThrough();
-			$scope.$broadcast('$destroy');
-		});
-		afterEach(function() {
-			fileChooser[0].removeEventListener.calls.reset();
-		});
-		it('should remove all event handlers', function() {
-			expect(fileChooser[0].removeEventListener).toHaveBeenCalled();
-		});
-	});
 });
