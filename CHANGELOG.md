@@ -1,3 +1,20 @@
+<a name="v4.4.5"></a>
+### v4.4.5 (2018-03-31)
+
+
+#### Bug Fixes
+
+* **Grid.js:** scrollToIfNecessary can scroll to last row. ([87c9eed3](http://github.com/angular-ui/ng-grid/commit/87c9eed31c5e3b1b81d60721cd4fad846b0eb5a9))
+* **expandable.js:** Update expandedAll attribute when toggling rows. ([1b080b91](http://github.com/angular-ui/ng-grid/commit/1b080b916798addff1b67985465c6b01a8c5dce7))
+* **footer.less:** Empty footer cells now take the full available height. (#6630) ([dbe3ecd3](http://github.com/angular-ui/ng-grid/commit/dbe3ecd3ccf1d768b8ad3a8adc5bc38676f8542c))
+* **gridClassFactory.js:** Move priority to correct spot. ([842a9b77](http://github.com/angular-ui/ng-grid/commit/842a9b772f6b3f8dc43c614133b8284e991cd0e7))
+* **gridEdit.js:** Move deregister events until event conclusion. ([214f6cc4](http://github.com/angular-ui/ng-grid/commit/214f6cc4aa547c0e027bf7c2c8ce1865f50adddc))
+* **pagination.less:** Correct style pagination in footer info panel. ([5ca555a8](http://github.com/angular-ui/ng-grid/commit/5ca555a81efd12d3411e950c379dd58a4ad23c4f))
+* **selection.js:** When enableSelection is false, row cannot be toggled. ([33260602](http://github.com/angular-ui/ng-grid/commit/33260602609711077637e04614887b3341289cb1))
+* **tree-base.js:** Stop event propagation on click of the row header. ([c2824d5c](http://github.com/angular-ui/ng-grid/commit/c2824d5cbee3cb100291f51d95c09d58fcb4f5a6))
+* **ui-grid-render-container:** Use offsetHeight to avoid sizing issues. ([9927b711](http://github.com/angular-ui/ng-grid/commit/9927b711e037946e52d17fd521600e5c4e9d8b99))
+* **ui-grid.js:** Ignore scrollbar height prior to checking if autoAdjustHeight is needed. ([f9971a5d](http://github.com/angular-ui/ng-grid/commit/f9971a5d19d215c8978f64ecbc349830be6f7d6e))
+
 <a name="v4.4.4"></a>
 ### v4.4.4 (2018-03-23)
 
