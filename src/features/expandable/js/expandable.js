@@ -130,16 +130,28 @@
             expandable: {
               /**
                * @ngdoc event
+               * @name rowExpandedBeforeStateChanged
+               * @eventOf  ui.grid.expandable.api:PublicApi
+               * @description raised when row is expanding or collapsing
+               * <pre>
+               *      gridApi.expandable.on.rowExpandedBeforeStateChanged(scope,function(row){})
+               * </pre>
+               * @param {scope} scope the application scope
+               * @param {GridRow} row the row that was expanded
+               */
+              rowExpandedBeforeStateChanged: function(scope, row){
+              },
+              /**
+               * @ngdoc event
                * @name rowExpandedStateChanged
                * @eventOf  ui.grid.expandable.api:PublicApi
                * @description raised when row expanded or collapsed
                * <pre>
                *      gridApi.expandable.on.rowExpandedStateChanged(scope,function(row){})
                * </pre>
+               * @param {scope} scope the application scope
                * @param {GridRow} row the row that was expanded
                */
-              rowExpandedBeforeStateChanged: function(scope,row){
-              },
               rowExpandedStateChanged: function (scope, row) {
               }
             }
@@ -270,15 +282,15 @@
 
         if (row.isExpanded) {
           row.height = row.grid.options.rowHeight + row.expandedRowHeight;
-        }
-        else {
+          grid.expandable.expandedAll = service.getExpandedRows(grid).length === grid.rows.length;
+        } else {
           row.height = row.grid.options.rowHeight;
           grid.expandable.expandedAll = false;
         }
         grid.api.expandable.raise.rowExpandedStateChanged(row);
       },
 
-      expandAllRows: function(grid, $scope) {
+      expandAllRows: function(grid) {
         grid.renderContainers.body.visibleRowCache.forEach( function(row) {
           if (!row.isExpanded && !(row.entity.subGridOptions && row.entity.subGridOptions.disableRowExpandable)) {
             service.toggleRowExpansion(grid, row);
