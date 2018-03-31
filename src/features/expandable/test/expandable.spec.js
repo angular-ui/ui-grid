@@ -175,6 +175,9 @@ describe('ui.grid.expandable', function() {
           grid.api.registerMethodsFromObject.and.callFake(function(publicMethods) {
             methods = publicMethods.expandable;
           });
+          grid.api.registerEventsFromObject.and.callFake(function(events) {
+            grid.api.expandable = {raise: events.expandable};
+          });
           grid.rows = [
             {entity: {id: 1, name: 'John Doe'}, isExpanded: true},
             {entity: {id: 2, name: 'Joe Doe'}, isExpanded: false},
@@ -233,20 +236,64 @@ describe('ui.grid.expandable', function() {
         });
         describe('expandRow', function() {
           beforeEach(function() {
-            grid.getRow.and.returnValue(null);
-            methods.expandRow(grid.rows[1].entity);
+            grid.getRow.and.callFake(function(rowEntity) {
+              return rowEntity;
+            });
+
+            grid.rows = [
+              {isExpanded: false, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid}
+            ];
           });
-          it('should call getRow on the grid with the row entity passed in', function() {
-            expect(grid.getRow).toHaveBeenCalledWith(grid.rows[1].entity);
+          it('should do nothing when the current row is expanded', function() {
+            methods.expandRow(grid.rows[1]);
+
+            expect(grid.rows[1].isExpanded).toEqual(true);
+          });
+          it('should expand the current row if it is collapsed', function() {
+            methods.expandRow(grid.rows[0]);
+
+            expect(grid.rows[0].isExpanded).toEqual(true);
+          });
+          it('should update the value of expandAll if all rows are expanded', function() {
+            methods.expandRow(grid.rows[0]);
+
+            expect(grid.expandable.expandedAll).toEqual(true);
           });
         });
         describe('collapseRow', function() {
           beforeEach(function() {
-            grid.getRow.and.returnValue(null);
-            methods.collapseRow(grid.rows[0].entity);
+            grid.getRow.and.callFake(function(rowEntity) {
+              return rowEntity;
+            });
+
+            grid.rows = [
+              {isExpanded: false, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid},
+              {isExpanded: true, grid: grid}
+            ];
           });
-          it('should call getRow on the grid with the row entity passed in', function() {
-            expect(grid.getRow).toHaveBeenCalledWith(grid.rows[0].entity);
+          it('should do nothing when the current row is collapsed', function() {
+            methods.collapseRow(grid.rows[0]);
+
+            expect(grid.rows[0].isExpanded).toEqual(false);
+          });
+          it('should collapse the current row if it is expanded', function() {
+            methods.collapseRow(grid.rows[1]);
+
+            expect(grid.rows[1].isExpanded).toEqual(false);
+          });
+          it('should update the value of expandAll if one row is collapsed', function() {
+            methods.collapseRow(grid.rows[0]);
+
+            expect(grid.expandable.expandedAll).toEqual(false);
           });
         });
         describe('getExpandedRows', function() {
@@ -293,7 +340,18 @@ describe('ui.grid.expandable', function() {
     });
 
     describe('getExpandedRows', function() {
+      it('should return only the rows that are expanded', function() {
+        grid.rows = [
+          {isExpanded: false},
+          {isExpanded: true},
+          {isExpanded: false},
+          {isExpanded: true},
+          {isExpanded: true},
+          {isExpanded: true}
+        ];
 
+        expect(uiGridExpandableService.getExpandedRows(grid).length).toEqual(4);
+      });
     });
   });
 });
