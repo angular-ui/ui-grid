@@ -481,7 +481,7 @@
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
           var selected = row.isSelected;
 
-          if (row.enableSelection === false && !selected) {
+          if (row.enableSelection === false) {
             return;
           }
 
