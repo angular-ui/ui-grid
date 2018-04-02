@@ -294,7 +294,14 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
                 $scope.$emit('hide-menu');
               } else {
                 // Maintain focus on the selected item
-                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
+                var correctParent = $event.target.parentElement;
+
+                // nodeName of 'I' means target is i element, need the next parent
+                if (angular.element($event.target)[0].nodeName === 'I') {
+                  correctParent = correctParent.parentElement;
+                }
+
+                gridUtil.focus.bySelector(correctParent, 'button[type=button]', true);
               }
             }
           };
