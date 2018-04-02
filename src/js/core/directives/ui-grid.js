@@ -84,10 +84,12 @@
         // gridUtil.logDebug('dataWatch fired');
         var promises = [];
 
-        if (angular.isString($scope.uiGrid.data)) {
-          newData = self.grid.appScope[$scope.uiGrid.data];
-        } else {
-          newData = $scope.uiGrid.data;
+        if ( self.grid.options.fastWatch ) {
+          if (angular.isString($scope.uiGrid.data)) {
+            newData = self.grid.appScope.$eval($scope.uiGrid.data);
+          } else {
+            newData = $scope.uiGrid.data;
+          }
         }
 
         mostRecentData = newData;
