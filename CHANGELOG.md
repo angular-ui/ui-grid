@@ -1,3 +1,16 @@
+<a name="v4.4.6"></a>
+### v4.4.6 (2018-04-06)
+
+
+#### Bug Fixes
+
+* **Grid.js:** ScrollIfNecessary will not scroll if percentage has not changed. ([7ed11ecb](http://github.com/angular-ui/ng-grid/commit/7ed11ecb57e9a809af41e36315575486e1ad2b93))
+* **exporter.js:** Exporter will respect headerCellFilter and cellFilter. ([4c632391](http://github.com/angular-ui/ng-grid/commit/4c63239186c73fd3ba1723481ed67618897e9fe4))
+* **footer.less:** Footer column width now matches header column width. ([3134f77b](http://github.com/angular-ui/ng-grid/commit/3134f77b3dc659e172a5cda67ef7c45528a3ea3a))
+* **ui-grid-menu-button.js:** Replace show/hide buttons with a single toggle button. ([a6a26d99](http://github.com/angular-ui/ng-grid/commit/a6a26d997ed7fee102ab89cb863b0a5a40ce895c))
+* **ui-grid-menu.js:** Give bySelector correct parent. ([1972dcc2](http://github.com/angular-ui/ng-grid/commit/1972dcc29a7727f6e66fffdcbe3c5c4240f3e499))
+* **ui-grid.js:** gridOptions.data string value now works again. ([c62b986d](http://github.com/angular-ui/ng-grid/commit/c62b986d14e68f7e6e8f72ceb89666d7b7add749))
+
 <a name="v4.4.5"></a>
 ### v4.4.5 (2018-03-31)
 
