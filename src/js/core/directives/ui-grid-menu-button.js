@@ -250,6 +250,10 @@ angular.module('ui.grid')
         return showHideColumns;
       }
 
+      function isColumnVisible(colDef) {
+        return colDef.visible === true || colDef.visible === undefined;
+      }
+
       // add header for columns
       showHideColumns.push({
         title: i18nService.getSafeText('gridMenu.columns'),
@@ -262,34 +266,23 @@ angular.module('ui.grid')
         if ( colDef.enableHiding !== false ){
           // add hide menu item - shows an OK icon as we only show when column is already visible
           var menuItem = {
-            icon: 'ui-grid-icon-ok',
+            icon: isColumnVisible(colDef) ? 'ui-grid-icon-ok' : 'ui-grid-icon-cancel',
             action: function($event) {
               $event.stopPropagation();
-              service.toggleColumnVisibility( this.context.gridCol );
-            },
-            shown: function() {
-              return this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined;
-            },
-            context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
-            leaveOpen: true,
-            order: 301 + index * 2
-          };
-          service.setMenuItemTitle( menuItem, colDef, $scope.grid );
-          showHideColumns.push( menuItem );
 
-          // add show menu item - shows no icon as we only show when column is invisible
-          menuItem = {
-            icon: 'ui-grid-icon-cancel',
-            action: function($event) {
-              $event.stopPropagation();
               service.toggleColumnVisibility( this.context.gridCol );
+
+              if ($event.target && $event.target.firstChild) {
+                $event.target.firstChild.className = isColumnVisible(this.context.gridCol.colDef) ?
+                  'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+              }
             },
             shown: function() {
-              return !(this.context.gridCol.colDef.visible === true || this.context.gridCol.colDef.visible === undefined);
+              return this.context.gridCol.colDef.enableHiding !== false;
             },
             context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
             leaveOpen: true,
-            order: 301 + index * 2 + 1
+            order: 301 + index
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
