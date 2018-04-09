@@ -167,7 +167,7 @@
            * of matching column names.  A null value in any given position means "don't import this column"
            *
            * <pre>
-           *      gridOptions.importerProcessHeaders: function( headerArray ) {
+           *      gridOptions.importerProcessHeaders: function( grid, headerArray ) {
            *        var myHeaderColumns = [];
            *        var thisCol;
            *        headerArray.forEach( function( value, index ) {
