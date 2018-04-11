@@ -2393,6 +2393,8 @@ angular.module('ui.grid')
 
       // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
       // var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+      
+      // Adding headerHeight results in unexpected behaviour of endless scrolling, remove it for now
       var topBound = self.renderContainers.body.prevScrollTop;
 
       // Don't the let top boundary be less than 0
