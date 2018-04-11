@@ -2392,7 +2392,8 @@ angular.module('ui.grid')
       /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
 
       // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
-      var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+      // var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+      var topBound = self.renderContainers.body.prevScrollTop;
 
       // Don't the let top boundary be less than 0
       topBound = (topBound < 0) ? 0 : topBound;
