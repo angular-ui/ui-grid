@@ -2444,6 +2444,11 @@ angular.module('ui.grid')
           //   to get the full position we need
           scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
 
+          //Since scrollIfNecessary is called multiple times when enableCellEditOnFocus is true we need to make sure the scrollbarWidth and footerHeight is accounted for to not cause a loop.
+          if (gridCol.colDef.enableCellEditOnFocus === true) {
+            scrollPixels = scrollPixels - self.footerHeight - self.scrollbarWidth;
+          }
+
           scrollEvent.y = getScrollY(scrollPixels, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
