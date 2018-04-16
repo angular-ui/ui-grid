@@ -2445,7 +2445,7 @@ angular.module('ui.grid')
           scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
 
           //Since scrollIfNecessary is called multiple times when enableCellEditOnFocus is true we need to make sure the scrollbarWidth and footerHeight is accounted for to not cause a loop.
-          if (gridCol.colDef.enableCellEditOnFocus === true) {
+          if (gridCol && gridCol.colDef && gridCol.colDef.enableCellEditOnFocus) {
             scrollPixels = scrollPixels - self.footerHeight - self.scrollbarWidth;
           }
 
