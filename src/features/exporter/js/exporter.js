@@ -61,12 +61,14 @@
    */
   module.constant('uiGridExporterConstants', {
     featureName: 'exporter',
+    rowHeaderColName: 'treeBaseRowHeaderCol',
     ALL: 'all',
     VISIBLE: 'visible',
     SELECTED: 'selected',
     CSV_CONTENT: 'CSV_CONTENT',
     BUTTON_LABEL: 'BUTTON_LABEL',
-    FILE_NAME: 'FILE_NAME'
+    FILE_NAME: 'FILE_NAME',
+    PIXEL_PER_UNIT: 75
   });
 
   /**
@@ -1533,9 +1535,11 @@
             // The standard column width in Microsoft Excel 2000 is 8.43 characters based on fixed-width Courier font
             // Width of 10 in excel is 75 pixels
             var colWidths = [];
-            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : (grid.enableRowSelection !== false ? 1 : 0);
+            var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : (grid.enableRowSelection ? 1 : 0);
             for (var i = startDataIndex; i < grid.columns.length; i++) {
-              colWidths.push({width: (grid.columns[i].drawnWidth / 75) * 10});
+              if (grid.columns[i].field !== uiGridExporterConstants.rowHeaderColName) {
+                colWidths.push({width: (grid.columns[i].drawnWidth / uiGridExporterConstants.PIXEL_PER_UNIT) * 10});
+              }
             }
             sheet.setColumns(colWidths);
 
