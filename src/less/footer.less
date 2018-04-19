@@ -1,6 +1,9 @@
+.ui-grid-footer-info {
+  padding: 5px 10px;
+}
 
 .ui-grid-footer-panel-background {
-  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+  background-color: @headerBackgroundColor;
 }
 
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
@@ -22,6 +25,13 @@
 .ui-grid-grid-footer {
   float: left;
   width: 100%;
+}
+
+.ui-grid-footer-viewport,
+.ui-grid-footer-canvas {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
 }
 
 .ui-grid-footer-viewport {
@@ -67,19 +77,5 @@
 
   &:last-child {
     border-right: 0;
-  }
-}
-
-input[type="text"].ui-grid-filter-input {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  width: 100%;
-
-  border: @gridBorderWidth solid  @borderColor;
-  .border-radius(@gridBorderRadius);
-
-  &:hover {
-    border: @gridBorderWidth solid  @borderColor;
   }
 }

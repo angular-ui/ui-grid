@@ -1,14 +1,14 @@
-describe('i18n Directives', function () {
-  var gridUtil;
-  var scope;
-  var element;
-  var uiGridController;
-  var recompile;
+describe('i18n Directives', function() {
+  var $compile, $rootScope, gridUtil, element, recompile, scope;
 
-  beforeEach(module('ui.grid'));
+  beforeEach(function() {
+    module('ui.grid');
 
-  beforeEach(inject(function ($rootScope, $compile, $controller, _gridUtil_, $templateCache, $timeout) {
-    gridUtil = _gridUtil_;
+    inject(function (_$rootScope_, _$compile_, _gridUtil_) {
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+      gridUtil = _gridUtil_;
+    });
 
     scope = $rootScope.$new();
     scope.options = {};
@@ -24,22 +24,23 @@ describe('i18n Directives', function () {
 
     recompile = function () {
       $compile(element)(scope);
-      $rootScope.$digest();
+      $rootScope.$apply();
     };
-  }));
+  });
 
-
-  describe('ui-translate directive', function () {
-    it('should translate', function () {
-      element = angular.element('<div ui-i18n="en"><p ui-translate="search.placeholder"></p></div>');
+  describe('ui-translate directive', function() {
+    beforeEach(function() {
+      scope.lang = 'en';
+      element = angular.element('<div ui-i18n="lang"><p ui-translate="search.placeholder"></p></div>');
       recompile();
-
+    });
+    it('should translate', function() {
       expect(element.find('p').text()).toBe('Search...');
     });
   });
 
-  describe('ui-t directive', function () {
-    it('should translate', function () {
+  describe('ui-t directive', function() {
+    it('should translate', function() {
       element = angular.element('<div ui-i18n="en"><p ui-t="search.placeholder"></p></div>');
       recompile();
 
@@ -47,8 +48,8 @@ describe('i18n Directives', function () {
     });
   });
 
-  describe('t filter', function () {
-    it('should translate', function () {
+  describe('t filter', function() {
+    it('should translate', function() {
       element = angular.element('<div ui-i18n="en"><p>{{"search.placeholder" | t}}</p></div>');
       recompile();
 
@@ -56,13 +57,12 @@ describe('i18n Directives', function () {
     });
   });
 
-  describe('uiTranslate filter', function () {
-    it('should translate', function () {
+  describe('uiTranslate filter', function() {
+    it('should translate', function() {
       element = angular.element('<div ui-i18n="en"><p>{{"search.placeholder" | uiTranslate}}</p></div>');
       recompile();
 
       expect(element.find('p').text()).toBe('Search...');
     });
   });
-
 });

@@ -4,6 +4,12 @@
 
 UI-Grid can also bind be to a one-dimensional array of primitives - in this case using `uiGridConstants.ENTITY_BINDING` will use the entire entry in the data array as the value for the cell instead of a field therein. This is useful if the data is an array of strings, or also if a cell filter needs access to multiple fields within each row object.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -11,18 +17,18 @@ UI-Grid can also bind be to a one-dimensional array of primitives - in this case
 
     app.controller('OneDimensionCtrl', ['$scope', 'uiGridConstants', function ($scope, uiGridConstants) {
 
-    $scope.gridOptions = {
-            enableSorting: true,
-            columnDefs: [
-              { name:'Name', field: uiGridConstants.ENTITY_BINDING }
-            ],
-            data : [
-              "John Rogers",
-              "David Michaels",
-              "Andrew Johnson",
-              "Donald McDonald"
-            ]
-          };
+      $scope.gridOptions = {
+        enableSorting: true,
+        columnDefs: [
+          { name:'Name', field: uiGridConstants.ENTITY_BINDING }
+        ],
+        data: [
+          "John Rogers",
+          "David Michaels",
+          "Andrew Johnson",
+          "Donald McDonald"
+        ]
+      };
     }]);
 
 

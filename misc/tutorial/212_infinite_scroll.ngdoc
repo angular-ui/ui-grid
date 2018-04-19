@@ -50,6 +50,11 @@ You may sometimes remove data, for example if you're keeping 10 pages of data in
 from the top as you add data to the bottom.  You can use the `dataRemovedTop` and `dataRemovedBottom` to tell
 us that you've discarded data, and we'll aim to set the scroll back to where it was before you removed that data.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.infinite-scroll.min.js"></script>
+</pre>
 
 @example
 In this example we have a data set that starts at page 2 of a 5 page data set.  Each page is 100 records, so we start at
@@ -67,8 +72,10 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.infiniteScroll']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-      $scope.gridOptions = {
+    app.controller('MainCtrl', function ($scope, $http, $timeout) {
+      var vm = this;
+
+      vm.gridOptions = {
         infiniteScrollRowsFromEnd: 40,
         infiniteScrollUp: true,
         infiniteScrollDown: true,
@@ -79,117 +86,117 @@ Finally, we can reset the data, which gets us back to the middle page and sets t
         ],
         data: 'data',
         onRegisterApi: function(gridApi){
-          gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
-          gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);
-          $scope.gridApi = gridApi;
+          gridApi.infiniteScroll.on.needLoadMoreData($scope, getDataDown);
+          gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, getDataUp);
+          vm.gridApi = gridApi;
         }
       };
 
       $scope.data = [];
 
-      $scope.firstPage = 2;
-      $scope.lastPage = 2;
+      vm.firstPage = 2;
+      vm.lastPage = 2;
 
-      $scope.getFirstData = function() {
+      function getFirstData() {
         return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
         .then(function(response) {
-          var newData = $scope.getPage(response.data, $scope.lastPage);
+          var newData = getPage(response.data, vm.lastPage);
+
           $scope.data = $scope.data.concat(newData);
         });
-      };
+      }
 
-      $scope.getDataDown = function() {
+      function getDataDown() {
         return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
         .then(function(response) {
-          $scope.lastPage++;
-          var newData = $scope.getPage(response.data, $scope.lastPage);
-          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          vm.lastPage++;
+          var newData = getPage(response.data, vm.lastPage);
+          vm.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = $scope.data.concat(newData);
-          return $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');});
+          return vm.gridApi.infiniteScroll.dataLoaded(vm.firstPage > 0, vm.lastPage < 4).then(function() {checkDataLength('up');});
         })
         .catch(function(error) {
-          return $scope.gridApi.infiniteScroll.dataLoaded();
+          return vm.gridApi.infiniteScroll.dataLoaded();
         });
-      };
+      }
 
-      $scope.getDataUp = function() {
+      function getDataUp() {
         return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
         .then(function(response) {
-          $scope.firstPage--;
-          var newData = $scope.getPage(response.data, $scope.firstPage);
-          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          vm.firstPage--;
+          var newData = getPage(response.data, vm.firstPage);
+          vm.gridApi.infiniteScroll.saveScrollPercentage();
           $scope.data = newData.concat($scope.data);
-          return $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');});
+          return vm.gridApi.infiniteScroll.dataLoaded(vm.firstPage > 0, vm.lastPage < 4).then(function() {checkDataLength('down');});
         })
         .catch(function(error) {
-          return $scope.gridApi.infiniteScroll.dataLoaded();
+          return vm.gridApi.infiniteScroll.dataLoaded();
         });
-      };
+      }
 
-      $scope.getPage = function(data, page) {
+      function getPage(data, page) {
         var res = [];
         for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
           res.push(data[i]);
         }
         return res;
-      };
+      }
 
-      $scope.checkDataLength = function( discardDirection) {
+      function checkDataLength( discardDirection) {
         // work out whether we need to discard a page, if so discard from the direction passed in
-        if( $scope.lastPage - $scope.firstPage > 3 ){
+        if( vm.lastPage - vm.firstPage > 3 ){
           // we want to remove a page
-          $scope.gridApi.infiniteScroll.saveScrollPercentage();
+          vm.gridApi.infiniteScroll.saveScrollPercentage();
 
           if( discardDirection === 'up' ){
             $scope.data = $scope.data.slice(100);
-            $scope.firstPage++;
+            vm.firstPage++;
             $timeout(function() {
               // wait for grid to ingest data changes
-              $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
+              vm.gridApi.infiniteScroll.dataRemovedTop(vm.firstPage > 0, vm.lastPage < 4);
             });
           } else {
             $scope.data = $scope.data.slice(0, 400);
-            $scope.lastPage--;
+            vm.lastPage--;
             $timeout(function() {
               // wait for grid to ingest data changes
-              $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
+              vm.gridApi.infiniteScroll.dataRemovedBottom(vm.firstPage > 0, vm.lastPage < 4);
             });
           }
         }
-      };
+      }
 
-      $scope.reset = function() {
-        $scope.firstPage = 2;
-        $scope.lastPage = 2;
+      vm.reset = function() {
+        vm.firstPage = 2;
+        vm.lastPage = 2;
 
         // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
-        $scope.gridApi.infiniteScroll.setScrollDirections( false, false );
+        vm.gridApi.infiniteScroll.setScrollDirections( false, false );
         $scope.data = [];
 
-        $scope.getFirstData().then(function(){
+        getFirstData().then(function(){
           $timeout(function() {
             // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
-            $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+            vm.gridApi.infiniteScroll.resetScroll( vm.firstPage > 0, vm.lastPage < 4 );
           });
         });
       };
 
-      $scope.getFirstData().then(function(){
+      getFirstData().then(function(){
         $timeout(function() {
           // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
           // you need to call resetData once you've loaded your data if you want to enable scroll up,
           // it adjusts the scroll position down one pixel so that we can generate scroll up events
-          $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+          vm.gridApi.infiniteScroll.resetScroll( vm.firstPage > 0, vm.lastPage < 4 );
         });
       });
-
-    }]);
+    });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <button id="reset" class="button" ng-click="reset()">Reset</button>
-      <span> &nbsp; &nbsp; First page: {{ firstPage }} &nbsp; &nbsp; Last page: {{ lastPage }}  &nbsp; &nbsp; data.length: {{ data.length }} </span>
-      <div ui-grid="gridOptions" class="grid" ui-grid-infinite-scroll></div>
+    <div ng-controller="MainCtrl as $ctrl">
+      <button id="reset" class="button" ng-click="$ctrl.reset()">Reset</button>
+      <span> &nbsp; &nbsp; First page: {{ $ctrl.firstPage }} &nbsp; &nbsp; Last page: {{ $ctrl.lastPage }}  &nbsp; &nbsp; data.length: {{ data.length }} </span>
+      <div ui-grid="$ctrl.gridOptions" class="grid" ui-grid-infinite-scroll></div>
     </div>
   </file>
   <file name="main.css">

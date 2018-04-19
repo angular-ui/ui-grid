@@ -8,6 +8,11 @@ In this example there an initial sort via name, but the defaultSort on memberNo 
 
 Default sorts are intended to ensure a sensible implicit ordering to the data is retained, and therefore they do not show on columnHeaders as sorts unless the user explicitly sorts by that column.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);

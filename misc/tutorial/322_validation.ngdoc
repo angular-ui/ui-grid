@@ -47,6 +47,14 @@ api/ui.grid.validate.service:uiGridValidateService#methods_setExternalFactoryFun
 Please be advised that external validators should accept the same parameters (or at least an ordered subset) as
 our validators do (`oldValue`, `newValue`, `rowEntity`, `colDef`);
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+  <script src="/release/ui-grid.validate.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

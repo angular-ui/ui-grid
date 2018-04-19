@@ -11,6 +11,13 @@ available through:
 
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.exporter.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
 
 @example
 In this example we provide a custom UI for calling the exporter, and we tailor

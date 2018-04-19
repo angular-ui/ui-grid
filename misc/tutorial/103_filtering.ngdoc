@@ -83,17 +83,28 @@ columnDef option will cause filtering to be applied after the `cellFilters` are 
 
 Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implement this using a rowsProcessor.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
+    angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid'])
+      .controller('MainCtrl', MainCtrl)
+      .filter('mapGender', mapGender);
 
-    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
-      var today = new Date();
-      var nextWeek = new Date();
+    MainCtrl.$inject = ['$http', 'uiGridConstants'];
+
+    function MainCtrl($http, uiGridConstants) {
+      var vm = this,
+        today = new Date(),
+        nextWeek = new Date();
+
       nextWeek.setDate(nextWeek.getDate() + 7);
 
-      $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
+      vm.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
         if( col.filters[0].term ){
           return 'header-filtered';
         } else {
@@ -101,21 +112,21 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
         }
       };
 
-      $scope.gridOptions = {
+      vm.gridOptions = {
         enableFiltering: true,
         onRegisterApi: function(gridApi){
-          $scope.gridApi = gridApi;
+          vm.gridApi = gridApi;
         },
         columnDefs: [
           // default
-          { field: 'name', headerCellClass: $scope.highlightFilteredHeader },
+          { field: 'name', headerCellClass: vm.highlightFilteredHeader },
           // pre-populated search field
           { field: 'gender', filter: {
               term: '1',
               type: uiGridConstants.filter.SELECT,
               selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
             },
-            cellFilter: 'mapGender', headerCellClass: $scope.highlightFilteredHeader },
+            cellFilter: 'mapGender', headerCellClass: vm.highlightFilteredHeader },
           // no filter input
           { field: 'company', enableFiltering: false, filter: {
             noTerm: true,
@@ -130,7 +141,7 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
             filter: {
               condition: uiGridConstants.filter.ENDS_WITH,
               placeholder: 'ends with'
-            }, headerCellClass: $scope.highlightFilteredHeader
+            }, headerCellClass: vm.highlightFilteredHeader
           },
           // custom condition function
           {
@@ -140,7 +151,7 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
                 var strippedValue = (cellValue + '').replace(/[^\d]/g, '');
                 return strippedValue.indexOf(searchTerm) >= 0;
               }
-            }, headerCellClass: $scope.highlightFilteredHeader
+            }, headerCellClass: vm.highlightFilteredHeader
           },
           // multiple filters
           { field: 'age', filters: [
@@ -152,23 +163,28 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than'
             }
-          ], headerCellClass: $scope.highlightFilteredHeader},
+          ], headerCellClass: vm.highlightFilteredHeader},
           // date filter
           { field: 'mixedDate', cellFilter: 'date', width: '15%', filter: {
               condition: uiGridConstants.filter.LESS_THAN,
               placeholder: 'less than',
               term: nextWeek
-            }, headerCellClass: $scope.highlightFilteredHeader
+            }, headerCellClass: vm.highlightFilteredHeader
           },
-          { field: 'mixedDate', displayName: "Long Date", cellFilter: 'date:"longDate"', filterCellFiltered:true, width: '15%',
+          {
+            field: 'mixedDate',
+            displayName: 'Long Date',
+            cellFilter: 'date:"longDate"',
+            filterCellFiltered: true,
+            width: '15%'
           }
         ]
       };
 
       $http.get('/data/500_complex.json')
         .then(function(response) {
-          $scope.gridOptions.data = response.data;
-          $scope.gridOptions.data[0].age = -5;
+          vm.gridOptions.data = response.data;
+          vm.gridOptions.data[0].age = -5;
 
           response.data.forEach( function addDates( row, index ){
             row.mixedDate = new Date();
@@ -177,12 +193,13 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
           });
         });
 
-      $scope.toggleFiltering = function(){
-        $scope.gridOptions.enableFiltering = !$scope.gridOptions.enableFiltering;
-        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      vm.toggleFiltering = function(){
+        vm.gridOptions.enableFiltering = !vm.gridOptions.enableFiltering;
+        vm.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       };
-    }])
-    .filter('mapGender', function() {
+    }
+
+    function mapGender() {
       var genderHash = {
         1: 'male',
         2: 'female'
@@ -195,18 +212,18 @@ Refer {@link 321_singleFilter singleFilter tutorial}, it is possible to implemen
           return genderHash[input];
         }
       };
-    });
+    }
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as $ctrl">
       You can use asterisks to fuzz-match, i.e. use "*z*" as your filter to show any row where that column contains a "z".
       <br>
       <br>
       <strong>Note:</strong> The third column has the filter input disabled, but actually has a filter set in code that requires every company to have an 'a' in their name.
       <br>
       <br>
-      <button id='toggleFiltering' ng-click="toggleFiltering()" class="btn btn-success">Toggle Filtering</button>
-      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+      <button id='toggleFiltering' ng-click="$ctrl.toggleFiltering()" class="btn btn-success">Toggle Filtering</button>
+      <div id="grid1" ui-grid="$ctrl.gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">

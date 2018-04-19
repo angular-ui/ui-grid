@@ -51,6 +51,13 @@ after grid initialisation you need to call `gridApi.core.notifyDataChange(uiGrid
 the option.  In the grid below pressing the button to "set selectable" will set any rows that have an age > 30 to not be
 selectable, and also set the age of the first row to 31.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 Two examples are provided, the first with rowHeaderSelection and multi-select, the second without.  The first example
 auto-selects the first row once the data is loaded.

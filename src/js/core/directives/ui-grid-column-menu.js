@@ -274,17 +274,14 @@ function ( i18nService, uiGridConstants, gridUtil ) {
 
       var containerScrollLeft = renderContainerElm.querySelectorAll('.ui-grid-viewport')[0].scrollLeft;
 
-      // default value the last width for _this_ column, otherwise last width for _any_ column, otherwise default to 170
-      var myWidth = column.lastMenuWidth ? column.lastMenuWidth : ( $scope.lastMenuWidth ? $scope.lastMenuWidth : 170);
+      // repositionMenu is now always called after it's visible in the DOM,
+      // allowing us to simply get the width every time the menu is opened
+      var myWidth = gridUtil.elementWidth(menu, true);
       var paddingRight = column.lastMenuPaddingRight ? column.lastMenuPaddingRight : ( $scope.lastMenuPaddingRight ? $scope.lastMenuPaddingRight : 10);
 
       if ( menu.length !== 0 ){
         var mid = menu[0].querySelectorAll('.ui-grid-menu-mid');
-        if ( mid.length !== 0 && !angular.element(mid).hasClass('ng-hide') ) {
-          myWidth = gridUtil.elementWidth(menu, true);
-          $scope.lastMenuWidth = myWidth;
-          column.lastMenuWidth = myWidth;
-
+        if ( mid.length !== 0 ) {
           // TODO(c0bra): use padding-left/padding-right based on document direction (ltr/rtl), place menu on proper side
           // Get the column menu right padding
           paddingRight = parseInt(gridUtil.getStyles(angular.element(menu)[0])['paddingRight'], 10);
@@ -293,9 +290,10 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         }
       }
 
-      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width - myWidth + paddingRight;
-      if (left < positionData.offset){
-        left = positionData.offset;
+      var left = positionData.left + renderContainerOffset - containerScrollLeft + positionData.parentLeft + positionData.width + paddingRight;
+
+      if (left < positionData.offset + myWidth) {
+        left = Math.max(positionData.left - containerScrollLeft + positionData.parentLeft - paddingRight + myWidth, positionData.offset + myWidth);
       }
 
       $elm.css('left', left + 'px');
@@ -362,7 +360,6 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           $scope.$broadcast('hide-menu', { originalEvent: event });
         } else {
           $scope.menuShown = true;
-          uiGridColumnMenuService.repositionMenu( $scope, column, colElementPosition, $elm, $columnElement );
 
           $scope.colElement = $columnElement;
           $scope.colElementPosition = colElementPosition;
@@ -390,10 +387,13 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
 
       $scope.$on('menu-hidden', function() {
+        var menuItems = angular.element($elm[0].querySelector('.ui-grid-menu-items'))[0];
+
+        $elm[0].removeAttribute('style');
+
         if ( $scope.hideThenShow ){
           delete $scope.hideThenShow;
 
-          uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
           $scope.$broadcast('show-menu');
 
           $scope.menuShown = true;
@@ -405,16 +405,25 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
             gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false);
           }
         }
+
+        if (menuItems) {
+          menuItems.onkeydown = null;
+          angular.forEach(menuItems.children, function removeHandlers(item) {
+            item.onkeydown = null;
+          });
+        }
       });
 
       $scope.$on('menu-shown', function() {
         $timeout( function() {
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
-          //Focus on the first item
-          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item', true);
+
+          //automatically set the focus to the first button element in the now open menu.
+          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
           delete $scope.colElementPosition;
           delete $scope.columnElement;
-        }, 200);
+          addKeydownHandlersToMenu();
+        });
       });
 
 
@@ -436,9 +445,57 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         $scope.hideMenu();
       };
 
-      //Since we are hiding this column the default hide action will fail so we need to focus somewhere else.
+      function addKeydownHandlersToMenu() {
+        var menu = angular.element($elm[0].querySelector('.ui-grid-menu-items'))[0],
+          menuItems,
+          visibleMenuItems = [];
+
+        if (menu) {
+          menu.onkeydown = function closeMenu(event) {
+            if (event.keyCode === uiGridConstants.keymap.ESC) {
+              event.preventDefault();
+              $scope.hideMenu();
+            }
+          };
+
+          menuItems = menu.querySelectorAll('.ui-grid-menu-item:not(.ng-hide)');
+          angular.forEach(menuItems, function filterVisibleItems(item) {
+            if (item.offsetParent !== null) {
+              this.push(item);
+            }
+          }, visibleMenuItems);
+
+          if (visibleMenuItems.length) {
+            if (visibleMenuItems.length === 1) {
+              visibleMenuItems[0].onkeydown = function singleItemHandler(event) {
+                circularFocusHandler(event, true);
+              };
+            } else {
+              visibleMenuItems[0].onkeydown = function firstItemHandler(event) {
+                circularFocusHandler(event, false, event.shiftKey, visibleMenuItems.length - 1);
+              };
+              visibleMenuItems[visibleMenuItems.length - 1].onkeydown = function lastItemHandler(event) {
+                circularFocusHandler(event, false, !event.shiftKey, 0);
+              };
+            }
+          }
+        }
+
+        function circularFocusHandler(event, isSingleItem, shiftKeyStatus, index) {
+          if (event.keyCode === uiGridConstants.keymap.TAB) {
+            if (isSingleItem) {
+              event.preventDefault();
+            } else if (shiftKeyStatus) {
+              event.preventDefault();
+              visibleMenuItems[index].focus();
+            }
+          }
+        }
+      }
+
+      // Since we are hiding this column the default hide action will fail so we need to focus somewhere else.
       var setFocusOnHideColumn = function(){
-        $timeout(function(){
+        $timeout(function() {
           // Get the UID of the first
           var focusToGridMenu = function(){
             return gridUtil.focus.byId('grid-menu', $scope.grid);

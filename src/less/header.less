@@ -1,6 +1,6 @@
 
 .ui-grid-top-panel-background {
-  .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
+  background-color: @headerBackgroundColor;
 }
 
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
@@ -53,7 +53,6 @@
 
 .ui-grid-header-cell-row {
   display: table-row;
-  position: relative
 }
 
 .ui-grid-header-cell {
@@ -104,8 +103,24 @@
   }
 }
 
-.ui-grid-column-menu-button-last-col {
-  margin-right: 25px;
+.ui-grid-header-cell-last-col {
+  .ui-grid-cell-contents,
+  .ui-grid-filter-container,
+  .ui-grid-column-menu-button,
+  & + .ui-grid-column-resizer.right {
+    margin-right: 13px;
+  }
+}
+
+.ui-grid-render-container-right {
+  .ui-grid-header-cell-last-col {
+    .ui-grid-cell-contents,
+    .ui-grid-filter-container,
+    .ui-grid-column-menu-button,
+    & + .ui-grid-column-resizer.right {
+      margin-right: 28px;
+    }
+  }
 }
 
 .ui-grid-column-menu {
@@ -115,7 +130,7 @@
 /* Slide up/down animations */
 .ui-grid-column-menu .ui-grid-menu .ui-grid-menu-mid {
   &.ng-hide-add, &.ng-hide-remove {
-    .transition(all, 0.05s, linear);
+    .transition(all, 0.04s, linear);
     display: block !important;
   }
 
@@ -133,7 +148,7 @@
 /* Slide up/down animations */
 .ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
   &.ng-hide-add, &.ng-hide-remove {
-    .transition(all, 0.05s, linear);
+    .transition(all, 0.04s, linear);
     display: block !important;
   }
 
@@ -195,7 +210,8 @@
 }
 
 input[type="text"].ui-grid-filter-input {
-  padding: 0;
+  box-sizing: border-box;
+  padding: 0 18px 0 0;
   margin: 0;
   border: 0;
   width: 100%;

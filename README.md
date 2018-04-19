@@ -17,7 +17,7 @@ Head to http://ui-grid.info for documentation and tutorials. Join https://gitter
 
 We're always looking for new contributors, for pro-level contribution guidelines look at [Contributor.md](CONTRIBUTING.md), if you're more of a first-timer with open source (or just need a refresher), look at [First Time Open Source Contributor.md](FIRST_TIMER.md), also look at [Developer.md](DEVELOPER.md)
 
-Need Some Inspiration? Have a look at our open [PRs Plz!](https://github.com/angular-ui/ui-grid/issues?q=is%3Aopen+is%3Aissue+label%3A%22PRs+plz%21%22) issues.
+Need Some Inspiration? Have a look at our open [good first issue](https://github.com/angular-ui/ui-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) issues, or the [help wanted](https://github.com/angular-ui/ui-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) issues if you are looking for more of a challenge
 
 # Installing
 

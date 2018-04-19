@@ -227,12 +227,13 @@
      * Available options are:
      * - `uiGridConstants.scrollbars.NEVER` - never show scrollbars in this direction
      * - `uiGridConstants.scrollbars.ALWAYS` - always show scrollbars in this direction
+     * - `uiGridConstants.scrollbars.WHEN_NEEDED` - shows scrollbars in this direction when needed
      */
 
     scrollbars: {
       NEVER: 0,
-      ALWAYS: 1
-      //WHEN_NEEDED: 2
+      ALWAYS: 1,
+      WHEN_NEEDED: 2
     }
   });
 

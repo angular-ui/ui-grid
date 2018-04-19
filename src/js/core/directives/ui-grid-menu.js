@@ -93,7 +93,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
            */
           $scope.shown = true;
 
-          $timeout( function() {
+          // Must be a timeout in order to work properly in Firefox. Issue #6533
+          $timeout(function() {
             $scope.shownMid = true;
             $scope.$emit('menu-shown');
           });
@@ -118,10 +119,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           angular.element(document).on(docEventType, applyHideMenu);
           $elm.on('keyup', checkKeyUp);
           $elm.on('keydown', checkKeyDown);
-
         });
-        //automatically set the focus to the first button element in the now open menu.
-        gridUtil.focus.bySelector($elm, 'button[type=button]', true);
       };
 
 
@@ -141,7 +139,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               $scope.shown = false;
               $scope.$emit('menu-hidden');
             }
-          }, 200);
+          }, 40);
         }
 
         angular.element(document).off('click touchstart', applyHideMenu);
@@ -296,7 +294,14 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
                 $scope.$emit('hide-menu');
               } else {
                 // Maintain focus on the selected item
-                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
+                var correctParent = $event.target.parentElement;
+
+                // nodeName of 'I' means target is i element, need the next parent
+                if (angular.element($event.target)[0].nodeName === 'I') {
+                  correctParent = correctParent.parentElement;
+                }
+
+                gridUtil.focus.bySelector(correctParent, 'button[type=button]', true);
               }
             }
           };

@@ -1141,7 +1141,7 @@
             // a short period of time (from now until $timeout function executed)
             clearFocus();
 
-            $timeout(refreshCellFocus);
+            $scope.$applyAsync(refreshCellFocus);
           }, [uiGridConstants.dataChange.ROW]);
 
           function refreshCellFocus() {

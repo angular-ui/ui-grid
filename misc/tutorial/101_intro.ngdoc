@@ -24,8 +24,10 @@ Steps:
  <li>Include uiGrid in your script and css
   <pre>
       <link rel="styleSheet" href="release/ui-grid.min.css"/>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
       <script src="/release/ui-grid.min.js"></script>
+      <!-- Or the following if you don't want to use all features -->
+      <!-- <script src="/release/ui-grid.core.min.js"></script> -->
   </pre>
  </li>
  <li>Include ui.grid module as a dependency in your app
@@ -48,19 +50,19 @@ Steps:
    </pre>
  </li>
  <li>
-  Add an array of data to a property on your $scope
+  Add an array of data to a property on your controller
      <pre>
-     $scope.myData = [
+     this.myData = [
              {
                  "firstName": "Cox",
                  "lastName": "Carney"...
      </pre>
  </li>
  <li>
- Use the ui-grid directive and specify a json object with a data property referencing your $scope.myData property.
+ Use the ui-grid directive and specify a json object with a data property referencing your $ctrl.myData property.
  <pre>
-     <div ng-controller="MainCtrl">
-       <div ui-grid="{ data: myData }" class="myGrid"></div>
+     <div ng-controller="MainCtrl as $ctrl">
+       <div ui-grid="{ data: $ctrl.myData }" class="myGrid"></div>
      </div>
  </pre>
 
@@ -71,35 +73,35 @@ Steps:
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+    angular.module('app', ['ngTouch', 'ui.grid'])
+      .controller('MainCtrl', MainCtrl);
 
-    app.controller('MainCtrl', ['$scope', function ($scope) {
-
-      $scope.myData = [
+    function MainCtrl() {
+      this.myData = [
         {
-            "firstName": "Cox",
-            "lastName": "Carney",
-            "company": "Enormo",
-            "employed": true
+            firstName: "Cox",
+            lastName: "Carney",
+            company: "Enormo",
+            employed: true
         },
         {
-            "firstName": "Lorraine",
-            "lastName": "Wise",
-            "company": "Comveyer",
-            "employed": false
+            firstName: "Lorraine",
+            lastName: "Wise",
+            company: "Comveyer",
+            employed: false
         },
         {
-            "firstName": "Nancy",
-            "lastName": "Waters",
-            "company": "Fuelton",
-            "employed": false
+            firstName: "Nancy",
+            lastName: "Waters",
+            company: "Fuelton",
+            employed: false
         }
-    ];
-    }]);
+      ];
+    }
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <div id="grid1" ui-grid="{ data: myData }" class="grid"></div>
+    <div ng-controller="MainCtrl as $ctrl">
+      <div id="grid1" ui-grid="{ data: $ctrl.myData }" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -110,18 +112,19 @@ Steps:
   </file>
 
   <file name="scenario.js">
-    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js');
-    var grid1 = new GridObjectTest('grid1');
+    var GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js'),
+      grid1 = new GridObjectTest('grid1');
+
     describe('101 tutorial', function() {
-      it('grid should have three visible rows', function () {
+      it('grid should have three visible rows', function() {
         grid1.expectRowCount( 3 );
       });
 
-      it('header values should be as expected', function () {
+      it('header values should be as expected', function() {
         grid1.expectHeaderColumns( ['First Name', 'Last Name', 'Company', 'Employed'] );
       });
 
-      it('first row cell values should be as expected', function () {
+      it('first row cell values should be as expected', function() {
         // checking individual cells usually gives a better stack trace when there are errors
         grid1.expectCellValueMatch( 0, 0, 'Cox' );
         grid1.expectCellValueMatch( 0, 1, 'Carney' );
@@ -129,7 +132,7 @@ Steps:
         grid1.expectCellValueMatch( 0, 3, 'true' );
       });
 
-      it('next two row cell values should be as expected', function () {
+      it('next two row cell values should be as expected', function() {
         // checking in bulk is convenient to write, but can be less informative with errors
         grid1.expectRowValuesMatch( 1, [ 'Lorraine', 'Wise', 'Comveyer', 'false' ] );
         grid1.expectRowValuesMatch( 2, [ 'Nancy', 'Waters', 'Fuelton', 'false' ] );

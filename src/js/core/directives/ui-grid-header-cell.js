@@ -245,27 +245,19 @@
               }
               contents.addClass(classAdded);
 
-              $timeout(function (){
-                var rightMostContainer = $scope.grid.renderContainers['right'] ? $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
-                $scope.isLastCol = ( $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ] );
+              $scope.$applyAsync(function() {
+                var rightMostContainer = $scope.grid.renderContainers['right'] && $scope.grid.renderContainers['right'].visibleColumnCache.length ?
+                $scope.grid.renderContainers['right'] : $scope.grid.renderContainers['body'];
+                $scope.isLastCol = uiGridCtrl.grid.options && uiGridCtrl.grid.options.enableGridMenu &&
+                  $scope.col === rightMostContainer.visibleColumnCache[ rightMostContainer.visibleColumnCache.length - 1 ];
               });
 
               // Figure out whether this column is sortable or not
-              if ($scope.col.enableSorting) {
-                $scope.sortable = true;
-              }
-              else {
-                $scope.sortable = false;
-              }
+              $scope.sortable = Boolean($scope.col.enableSorting);
 
               // Figure out whether this column is filterable or not
               var oldFilterable = $scope.filterable;
-              if (uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering) {
-                $scope.filterable = true;
-              }
-              else {
-                $scope.filterable = false;
-              }
+              $scope.filterable = Boolean(uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering);
 
               if ( oldFilterable !== $scope.filterable){
                 if ( typeof($scope.col.updateFilters) !== 'undefined' ){
@@ -381,7 +373,7 @@
                 event.preventDefault();
                 $scope.toggleMenu(event);
               }
-            }; 
+            };
 
             $scope.toggleMenu = function(event) {
 

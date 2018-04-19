@@ -11,7 +11,8 @@
 @gridBorderWidth: 1px;
 @gridBorderRadius: 0px;
 @borderColor: #d4d4d4;
-
+@focusColor: #b3c4c7;
+@activeColor: darken(@focusColor, 8%);
 
 /**
 * @section Header styles
@@ -32,7 +33,13 @@
 @rowColorEven: #f3f3f3;
 @rowColorOdd: #fdfdfd;
 
-// TODO: colors for buttons
+/**
+* @section Grid Menu colors
+*/
+@menuBackgroundColor: #fff;
+@menuHoverColor: @focusColor;
+@menuSelectedColor: @activeColor;
+@menuTextColor: #000;
 
 /**
 * @section Sort arrow colors
@@ -42,7 +49,6 @@
 @sortArrowBorderColor: #777777;
 
 
-// TODO: color for menu background
 @rowHeaderCell: #F0F0EE;
 @rowSelected: #C9DDE1;
 @rowSavingForeground: #848484;
@@ -50,10 +56,10 @@
 @rowDirtyForeground: #610B38;
 
 // TODO: color for cell selections
-@focusedCell: #b3c4c7;
+@focusedCell: @focusColor;
 
 // Color to use for enabled or selected settings/items/cells, etc. Should probably override the one above
-@selectedColor: #cecece;
+@selectedColor: @activeColor;
 
 /**
 * @section Scrollbar styles

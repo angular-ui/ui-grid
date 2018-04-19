@@ -534,8 +534,10 @@
 
                 cellNavNavigateDereg = uiGridCtrl.grid.api.cellNav.on.navigate($scope, function (newRowCol, oldRowCol, evt) {
                   if ($scope.col.colDef.enableCellEditOnFocus) {
-                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col && evt && (evt.type === 'click' || evt.type === 'keydown')) {
-                      $timeout(function () {
+                    // Don't begin edit if the cell hasn't changed
+                    if (newRowCol.row === $scope.row && newRowCol.col === $scope.col &&
+                      (!evt || (evt && (evt.type === 'click' || evt.type === 'keydown')))) {
+                      $timeout(function() {
                         beginEdit(evt);
                       });
                     }
@@ -544,7 +546,6 @@
               }
 
               $scope.beginEditEventsWired = true;
-
             }
 
             function touchStart(event) {
@@ -835,7 +836,7 @@
 
               $scope.$broadcast(uiGridEditConstants.events.BEGIN_CELL_EDIT, triggerEvent);
               $timeout(function () {
-                //execute in a timeout to give any complex editor templates a cycle to completely render
+                // execute in a timeout to give any complex editor templates a cycle to completely render
                 $scope.grid.api.edit.raise.beginCellEdit($scope.row.entity, $scope.col.colDef, triggerEvent);
               });
             }
@@ -895,7 +896,6 @@
               }
               return object;
             }
-
           }
         };
       }]);
@@ -935,6 +935,7 @@
 
                 //set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function (evt,triggerEvent) {
+                  // must be in a timeout since it requires a new digest cycle
                   $timeout(function () {
                     $elm[0].focus();
                     //only select text if it is not being replaced below in the cellNav viewPortKeyPress
@@ -1005,7 +1006,7 @@
                 $elm.on('click', function (evt) {
                   if ($elm[0].type !== 'checkbox') {
                     $scope.deepEdit = true;
-                    $timeout(function () {
+                    $scope.$applyAsync(function () {
                       $scope.grid.disableScrolling = true;
                     });
                   }
@@ -1223,8 +1224,8 @@
    *
    */
   module.directive('uiGridEditFileChooser',
-    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants','$timeout',
-      function (gridUtil, uiGridConstants, uiGridEditConstants, $timeout) {
+    ['gridUtil', 'uiGridConstants', 'uiGridEditConstants',
+      function (gridUtil, uiGridConstants, uiGridEditConstants) {
         return {
           scope: true,
           require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -1233,13 +1234,8 @@
               pre: function ($scope, $elm, $attrs) {
 
               },
-              post: function ($scope, $elm, $attrs, controllers) {
-                var uiGridCtrl, renderContainerCtrl;
-                if (controllers[0]) { uiGridCtrl = controllers[0]; }
-                if (controllers[1]) { renderContainerCtrl = controllers[1]; }
-                var grid = uiGridCtrl.grid;
-
-                var handleFileSelect = function( event ){
+              post: function ($scope, $elm) {
+                function handleFileSelect(event) {
                   var target = event.srcElement || event.target;
 
                   if (target && target.files && target.files.length > 0) {
@@ -1290,7 +1286,8 @@
                   } else {
                     $scope.$emit(uiGridEditConstants.events.CANCEL_CELL_EDIT);
                   }
-                };
+                  $elm[0].removeEventListener('change', handleFileSelect, false);
+                }
 
                 $elm[0].addEventListener('change', handleFileSelect, false);
 
@@ -1298,15 +1295,10 @@
                   $elm[0].focus();
                   $elm[0].select();
 
-                  $elm.on('blur', function (evt) {
+                  $elm.on('blur', function () {
                     $scope.$emit(uiGridEditConstants.events.END_CELL_EDIT);
+                    $elm.off();
                   });
-                });
-
-                $scope.$on('$destroy', function unbindEvents() {
-                  // unbind jquery events to prevent memory leaks
-                  $elm.off();
-                  $elm[0].removeEventListener('change', handleFileSelect, false);
                 });
               }
             };
