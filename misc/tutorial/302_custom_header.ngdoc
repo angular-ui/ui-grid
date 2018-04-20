@@ -12,6 +12,11 @@ If you want to customize the height of the header do it by setting a height on y
 }
 ```
 
+For better performance with the following example, you can choose to load the ui-grid.core.js instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

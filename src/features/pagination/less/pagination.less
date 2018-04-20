@@ -3,6 +3,9 @@
 @import (reference) "../../../less/bootstrap/bootstrap";
 
 .ui-grid-pager-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -17,10 +20,18 @@
 }
 
 .ui-grid-pager-control {
+  padding: 5px 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
   margin-right: 10px;
   margin-left: 10px;
   min-width: 135px;
   float: left;
+
+  button, span, input {
+    margin-right: 4px;
+  }
 
   button {
     height: 25px;
@@ -38,10 +49,14 @@
     vertical-align: top;
   }
 
-  .ui-grid-pager-max-pages-number{
+  .ui-grid-pager-max-pages-number {
     vertical-align: bottom;
     > * {
-      vertical-align: middle;
+      vertical-align: bottom;
+    }
+    abbr {
+      border-bottom: none;
+      text-decoration: none;
     }
   }
 
@@ -102,19 +117,19 @@
     height: 12px;
     margin-right: -11px;
   }
-
-
 }
 
 .ui-grid-pager-row-count-picker {
   float: left;
+  padding: 5px 10px;
 
   select {
     #ui-grid-twbs > .form-control;
     #ui-grid-twbs > .input-sm ();
-    height: 26px;
+    height: 25px;
     width: 67px;
     display: inline;
+    vertical-align: middle;
   }
 
   .ui-grid-pager-row-count-label {
@@ -131,5 +146,9 @@
     margin-right: 10px;
     margin-left: 10px;
     float: right;
+    abbr {
+      border-bottom: none;
+      text-decoration: none;
+    }
   }
 }

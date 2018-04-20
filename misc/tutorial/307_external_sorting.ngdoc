@@ -9,6 +9,11 @@ UI-Grid provides two functions that support this, firstly a sortChanged event th
 changed their requested sort using the grid ui, and secondly a useExternalSorting property to turn off
 the grid native sorting.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 In this example we suppress the internal sorting, and emulate an external sort by picking one of three
 json files to show - one sorted by name ASC, one sorted by name DESC, and one not sorted.  To further illustrate that this

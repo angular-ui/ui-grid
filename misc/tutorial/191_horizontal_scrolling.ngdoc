@@ -2,7 +2,12 @@
 @name Tutorial: 191 Horizontal Scrolling
 @description
 
-Demonstrating scrolling with large amount of columns
+Demonstrating scrolling with large amount of columns.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
 
 @example
 <example module="app">

@@ -4,35 +4,42 @@
 
 Using multiple grids on a single page
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions1 = {};
-      $scope.gridOptions2 = {};
+    app.controller('MainCtrl', function ($http) {
+      var vm = this;
+
+      vm.gridOptions1 = {};
+      vm.gridOptions2 = {};
 
       $http.get('/data/100.json')
       .then(function(response) {
-        $scope.gridOptions1.data = response.data;
+        vm.gridOptions1.data = response.data;
       });
 
       $http.get('/data/500.json')
       .then(function(response) {
-        $scope.gridOptions2.data = response.data;
+        vm.gridOptions2.data = response.data;
       });
-    }]);
+    });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as $ctrl">
       <div class="row">
         <div class="span4">
-          <div id="grid1" ui-grid="gridOptions1" class="grid"></div>
+          <div id="grid1" ui-grid="$ctrl.gridOptions1" class="grid"></div>
         </div>
         
         <div class="span4">
-          <div id="grid2" ui-grid="gridOptions2" class="grid"></div>
+          <div id="grid2" ui-grid="$ctrl.gridOptions2" class="grid"></div>
         </div>
       </div>
     </div>

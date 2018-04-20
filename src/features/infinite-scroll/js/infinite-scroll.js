@@ -20,7 +20,7 @@
    *
    *  @description Service for infinite scroll features
    */
-  module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$timeout', 'uiGridConstants', 'ScrollEvent', '$q', function (gridUtil, $compile, $timeout, uiGridConstants, ScrollEvent, $q) {
+  module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$rootScope', 'uiGridConstants', 'ScrollEvent', '$q', function (gridUtil, $compile, $rootScope, uiGridConstants, ScrollEvent, $q) {
 
     var service = {
 
@@ -351,7 +351,7 @@
        *
        * If we're scrolling up we scroll to the first row of the old data set -
        * so we're assuming that you would have gotten to the top of the grid (from the 20% need more data trigger) by
-       * the time the data comes back.  If we're scrolling down we scoll to the last row of the old data set - so we're
+       * the time the data comes back.  If we're scrolling down we scroll to the last row of the old data set - so we're
        * assuming that you would have gotten to the bottom of the grid (from the 80% need more data trigger) by the time
        * the data comes back.
        *
@@ -365,7 +365,7 @@
        */
       adjustScroll: function(grid){
         var promise = $q.defer();
-        $timeout(function () {
+        $rootScope.$applyAsync(function () {
           var newPercentage, viewportHeight, rowHeight, newVisibleRows, oldTop, newTop;
 
           viewportHeight = grid.getViewportHeight() + grid.headerHeight - grid.renderContainers.body.headerHeight - grid.scrollbarHeight;
@@ -388,7 +388,7 @@
             oldTop = grid.infiniteScroll.prevScrollTop || 0;
             newTop = oldTop + (newVisibleRows - grid.infiniteScroll.previousVisibleRows)*rowHeight;
             service.adjustInfiniteScrollPosition(grid, newTop);
-            $timeout( function() {
+            $rootScope.$applyAsync( function() {
               promise.resolve();
             });
           }
@@ -396,7 +396,7 @@
           if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
             newTop = grid.infiniteScroll.prevScrollTop || (grid.infiniteScroll.previousVisibleRows*rowHeight - viewportHeight);
             service.adjustInfiniteScrollPosition(grid, newTop);
-            $timeout( function() {
+            $rootScope.$applyAsync( function() {
               promise.resolve();
             });
           }

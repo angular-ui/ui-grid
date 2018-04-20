@@ -4,9 +4,10 @@
 
   describe('ui.grid.edit GridCellDirective', function() {
     var $compile, $rootScope, $templateCache, $timeout, element, grid, gridClassFactory, gridUtil,
-      recompile, scope, uiGridConstants, uiGridCtrl, uiGridEditService;
+      recompile, scope, uiGridConstants, uiGridCtrl, uiGridEditService, onNavigateCb;
 
     beforeEach(function() {
+      module('ui.grid');
       module('ui.grid.edit');
 
       inject(function(_$compile_, _$rootScope_, _$templateCache_, _$timeout_, _gridClassFactory_,
@@ -37,6 +38,27 @@
       uiGridEditService.initializeGrid(grid);
       grid.buildColumns();
       grid.modifyRows(grid.options.data);
+      grid.options.onRegisterApi = function(gridApi) {
+        uiGridCtrl = {
+          grid: {
+            api: gridApi
+          }
+        };
+        gridApi.cellNav = {
+          on: {
+            navigate: function(scope, callback) {
+              uiGridCtrl.gridScope = scope;
+              onNavigateCb = callback;
+
+              return angular.noop;
+            },
+            viewPortKeyDown: function() {
+              return angular.noop;
+            }
+          }
+        };
+      };
+      element = angular.element('<div ui-grid-cell/>');
 
       scope.grid = grid;
       scope.col = grid.columns[0];
@@ -86,6 +108,79 @@
         scope.$apply();
 
         expect(scope.beginEditEventsWired).toBe(false);
+      });
+    });
+
+    describe('on navigate', function() {
+      beforeEach(function() {
+        element = angular.element('<div ui-grid="grid.options" ui-grid-edit/>');
+      });
+      describe('if enableCellEditOnFocus is set to true', function() {
+        beforeEach(function() {
+          recompile();
+          uiGridCtrl.gridScope.col.colDef.enableCellEditOnFocus = true;
+          uiGridCtrl.gridScope.col.editableCellTemplate = '';
+          uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary = jasmine.createSpy('scrollToIfNecessary').and.returnValue({then: angular.noop});
+          scope.$apply();
+        });
+        afterEach(function() {
+          uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary.calls.reset();
+        });
+        it('should trigger scrolling if necessary when the navigating to the current row and column via click', function(done) {
+          var event = new jQuery.Event('click');
+
+          onNavigateCb({row: uiGridCtrl.gridScope.row, col: uiGridCtrl.gridScope.col}, {}, event);
+          $timeout.flush();
+          setTimeout(function() {
+            expect(uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary).toHaveBeenCalled();
+            done();
+          }, 1);
+        });
+        it('should trigger scrolling if necessary when the navigating to the current row and column via keydown', function(done) {
+          var event = new jQuery.Event('keydown');
+
+          onNavigateCb({row: uiGridCtrl.gridScope.row, col: uiGridCtrl.gridScope.col}, {}, event);
+          $timeout.flush();
+          setTimeout(function() {
+            expect(uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary).toHaveBeenCalled();
+            done();
+          }, 1);
+        });
+        it('should trigger scrolling if necessary when the navigating to the current row and column without an event', function(done) {
+          onNavigateCb({row: uiGridCtrl.gridScope.row, col: uiGridCtrl.gridScope.col}, {}, null);
+          $timeout.flush();
+          setTimeout(function() {
+            expect(uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary).toHaveBeenCalled();
+            done();
+          }, 1);
+        });
+        it('should not trigger scrolling if necessary when the navigating to a different row and column', function(done) {
+          onNavigateCb({row: 'DifferentRow', col: 'DifferentCol'}, {}, null);
+          $timeout.flush();
+          setTimeout(function() {
+            expect(uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary).not.toHaveBeenCalled();
+            done();
+          }, 1);
+        });
+      });
+      describe('if enableCellEditOnFocus is set to false', function() {
+        beforeEach(function() {
+          recompile();
+          uiGridCtrl.gridScope.col.colDef.enableCellEditOnFocus = false;
+          uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary = jasmine.createSpy('scrollToIfNecessary').and.returnValue({then: angular.noop});
+          onNavigateCb({row: uiGridCtrl.gridScope.row, col: uiGridCtrl.gridScope.col}, {}, null);
+          $timeout.flush();
+          scope.$apply();
+        });
+        afterEach(function() {
+          uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary.calls.reset();
+        });
+        it('should not trigger scrolling', function(done) {
+          setTimeout(function() {
+            expect(uiGridCtrl.gridScope.grid.api.core.scrollToIfNecessary).not.toHaveBeenCalled();
+            done();
+          }, 1);
+        });
       });
     });
 

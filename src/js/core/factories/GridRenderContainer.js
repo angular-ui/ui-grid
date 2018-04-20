@@ -41,7 +41,7 @@ angular.module('ui.grid')
     self.prevScrollleftPercentage = 0;
     self.prevColumnScrollIndex = 0;
 
-    self.columnStyles = "";
+    self.columnStyles = '';
 
     self.viewportAdjusters = [];
 
@@ -127,7 +127,7 @@ angular.module('ui.grid')
 
     var min = 0;
     var totalWidth = 0;
-    // self.columns.forEach(function(col, i) {
+
     for (var i = 0; i < self.visibleColumnCache.length; i++) {
       var col = self.visibleColumnCache[i];
 
@@ -285,7 +285,7 @@ angular.module('ui.grid')
 
     var oldCanvasHeight = self.$$canvasHeight;
 
-    self.$$canvasHeight =  0;
+    self.$$canvasHeight = 0;
 
     self.visibleRowCache.forEach(function(row){
       self.$$canvasHeight += row.height;
@@ -310,9 +310,7 @@ angular.module('ui.grid')
   GridRenderContainer.prototype.getCanvasWidth = function getCanvasWidth() {
     var self = this;
 
-    var ret = self.canvasWidth;
-
-    return ret;
+    return self.canvasWidth;
   };
 
   GridRenderContainer.prototype.setRenderedRows = function setRenderedRows(newRows) {
@@ -372,7 +370,6 @@ angular.module('ui.grid')
     var horizScrollPercentage = -1;
 
     // Handle RTL here
-
     if (newScrollLeft !== this.prevScrollLeft) {
       var xDiff = newScrollLeft - this.prevScrollLeft;
 
@@ -463,11 +460,9 @@ angular.module('ui.grid')
           return;
         }
       }
-      var rangeStart = {};
-      var rangeEnd = {};
 
-      rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows);
-      rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
+      var rangeStart = Math.max(0, rowIndex - self.grid.options.excessRows);
+      var rangeEnd = Math.min(rowCache.length, rowIndex + minRows + self.grid.options.excessRows);
 
       newRange = [rangeStart, rangeEnd];
     }
@@ -620,12 +615,12 @@ angular.module('ui.grid')
     // get all the columns across all render containers, we have to calculate them all or one render container
     // could consume the whole viewport
     var columnCache = [];
-    angular.forEach(self.grid.renderContainers, function (container, name) {
+    angular.forEach(self.grid.renderContainers, function (container) {
       columnCache = columnCache.concat(container.visibleColumnCache);
     });
 
     // look at each column, process any manual values or %, put the * into an array to look at later
-    columnCache.forEach(function (column, i) {
+    columnCache.forEach(function (column) {
       var width = 0;
       // Skip hidden columns
       if (!column.visible) { return; }
@@ -645,7 +640,7 @@ angular.module('ui.grid')
         column.drawnWidth = width;
 
         fixedNumberArray.push(column);
-      } else if (gridUtil.endsWith(column.width, "%")) {
+      } else if (gridUtil.endsWith(column.width, '%')) {
         // percentage width, set to percentage of the viewport
         // round down to int - some browsers don't play nice with float maxWidth
         var percentageIntegerValue = parseInt(column.width.replace(/%/g, ''), 10);
@@ -673,8 +668,6 @@ angular.module('ui.grid')
 
     // Get the remaining width (available width subtracted by the used widths sum)
     var remainingWidth = availableWidth - usedWidthSum;
-
-    var i, column, colWidth;
 
     if (asterisksArray.length > 0) {
       // the width that each asterisk value would be assigned (this can be negative)
@@ -771,12 +764,26 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.needsHScrollbarPlaceholder = function () {
-    return this.grid.options.enableHorizontalScrollbar && !this.hasHScrollbar && !this.grid.disableScrolling;
+    var self = this,
+      containerBody;
+
+    if (self.name === 'left' || self.name === 'right' && !this.hasHScrollbar && !this.grid.disableScrolling) {
+      if (self.grid.options.enableHorizontalScrollbar === uiGridConstants.scrollbars.ALWAYS) {
+        return true;
+      }
+      containerBody = this.grid.element[0].querySelector('.ui-grid-render-container-body .ui-grid-viewport');
+      return containerBody.scrollWidth > containerBody.offsetWidth;
+    }
+    return false;
   };
 
   GridRenderContainer.prototype.getViewportStyle = function () {
     var self = this;
     var styles = {};
+    var scrollbarVisibility = {};
+
+    scrollbarVisibility[uiGridConstants.scrollbars.ALWAYS] = 'scroll';
+    scrollbarVisibility[uiGridConstants.scrollbars.WHEN_NEEDED] = 'auto';
 
     self.hasHScrollbar = false;
     self.hasVScrollbar = false;
@@ -807,13 +814,10 @@ angular.module('ui.grid')
       self.hasVScrollbar = !self.grid.isRTL() ? self.grid.options.enableVerticalScrollbar !== uiGridConstants.scrollbars.NEVER : false;
     }
 
-    styles['overflow-x'] = self.hasHScrollbar ? 'auto' : 'hidden';
-    styles['overflow-y'] = self.hasVScrollbar ? 'auto' : 'hidden';
-
+    styles['overflow-x'] = self.hasHScrollbar ? scrollbarVisibility[self.grid.options.enableHorizontalScrollbar] : 'hidden';
+    styles['overflow-y'] = self.hasVScrollbar ? scrollbarVisibility[self.grid.options.enableVerticalScrollbar] : 'hidden';
 
     return styles;
-
-
   };
 
   return GridRenderContainer;

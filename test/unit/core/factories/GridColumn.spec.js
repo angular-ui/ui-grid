@@ -562,9 +562,23 @@ describe('GridColumn factory', function () {
       expect(updateCol(colDef.width)).toThrow();
     });
 
-    it ('should set the value of minWidth to 30 when colDef.minWidth is undefined', invalidMinOrMaxWidthDef(undefined, 'minWidth'));
-    it ('should set the value of minWidth to 30 when colDef.minWidth is null', invalidMinOrMaxWidthDef(null, 'minWidth'));
-    it ('should set the value of minWidth to 30 when colDef.minWidth is an object', invalidMinOrMaxWidthDef({}, 'minWidth'));
+    it ('should set the value of minWidth to 30 when colDef.minWidth and options.minimumColumnSize are undefined', invalidMinOrMaxWidthDef(undefined, 'minWidth'));
+    it ('should set the value of minWidth to 30 when colDef.minWidth and options.minimumColumnSize are null', invalidMinOrMaxWidthDef(null, 'minWidth'));
+    it ('should set the value of minWidth to 30 when colDef.minWidth and options.minimumColumnSize are an object', invalidMinOrMaxWidthDef({}, 'minWidth'));
+
+    describe('when options.minimumColumnSize is valid', function() {
+      function validMinimumColumnSize(colSize, colMinWidth) {
+        return function() {
+          col.grid.options.minimumColumnSize = colSize;
+          colDef.minWidth = colMinWidth;
+          col.updateColumnDef(colDef);
+          expect(col.minWidth).toBe(parseInt(grid.options.minimumColumnSize));
+        };
+      }
+      it ('should set the value of minWidth to options.minimumColumnSize when colDef.minWidth is undefined', validMinimumColumnSize(50, undefined));
+      it ('should set the value of minWidth to options.minimumColumnSize when colDef.minWidth is null', validMinimumColumnSize('60', null));
+      it ('should set the value of minWidth to options.minimumColumnSize when colDef.minWidth is an object', validMinimumColumnSize(70, {}));
+    });
 
     it ('should set the value of minWidth to the parsed integer colDef.minWidth when it is a string', function () {
       colDef.minWidth = '90';
@@ -632,6 +646,7 @@ describe('GridColumn factory', function () {
 
     function invalidMinOrMaxWidthDef(width, minOrMax) {
       return function () {
+        col.grid.options.minimumColumnSize = width;
         colDef[minOrMax] = width;
         col.updateColumnDef(colDef);
         expect(col[minOrMax]).toBe(minOrMax === 'minWidth' ? 30 : 9000);

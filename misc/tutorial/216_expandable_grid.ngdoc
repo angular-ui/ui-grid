@@ -40,22 +40,32 @@ SubGrid nesting can be done upto multiple levels.
 In addition to the above configuration, 'scrollFillerClass' is also available and can be used to style the scroll filler. The scroll filler
 appears when you quickly scroll through the grid.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.expandable.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.expandable', 'ui.grid.selection', 'ui.grid.pinning']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-      $scope.gridOptions = {
+    app.controller('MainCtrl', function MainCtrl($http, $log) {
+      var vm = this;
+
+      vm.gridOptions = {
         expandableRowTemplate: 'expandableRowTemplate.html',
         expandableRowHeight: 150,
         //subGridVariable will be available in subGrid scope
         expandableRowScope: {
           subGridVariable: 'subGridScopeVariable'
         }
-      }
+      };
 
-      $scope.gridOptions.columnDefs = [
+      vm.gridOptions.columnDefs = [
         { name: 'id' },
         { name: 'name'},
         { name: 'age'},
@@ -68,137 +78,149 @@ appears when you quickly scroll through the grid.
 
           for(i = 0; i < data.length; i++){
             data[i].subGridOptions = {
-              columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
+              columnDefs: [{name: 'Id', field: 'id'}, {name: 'Name', field: 'name'}],
               data: data[i].friends
-            }
+            };
           }
-          $scope.gridOptions.data = data;
+          vm.gridOptions.data = data;
         });
 
-        $scope.gridOptions.onRegisterApi = function(gridApi){
-          $scope.gridApi = gridApi;
+        vm.gridOptions.onRegisterApi = function(gridApi){
+          vm.gridApi = gridApi;
         };
 
-        $scope.expandAllRows = function() {
-          $scope.gridApi.expandable.expandAllRows();
-        }
+        vm.expandAllRows = function() {
+          vm.gridApi.expandable.expandAllRows();
+        };
 
-        $scope.collapseAllRows = function() {
-          $scope.gridApi.expandable.collapseAllRows();
-        }
-    }]);
+        vm.collapseAllRows = function() {
+          vm.gridApi.expandable.collapseAllRows();
+        };
 
-    app.controller('SecondCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-          $scope.gridOptions = {
-            enableRowSelection: true,
-            expandableRowTemplate: 'expandableRowTemplate.html',
-            expandableRowHeight: 150
-          }
+        vm.toggleExpandAllBtn = function() {
+          vm.gridOptions.showExpandAllButton = !vm.gridOptions.showExpandAllButton;
+        };
+    });
 
-          $scope.gridOptions.columnDefs = [
-            { name: 'id', pinnedLeft:true },
-            { name: 'name'},
-            { name: 'age'},
-            { name: 'address.city'}
-          ];
+    app.controller('SecondCtrl', function SecondCtrl($http, $log) {
+						var vm = this;
 
-          $http.get('/data/500_complex.json')
-            .then(function(response) {
-              var data = response.data;
+						vm.gridOptions = {
+								enableRowSelection: true,
+								expandableRowTemplate: 'expandableRowTemplate.html',
+								expandableRowHeight: 150
+						}
 
-              for(i = 0; i < data.length; i++){
-                data[i].subGridOptions = {
-                  columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
-                  data: data[i].friends
-                }
-              }
-              $scope.gridOptions.data = data;
-            });
-        }]);
+						vm.gridOptions.columnDefs = [
+								{ name: 'id', pinnedLeft:true },
+								{ name: 'name'},
+								{ name: 'age'},
+								{ name: 'address.city'}
+						];
 
-    app.controller('ThirdCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-          $scope.gridOptions = {
-            expandableRowTemplate: 'expandableRowTemplate.html',
-            expandableRowHeight: 150,
-            onRegisterApi: function (gridApi) {
-                gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                    if (row.isExpanded) {
-                      row.entity.subGridOptions = {
-                        columnDefs: [
-                        { name: 'name'},
-                        { name: 'gender'},
-                        { name: 'company'}
-                      ]};
+						$http.get('/data/500_complex.json')
+								.then(function(response) {
+										var data = response.data;
 
-                      $http.get('/data/100.json')
-                        .then(function(response) {
-                          row.entity.subGridOptions.data = response.data;
-                        });
-                    }
-                });
-            }
-          }
+										for(i = 0; i < data.length; i++) {
+												data[i].subGridOptions = {
+														columnDefs: [{name: 'Id', field: 'id'}, {name: 'Name', field: 'name'}],
+														data: data[i].friends
+												};
+										}
+										vm.gridOptions.data = data;
+								});
+				});
 
-          $scope.gridOptions.columnDefs = [
-            { name: 'id', pinnedLeft:true },
-            { name: 'name'},
-            { name: 'age'},
-            { name: 'address.city'}
-          ];
+    app.controller('ThirdCtrl', function ThirdCtrl($scope, $http, $log) {
+						var vm = this;
 
-          $http.get('/data/500_complex.json')
-            .then(function(response) {
-              $scope.gridOptions.data = response.data;
-            });
-        }]);
-    app.controller('FourthCtrl', ['$scope', '$http', '$log', function ($scope, $http, $log) {
-          $scope.gridOptions = {
-            enableRowSelection: true,
-            expandableRowTemplate: 'expandableRowTemplate.html',
-            expandableRowHeight: 150
-          }
+						vm.gridOptions = {
+								expandableRowTemplate: 'expandableRowTemplate.html',
+								expandableRowHeight: 150,
+								onRegisterApi: function (gridApi) {
+										gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+												if (row.isExpanded) {
+														row.entity.subGridOptions = {
+																columnDefs: [
+																{ name: 'name'},
+																{ name: 'gender'},
+																{ name: 'company'}
+														]};
 
-          $scope.gridOptions.columnDefs = [
-            { name: 'id', pinnedLeft:true },
-            { name: 'name'},
-            { name: 'age'},
-            { name: 'address.city'}
-          ];
+														$http.get('/data/100.json')
+																.then(function(response) {
+																		row.entity.subGridOptions.data = response.data;
+																});
+												}
+										});
+								}
+						};
 
-          $http.get('/data/500_complex.json')
-            .then(function(response) {
-              var data = response.data;
+						vm.gridOptions.columnDefs = [
+								{ name: 'id', pinnedLeft:true },
+								{ name: 'name'},
+								{ name: 'age'},
+								{ name: 'address.city'}
+						];
 
-              for(i = 0; i < data.length; i++){
-                data[i].subGridOptions = {
-                  columnDefs: [ {name:"Id", field:"id"},{name:"Name", field:"name"} ],
-                  data: data[i].friends,
-                  disableRowExpandable : (i % 2 === 0)
-                }
-              }
-              $scope.gridOptions.data = data;
-            });
-        }]);
+						$http.get('/data/500_complex.json')
+								.then(function(response) {
+										vm.gridOptions.data = response.data;
+								});
+				});
+
+    app.controller('FourthCtrl', function FourthCtrl($http, $log) {
+						var vm = this;
+
+						vm.gridOptions = {
+								enableRowSelection: true,
+								expandableRowTemplate: 'expandableRowTemplate.html',
+								expandableRowHeight: 150
+						};
+
+						vm.gridOptions.columnDefs = [
+								{ name: 'id', pinnedLeft:true },
+								{ name: 'name'},
+								{ name: 'age'},
+								{ name: 'address.city'}
+						];
+
+						$http.get('/data/500_complex.json')
+								.then(function(response) {
+										var data = response.data;
+
+										for(i = 0; i < data.length; i++) {
+												data[i].subGridOptions = {
+														columnDefs: [{name: 'Id', field: 'id'}, {name: 'Name', field: 'name'}],
+														data: data[i].friends,
+														disableRowExpandable : (i % 2 === 0)
+												};
+										}
+										vm.gridOptions.data = data;
+								});
+				});
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as main">
       <div class="control-group">
-        <input type="button" class="btn btn-small" ng-click="expandAllRows()" value="Expand All"/>
-        <input type="button" class="btn btn-small" ng-click="collapseAllRows()" value="Collapse All"/>
+        <button id="toggleVisibility" type="button" class="btn btn-sm btn-default" ng-click="main.toggleExpandAllBtn()">Toggle Expand All Visibility</button>
+        <button type="button" class="btn btn-sm btn-default" ng-click="main.expandAllRows()">Expand All</button>
+        <button type="button" class="btn btn-sm btn-default" ng-click="main.collapseAllRows()">Collapse All</button>
       </div>
-      <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable class="grid"></div>
+      <div id="grid1" ui-grid="main.gridOptions" ui-grid-pinning ui-grid-expandable class="grid"></div>
     </div>
     Expandable rows works with checkboxes from selection and left pins
-    <div ng-controller="SecondCtrl">
-       <div ui-grid="gridOptions" ui-grid-pinning ui-grid-expandable ui-grid-selection class="grid"></div>
+    <div ng-controller="SecondCtrl as second">
+       <div ui-grid="second.gridOptions" ui-grid-pinning ui-grid-expandable ui-grid-selection class="grid"></div>
     </div>
     Retrieve data for subGrid when expanding
-    <div ng-controller="ThirdCtrl">
-       <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
+    <div ng-controller="ThirdCtrl as third">
+       <div ui-grid="third.gridOptions" ui-grid-expandable class="grid"></div>
     </div>
     Toggle expand subGrid control
-    <div ng-controller="FourthCtrl">
-       <div ui-grid="gridOptions" ui-grid-expandable class="grid"></div>
+    <div ng-controller="FourthCtrl as fourth">
+       <div ui-grid="fourth.gridOptions" ui-grid-expandable class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -209,5 +231,34 @@ appears when you quickly scroll through the grid.
   </file>
   <file name="expandableRowTemplate.html">
     <div ui-grid="row.entity.subGridOptions" style="height:150px;"></div>
+  </file>
+  <file name="scenario.js">
+      var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js'),
+        GridObjectTest = require('../../test/e2e/gridObjectTestUtils.spec.js'),
+        grid1 = new GridObjectTest('grid1');
+
+      describe('216 Expandable Grid', function() {
+        // Reload the page before each test if on Firefox. Chrome does it automatically.
+        gridTestUtils.firefoxReload();
+
+        it('should load the header values should be as expected', function() {
+          grid1.expectHeaderColumns(['Id', 'Name', 'Age', 'Address.City']);
+        });
+
+        describe('Toggle Expand All Visibility', function() {
+          var expandAllButton, emptyCellContent;
+
+          it('should display the expand all button by default', function() {
+            expandAllButton = element( by.css('#grid1 .ui-grid-expandable-buttons-cell .ui-grid-icon-button') );
+            expect(expandAllButton.isDisplayed()).toBe(true);
+          });
+          it('should hide the expand all button when the Toggle Expand All Visibility button is clicked', function() {
+            element( by.id('toggleVisibility') ).click();
+
+            emptyCellContent = element( by.css('#grid1 .ui-grid-expandable-buttons-cell .ui-grid-cell-empty') );
+            expect(emptyCellContent.isDisplayed()).toBe(true);
+          });
+        });
+      });
   </file>
 </example>

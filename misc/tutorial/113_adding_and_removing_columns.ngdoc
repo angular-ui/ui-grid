@@ -1,80 +1,107 @@
 @ngdoc overview
 @name Tutorial: 113 Adding and removing columns
-@description 
+@description
 
 You can dynamically add and remove columns, the grid watches the column defs and
 updates appropriately.  The columns are by default shown in the order of the columnDefs,
-although if/when the column move feature arrives the end user will be able to alter 
+although if/when the column move feature arrives the end user will be able to alter
 that default.
 
 You can dynamically change the display name on a column (along with some other column
-def properties), and call the notifyDataChange api to force an update. 
+def properties), and call the {@link api/ui.grid.core.api:PublicApi#notifyDataChange notifyDataChange}
+api to force an update.
+
+The recommended way to change the display of a column is to take advantage of the
+{@link api/ui.grid.class:GridColumn#hideColum hideColum} and
+{@link api/ui.grid.class:GridColumn#showColumn showColumn} functions
+that are provided as part of the GridColumn object. However, it is worth mentioning, that
+this will still require you to call notifyDataChange afterwardsin order to refresh the grid.
+This is done as a way to allow you to perform multiple toggle operations prior to updating
+the grid, which is a way to reduce the amount of $digest cycles that we trigger and improve
+performance.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
-    
-    app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
-      $scope.columns = [{ field: 'name' }, { field: 'gender' }];
-      $scope.gridOptions = {
+
+    app.controller('MainCtrl', function MainCtrl($scope, $http, uiGridConstants) {
+      var vm = this;
+
+      vm.columns = [{ field: 'name' }, { field: 'gender' }];
+      vm.gridOptions = {
         enableSorting: true,
-        columnDefs: $scope.columns,
+        columnDefs: vm.columns,
         onRegisterApi: function(gridApi) {
-          $scope.gridApi = gridApi;
+          vm.gridApi = gridApi;
         }
       };
-      
-      $scope.remove = function() {
-        $scope.columns.splice($scope.columns.length-1, 1);
-      }
-      
-      $scope.add = function() {
-        $scope.columns.push({ field: 'company', enableSorting: false });
-      }
 
-      $scope.splice = function() {
-        $scope.columns.splice(1, 0, { field: 'company', enableSorting: false });
-      }
-    
-      $scope.unsplice = function() {
-        $scope.columns.splice(1, 1);
-      }
-      
-      $scope.toggleDisplayName = function() {
-        if( $scope.columns[1].displayName === 'GENDER' ){
-          $scope.columns[1].displayName = 'Gender';
+      vm.remove = function() {
+        vm.columns.splice($scope.columns.length-1, 1);
+      };
+
+      vm.add = function() {
+        vm.columns.push({ field: 'company', enableSorting: false });
+      };
+
+      vm.splice = function() {
+        vm.columns.splice(1, 0, { field: 'company', enableSorting: false });
+      };
+
+      vm.unsplice = function() {
+        vm.columns.splice(1, 1);
+      };
+
+      vm.toggleDisplayName = function() {
+        if( vm.columns[1].displayName === 'GENDER' ){
+          vm.columns[1].displayName = 'Gender';
         } else {
-          $scope.columns[1].displayName = 'GENDER';
+          vm.columns[1].displayName = 'GENDER';
         }
-        $scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-      }
-      
-      $scope.toggleVisible = function() {
-        $scope.columns[0].visible = !($scope.columns[0].visible || $scope.columns[0].visible === undefined);
-        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
-      }
-    
+        vm.gridApi.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+      };
+
+      vm.toggleVisible = function() {
+        var firstColumn = vm.gridApi.grid.columns[0];
+
+        if (firstColumn.visible) {
+          firstColumn.hideColumn();
+        } else {
+          firstColumn.showColumn();
+        }
+        vm.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+      };
+
       $http.get('/data/100.json')
         .then(function(response) {
-          $scope.gridOptions.data = response.data;
+          vm.gridOptions.data = response.data;
         });
-    }]);
+
+      $scope.$on('$destroy', function() {
+        vm.gridApi = null;
+      });
+    });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as $ctrl">
       Try clicking the Add button to add the company column.
       Try clicking the Remove button to remove the last column.
       Try clicking the Splice button to insert a column in the middle.
       <br>
       <br>
-      <button id="button_add" class="btn" ng-click="add()">Add</button>
-      <button id="button_remove" class="btn" ng-click="remove()">Remove Last</button>
-      <button id="button_splice" class="btn" ng-click="splice()">Splice</button>
-      <button id="button_unsplice" class="btn" ng-click="unsplice()">Remove Middle</button>
-      <button id="button_toggle_visible" class="btn" ng-click="toggleVisible()">Toggle Visible</button>
-      <button id="button_toggle_display_name" class="btn" ng-click="toggleDisplayName()">Toggle Display Name</button>
-      <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+      <button id="button_add" class="btn btn-default" ng-click="$ctrl.add()">Add</button>
+      <button id="button_remove" class="btn btn-default" ng-click="$ctrl.remove()">Remove Last</button>
+      <button id="button_splice" class="btn btn-default" ng-click="$ctrl.splice()">Splice</button>
+      <button id="button_unsplice" class="btn btn-default" ng-click="$ctrl.unsplice()">Remove Middle</button>
+      <button id="button_toggle_visible" class="btn btn-default" ng-click="$ctrl.toggleVisible()">Toggle Visible</button>
+      <button id="button_toggle_display_name" class="btn btn-default" ng-click="$ctrl.toggleDisplayName()">Toggle Display Name</button>
+      <div id="grid1" ui-grid="$ctrl.gridOptions" class="grid"></div>
     </div>
   </file>
   <file name="main.css">
@@ -89,7 +116,7 @@ def properties), and call the notifyDataChange api to force an update.
       it('grid should have two visible columns', function () {
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
       });
-  
+
       it('add and remove columns from end, grid updates accordingly', function () {
         element(by.id('button_add')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
@@ -99,7 +126,7 @@ def properties), and call the notifyDataChange api to force an update.
         element(by.id('button_remove')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-      });      
+      });
 
       it('add and remove columns in middle, grid updates accordingly', function () {
         element(by.id('button_splice')).click();
@@ -110,8 +137,8 @@ def properties), and call the notifyDataChange api to force an update.
         element(by.id('button_unsplice')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-      }); 
-      
+      });
+
       it('toggle column 0 visible should make column appear and disappear', function () {
         element(by.id('button_toggle_visible')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 1 );
@@ -120,7 +147,7 @@ def properties), and call the notifyDataChange api to force an update.
         element(by.id('button_toggle_visible')).click();
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 0, 'Name' );
-      });     
+      });
 
       it('toggle display name should change column header', function () {
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
@@ -128,7 +155,7 @@ def properties), and call the notifyDataChange api to force an update.
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'GENDER' );
         element(by.id('button_toggle_display_name')).click();
         gridTestUtils.expectHeaderCellValueMatch( 'grid1', 1, 'Gender' );
-      });     
-    });    
+      });
+    });
   </file>
 </example>

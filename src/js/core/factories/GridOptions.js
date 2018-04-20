@@ -129,11 +129,21 @@ angular.module('ui.grid')
        *
        */
 
+      /**
+       * @ngdoc object
+       * @name enableGridMenu
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Takes a boolean that adds a settings icon in the top right of the grid, which floats above
+       * the column header, when true. The menu by default gives access to show/hide columns, but can be
+       * customised to show additional actions.
+       *
+       * See the {@link #!/tutorial/121_grid_menu Grid Menu tutorial} for more detailed information.
+       */
 
       /**
        * @ngdoc array
        * @name excludeProperties
-       * @propertyOf  ui.grid.class:GridOptions
+       * @propertyOf ui.grid.class:GridOptions
        * @description Array of property names in data to ignore when auto-generating column names.  Provides the
        * inverse of columnDefs - columnDefs is a list of columns to include, excludeProperties is a list of columns
        * to exclude.
@@ -400,7 +410,7 @@ angular.module('ui.grid')
        * @propertyOf ui.grid.class:GridOptions
        * @description {@link ui.grid.service:uiGridConstants#properties_scrollbars uiGridConstants.scrollbars.ALWAYS} by default.
        * This settings controls the vertical scrollbar for the grid.
-       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
+       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER, uiGridConstants.scrollbars.WHEN_NEEDED
        */
       baseOptions.enableVerticalScrollbar = typeof(baseOptions.enableVerticalScrollbar) !== "undefined" ? baseOptions.enableVerticalScrollbar : uiGridConstants.scrollbars.ALWAYS;
 
@@ -410,7 +420,7 @@ angular.module('ui.grid')
        * @propertyOf ui.grid.class:GridOptions
        * @description {@link ui.grid.service:uiGridConstants#properties_scrollbars uiGridConstants.scrollbars.ALWAYS} by default.
        * This settings controls the horizontal scrollbar for the grid.
-       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER
+       * Supported values: uiGridConstants.scrollbars.ALWAYS, uiGridConstants.scrollbars.NEVER, uiGridConstants.scrollbars.WHEN_NEEDED
        */
       baseOptions.enableHorizontalScrollbar = typeof(baseOptions.enableHorizontalScrollbar) !== "undefined" ? baseOptions.enableHorizontalScrollbar : uiGridConstants.scrollbars.ALWAYS;
 
@@ -428,9 +438,11 @@ angular.module('ui.grid')
        * @ngdoc boolean
        * @name minimumColumnSize
        * @propertyOf ui.grid.class:GridOptions
-       * @description Columns can't be smaller than this, defaults to 10 pixels
+       * @description Sets the default minimum column width, in other words,
+       * it defines the default value for a column minWidth attribute if that is not otherwise specified.
+       * Should be a number. Defaults to 30 pixels.
        */
-      baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 10;
+      baseOptions.minimumColumnSize = typeof(baseOptions.minimumColumnSize) !== "undefined" ? baseOptions.minimumColumnSize : 30;
 
       /**
        * @ngdoc function

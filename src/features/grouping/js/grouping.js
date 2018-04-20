@@ -741,7 +741,7 @@
        *
        * @param {Grid} grid grid object
        * @param {GridColumn} column the column we want to aggregate
-       * @param {string} one of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
+       * @param {string} aggregationType of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
        */
       aggregateColumn: function( grid, column, aggregationType){
 
@@ -1116,7 +1116,6 @@
        * @description Set all processing states lower than the one that had a break in value to
        * no longer be initialised.  Render the counts into the entity ready for display.
        *
-       * @param {Grid} grid grid object
        * @param {array} processingState the current processing state
        * @param {number} stateIndex the processing state item that we were on when we triggered a new group header, all
        * processing states after this need to be finalised
@@ -1157,8 +1156,8 @@
        *   }
        * </pre>
        *
-       * @param {Grid} grid grid object
-       * @returns {hash} the expanded states as a hash
+       * @param {object} treeChildren The tree children elements object
+       * @returns {object} the expanded states as an object
        */
       getRowExpandedStates: function(treeChildren){
         if ( typeof(treeChildren) === 'undefined' ){
@@ -1192,7 +1191,7 @@
        *
        * @param {object} currentNode can be grid.grouping.groupHeaderCache, or any of
        * the children of that hash
-       * @returns {hash} expandedStates can be the full expanded states, or children
+       * @param {object} expandedStates can be the full expanded states, or children
        * of that expanded states (which hopefully matches the subset of the groupHeaderCache)
        */
       applyRowExpandedStates: function( currentNode, expandedStates ){
@@ -1253,8 +1252,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridGrouping', ['uiGridGroupingConstants', 'uiGridGroupingService', '$templateCache',
-  function (uiGridGroupingConstants, uiGridGroupingService, $templateCache) {
+  module.directive('uiGridGrouping', ['uiGridGroupingConstants', 'uiGridGroupingService',
+  function (uiGridGroupingConstants, uiGridGroupingService) {
     return {
       replace: true,
       priority: 0,

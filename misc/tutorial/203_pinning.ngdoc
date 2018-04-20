@@ -14,6 +14,12 @@ Documentation for the pinning feature is provided in the api documentation, in p
 
 It is also possible to disable pinning on column level. Note the 'id' column definition in the example below.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">

@@ -365,7 +365,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         //do nothing; not valid html
       }
 
-      s.logDebug('fetching url', template);
+      // s.logDebug('fetching url', template);
 
       // Default to trying to fetch the template as a url with $http
       return $http({ method: 'GET', url: template})

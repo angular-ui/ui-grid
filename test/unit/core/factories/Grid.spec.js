@@ -1,10 +1,12 @@
 describe('Grid factory', function () {
-  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants, gridClassFactory;
+  var $timeout, $q, $scope, grid, Grid, GridRow, GridColumn, rows, returnedRows, column, uiGridConstants,
+    gridClassFactory, gridUtil;
 
   beforeEach(function() {
     module('ui.grid');
 
-    inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_, _gridClassFactory_) {
+    inject(function (_$timeout_, _$q_, _$rootScope_, _Grid_, _GridRow_, _GridColumn_, _uiGridConstants_,
+                     _gridClassFactory_, _gridUtil_) {
       $timeout = _$timeout_;
       $q = _$q_;
       $scope = _$rootScope_;
@@ -13,6 +15,7 @@ describe('Grid factory', function () {
       GridColumn = _GridColumn_;
       uiGridConstants = _uiGridConstants_;
       gridClassFactory = _gridClassFactory_;
+      gridUtil = _gridUtil_;
     });
     grid = new Grid({ id: 1 });
     rows = [
@@ -47,9 +50,9 @@ describe('Grid factory', function () {
     var canvasWidth = 100;
 
     beforeEach(function() {
-      renderContainers = { 
-        body: { 
-          visibleRowCache: null, 
+      renderContainers = {
+        body: {
+          visibleRowCache: null,
           visibleColumnCache: null,
           prevScrollTop: prevScrollTop,
           headerHeight: 30,
@@ -99,7 +102,7 @@ describe('Grid factory', function () {
       });
 
       $scope.$apply();
-    });    
+    });
   });
 
   describe('constructor', function() {
@@ -122,6 +125,38 @@ describe('Grid factory', function () {
       catch (e) {
         expect(e).toMatch(/It must follow CSS selector syntax rules/);
       }
+    });
+    describe('scrollbarHeight and scrollbarWidth', function() {
+      beforeEach(function() {
+        spyOn(gridUtil, 'getScrollbarWidth').and.returnValue(100);
+      });
+      afterEach(function() {
+        gridUtil.getScrollbarWidth.calls.reset();
+      });
+      describe('when enableHorizontalScrollbar not equal to NEVER', function() {
+        it('should set scrollbarHeight and scrollbarWidth', function() {
+          var grid = new Grid({
+            id: 1,
+            enableHorizontalScrollbar: uiGridConstants.scrollbars.ALWAYS,
+            enableVerticalScrollbar: uiGridConstants.scrollbars.ALWAYS
+          });
+
+          expect(grid.scrollbarHeight).toEqual(100);
+          expect(grid.scrollbarWidth).toEqual(100);
+        });
+      });
+      describe('when enableHorizontalScrollbar is equal to NEVER', function() {
+        it('should set scrollbarHeight and scrollbarWidth to 0', function() {
+          var grid = new Grid({
+            id: 1,
+            enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
+            enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER
+          });
+
+          expect(grid.scrollbarHeight).toEqual(0);
+          expect(grid.scrollbarWidth).toEqual(0);
+        });
+      });
     });
   });
 
@@ -277,8 +312,6 @@ describe('Grid factory', function () {
 
 
   });
-
-
 
   describe('buildColumns', function() {
     it('guess correct column types when not specified', function() {
@@ -494,6 +527,39 @@ describe('Grid factory', function () {
       it('should call preCompileCellTemplates on the grid', function() {
         expect(grid.preCompileCellTemplates).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('selection', function() {
+    var grid;
+
+    beforeEach(function() {
+      grid = new Grid({ id: 1, enableRowHashing: false });
+      spyOn(grid, 'getRow').and.callFake(function(newEntity) {
+        return newEntity;
+      });
+
+      grid.rows = [];
+      grid.selection = {selectAll: false};
+    });
+    afterEach(function() {
+      grid.getRow.calls.reset();
+    });
+
+    it('should enable selectAll if a new row is added that is already selected', function() {
+      grid.modifyRows([{isSelected: true}]);
+
+      expect(grid.selection.selectAll).toBe(true);
+    });
+    it('should disable selectAll if a new row is added that is not selected', function() {
+      grid.modifyRows([{isSelected: false}]);
+
+      expect(grid.selection.selectAll).toBe(false);
+    });
+    it('should not update selectAll if there are no rows', function() {
+      grid.modifyRows([]);
+
+      expect(grid.selection.selectAll).toBe(false);
     });
   });
 
