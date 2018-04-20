@@ -39,12 +39,6 @@ Additionally, information about the Excel Builder may be found at https://github
 
 If the example below we show how to make a custom header based on a callback method and
 
-For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
-<pre>
-  <script src="/release/ui-grid.core.min.js"></script>
-  <script src="/release/ui-grid.exporter.min.js"></script>
-  <script src="/release/ui-grid.selection.min.js"></script>
-</pre>
 
 @example
 In this example we use the native grid menu buttons, and we show the pdf, csv and excel export options.
@@ -180,6 +174,7 @@ In this example we use the native grid menu buttons, and we show the pdf, csv an
            return null;
          }
         },
+        exporterColumnScaleFactor: 4.5,
         exporterFieldApplyFilters: true,
         onRegisterApi: function(gridApi){
           $scope.gridApi = gridApi;
