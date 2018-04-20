@@ -62,13 +62,13 @@
   module.constant('uiGridExporterConstants', {
     featureName: 'exporter',
     rowHeaderColName: 'treeBaseRowHeaderCol',
+    selectionRowHeaderColName: 'selectionRowHeaderCol',
     ALL: 'all',
     VISIBLE: 'visible',
     SELECTED: 'selected',
     CSV_CONTENT: 'CSV_CONTENT',
     BUTTON_LABEL: 'BUTTON_LABEL',
-    FILE_NAME: 'FILE_NAME',
-    PIXEL_PER_UNIT: 75
+    FILE_NAME: 'FILE_NAME'
   });
 
   /**
@@ -559,6 +559,18 @@
            * </pre>
            */
           gridOptions.exporterFieldFormatCallback = gridOptions.exporterFieldFormatCallback ? gridOptions.exporterFieldFormatCallback : function( grid, row, col, value ) { return null; };
+
+          /**
+           * @ngdoc object
+           * @name exporterColumnScaleFactor
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A scaling factor to divide the drawnwidth of a column to convert to target excel column
+           * format size
+           * @example
+           * In this example we add a number to divide the drawnwidth of a column to get the excel width.
+           * <br/>Defaults to 3.5
+           */
+          gridOptions.exporterColumnScaleFactor = gridOptions.exporterColumnScaleFactor ? gridOptions.exporterColumnScaleFactor : 3.5;
 
           /**
            * @ngdoc object
@@ -1537,8 +1549,10 @@
             var colWidths = [];
             var startDataIndex = grid.treeBase ? grid.treeBase.numberLevels : (grid.enableRowSelection ? 1 : 0);
             for (var i = startDataIndex; i < grid.columns.length; i++) {
-              if (grid.columns[i].field !== uiGridExporterConstants.rowHeaderColName) {
-                colWidths.push({width: (grid.columns[i].drawnWidth / uiGridExporterConstants.PIXEL_PER_UNIT) * 10});
+              if (grid.columns[i].field !== uiGridExporterConstants.rowHeaderColName &&
+                grid.columns[i].field !== uiGridExporterConstants.selectionRowHeaderColName) {
+
+                colWidths.push({width: (grid.columns[i].drawnWidth / grid.options.exporterColumnScaleFactor)});
               }
             }
             sheet.setColumns(colWidths);
@@ -1555,7 +1569,8 @@
             sheet.setData(sheet.data.concat(excelContent));
 
             ExcelBuilder.Builder.createFile(workbook, {type:"blob"}).then(function(result) {
-              self.downloadFile (grid.options.exporterExcelFilename, result, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
+              self.downloadFile (grid.options.exporterExcelFilename, result, grid.options.exporterCsvColumnSeparator,
+                grid.options.exporterOlderExcelCompatibility);
             });
 
           });

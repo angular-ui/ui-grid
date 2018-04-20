@@ -153,6 +153,7 @@ describe('ui.grid.exporter', function() {
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 200
         });
       });
@@ -194,6 +195,7 @@ describe('ui.grid.exporter', function() {
           exporterExcelSheetName: 'Sheet1',
           exporterExcelHeader: 'My Header',
           exporterExcelFooter: 'My Footer',
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 75
         };
         uiGridExporterService.defaultGridOptions(options);
@@ -231,6 +233,7 @@ describe('ui.grid.exporter', function() {
           exporterExcelSheetName: 'Sheet1',
           exporterExcelHeader: 'My Header',
           exporterExcelFooter: 'My Footer',
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 75,
           exporterAllDataFn: callback
         });
