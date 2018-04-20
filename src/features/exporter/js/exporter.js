@@ -68,8 +68,7 @@
     SELECTED: 'selected',
     CSV_CONTENT: 'CSV_CONTENT',
     BUTTON_LABEL: 'BUTTON_LABEL',
-    FILE_NAME: 'FILE_NAME',
-    PIXEL_PER_UNIT: 75
+    FILE_NAME: 'FILE_NAME'
   });
 
   /**
