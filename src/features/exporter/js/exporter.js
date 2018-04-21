@@ -244,6 +244,24 @@
           gridOptions.exporterPdfFilename = gridOptions.exporterPdfFilename ? gridOptions.exporterPdfFilename : 'download.pdf';
           /**
            * @ngdoc object
+           * @name exporterExcelFilename
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description The default filename to use when saving the downloaded excel, only used in IE (other browsers open excels in a new window)
+           * <br/>Defaults to 'download.xlsx'
+           */
+          gridOptions.exporterExcelFilename = gridOptions.exporterExcelFilename ? gridOptions.exporterExcelFilename : 'download.xlsx';
+
+          /**
+           * @ngdoc object
+           * @name exporterExcelSheetName
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description The default sheetname to use when saving the downloaded to excel, only used in IE (other browsers open excels in a new window)
+           * <br/>Defaults to 'Sheet1'
+           */
+          gridOptions.exporterExcelSheetName = gridOptions.exporterExcelSheetName ? gridOptions.exporterExcelSheetName : 'Sheet1';
+
+          /**
+           * @ngdoc object
            * @name exporterOlderExcelCompatibility
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description Some versions of excel don't like the utf-16 BOM on the front, and it comes
@@ -559,6 +577,66 @@
            * </pre>
            */
           gridOptions.exporterFieldFormatCallback = gridOptions.exporterFieldFormatCallback ? gridOptions.exporterFieldFormatCallback : function( grid, row, col, value ) { return null; };
+
+          /**
+           * @ngdoc function
+           * @name exporterExcelCustomFormatters
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to call to setup formatters and store on docDefinition.
+           *
+           * The method is called at the start and can setup all the formatters to export to excel
+           *
+           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {Workbook} row the row from which the data comes
+           * @param {docDefinition} The docDefinition that will have styles as a object to store formatters
+           * @returns {docDefinition} Updated docDefinition with formatter styles
+           *
+           * @example
+           * <pre>
+           *   gridOptions.exporterExcelCustomFormatters = function(grid, workbook, docDefinition) {
+           *     const formatters = {};
+           *     const stylesheet = workbook.getStyleSheet();
+           *     const headerFormatDefn = {
+           *       'font': { 'size': 11, 'fontName': 'Calibri', 'bold': true },
+           *       'alignment': { 'wrapText': false }
+           *     };
+           *
+           *     formatters['header'] = headerFormatter;
+           *     Object.assign(docDefinition.styles , formatters);
+           *     grid.docDefinition = docDefinition;
+           *     return docDefinition;
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return null; };
+
+          /**
+           * @ngdoc function
+           * @name exporterExcelHeader
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to write formatted header data to sheet.
+           *
+           * The method is called to provide custom header building for Excel. This data comes before the grid header
+           *
+           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {Workbook} row the row from which the data comes
+           * @param (Sheet) the sheet to insert data
+           * @param {docDefinition} The docDefinition that will have styles as a object to store formatters
+           * @returns {docDefinition} Updated docDefinition with formatter styles
+           *
+           * @example
+           * <pre>
+           *   gridOptions.exporterExcelCustomFormatters = function (grid, workbook, sheet, docDefinition) {
+           *      const headerFormatter = docDefinition.styles['header'];
+           *      let cols = [];
+           *      // push data in A1 cell with metadata formatter
+           *      cols.push({ value: 'Summary Report', metadata: {style: headerFormatter.id} });
+           *      sheet.data.push(cols);
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterExcelHeader = gridOptions.exporterExcelHeader ? gridOptions.exporterExcelHeader : function( grid, workbook, sheet, docDefinition ) { return null; };
+
 
           /**
            * @ngdoc object
