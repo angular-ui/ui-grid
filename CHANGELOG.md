@@ -1,3 +1,17 @@
+<a name="v4.4.7"></a>
+### v4.4.7 (2018-04-20)
+
+
+#### Bug Fixes
+
+* **exporter.js:**
+  * Eliminate selection column. Add export scale factor for excel and fonts ([bc50dfb0](http://github.com/angular-ui/ng-grid/commit/bc50dfb054ad4a571505051de258eee33539ffe2))
+  * Fix to handle filter args and spaces after filter name (#6681) ([7c2c002b](http://github.com/angular-ui/ng-grid/commit/7c2c002b29f43b46e6ac965d59bd5ff0bef677c8))
+  * Fix export when selection col is hidden. (#6676) ([b971f417](http://github.com/angular-ui/ng-grid/commit/b971f4177cf19666f420eb5f70fbe774c33fd137))
+* **Grid.js:** ScrollIfNecessary does not account for scrollWidth correctly ([16826bf1](http://github.com/angular-ui/ng-grid/commit/16826bf15f9ef72f885545894deddbdef99dcc97))
+* **i18n:** Add missing portuguese translations. ([25fdb473](http://github.com/angular-ui/ng-grid/commit/25fdb4738d6daadc91ffa28294a655d45cfeac74))
+* **uiGridRenderContainer.html:** Prevent duplicate ids in the grid for ADA compliance. ([ecf07c6f](http://github.com/angular-ui/ng-grid/commit/ecf07c6f19b18a87002791d66fe8e85b0e0f0e33))
+
 <a name="v4.4.6"></a>
 ### v4.4.6 (2018-04-06)
 
