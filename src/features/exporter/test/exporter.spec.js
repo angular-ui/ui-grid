@@ -130,6 +130,8 @@ describe('ui.grid.exporter', function() {
           exporterCsvColumnSeparator: ',',
           exporterCsvFilename: 'download.csv',
           exporterPdfFilename: 'download.pdf',
+          exporterExcelFilename: 'download.xlsx',
+          exporterExcelSheetName: 'Sheet1',
           exporterOlderExcelCompatibility: false,
           exporterIsExcelCompatible: false,
           exporterPdfDefaultStyle: {fontSize: 11},
@@ -150,10 +152,12 @@ describe('ui.grid.exporter', function() {
           exporterMenuExcel: true,
           exporterFieldCallback: jasmine.any(Function),
           exporterFieldFormatCallback: jasmine.any(Function),
+          exporterExcelCustomFormatters: jasmine.any(Function),
+          exporterExcelHeader: jasmine.any(Function),
+          exporterColumnScaleFactor: 3.5,
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
-          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 200
         });
       });
@@ -174,6 +178,8 @@ describe('ui.grid.exporter', function() {
           exporterCsvColumnSeparator: ',',
           exporterCsvFilename: 'download.csv',
           exporterPdfFilename: 'download.pdf',
+          exporterExcelFilename: 'download.xlsx',
+          exporterExcelSheetName: 'Sheet1',
           exporterOlderExcelCompatibility: false,
           exporterIsExcelCompatible: false,
           exporterPdfDefaultStyle : { fontSize : 11 },
@@ -194,10 +200,12 @@ describe('ui.grid.exporter', function() {
           exporterMenuExcel: true,
           exporterFieldCallback: jasmine.any(Function),
           exporterFieldFormatCallback: jasmine.any(Function),
+          exporterExcelCustomFormatters: jasmine.any(Function),
+          exporterExcelHeader: jasmine.any(Function),
+          exporterColumnScaleFactor: 3.5,
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
-          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 200
         });
       });
@@ -231,10 +239,10 @@ describe('ui.grid.exporter', function() {
           exporterMenuExcel: false,
           exporterFieldCallback: callback,
           exporterFieldFormatCallback: callback,
+          exporterExcelCustomFormatters: callback,
           exporterFieldApplyFilters: false,
           exporterAllDataPromise: callback,
           exporterSuppressColumns: [ 'buttons' ],
-          exporterExcelCustomFormatters: callback,
           exporterExcelFilename: 'myFile.xlsx',
           exporterExcelSheetName: 'Sheet1',
           exporterExcelHeader: 'My Header',
