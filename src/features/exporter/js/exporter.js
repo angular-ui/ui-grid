@@ -255,7 +255,7 @@
            * @ngdoc object
            * @name exporterExcelSheetName
            * @propertyOf  ui.grid.exporter.api:GridOptions
-           * @description The default sheetname to use when saving the downloaded to excel, only used in IE (other browsers open excels in a new window)
+           * @description The default sheetname to use when saving the downloaded to excel
            * <br/>Defaults to 'Sheet1'
            */
           gridOptions.exporterExcelSheetName = gridOptions.exporterExcelSheetName ? gridOptions.exporterExcelSheetName : 'Sheet1';
@@ -618,9 +618,9 @@
            *
            * The method is called to provide custom header building for Excel. This data comes before the grid header
            *
-           * @param {Grid} grid provides the grid in case you have need of it
+           * @param {grid} grid provides the grid in case you have need of it
            * @param {Workbook} row the row from which the data comes
-           * @param (Sheet) the sheet to insert data
+           * @param {Sheet} the sheet to insert data
            * @param {docDefinition} The docDefinition that will have styles as a object to store formatters
            * @returns {docDefinition} Updated docDefinition with formatter styles
            *
