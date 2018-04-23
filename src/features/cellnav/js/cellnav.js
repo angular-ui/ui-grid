@@ -547,7 +547,7 @@
 
             // Broadcast the navigation
             if (gridRow !== null && gridCol !== null) {
-              grid.cellNav.broadcastCellNav(rowCol);
+              grid.cellNav.broadcastCellNav(rowCol, null, null);
             }
           });
 
