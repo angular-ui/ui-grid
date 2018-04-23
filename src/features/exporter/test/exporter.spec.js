@@ -122,6 +122,50 @@ describe('ui.grid.exporter', function() {
         options = {};
       });
 
+      it('set all options to default', function () {
+        uiGridExporterService.defaultGridOptions(options);
+        expect(options).toEqual({
+          exporterSuppressMenu: false,
+          exporterMenuLabel: 'Export',
+          exporterCsvColumnSeparator: ',',
+          exporterCsvFilename: 'download.csv',
+          exporterPdfFilename: 'download.pdf',
+          exporterOlderExcelCompatibility: false,
+          exporterIsExcelCompatible: false,
+          exporterPdfDefaultStyle: {fontSize: 11},
+          exporterPdfTableStyle: {margin: [0, 5, 0, 15]},
+          exporterPdfTableHeaderStyle: {bold: true, fontSize: 12, color: 'black'},
+          exporterPdfHeader: null,
+          exporterPdfFooter: null,
+          exporterPdfOrientation: 'landscape',
+          exporterPdfPageSize: 'A4',
+          exporterPdfMaxGridWidth: 720,
+          exporterPdfCustomFormatter: jasmine.any(Function),
+          exporterHeaderFilterUseName: false,
+          exporterMenuAllData: true,
+          exporterMenuVisibleData: true,
+          exporterMenuSelectedData: true,
+          exporterMenuCsv: true,
+          exporterMenuPdf: true,
+          exporterMenuExcel: true,
+          exporterFieldCallback: jasmine.any(Function),
+          exporterFieldFormatCallback: jasmine.any(Function),
+          exporterFieldApplyFilters: false,
+          exporterAllDataFn: null,
+          exporterSuppressColumns: [],
+          exporterColumnScaleFactor: 3.5,
+          exporterMenuItemOrder: 200
+        });
+      });
+    });
+
+    describe('defaultGridOptions', function() {
+      var options;
+
+      beforeEach(function() {
+        options = {};
+      });
+
       it('should set all options to default', function() {
         uiGridExporterService.defaultGridOptions(options);
         expect(options).toEqual({
@@ -153,6 +197,7 @@ describe('ui.grid.exporter', function() {
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 200
         });
       });
@@ -194,6 +239,7 @@ describe('ui.grid.exporter', function() {
           exporterExcelSheetName: 'Sheet1',
           exporterExcelHeader: 'My Header',
           exporterExcelFooter: 'My Footer',
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 75
         };
         uiGridExporterService.defaultGridOptions(options);
@@ -231,6 +277,7 @@ describe('ui.grid.exporter', function() {
           exporterExcelSheetName: 'Sheet1',
           exporterExcelHeader: 'My Header',
           exporterExcelFooter: 'My Footer',
+          exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 75,
           exporterAllDataFn: callback
         });

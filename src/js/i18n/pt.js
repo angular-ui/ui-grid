@@ -6,7 +6,8 @@
           aria: {
             defaultFilterLabel: 'Filtro por coluna',
             removeFilter: 'Remover filtro',
-            columnMenuButtonLabel: 'Menu coluna'
+            columnMenuButtonLabel: 'Menu coluna',
+            column: 'Coluna'
           },
           priority: 'Prioridade:',
           filterLabel: "Filtro por coluna: "
@@ -18,6 +19,10 @@
           description: 'Arraste e solte uma coluna aqui para agrupar por essa coluna'
         },
         search: {
+          aria: {
+            selected: 'Linha selecionada',
+            notSelected: 'Linha não está selecionada'
+          },
           placeholder: 'Procurar...',
           showingItems: 'Mostrando os Itens:',
           selectedItems: 'Itens Selecionados:',
@@ -67,6 +72,9 @@
           exporterAllAsPdf: 'Exportar todos os dados como pdf',
           exporterVisibleAsPdf: 'Exportar dados visíveis como pdf',
           exporterSelectedAsPdf: 'Exportar dados selecionados como pdf',
+          exporterAllAsExcel: 'Exportar todos os dados como excel',
+          exporterVisibleAsExcel: 'Exportar dados visíveis como excel',
+          exporterSelectedAsExcel: 'Exportar dados selecionados como excel',
           clearAllFilters: 'Limpar todos os filtros'
         },
         importer: {
@@ -98,6 +106,12 @@
           aggregate_min: 'Agr: Min',
           aggregate_avg: 'Agr: Med',
           aggregate_remove: 'Agr: Remover'
+        },
+        validate: {
+          error: 'Erro:',
+          minLength: 'O valor deve ter, no minimo, THRESHOLD caracteres.',
+          maxLength: 'O valor deve ter, no máximo, THRESHOLD caracteres.',
+          required: 'Um valor é necessário.'
         }
       });
       return $delegate;
