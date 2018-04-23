@@ -2402,7 +2402,7 @@ angular.module('ui.grid')
 
       // The bottom boundary is the current Y scroll position, plus the height of the grid, but minus the header height.
       //   Basically this is the viewport height added on to the scroll position
-      var bottomBound = self.renderContainers.body.prevScrollTop + self.gridHeight - self.renderContainers.body.headerHeight - self.footerHeight -  self.scrollbarWidth;
+      var bottomBound = self.renderContainers.body.prevScrollTop + self.gridHeight - self.renderContainers.body.headerHeight - self.footerHeight -  self.scrollbarHeight;
 
       // If there's a horizontal scrollbar, remove its height from the bottom boundary, otherwise we'll be letting it obscure rows
       //if (self.horizontalScrollbarHeight) {
@@ -2439,20 +2439,20 @@ angular.module('ui.grid')
         var scrollPixels;
 
         // If the scroll position we need to see the row is LESS than the top boundary, i.e. obscured above the top of the self...
-        if (pixelsToSeeRow < topBound) {
+        if (pixelsToSeeRow < Math.floor(topBound)) {
           // Get the different between the top boundary and the required scroll position and subtract it from the current scroll position\
           //   to get the full position we need
           scrollPixels = self.renderContainers.body.prevScrollTop - (topBound - pixelsToSeeRow);
 
           //Since scrollIfNecessary is called multiple times when enableCellEditOnFocus is true we need to make sure the scrollbarWidth and footerHeight is accounted for to not cause a loop.
           if (gridCol && gridCol.colDef && gridCol.colDef.enableCellEditOnFocus) {
-            scrollPixels = scrollPixels - self.footerHeight - self.scrollbarWidth;
+            scrollPixels = scrollPixels - self.footerHeight - self.scrollbarHeight;
           }
 
           scrollEvent.y = getScrollY(scrollPixels, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
-        else if (pixelsToSeeRow > bottomBound) {
+        else if (pixelsToSeeRow > Math.ceil(bottomBound)) {
           // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
           //   to get the full position we need
           scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
