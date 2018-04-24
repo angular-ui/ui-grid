@@ -243,8 +243,8 @@
                         service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
                       }
                     });
-                    service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
                     grid.selection.selectAll = true;
+                    service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
                   }
                 },
                 /**
@@ -268,8 +268,8 @@
                         service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
                       }
                     });
-                    service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
                     grid.selection.selectAll = true;
+                    service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
                   }
                 },
                 /**
@@ -576,9 +576,9 @@
               service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
             }
           });
-          service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
           grid.selection.selectAll = false;
           grid.selection.selectedCount = 0;
+          service.decideRaiseSelectionBatchEvent(grid, changedRows, evt);
         },
 
         /**
