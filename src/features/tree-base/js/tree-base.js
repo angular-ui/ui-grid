@@ -984,11 +984,12 @@
        * @returns {array} the updated rows
        */
       treeRows: function( renderableRows ) {
-        if (renderableRows.length === 0){
+        var grid = this;
+
+        if (renderableRows.length === 0) {
+          service.updateRowHeaderWidth( grid );
           return renderableRows;
         }
-
-        var grid = this;
 
         grid.treeBase.tree = service.createTree( grid, renderableRows );
         service.updateRowHeaderWidth( grid );
