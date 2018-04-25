@@ -3,7 +3,7 @@ exports.config = {
   // The address of a running selenium server.
 
   //seleniumAddress: 'http://localhost:4444/wd/hub',
-  seleniumServerJar: '../node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-2.45.0.jar',
+  seleniumServerJar: '../node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-3.11.0.jar',
   seleniumPort: 4444,
 
   specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],

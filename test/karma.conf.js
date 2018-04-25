@@ -114,13 +114,13 @@ module.exports = function(config) {
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
 
-    // config.transports = ['websocket', 'xhr-polling'];
+    config.transports = ['websocket', 'polling'];
 
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
 
-    config.transports = ['xhr-polling'];
+    // config.transports = ['xhr-polling'];
 
     // Debug logging into a file, that we print out at the end of the build.
     config.loggers.push({
