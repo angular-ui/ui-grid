@@ -39,7 +39,7 @@
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "grunt": "0.4.5",
-    "grunt-angular-templates": "~0.5",
+    "grunt-angular-templates": "^1.1.0",
     "grunt-bump": "^0.7.0",
     "grunt-contrib-clean": "~0.5",
     "grunt-contrib-concat": "~0.3",
