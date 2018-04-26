@@ -456,7 +456,7 @@
          *  but will make the tree row header wider
          *  <br/>Defaults to 10
          */
-        gridOptions.treeIndent = gridOptions.treeIndent || 10;
+        gridOptions.treeIndent = (gridOptions.treeIndent != null) ? gridOptions.treeIndent : 10;
 
         /**
          *  @ngdoc object
