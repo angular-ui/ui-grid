@@ -1,5 +1,5 @@
 <div
   class="ui-grid-tree-base-row-header-buttons"
-  ng-class="{'ui-grid-icon-minus-squared': grid.treeBase.numberLevels > 0 && grid.treeBase.expandAll, 'ui-grid-icon-plus-squared': grid.treeBase.numberLevels > 0 && !grid.treeBase.expandAll}"
+  ng-class="headerButtonClass()"
   ng-click="headerButtonClick($event)">
 </div>
