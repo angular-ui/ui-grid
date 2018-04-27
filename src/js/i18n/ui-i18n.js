@@ -61,7 +61,7 @@
           if (!this._langs[lower]) {
             this._langs[lower] = {};
           }
-          angular.extend(this._langs[lower], strings);
+          angular.merge(this._langs[lower], strings);
         },
         getAllLangs: function () {
           var langs = [];
