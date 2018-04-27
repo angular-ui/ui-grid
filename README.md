@@ -5,7 +5,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
-[![npm](https://img.shields.io/npm/dt/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
+[![devDependencies Status](https://david-dm.org/angular-ui/ui-grid/dev-status.svg)](https://david-dm.org/angular-ui/ui-grid?type=dev)
 [![OpenCollective](https://opencollective.com/ui-grid/backers/badge.svg)](#backers) 
 [![OpenCollective](https://opencollective.com/ui-grid/sponsors/badge.svg)](#sponsors)
 
