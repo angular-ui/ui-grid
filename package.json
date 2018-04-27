@@ -58,6 +58,7 @@
     "grunt-ngdocs": "https://github.com/mportuga/grunt-ngdocs/tarball/0.3.1-custom",
     "grunt-protractor-runner": "^5.0.0",
     "grunt-shell-spawn": "~0.3.10",
+    "hoek": "^5.0.3",
     "husky": "^0.14.3",
     "jit-grunt": "^0.10.0",
     "jshint-stylish": "^2.2.1",
