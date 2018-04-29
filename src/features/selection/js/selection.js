@@ -292,7 +292,7 @@
                   return service.getSelectedRows(grid).map(function (gridRow) {
                     return gridRow.entity;
                   }).filter(function (entity) {
-                    return entity.hasOwnProperty('$$hashKey');
+                    return entity.hasOwnProperty('$$hashKey') || !angular.isObject(entity);
                   });
                 },
                 /**
