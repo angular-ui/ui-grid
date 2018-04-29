@@ -1,3 +1,23 @@
+<a name="4.4.8"></a>
+## [4.4.8](https://github.com/angular-ui/ui-grid/compare/v4.4.7...v4.4.8) (2018-04-29)
+
+
+### Bug Fixes
+
+* **exporter.js:** Eliminate selection column. Add export scale factor for excel and fonts ([d96f43d](https://github.com/angular-ui/ui-grid/commit/d96f43d))
+* **selection.js:** Allow group header selection. ([9718d8b](https://github.com/angular-ui/ui-grid/commit/9718d8b)), closes [#6698](https://github.com/angular-ui/ui-grid/issues/6698)
+* **selection.js:** Check if column is row header before disabling selection. ([dff19a7](https://github.com/angular-ui/ui-grid/commit/dff19a7)), closes [#5239](https://github.com/angular-ui/ui-grid/issues/5239)
+* **selection.js:** getSelectedRows will work on primitive data types. ([39a5439](https://github.com/angular-ui/ui-grid/commit/39a5439)), closes [#6704](https://github.com/angular-ui/ui-grid/issues/6704)
+* **selection.js:** Raise rowSelectionChangedBatch after toggling selectAll flag. ([bff5bb2](https://github.com/angular-ui/ui-grid/commit/bff5bb2)), closes [#5411](https://github.com/angular-ui/ui-grid/issues/5411)
+* **tree-base.js:** Call updateRowHeaderWidth even when no data exists. ([49678eb](https://github.com/angular-ui/ui-grid/commit/49678eb)), closes [#5430](https://github.com/angular-ui/ui-grid/issues/5430)
+
+
+### Features
+
+* **ui-i18n.js:** Allow replacing/customizing specific existing locale strings when using add. ([d6d820f](https://github.com/angular-ui/ui-grid/commit/d6d820f))
+
+
+
 <a name="v4.4.7"></a>
 ### v4.4.7 (2018-04-20)
 
