@@ -219,6 +219,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 
 				expect(menuItems[4].title).toEqual('Clear all filters', 'Menu item 4 Clear all filters');
 				expect(menuItems[5].title).toEqual('Columns:', 'Menu item 5 should be header');
+				expect(menuItems[5].templateUrl).toEqual('ui-grid/ui-grid-menu-header-item');
 				expect(menuItems[6].title.toLowerCase()).toEqual('fn_col1', 'Menu item 5 should be col1');
 				expect(menuItems[7].title.toLowerCase()).toEqual('fn_col3', 'Menu item 6 should be col3');
 				expect(menuItems[8].title.toLowerCase()).toEqual('fn_col4', 'Menu item 7 should be col4');
@@ -243,6 +244,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 				expect(menuItems.length).toEqual(6, 'Should be 6 items, 1 columns header, 4 columns that allow hiding and clear all filters');
 				expect(menuItems[0].title).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
 				expect(menuItems[1].title).toEqual('Columns:', 'Menu item 1 should be header');
+				expect(menuItems[1].templateUrl).toEqual('ui-grid/ui-grid-menu-header-item');
 				expect(menuItems[2].title).toEqual('', 'Promise not resolved');
 				expect(menuItems[3].title).toEqual('', 'Promise not resolved');
 				expect(menuItems[4].title).toEqual('', 'Promise not resolved');
@@ -256,6 +258,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 				expect(menuItems.length).toEqual(6, 'Should be 10 items, 1 columns header, 4 columns that allow hiding and Clean all filters');
 				expect(menuItems[0].title).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
 				expect(menuItems[1].title).toEqual('Columns:', 'Menu item 0 should be header');
+				expect(menuItems[1].templateUrl).toEqual('ui-grid/ui-grid-menu-header-item');
 				expect(menuItems[2].title).toEqual('resolve_0', 'Promise now resolved');
 				expect(menuItems[3].title).toEqual('resolve_1', 'Promise now resolved');
 				expect(menuItems[4].title).toEqual('resolve_2', 'Promise now resolved');

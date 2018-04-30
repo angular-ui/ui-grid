@@ -57,14 +57,18 @@
   list-style-type: none;
 
   li {
-    padding: 0px;
-    button {
+    padding: 0;
+    .ui-grid-menu-item {
       color: @menuTextColor;
       min-width: 100%;
       padding: 8px;
       text-align: left;
       background: transparent;
       border: none;
+      cursor: default;
+    }
+    button.ui-grid-menu-item {
+      cursor: pointer;
 
       // Show a shadow when hovering over a menu item
       &:hover,
@@ -78,7 +82,7 @@
   }
 
   // Show a bottom border on all but the last menu item
-  li:not(:last-child) > button {
+  li:not(:last-child) > .ui-grid-menu-item {
     border-bottom: @gridBorderWidth solid @borderColor;
   }
 }
