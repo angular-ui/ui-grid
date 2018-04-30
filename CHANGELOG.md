@@ -1,5 +1,5 @@
-<a name="4.4.8"></a>
-## [4.4.8](https://github.com/angular-ui/ui-grid/compare/v4.4.7...v4.4.8) (2018-04-29)
+<a name="4.4.9"></a>
+## [4.4.9](https://github.com/angular-ui/ui-grid/compare/v4.4.7...v4.4.9) (2018-04-30)
 
 
 ### Bug Fixes
