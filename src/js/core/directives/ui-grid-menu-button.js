@@ -257,7 +257,8 @@ angular.module('ui.grid')
       // add header for columns
       showHideColumns.push({
         title: i18nService.getSafeText('gridMenu.columns'),
-        order: 300
+        order: 300,
+        templateUrl: 'ui-grid/ui-grid-menu-header-item'
       });
 
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };
