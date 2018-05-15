@@ -1,3 +1,14 @@
+<a name="4.4.10"></a>
+## [4.4.10](https://github.com/angular-ui/ui-grid/compare/v4.4.9...v4.4.10) (2018-05-15)
+
+
+### Bug Fixes
+
+* **ui-grid-menu-button.js:** Change "Columns:" item to a heading. ([85ad462](https://github.com/angular-ui/ui-grid/commit/85ad462))
+* **ui-grid-util.js:** Replace angular.uppercase and .lowercase with String.toUpperCase and .toLowerC ([a41677a](https://github.com/angular-ui/ui-grid/commit/a41677a)), closes [#6715](https://github.com/angular-ui/ui-grid/issues/6715)
+
+
+
 <a name="4.4.9"></a>
 ## [4.4.9](https://github.com/angular-ui/ui-grid/compare/v4.4.7...v4.4.9) (2018-04-30)
 
