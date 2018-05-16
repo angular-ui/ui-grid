@@ -46,16 +46,15 @@ There are a number of common gotchas in using the grid, this FAQ aims to cover m
 
 # What browsers are supported by ui.grid
 
-  Our current testing verifies against IE9+, Edge, Chrome, Firefox, and Safari 7+.  We expect that the functionality
+  Our current testing verifies against IE10+, Edge, Chrome, Firefox, and Safari 8+.  We expect that the functionality
   is compatible with any HTML5 compliant and Javascript enabled browser.  Refer {@link 100_preReqs preReqs}.  Note that IE9
   compatibility is marginal - the base functions all work but performance is poor in some cases, and some behaviour is not
-  as desired.  We have limited ability to control some of this, but have decided to retain IE9 in the supported list due to
-  the small number of organisations for whom this is critical.  If using on IE9 we recommend testing your specific use cases
+  as desired.  We have limited ability to control some of this.  If using on IE9 we recommend testing your specific use cases
   to verify all your desired functions work adequately.
 
 # What angular versions are supported by ui.grid
 
-  Our current testing uses angular 1.4 - 1.6.  We intend to remain compatible with all forward versions of 1.6.
+  Our current testing uses angular 1.4 - 1.7.  We intend to remain compatible with all forward versions of 1.7.
   Refer {@link 100_preReqs preReqs}
 
 # How can I wrap text in a cell?

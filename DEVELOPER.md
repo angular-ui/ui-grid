@@ -19,10 +19,10 @@ http://localhost:9003/docs/#/tutorial to browse each tutorial.
 <br/> no-e2e - eliminate protractor tests
 <br/> angular=n.n.n - specify a specify angular version to run unit tests against
 <br/> core - run only the tests for the core code, skip features
-<br/> fast - alias for --no-e2e --core --angular=1.6.7
+<br/> fast - alias for --no-e2e --core --angular=1.7.0
 
 ```
-grunt dev --no-e2e --angular=1.6.7
+grunt dev --no-e2e --angular=1.7.0
 ```
 
 # Code Structure
