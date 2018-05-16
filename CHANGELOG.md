@@ -1,3 +1,15 @@
+<a name="4.4.11"></a>
+## [4.4.11](https://github.com/angular-ui/ui-grid/compare/v4.4.9...v4.4.11) (2018-05-16)
+
+### Features
+
+* **angular.js:** Support Angular 1.7. ([8c6cb51](https://github.com/angular-ui/ui-grid/commit/8c6cb51d3fbcf8bb6e3fc15c8378d9ba7b11a32c))
+
+### Bug Fixes
+
+* **ui-grid-util.js:** Replace angular.uppercase with toUpperCase. ([82033e0](https://github.com/angular-ui/ui-grid/commit/82033e0)), closes [#6729](https://github.com/angular-ui/ui-grid/issues/6729)
+
+
 <a name="4.4.10"></a>
 ## [4.4.10](https://github.com/angular-ui/ui-grid/compare/v4.4.9...v4.4.10) (2018-05-15)
 
