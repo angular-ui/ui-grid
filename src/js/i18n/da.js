@@ -38,6 +38,11 @@
           min: 'min: ',
           max: 'max: '
         },
+        pinning: {
+          pinLeft: 'Fastgør til venstre',
+          pinRight: 'Fastgør til højre',
+          unpin: 'Frigør'
+        },
         gridMenu: {
           columns: 'Kolonner:',
           importerTitle: 'Importer fil',
