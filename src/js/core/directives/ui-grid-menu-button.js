@@ -274,8 +274,12 @@ angular.module('ui.grid')
               service.toggleColumnVisibility( this.context.gridCol );
 
               if ($event.target && $event.target.firstChild) {
-                $event.target.firstChild.className = isColumnVisible(this.context.gridCol.colDef) ?
-                  'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+                if (angular.element($event.target)[0].nodeName === 'I') {
+                  $event.target.className = isColumnVisible(this.context.gridCol.colDef) ? 'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+                }
+                else {
+                  $event.target.firstChild.className = isColumnVisible(this.context.gridCol.colDef) ?  'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+                }
               }
             },
             shown: function() {
