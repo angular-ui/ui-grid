@@ -253,6 +253,10 @@ angular.module('ui.grid')
       function isColumnVisible(colDef) {
         return colDef.visible === true || colDef.visible === undefined;
       }
+      
+      function getColumnIcon(colDef) {
+        return isColumnVisible(colDef) ? 'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+      }
 
       // add header for columns
       showHideColumns.push({
@@ -267,15 +271,19 @@ angular.module('ui.grid')
         if ( colDef.enableHiding !== false ){
           // add hide menu item - shows an OK icon as we only show when column is already visible
           var menuItem = {
-            icon: isColumnVisible(colDef) ? 'ui-grid-icon-ok' : 'ui-grid-icon-cancel',
+            icon: getColumnIcon(colDef),
             action: function($event) {
               $event.stopPropagation();
 
               service.toggleColumnVisibility( this.context.gridCol );
 
               if ($event.target && $event.target.firstChild) {
-                $event.target.firstChild.className = isColumnVisible(this.context.gridCol.colDef) ?
-                  'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
+                if (angular.element($event.target)[0].nodeName === 'I') {
+                  $event.target.className = getColumnIcon(this.context.gridCol.colDef);
+                }
+                else {
+                  $event.target.firstChild.className = getColumnIcon(this.context.gridCol.colDef);
+                }
               }
             },
             shown: function() {
