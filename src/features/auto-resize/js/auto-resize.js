@@ -19,30 +19,31 @@
       require: 'uiGrid',
       scope: false,
       link: function($scope, $elm, $attrs, uiGridCtrl) {
-        var timeout = null;
+        var debouncedRefresh;
 
-        var debounce = function(width, height) {
-          if (timeout !== null) {
-            clearTimeout(timeout);
-          }
-          timeout = setTimeout(function() {
+        function getDimensions() {
+          return {
+            width: gridUtil.elementWidth($elm),
+            height: gridUtil.elementHeight($elm)
+          };
+        }
+
+        function refreshGrid(prevWidth, prevHeight, width, height) {
+          if ($elm[0].offsetParent !== null) {
             uiGridCtrl.grid.gridWidth = width;
             uiGridCtrl.grid.gridHeight = height;
-            uiGridCtrl.grid.refresh();
-            timeout = null;
-          }, 400);
-        };
-
-        $scope.$watchGroup([
-          function() {
-            return gridUtil.elementWidth($elm);
-          },
-          function() {
-            return gridUtil.elementHeight($elm);
+            uiGridCtrl.grid.queueRefresh()
+              .then(function() {
+                uiGridCtrl.grid.api.core.raise.gridDimensionChanged(prevHeight, prevWidth, height, width);
+              });
           }
-        ], function(newValues, oldValues, scope) {
+        }
+
+        debouncedRefresh = gridUtil.debounce(refreshGrid, 400);
+
+        $scope.$watchCollection(getDimensions, function(newValues, oldValues) {
           if (!angular.equals(newValues, oldValues)) {
-            debounce(newValues[0], newValues[1]);
+            debouncedRefresh(oldValues.width, oldValues.height, newValues.width, newValues.height);
           }
         });
       }
