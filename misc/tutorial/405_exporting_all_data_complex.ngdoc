@@ -42,10 +42,11 @@ This shows combined external pagination and sorting.
           ],
           exporterAllDataFn: function() {
             return getPage(1, $scope.gridOptions.totalItems, paginationOptions.sort)
-            .then(function() {
+            .then(function(allData) {
               $scope.gridOptions.useExternalPagination = false;
               $scope.gridOptions.useExternalSorting = false;
               getPage = null;
+              return allData;
             });
           },
           onRegisterApi: function(gridApi) {
@@ -87,7 +88,8 @@ This shows combined external pagination and sorting.
           .then(function (response) {
             var firstRow = (curPage - 1) * pageSize;
             $scope.gridOptions.totalItems = 100;
-            $scope.gridOptions.data = response.data.slice(firstRow, firstRow + pageSize)
+            $scope.gridOptions.data = response.data.slice(firstRow, firstRow + pageSize);
+            return response.data.slice(firstRow, firstRow + pageSize);
           });
         };
 
