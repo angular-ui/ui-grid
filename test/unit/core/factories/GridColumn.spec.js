@@ -622,6 +622,149 @@ describe('GridColumn factory', function () {
       expect(updateCol(col, colDef)).toThrow();
     });
 
+    describe('cellTooltip', function() {
+      it('should be set to false when it is undefined', function() {
+        colDef.cellTooltip = undefined;
+        col.updateColumnDef(colDef);
+        expect(col.cellTooltip).toBe(false);
+      });
+      it('should stay false when the user passed false', function() {
+        colDef.cellTooltip = false;
+        col.updateColumnDef(colDef);
+        expect(col.cellTooltip).toBe(false);
+      });
+      it('should be set to a function that calls grid.getCellValue when it is set to true', function() {
+        colDef.cellTooltip = true;
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.cellTooltip)).toBe(true);
+
+        spyOn(col.grid, 'getCellValue').and.callFake(angular.noop);
+        col.cellTooltip(null, col);
+
+        expect(col.grid.getCellValue).toHaveBeenCalled();
+
+        col.grid.getCellValue.calls.reset();
+      });
+      it('should be assigned to whatever function is passed to it', function() {
+        colDef.cellTooltip = angular.noop;
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.cellTooltip)).toBe(true);
+        expect(col.cellTooltip).toEqual(colDef.cellTooltip);
+      });
+      it('should be set to a function that returns the string passed into it when it is set to a string', function() {
+        colDef.cellTooltip = 'MockHeaderTooltip';
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.cellTooltip)).toBe(true);
+        expect(col.cellTooltip(null, col)).toEqual(colDef.cellTooltip);
+      });
+    });
+
+    describe('headerTooltip', function() {
+      it('should be set to false when it is undefined', function() {
+        colDef.headerTooltip = undefined;
+        col.updateColumnDef(colDef);
+        expect(col.headerTooltip).toBe(false);
+      });
+      it('should stay false when the user passed false', function() {
+        colDef.headerTooltip = false;
+        col.updateColumnDef(colDef);
+        expect(col.headerTooltip).toBe(false);
+      });
+      it('should be set to a function that returns the display name when it is set to true', function() {
+        colDef.headerTooltip = true;
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.headerTooltip)).toBe(true);
+        expect(col.headerTooltip(col)).toEqual(col.displayName);
+      });
+      it('should be assigned to whatever function is passed to it', function() {
+        colDef.headerTooltip = angular.noop;
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.headerTooltip)).toBe(true);
+        expect(col.headerTooltip).toEqual(colDef.headerTooltip);
+      });
+      it('should be set to a function that returns the string passed into it when it is set to a string', function() {
+        colDef.headerTooltip = 'MockHeaderTooltip';
+        col.updateColumnDef(colDef);
+        expect(angular.isFunction(col.headerTooltip)).toBe(true);
+        expect(col.headerTooltip(col)).toEqual(colDef.headerTooltip);
+      });
+    });
+
+    describe('sortCellFiltered', function() {
+      it('should set sortCellFiltered to true when the user passes in a truthy value', function() {
+        colDef.sortCellFiltered = 1;
+        col.updateColumnDef(colDef);
+
+        expect(col.sortCellFiltered).toBe(true);
+      });
+      it('should set sortCellFiltered to false when the user passes in a falsy value', function() {
+        colDef.sortCellFiltered = 0;
+        col.updateColumnDef(colDef);
+
+        expect(col.sortCellFiltered).toBe(false);
+      });
+    });
+
+    describe('filterCellFiltered', function() {
+      it('should set filterCellFiltered to true when the user passes in a truthy value', function() {
+        colDef.filterCellFiltered = 'yes';
+        col.updateColumnDef(colDef);
+
+        expect(col.filterCellFiltered).toBe(true);
+      });
+      it('should set filterCellFiltered to false when the user passes in a falsy value', function() {
+        colDef.filterCellFiltered = null;
+        col.updateColumnDef(colDef);
+
+        expect(col.filterCellFiltered).toBe(false);
+      });
+    });
+
+    describe('footerCellFilter', function() {
+      it('should set footerCellFilter to the value passed in by the user when the user passes in a truthy value', function() {
+        colDef.footerCellFilter = 'date';
+        col.updateColumnDef(colDef);
+
+        expect(col.footerCellFilter).toEqual(colDef.footerCellFilter);
+      });
+      it('should set footerCellFilter an empty string when the user passes in a falsy value', function() {
+        colDef.footerCellFilter = null;
+        col.updateColumnDef(colDef);
+
+        expect(col.footerCellFilter).toEqual('');
+      });
+    });
+
+    describe('sortDirectionCycle', function() {
+      it('should set sortDirectionCycle to the value passed in by the user when the user passes in a truthy value', function() {
+        colDef.sortDirectionCycle = [uiGridConstants.ASC, uiGridConstants.DESC];
+        col.updateColumnDef(colDef);
+
+        expect(col.sortDirectionCycle).toEqual(colDef.sortDirectionCycle);
+      });
+      it('should set sortDirectionCycle the default value when the user passes in undefined', function() {
+        colDef.sortDirectionCycle = undefined;
+        col.updateColumnDef(colDef);
+
+        expect(col.sortDirectionCycle).toEqual([null, uiGridConstants.ASC, uiGridConstants.DESC]);
+      });
+    });
+
+    describe('enableFiltering', function() {
+      it('should set enableFiltering to the value passed by the user when that value is not undefined', function() {
+        colDef.enableFiltering = false;
+        col.updateColumnDef(colDef);
+
+        expect(col.enableFiltering).toEqual(colDef.enableFiltering);
+      });
+      it('should set enableFiltering to true when the user passes in undefined', function() {
+        colDef.enableFiltering = undefined;
+        col.updateColumnDef(colDef);
+
+        expect(col.enableFiltering).toBe(true);
+      });
+    });
+
     function widthEqualsColDefWidth(expected) {
       return function () {
         colDef.width = expected;
@@ -652,5 +795,43 @@ describe('GridColumn factory', function () {
         expect(col[minOrMax]).toBe(minOrMax === 'minWidth' ? 30 : 9000);
       };
     }
+  });
+
+  describe('isPinnedLeft', function() {
+    var col;
+
+    beforeEach(function () {
+      col = grid.columns[0];
+    });
+
+    it('should return true when the column is on the left render container', function() {
+      col.renderContainer = 'left';
+
+      expect(col.isPinnedLeft()).toBe(true);
+    });
+    it('should return false when the column is not on the left render container', function() {
+      col.renderContainer = 'right';
+
+      expect(col.isPinnedLeft()).toBe(false);
+    });
+  });
+
+  describe('isPinnedRight', function() {
+    var col;
+
+    beforeEach(function () {
+      col = grid.columns[0];
+    });
+
+    it('should return true when the column is on the right render container', function() {
+      col.renderContainer = 'right';
+
+      expect(col.isPinnedRight()).toBe(true);
+    });
+    it('should return false when the column is not on the right render container', function() {
+      col.renderContainer = 'left';
+
+      expect(col.isPinnedRight()).toBe(false);
+    });
   });
 });
