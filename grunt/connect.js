@@ -1,7 +1,7 @@
 module.exports = {
   dev: {
     options: {
-      port: process.env.DEV_PORT || 9002,
+      port: process.env.DEV_PORT || 9004,
       base: '.',
       livereload: true
     }
