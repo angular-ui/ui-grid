@@ -527,15 +527,17 @@
                 // Applies `klass` to `col`, if it hasn't already been applied and if `col` is not the column we are moving.
                 function addNewPositionClass(col, klass) {
                   var colClass = col.getColClass(true);
+
+                  var gridElm = uiGridCtrl.grid.element || $elm.parent();
                   // Only do something if the column in question doesn't already have the class applied.
                   if ($elm.parent().find('div.' + klass + colClass).length === 0) {
                     // When adding the position class to a new column, clear out any old position classes
-                    $elm.parent().find('div.new_position_left').removeClass('new_position_left');
-                    $elm.parent().find('div.new_position_right').removeClass('new_position_right');
+                    gridElm.find('div.new_position_left').removeClass('new_position_left');
+                    gridElm.find('div.new_position_right').removeClass('new_position_right');
 
                     // Only add the class if this is not the column that is moving
                     if ($elm.parent().find('div.' + 'old_position' + colClass).length === 0) {
-                      $elm.parent().find('div' + colClass).addClass(klass);
+                      gridElm.find('div' + colClass).addClass(klass);
                     }
                   }
                 }
@@ -567,9 +569,10 @@
 
                 if (isColumnDropped) {
                   // If we are dropping the column, clear out the position classes.
-                  $elm.parent().find('div.new_position_left').removeClass('new_position_left');
-                  $elm.parent().find('div.new_position_right').removeClass('new_position_right');
-                  $elm.parent().find('div.old_position').removeClass('old_position');
+                  var gridElm = uiGridCtrl.grid.element || $elm.parent();
+                  gridElm.find('div.new_position_left').removeClass('new_position_left');
+                  gridElm.find('div.new_position_right').removeClass('new_position_right');
+                  gridElm.find('div.old_position').removeClass('old_position');
                 } else {
                   // Add the 'old_position' class to the column we are moving to mark its original location.
                   $elm.parent().find('div.ui-grid-header-cell' + columns[columnIndex].getColClass(true)).addClass('old_position');
