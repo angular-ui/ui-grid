@@ -1,5 +1,5 @@
 describe('GridColumn factory', function () {
-  var $q, $scope, cols, grid, gridCol, Grid, GridColumn, gridClassFactory, GridRenderContainer, uiGridConstants, $httpBackend;
+  var $q, $scope, cols, grid, Grid, GridColumn, gridClassFactory, GridRenderContainer, uiGridConstants, $httpBackend;
 
   beforeEach(module('ui.grid'));
 
@@ -65,8 +65,7 @@ describe('GridColumn factory', function () {
 
     describe('should not update sort when updating a column, but visible flag does update', function () {
       beforeEach(function(complete){
-        var sort = { priority: 0, direction: 'asc' };
-        grid.options.columnDefs[0].sort = sort;
+        grid.options.columnDefs[0].sort = { priority: 0, direction: 'asc' };
         grid.options.columnDefs[0].visible = false;
         buildCols(complete);
       });
@@ -79,8 +78,7 @@ describe('GridColumn factory', function () {
 
     describe('should update everything but term when updating filters', function () {
       beforeEach(function(complete) {
-        var filter = { term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] };
-        grid.options.columnDefs[0].filter = filter;
+        grid.options.columnDefs[0].filter = { term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] };
         buildCols(complete);
       });
 
@@ -92,8 +90,7 @@ describe('GridColumn factory', function () {
 
     describe('should update everything but term when updating filters', function () {
       beforeEach(function(complete) {
-        var filters = [{ term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] }];
-        grid.options.columnDefs[0].filters = filters;
+        grid.options.columnDefs[0].filters = [{ term: 'x', placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] }];
         buildCols(complete);
       });
 
@@ -101,7 +98,6 @@ describe('GridColumn factory', function () {
         expect(grid.columns[0].filters).toEqual([ { placeholder: 'placeholder', type: uiGridConstants.filter.SELECT, selectOptions: [ { value: 1, label: "male" } ] } ] );
       });
     });
-
 
 
     it('should obey columnDef sort spec', function () {
@@ -115,14 +111,12 @@ describe('GridColumn factory', function () {
       });
 
       it('should add an incrementing number to column names when they have the same field and no name', function () {
-        var cols = [
+        grid.options.columnDefs = [
           { field: 'age' },
           { field: 'name' },
           { field: 'name' },
           { field: 'name' }
         ];
-
-        grid.options.columnDefs = cols;
 
         buildCols();
 
@@ -133,14 +127,12 @@ describe('GridColumn factory', function () {
       });
 
       it('should not change the displayNames if they are provided', function () {
-        var cols = [
+        grid.options.columnDefs = [
           { field: 'age' },
           { field: 'name', displayName:'First Name' },
           { field: 'name', displayName:'First Name' },
           { field: 'name', displayName:'First Name' }
         ];
-
-        grid.options.columnDefs = cols;
 
         buildCols();
 
@@ -148,18 +140,15 @@ describe('GridColumn factory', function () {
         expect(grid.columns[1].displayName).toEqual('First Name');
         expect(grid.columns[2].displayName).toEqual('First Name');
         expect(grid.columns[3].displayName).toEqual('First Name');
-
       });
 
       it('should account for existing incremented names', function () {
-        var cols = [
+        grid.options.columnDefs = [
           { field: 'age' },
           { field: 'name' },
           { field: 'name', name: 'name3' },
           { field: 'name' }
         ];
-
-        grid.options.columnDefs = cols;
 
         buildCols();
 
@@ -620,6 +609,29 @@ describe('GridColumn factory', function () {
       expect(updateCol(col, colDef)).toThrow();
       colDef.maxWidth = '#FFF';
       expect(updateCol(col, colDef)).toThrow();
+    });
+
+    describe('displayName', function() {
+      it('should allow the user to set the displayName to an empty string or null value', function() {
+        colDef.displayName = '';
+        col.updateColumnDef(colDef);
+        expect(col.displayName).toEqual('');
+
+        colDef.displayName = null;
+        col.updateColumnDef(colDef);
+        expect(col.displayName).toBeNull();
+      });
+      it('should allow the user to enter whatever displayName they desire', function() {
+        colDef.displayName = 'Test';
+        col.updateColumnDef(colDef);
+        expect(col.displayName).toEqual(colDef.displayName);
+      });
+      it('should generate a displayName based on the name attribute if the user does not define it', function() {
+        colDef.displayName = undefined;
+        colDef.name = 'mockName';
+        col.updateColumnDef(colDef);
+        expect(col.displayName).toEqual('Mock Name');
+      });
     });
 
     describe('cellTooltip', function() {

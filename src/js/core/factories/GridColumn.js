@@ -446,7 +446,9 @@ angular.module('ui.grid')
 
   // Use colDef.displayName as long as it's not undefined, otherwise default to the field name
   function getDisplayName(colDef) {
-    return colDef.displayName || gridUtil.readableColumnName(colDef.name);
+    return (colDef.displayName === undefined)
+      ? gridUtil.readableColumnName(colDef.name)
+      : colDef.displayName;
   }
 
   /**
