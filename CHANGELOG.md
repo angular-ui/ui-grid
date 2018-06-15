@@ -1,3 +1,30 @@
+<a name="4.5.0"></a>
+# [4.5.0](https://github.com/angular-ui/ui-grid/compare/v4.4.11...v4.5.0) (2018-06-15)
+
+
+### Bug Fixes
+
+* **fonts:** Change font files path. ([1bd060c](https://github.com/angular-ui/ui-grid/commit/1bd060c)), closes [#3751](https://github.com/angular-ui/ui-grid/issues/3751)
+* **i18n:** Add missing Danish pinning translations [#6731](https://github.com/angular-ui/ui-grid/issues/6731) ([c14def4](https://github.com/angular-ui/ui-grid/commit/c14def4))
+* **i18n:** Add missing sk translations. ([2d6907f](https://github.com/angular-ui/ui-grid/commit/2d6907f))
+* **selection, expandable:** Add pointer cursor css ([faf332e](https://github.com/angular-ui/ui-grid/commit/faf332e))
+* **ui-grid-menu-button.js:**  Click on the menu button item checkbox … ([#6738](https://github.com/angular-ui/ui-grid/issues/6738)) ([c0d27d1](https://github.com/angular-ui/ui-grid/commit/c0d27d1))
+* **ui-grid.core:** Address resizing issues. ([767e022](https://github.com/angular-ui/ui-grid/commit/767e022))
+
+
+### Features
+
+* **expandable:** Enhance the expandable grid feature. ([ec13255](https://github.com/angular-ui/ui-grid/commit/ec13255))
+* **selection:** Enhance the selection feature ([2485652](https://github.com/angular-ui/ui-grid/commit/2485652))
+
+
+### BREAKING CHANGES
+
+* **fonts:** If you take the new CSS and do not relocate the icon files, your icons will likely cease to
+show in the grid.
+
+
+
 <a name="4.4.11"></a>
 ## [4.4.11](https://github.com/angular-ui/ui-grid/compare/v4.4.9...v4.4.11) (2018-05-16)
 
