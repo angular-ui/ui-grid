@@ -2289,6 +2289,9 @@ angular.module('ui.grid')
     return p.promise;
   };
 
+  function getPrevScrollValue(rowsAdded, prevScrollVal) {
+    return rowsAdded || prevScrollVal > 0 ? prevScrollVal : null;
+  }
 
   /**
    * @ngdoc function
@@ -2304,18 +2307,16 @@ angular.module('ui.grid')
     var self = this;
 
     for (var i in self.renderContainers) {
-      var container = self.renderContainers[i];
+      var container = self.renderContainers[i],
+        prevScrollTop = getPrevScrollValue(rowsAdded, container.prevScrollTop),
+        prevScrollLeft = getPrevScrollValue(rowsAdded, container.prevScrollLeft),
+        prevScrolltopPercentage = rowsAdded || prevScrollTop > 0 ? null : container.prevScrolltopPercentage,
+        prevScrollleftPercentage = rowsAdded || prevScrollLeft > 0 ? null : container.prevScrollleftPercentage;
 
       // gridUtil.logDebug('redrawing container', i);
 
-      if (rowsAdded) {
-        container.adjustRows(container.prevScrollTop, null);
-        container.adjustColumns(container.prevScrollLeft, null);
-      }
-      else {
-        container.adjustRows(null, container.prevScrolltopPercentage);
-        container.adjustColumns(null, container.prevScrollleftPercentage);
-      }
+      container.adjustRows(prevScrollTop, prevScrolltopPercentage);
+      container.adjustColumns(prevScrollLeft, prevScrollleftPercentage);
     }
   };
 
