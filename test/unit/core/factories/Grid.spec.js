@@ -309,8 +309,6 @@ describe('Grid factory', function () {
       grid.createRightContainer();
       expect(grid.renderContainers.right).toBe(right);
     });
-
-
   });
 
   describe('buildColumns', function() {
@@ -1147,6 +1145,75 @@ describe('Grid factory', function () {
     });
   });
 
+  describe('redrawInPlace', function() {
+    beforeEach(function() {
+      grid.renderContainers = {
+        body: {
+          prevScrollTop: 0,
+          prevScrollLeft: 0,
+          prevScrolltopPercentage: 0,
+          prevScrollleftPercentage: 0,
+          adjustRows: jasmine.createSpy('adjustRows'),
+          adjustColumns: jasmine.createSpy('adjustColumns')
+        }
+      };
+    });
+    describe('when rows have been added', function() {
+      beforeEach(function() {
+        grid.renderContainers.body.prevScrollTop = 10;
+        grid.renderContainers.body.prevScrollLeft = 20;
+        grid.redrawInPlace(true);
+      });
+      it('should call adjust rows with null for a scroll percentage and the prevScrollTop value', function() {
+        expect(grid.renderContainers.body.adjustRows).toHaveBeenCalledWith(
+          grid.renderContainers.body.prevScrollTop,
+          null
+        );
+      });
+      it('should call adjust columns with null for a scroll percentage and the prevScrollLeft value', function() {
+        expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
+          grid.renderContainers.body.prevScrollLeft,
+          null
+        );
+      });
+    });
+    describe('when rows have not been added', function() {
+      it('should call adjust rows with null for a scroll percentage and the prevScrollTop value if prevScrollTop is greater than 0', function() {
+        grid.renderContainers.body.prevScrollTop = 10;
+        grid.redrawInPlace(false);
+        expect(grid.renderContainers.body.adjustRows).toHaveBeenCalledWith(
+          grid.renderContainers.body.prevScrollTop,
+          null
+        );
+      });
+      it('should call adjust columns with null for a scroll percentage and the prevScrollLeft value if prevScrollLeft is greater than 0', function() {
+        grid.renderContainers.body.prevScrollLeft = 20;
+        grid.redrawInPlace(false);
+        expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
+          grid.renderContainers.body.prevScrollLeft,
+          null
+        );
+      });
+      it('should call adjust rows with null for a scroll top and the scroll percentage value if prevScrollTop is less or equal to 0', function() {
+        grid.renderContainers.body.prevScrollTop = 0;
+        grid.renderContainers.body.prevScrolltopPercentage = 30;
+        grid.redrawInPlace(false);
+        expect(grid.renderContainers.body.adjustRows).toHaveBeenCalledWith(
+          null,
+          grid.renderContainers.body.prevScrolltopPercentage
+        );
+      });
+      it('should call adjust columns with null for a scroll left and the scroll percentage value if prevScrollLeft is less or equal to 0', function() {
+        grid.renderContainers.body.prevScrollLeft = 0;
+        grid.renderContainers.body.prevScrollleftPercentage = 40;
+        grid.redrawInPlace(false);
+        expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
+          null,
+          grid.renderContainers.body.prevScrollleftPercentage
+        );
+      });
+    });
+  });
 
   describe( 'data change callbacks', function() {
     it('register then deregister data change callback', function() {

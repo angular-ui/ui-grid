@@ -32,7 +32,7 @@
           if ($elm[0].offsetParent !== null) {
             uiGridCtrl.grid.gridWidth = width;
             uiGridCtrl.grid.gridHeight = height;
-            uiGridCtrl.grid.queueRefresh()
+            uiGridCtrl.grid.queueGridRefresh()
               .then(function() {
                 uiGridCtrl.grid.api.core.raise.gridDimensionChanged(prevHeight, prevWidth, height, width);
               });
