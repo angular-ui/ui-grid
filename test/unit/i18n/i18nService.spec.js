@@ -19,6 +19,15 @@ describe('i18nService', function () {
       expect(i18nService.getCurrentLang()).toBe('fr');
       expect(i18nService.get().search.placeholder).toBe('Recherche...');
     });
+    describe('get', function() {
+      it('should return the language passed to it if a language is passed', function() {
+        expect(i18nService.get('fr').search.placeholder).toBe('Recherche...');
+      });
+      it('should the current language no language is passed to it', function() {
+        i18nService.setCurrentLang('en');
+        expect(i18nService.get().search.placeholder).toBe('Search...');
+      });
+    });
     describe('add', function() {
       it('should add a language when langs is a string', function() {
         i18nService.add('tst',{test:'testlang'});
@@ -40,18 +49,58 @@ describe('i18nService', function () {
     });
     it('should return all langs', function() {
       var langs = i18nService.getAllLangs();
+
       expect(langs.length).toBeGreaterThan(8);
     });
+    describe('fallback lang', function() {
+      it('getFallbackLang should default to english when a fallback language is not set', function() {
+        expect(i18nService.getFallbackLang()).toEqual(i18nConstants.DEFAULT_LANG);
+      });
+      it('getFallbackLang should return the user set language when the user calls setFallbackLang', function() {
+        var fallback = 'es';
 
+        i18nService.setFallbackLang(fallback);
+        expect(i18nService.getFallbackLang()).toEqual(fallback);
+      });
+      it('getFallbackLang should return english when the user calls setFallbackLang with an empty string', function() {
+        var fallback = '';
+
+        i18nService.setFallbackLang(fallback);
+        expect(i18nService.getFallbackLang()).toEqual(i18nConstants.DEFAULT_LANG);
+      });
+    });
     describe('getSafeText', function() {
+      beforeEach(function() {
+        i18nService.setCurrentLang('en');
+        i18nService.setFallbackLang('en');
+      });
       it('should get safe text when text is defined', function() {
         expect(i18nService.getSafeText('search.placeholder')).toBe('Search...');
       });
-      it('should get safe text for missing property', function() {
-        expect(i18nService.getSafeText('search.bad.text')).toBe('[MISSING]');
+      it('should get missing text for missing property', function() {
+        var badText = 'search.bad.text';
+
+        expect(i18nService.getSafeText(badText)).toBe(i18nConstants.MISSING + badText);
       });
-      it('should get missing text when language is missing or nonexistent', function() {
-        expect(i18nService.getSafeText('search.placeholder', 'valerian')).toBe(i18nConstants.MISSING);
+      it('should get fallback text when language is missing or nonexistent', function() {
+        expect(i18nService.getSafeText('search.placeholder', 'valerian')).toBe('Search...');
+      });
+      it('should get missing text when language is missing or nonexistent and there is no fallback', function() {
+        var badText = 'bad.text';
+
+        expect(i18nService.getSafeText(badText, 'valerian')).toBe(i18nConstants.MISSING + badText);
+      });
+      it('should get missing text when language is missing or nonexistent and the fallback language is the same', function() {
+        var missingProperty = 'search.placeholder';
+
+        i18nService.setFallbackLang('valerian');
+        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe(i18nConstants.MISSING + missingProperty);
+      });
+      it('should get missing text when language is missing or nonexistent and the fallback language is also missing it', function() {
+        var missingProperty = 'search.placeholder';
+
+        i18nService.setFallbackLang('orcish');
+        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe(i18nConstants.MISSING + missingProperty);
       });
     });
   });

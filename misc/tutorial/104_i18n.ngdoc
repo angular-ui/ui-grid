@@ -59,13 +59,20 @@ support. By default ui-grid.base.js will contain just the english language, in o
   </file>
   <file name="index.html">
     <div ng-controller="MainCtrl as $ctrl">
-      <select id="langDropdown" ng-model="$ctrl.lang" ng-options="l for l in $ctrl.langs"></select><br>
+      <select id="langDropdown" ng-model="$ctrl.lang" ng-options="l for l in $ctrl.langs"></select>
+      <br />
 
       <div ui-i18n="{{$ctrl.lang}}">
-         <p>Using attribute:</p>
+         <h2>Using attribute:</h2>
          <p ui-t="groupPanel.description"></p>
-         <br/>
-         <p>Using Filter:</p>
+
+         <h2>Using attribute 2:</h2>
+         <p ui-translate>groupPanel.description</p>
+
+         <h2>Using Filter that updates with language:</h2>
+         <p>{{"groupPanel.description" | t:$ctrl.lang}}</p>
+
+         <h2>Using Filter that does not update after load:</h2>
          <p>{{"groupPanel.description" | t}}</p>
 
          <p>Click the header menu to see language.</p>
