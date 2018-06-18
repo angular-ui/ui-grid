@@ -82,7 +82,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error.message).toEqual('Row render container \'mock\' is not registered.');
+					expect(error.message).toEqual('Row render container "mock" is not registered.');
 					grid.remove();
 					done();
 				}
@@ -93,7 +93,7 @@
 				try {
 					recompile();
 				} catch (error) {
-					expect(error.message).toEqual('Column render container \'mock\' is not registered.');
+					expect(error.message).toEqual('Column render container "mock" is not registered.');
 					grid.remove();
 					done();
 				}
