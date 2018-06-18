@@ -1,3 +1,13 @@
+<a name="4.5.1"></a>
+## [4.5.1](https://github.com/angular-ui/ui-grid/compare/v4.5.0...v4.5.1) (2018-06-18)
+
+
+### Bug Fixes
+
+* **fonts:** Add missing fonts folder to release ([544a483](https://github.com/angular-ui/ui-grid/commit/544a483)), closes [#6759](https://github.com/angular-ui/ui-grid/issues/6759)
+
+
+
 <a name="4.5.0"></a>
 # [4.5.0](https://github.com/angular-ui/ui-grid/compare/v4.4.11...v4.5.0) (2018-06-15)
 
