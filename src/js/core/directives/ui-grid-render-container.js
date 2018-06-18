@@ -23,46 +23,46 @@
       compile: function () {
         return {
           pre: function prelink($scope, $elm, $attrs, controllers) {
-
-            var uiGridCtrl = controllers[0];
-            var containerCtrl = controllers[1];
-            var grid = $scope.grid = uiGridCtrl.grid;
+            var rowContainer, colContainer, gridContainerPrefix,
+              uiGridCtrl = controllers[0],
+              containerCtrl = controllers[1],
+              grid = $scope.grid = uiGridCtrl.grid,
+              gridContainerId = 'grid-container';
 
             // Verify that the render container for this element exists
             if (!$scope.rowContainerName) {
-              throw new Error("No row render container name specified");
+              throw new Error('No row render container name specified');
             }
             if (!$scope.colContainerName) {
-              throw new Error("No column render container name specified");
+              throw new Error('No column render container name specified');
             }
 
             if (!grid.renderContainers[$scope.rowContainerName]) {
-              throw new Error("Row render container '" + $scope.rowContainerName + "' is not registered.");
+              throw new Error('Row render container "' + $scope.rowContainerName + '" is not registered.');
             }
             if (!grid.renderContainers[$scope.colContainerName]) {
-              throw new Error("Column render container '" + $scope.colContainerName + "' is not registered.");
+              throw new Error('Column render container "' + $scope.colContainerName + '" is not registered.');
             }
 
-            var rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];
-            var colContainer = $scope.colContainer = grid.renderContainers[$scope.colContainerName];
+            rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];
+            colContainer = $scope.colContainer = grid.renderContainers[$scope.colContainerName];
+            gridContainerPrefix = $scope.containerId !== 'body' ? $scope.containerId + '-' : '';
 
+            containerCtrl.gridContainerId = gridContainerPrefix + gridContainerId;
             containerCtrl.containerId = $scope.containerId;
             containerCtrl.rowContainer = rowContainer;
             containerCtrl.colContainer = colContainer;
+            containerCtrl.grid = grid;
           },
           post: function postlink($scope, $elm, $attrs, controllers) {
-
-            var uiGridCtrl = controllers[0];
-            var containerCtrl = controllers[1];
-
-            var grid = uiGridCtrl.grid;
-            var rowContainer = containerCtrl.rowContainer;
-            var colContainer = containerCtrl.colContainer;
-            var scrollTop = null;
-            var scrollLeft = null;
-
-
-            var renderContainer = grid.renderContainers[$scope.containerId];
+            var uiGridCtrl = controllers[0],
+              containerCtrl = controllers[1],
+              grid = uiGridCtrl.grid,
+              rowContainer = containerCtrl.rowContainer,
+              colContainer = containerCtrl.colContainer,
+              scrollTop = null,
+              scrollLeft = null,
+              renderContainer = grid.renderContainers[$scope.containerId];
 
             // Put the container name on this element as a class
             $elm.addClass('ui-grid-render-container-' + $scope.containerId);
@@ -120,9 +120,10 @@
             });
 
             $elm.bind('$destroy', function() {
-              $elm.unbind('keydown');
+              var eventsToUnbind = ['touchstart', 'touchmove', 'touchend','keydown', 'wheel', 'mousewheel',
+                'DomMouseScroll', 'MozMousePixelScroll'];
 
-              ['touchstart', 'touchmove', 'touchend','keydown', 'wheel', 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll'].forEach(function (eventName) {
+              eventsToUnbind.forEach(function(eventName) {
                 $elm.unbind(eventName);
               });
             });
@@ -152,9 +153,11 @@
               headerViewportWidth = footerViewportWidth = colContainer.getHeaderViewportWidth();
 
               // Set canvas dimensions
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-canvas { width: ' + canvasWidth + 'px; height: ' + canvasHeight + 'px; }';
 
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { width: ' + (canvasWidth + grid.scrollbarWidth) + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-header-canvas { width: ' + (canvasWidth + grid.scrollbarWidth) + 'px; }';
 
               if (renderContainer.explicitHeaderCanvasHeight) {
                 // get height from body container
@@ -165,22 +168,23 @@
                   renderContainer.explicitHeaderCanvasHeight = reHCHeight.offsetHeight;
                 }
 
-                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId +
-                  ' .ui-grid-header-canvas { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
+                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                  + ' .ui-grid-header-canvas { height: ' + renderContainer.explicitHeaderCanvasHeight + 'px; }';
               }
               else {
-                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId + ' .ui-grid-header-canvas { height: inherit; }';
+                ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                  + ' .ui-grid-header-canvas { height: inherit; }';
               }
   
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId +
-                ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId +
-                ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-viewport { width: ' + viewportWidth + 'px; height: ' + viewportHeight + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-header-viewport { width: ' + headerViewportWidth + 'px; }';
 
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId +
-                ' .ui-grid-footer-canvas { width: ' + (canvasWidth + grid.scrollbarWidth) + 'px; }';
-              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId +
-                ' .ui-grid-footer-viewport { width: ' + footerViewportWidth + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-footer-canvas { width: ' + (canvasWidth + grid.scrollbarWidth) + 'px; }';
+              ret += '\n .grid' + uiGridCtrl.grid.id + ' .ui-grid-render-container-' + $scope.containerId
+                + ' .ui-grid-footer-viewport { width: ' + footerViewportWidth + 'px; }';
 
               return ret;
             }
