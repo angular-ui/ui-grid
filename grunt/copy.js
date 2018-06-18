@@ -46,6 +46,16 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    fonts_cut_release: {
+      files: [
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/fonts',
+          src: '**/*',
+          dest: '<%= dist %>/release/' + currentTag + '/fonts'
+        }
+      ]
+    },
     i18n_cut_release: {
       files: [
         {
