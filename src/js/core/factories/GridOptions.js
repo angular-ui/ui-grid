@@ -317,11 +317,13 @@ angular.module('ui.grid')
        * Defaults to 4
        */
       baseOptions.excessRows = typeof(baseOptions.excessRows) !== "undefined" ? baseOptions.excessRows : 4;
+
       /**
        * @ngdoc property
        * @name scrollThreshold
        * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 4
+       * @description Throttles the grid scrolling by the amount of rows set, which helps with smoothness of scrolling.
+       * Defaults to 4.
        */
       baseOptions.scrollThreshold = typeof(baseOptions.scrollThreshold) !== "undefined" ? baseOptions.scrollThreshold : 4;
 
@@ -333,14 +335,6 @@ angular.module('ui.grid')
        * Defaults to 4
        */
       baseOptions.excessColumns = typeof(baseOptions.excessColumns) !== "undefined" ? baseOptions.excessColumns : 4;
-      /**
-       * @ngdoc property
-       * @name horizontalScrollThreshold
-       * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 4
-       */
-      baseOptions.horizontalScrollThreshold = typeof(baseOptions.horizontalScrollThreshold) !== "undefined" ? baseOptions.horizontalScrollThreshold : 2;
-
 
       /**
        * @ngdoc property
