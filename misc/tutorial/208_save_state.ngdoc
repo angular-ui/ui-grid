@@ -39,6 +39,7 @@ default:
 - saveVisible
 - saveSort
 - saveFilter
+- savePagination
 - savePinning
 - saveGrouping
 - saveGroupingExpandedStates
