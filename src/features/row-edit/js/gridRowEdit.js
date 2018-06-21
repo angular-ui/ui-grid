@@ -156,10 +156,11 @@
                  * @methodOf ui.grid.rowEdit.api:PublicApi
                  * @name setRowsDirty
                  * @description Sets each of the rows passed in dataRows
-                 * to be dirty.  note that if you have only just inserted the
+                 * to be dirty. Note that if you have only just inserted the
                  * rows into your data you will need to wait for a $digest cycle
                  * before the gridRows are present - so often you would wrap this
-                 * call in a $interval or $timeout
+                 * call in a $interval or $timeout. Also, you must pass row.entity
+                 * into this function rather than row objects themselves.
                  * <pre>
                  *      $interval( function() {
                  *        gridApi.rowEdit.setRowsDirty(myDataRows);

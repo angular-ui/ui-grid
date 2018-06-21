@@ -302,7 +302,7 @@ angular.module('ui.grid')
   * - direction: values are {@link ui.grid.service:uiGridConstants#properties_ASC uiGridConstants.ASC}
   *  or {@link ui.grid.service:uiGridConstants#properties_DESC uiGridConstants.DESC}
   * - ignoreSort: if set to true this sort is ignored (used by tree to manipulate the sort functionality)
-  * - priority: says what order to sort the columns in (lower priority gets sorted first).
+  * - priority: says what order to sort the columns in (lower priority gets sorted first). Starts from 0.
   * @example
   * <pre>
   *   $scope.gridOptions.columnDefs = [{

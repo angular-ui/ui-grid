@@ -216,13 +216,19 @@ angular.module('ui.grid')
        */
       baseOptions.showHeader = typeof(baseOptions.showHeader) !== "undefined" ? baseOptions.showHeader : true;
 
-      /* (NOTE): Don't show this in the docs. We only use it internally
+      /**
        * @ngdoc property
        * @name headerRowHeight
        * @propertyOf ui.grid.class:GridOptions
-       * @description The height of the header in pixels, defaults to 30
+       * @description The height of the header in pixels, defaults to 30.
+       * Although, we recommend that you alter header height with CSS rather than using this option:
        *
-       */
+       * <pre>
+       *     .grid .ui-grid-header-cell {
+       *         height: 60px;
+       *     }
+       * </pre>
+       **/
       if (!baseOptions.showHeader) {
         baseOptions.headerRowHeight = 0;
       }
