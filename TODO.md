@@ -95,16 +95,11 @@
 1. [TODO] - Make HOME and END keys scroll to top/bottom if grid has focus...
 1. [IDEA] - Can we deselect any selected text when the grid is scrolled?
 1. [TODO] - Make row builders async with $q
-1. [TODO] - Make plnkr/jsfiddle ngdocs buttons work
 1. [TODO] - Remove IE11 cell selected weird green color...
 1. [IDEA] - Add gridOptions.options for all opts, and deep watch it then rebuild
 1. [IDEA] - Add version number to uiGrid module.
 
 1. [IDEA] - Might need to make dragging and reordering columns watch for a minimum pixel delta before starting drag, so it doesn't always cancel long-clicks
-1. [BUG] - Grid not redrawing properly when switching between tutorials. It still has the grid body height from the previous tutorial.
-   1. This is due to a combination of grunt-ngdocs and ngAnimate. ngAnimate is leaving two "page" (or whatever) elements on the page at the
-      same time. Both have a main.css which include styles for the grid. Having the old one on there at the same time as the new one makes
-      it use the height from the old one when calculating the grid height... *** Can we switch to Dgeni? ***
 1. [BUG] - Menu icon overlays menu text when column name is too long...
    1. [IDEA] - Can we shrink the size of the header-cell-contents div and make it text-overflow: ellipsis?
 1. [TOFIX] - Menu icon vertical alignment off in IE11 (how does it look in FF?)
@@ -123,16 +118,6 @@
 
 1. [TODO] - Add "master" grid menu that overlays the whole grid when open (should have a decent-size padding that leaves and overlay with high opacity).
 1. [TODO] - Make a master grid menu button using the font-awesome menu icon (add to fontello conf) that lives... somewhere... that won't move when columns scroll...
-
-# Cleanup
-
-1. [TODO] - Rename tutorials so they're consistent
-1. [TODO] - Re-order tutorials
-1. [TODO] - Build a tutorial index page.
-1. [TODO] - Remove commented-out dumps from gridUtil
-1. [TODO] - Rename gridUtil to uiGridUtil
-1. [TODO] - Rename GridUtil in uiGridBody to gridUtil or the above
-1. [TODO] - Move uiGridCell to its own file
 
 # Extras
 
