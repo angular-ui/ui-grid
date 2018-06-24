@@ -4,6 +4,8 @@
   "disallowSpaceBeforeBinaryOperators": [
     ","
   ],
+  "disallowTrailingWhitespace": true,
+  "requireLineFeedAtFileEnd": true,
   "requireSpaceBeforeBinaryOperators": [
     "=",
     "==",
@@ -17,8 +19,11 @@
     "afterConsequent": true,
     "beforeAlternate": true
   },
+  "requireSpaceBeforeObjectValues": true,
+  "requireSpaceBeforeBlockStatements": true,
   "requireCurlyBraces": ["if", "else", "for", "while", "do", "try", "catch"],
   "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
+  "requireSpaceAfterLineComment": true,
   "disallowSpacesInNamedFunctionExpression": {
     "beforeOpeningRoundBrace": true
   },
@@ -26,5 +31,7 @@
   "disallowMixedSpacesAndTabs": true,
   "disallowTrailingComma": true,
   "disallowYodaConditions": true,
-  "disallowNewlineBeforeBlockStatements": true
+  "disallowNewlineBeforeBlockStatements": true,
+  "validateLineBreaks": "LF",
+  "validateParameterSeparator": ", "
 }

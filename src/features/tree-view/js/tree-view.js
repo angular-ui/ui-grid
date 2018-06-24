@@ -99,7 +99,7 @@
       },
 
       defaultGridOptions: function (gridOptions) {
-        //default option to true unless it was explicitly set to false
+        // default option to true unless it was explicitly set to false
         /**
          *  @ngdoc object
          *  @name ui.grid.treeView.api:GridOptions
@@ -141,19 +141,17 @@
       adjustSorting: function( renderableRows ) {
         var grid = this;
 
-        grid.columns.forEach( function( column ){
-          if ( column.sort ){
+        grid.columns.forEach( function( column ) {
+          if ( column.sort ) {
             column.sort.ignoreSort = true;
           }
         });
 
         return renderableRows;
       }
-
     };
 
     return service;
-
   }]);
 
   /**
@@ -200,7 +198,7 @@
       compile: function () {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-            if (uiGridCtrl.grid.options.enableTreeView !== false){
+            if (uiGridCtrl.grid.options.enableTreeView !== false) {
               uiGridTreeViewService.initializeGrid(uiGridCtrl.grid, $scope);
             }
           },

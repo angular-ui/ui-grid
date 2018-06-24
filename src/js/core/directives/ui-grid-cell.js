@@ -1,5 +1,5 @@
 angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUtil', 'uiGridConstants', function ($compile, $parse, gridUtil, uiGridConstants) {
-  var uiGridCell = {
+  return {
     priority: 0,
     scope: false,
     require: '?^uiGrid',
@@ -18,11 +18,10 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
           if (uiGridCtrl && $scope.col.compiledElementFn) {
              compileTemplate();
           }
+
           // No controller, compile the element manually (for unit tests)
           else {
-            if ( uiGridCtrl && !$scope.col.compiledElementFn ){
-              // gridUtil.logError('Render has been called before precompile.  Please log a ui-grid issue');  
-
+            if ( uiGridCtrl && !$scope.col.compiledElementFn ) {
               $scope.col.getCompiledElementFn()
                 .then(function (compiledElementFn) {
                   compiledElementFn($scope, function(clonedElement, scope) {
@@ -40,14 +39,16 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
             }
           }
         },
-        post: function($scope, $elm, $attrs, uiGridCtrl) {
-          var initColClass = $scope.col.getColClass(false);
+        post: function($scope, $elm) {
+          var initColClass = $scope.col.getColClass(false),
+            classAdded;
+
           $elm.addClass(initColClass);
 
-          var classAdded;
-          var updateClass = function( grid ){
+          function updateClass( grid ) {
             var contents = $elm;
-            if ( classAdded ){
+
+            if ( classAdded ) {
               contents.removeClass( classAdded );
               classAdded = null;
             }
@@ -59,53 +60,46 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
               classAdded = $scope.col.cellClass;
             }
             contents.addClass(classAdded);
-          };
+          }
 
           if ($scope.col.cellClass) {
             updateClass();
           }
-          
+
           // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
           var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN, uiGridConstants.dataChange.EDIT]);
-          
+
           // watch the col and row to see if they change - which would indicate that we've scrolled or sorted or otherwise
           // changed the row/col that this cell relates to, and we need to re-evaluate cell classes and maybe other things
-          var cellChangeFunction = function( n, o ){
+          function cellChangeFunction( n, o ) {
             if ( n !== o ) {
-              if ( classAdded || $scope.col.cellClass ){
+              if ( classAdded || $scope.col.cellClass ) {
                 updateClass();
               }
 
               // See if the column's internal class has changed
               var newColClass = $scope.col.getColClass(false);
+
               if (newColClass !== initColClass) {
                 $elm.removeClass(initColClass);
                 $elm.addClass(newColClass);
                 initColClass = newColClass;
               }
             }
-          };
+          }
 
           // TODO(c0bra): Turn this into a deep array watch
-/*        shouldn't be needed any more given track by col.name
-          var colWatchDereg = $scope.$watch( 'col', cellChangeFunction );
-*/
           var rowWatchDereg = $scope.$watch( 'row', cellChangeFunction );
-          
-          
-          var deregisterFunction = function() {
+
+          function deregisterFunction() {
             dataChangeDereg();
-//            colWatchDereg();
-            rowWatchDereg(); 
-          };
-          
-          $scope.$on( '$destroy', deregisterFunction );
-          $elm.on( '$destroy', deregisterFunction );
+            rowWatchDereg();
+          }
+
+          $scope.$on('$destroy', deregisterFunction);
+          $elm.on('$destroy', deregisterFunction);
         }
       };
     }
   };
-
-  return uiGridCell;
 }]);
-

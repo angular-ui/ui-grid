@@ -1,4 +1,4 @@
-(function(){
+(function() {
 // 'use strict';
 
   /**
@@ -40,15 +40,7 @@
 
   angular.module('ui.grid').directive('uiGridStyle', ['gridUtil', '$interpolate', function(gridUtil, $interpolate) {
     return {
-      // restrict: 'A',
-      // priority: 1000,
-      // require: '?^uiGrid',
-      link: function($scope, $elm, $attrs, uiGridCtrl) {
-        // gridUtil.logDebug('ui-grid-style link');
-        // if (uiGridCtrl === undefined) {
-        //    gridUtil.logWarn('[ui-grid-style link] uiGridCtrl is undefined!');
-        // }
-
+      link: function($scope, $elm) {
         var interpolateFn = $interpolate($elm.text(), true);
 
         if (interpolateFn) {
@@ -56,25 +48,7 @@
             $elm.text(value);
           });
         }
-
-          // uiGridCtrl.recalcRowStyles = function() {
-          //   var offset = (scope.options.offsetTop || 0) - (scope.options.excessRows * scope.options.rowHeight);
-          //   var rowHeight = scope.options.rowHeight;
-
-          //   var ret = '';
-          //   var rowStyleCount = uiGridCtrl.minRowsToRender() + (scope.options.excessRows * 2);
-          //   for (var i = 1; i <= rowStyleCount; i++) {
-          //     ret = ret + ' .grid' + scope.gridId + ' .ui-grid-row:nth-child(' + i + ') { top: ' + offset + 'px; }';
-          //     offset = offset + rowHeight;
-          //   }
-
-          //   scope.rowStyles = ret;
-          // };
-
-          // uiGridCtrl.styleComputions.push(uiGridCtrl.recalcRowStyles);
-
       }
     };
   }]);
-
 })();

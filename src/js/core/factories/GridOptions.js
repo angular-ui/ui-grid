@@ -1,7 +1,6 @@
-  (function(){
-
+(function() {
 angular.module('ui.grid')
-.factory('GridOptions', ['gridUtil','uiGridConstants', function(gridUtil,uiGridConstants) {
+.factory('GridOptions', ['gridUtil','uiGridConstants', function(gridUtil, uiGridConstants) {
 
   /**
    * @ngdoc function
@@ -25,8 +24,8 @@ angular.module('ui.grid')
    * To provide default options for all of the grids within your application, use an angular
    * decorator to modify the GridOptions factory.
    * <pre>
-   * app.config(function($provide){
-   *   $provide.decorator('GridOptions',function($delegate){
+   * app.config(function($provide) {
+   *   $provide.decorator('GridOptions',function($delegate) {
    *     var gridOptions;
    *     gridOptions = angular.copy($delegate);
    *     gridOptions.initialize = function(options) {
@@ -41,7 +40,7 @@ angular.module('ui.grid')
    * </pre>
    */
   return {
-    initialize: function( baseOptions ){
+    initialize: function( baseOptions ) {
       /**
        * @ngdoc function
        * @name onRegisterApi
@@ -114,7 +113,7 @@ angular.module('ui.grid')
        * </br>_field property can be used in place of name for backwards compatibility with 2.x_
        *  @example
        *
-       * <pre>var columnDefs = [{name:'field1'}, {name:'field2'}];</pre>
+       * <pre>var columnDefs = [{name: 'field1'}, {name: 'field2'}];</pre>
        *
        */
       baseOptions.columnDefs = baseOptions.columnDefs || [];
@@ -125,7 +124,7 @@ angular.module('ui.grid')
        * @description Definition / configuration of an individual column, which would typically be
        * one of many column definitions within the gridOptions.columnDefs array
        * @example
-       * <pre>{name:'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
+       * <pre>{name: 'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
        *
        */
 
@@ -534,8 +533,5 @@ angular.module('ui.grid')
       return baseOptions;
     }
   };
-
-
 }]);
-
 })();

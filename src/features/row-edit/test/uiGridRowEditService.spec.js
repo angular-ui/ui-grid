@@ -305,7 +305,6 @@ describe('ui.grid.edit uiGridRowEditService', function () {
     });
   });
 
-
   describe( 'saveRow and promises: ', function() {
     beforeEach( function() {
       uiGridRowEditService.initializeGrid( $scope, grid );
@@ -320,7 +319,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
       grid.rows[0].isError = true;
       grid.rowEdit.dirtyRows = [ grid.rows[0] ];
       grid.rowEdit.errorRows = [ grid.rows[0] ];
-      grid.api.rowEdit.on.saveRow( $scope, function(){
+      grid.api.rowEdit.on.saveRow( $scope, function() {
         grid.api.rowEdit.setSavePromise( grid.options.data[0], promise.promise);
       });
 
@@ -350,7 +349,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
 
       grid.rows[0].isDirty = true;
       grid.rowEdit.dirtyRows = [ grid.rows[0] ];
-      grid.api.rowEdit.on.saveRow( $scope, function(){
+      grid.api.rowEdit.on.saveRow( $scope, function() {
         grid.api.rowEdit.setSavePromise( grid.options.data[0], promise.promise);
       });
 
@@ -396,7 +395,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
 
       grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
 
-      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
+      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ) {
         grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
         promiseCounter++;
       });
@@ -441,7 +440,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
 
       grid.rowEdit.dirtyRows = [ grid.rows[0] ];
 
-      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
+      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ) {
         grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
         promiseCounter++;
       });
@@ -482,7 +481,7 @@ describe('ui.grid.edit uiGridRowEditService', function () {
 
       grid.rowEdit.dirtyRows = [ grid.rows[0], grid.rows[2], grid.rows[3] ];
 
-      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ){
+      grid.api.rowEdit.on.saveRow( $scope, function( rowEntity ) {
         grid.api.rowEdit.setSavePromise( rowEntity, promises[promiseCounter].promise);
         promiseCounter++;
       });

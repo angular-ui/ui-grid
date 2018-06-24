@@ -76,10 +76,10 @@
        *  @methodOf  ui.grid.class:ScrollEvent
        *  @description returns newScrollLeft property if available; calculates a new value if it isn't
        */
-      ScrollEvent.prototype.getNewScrollLeft = function(colContainer, viewport){
+      ScrollEvent.prototype.getNewScrollLeft = function(colContainer, viewport) {
         var self = this;
 
-        if (!self.newScrollLeft){
+        if (!self.newScrollLeft) {
           var scrollWidth = (colContainer.getCanvasWidth() - colContainer.getViewportWidth());
 
           var oldScrollLeft = gridUtil.normalizeScrollLeft(viewport, self.grid);
@@ -108,11 +108,11 @@
        *  @methodOf  ui.grid.class:ScrollEvent
        *  @description returns newScrollTop property if available; calculates a new value if it isn't
        */
-      ScrollEvent.prototype.getNewScrollTop = function(rowContainer, viewport){
+      ScrollEvent.prototype.getNewScrollTop = function(rowContainer, viewport) {
         var self = this;
 
 
-        if (!self.newScrollTop){
+        if (!self.newScrollTop) {
           var scrollLength = rowContainer.getVerticalScrollLength();
 
           var oldScrollTop = viewport[0].scrollTop;

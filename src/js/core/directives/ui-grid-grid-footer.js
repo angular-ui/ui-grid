@@ -1,38 +1,30 @@
-(function () {
-  'use strict';
+(function() {
+	'use strict';
 
-  angular.module('ui.grid').directive('uiGridGridFooter', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', function ($templateCache, $compile, uiGridConstants, gridUtil, $timeout) {
+	angular.module('ui.grid').directive('uiGridGridFooter', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil',
+		function($templateCache, $compile, uiGridConstants, gridUtil) {
+			return {
+				restrict: 'EA',
+				replace: true,
+				require: '^uiGrid',
+				scope: true,
+				compile: function() {
+					return {
+						pre: function($scope, $elm, $attrs, uiGridCtrl) {
+							$scope.grid = uiGridCtrl.grid;
 
-    return {
-      restrict: 'EA',
-      replace: true,
-      // priority: 1000,
-      require: '^uiGrid',
-      scope: true,
-      compile: function ($elm, $attrs) {
-        return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+							var footerTemplate = $scope.grid.options.gridFooterTemplate;
 
-            $scope.grid = uiGridCtrl.grid;
+							gridUtil.getTemplate(footerTemplate)
+								.then(function(contents) {
+									var template = angular.element(contents),
+										newElm = $compile(template)($scope);
 
-
-
-            var footerTemplate = $scope.grid.options.gridFooterTemplate;
-            gridUtil.getTemplate(footerTemplate)
-              .then(function (contents) {
-                var template = angular.element(contents);
-
-                var newElm = $compile(template)($scope);
-                $elm.append(newElm);
-              }).catch(angular.noop);
-          },
-
-          post: function ($scope, $elm, $attrs, controllers) {
-
-          }
-        };
-      }
-    };
-  }]);
-
+									$elm.append(newElm);
+								}).catch(angular.noop);
+						}
+					};
+				}
+			};
+		}]);
 })();

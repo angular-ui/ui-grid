@@ -18,7 +18,7 @@ describe('GridRow factory', function () {
     var grid;
     var entity;
     beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _gridUtil_) {
-      grid = new Grid({id:'a'});
+      grid = new Grid({id: 'a'});
 
       entity = {
         simpleProp: 'simpleProp',
@@ -34,7 +34,7 @@ describe('GridRow factory', function () {
     it('binds correctly to row.entity', function() {
       var gridRow = new GridRow(entity,0,grid);
       var col = {
-        field:'simpleProp'
+        field: 'simpleProp'
       };
       expect(gridRow.getQualifiedColField(col)).toBe('row.entity[\'simpleProp\']');
     });
@@ -61,7 +61,7 @@ describe('GridRow factory', function () {
 
       grid.options.columnDefs = [{ field: 'col1' }];
       for (var i = 0; i < 10; i++) {
-        grid.options.data.push({col1:'a_' + i});
+        grid.options.data.push({col1: 'a_' + i});
       }
 
       grid.buildColumns();
@@ -136,7 +136,7 @@ describe('GridRow factory', function () {
 
       grid.options.columnDefs = [{ field: 'col1' }];
       for (var i = 0; i < 10; i++) {
-        grid.options.data.push({col1:'a_' + i});
+        grid.options.data.push({col1: 'a_' + i});
       }
 
       grid.buildColumns();

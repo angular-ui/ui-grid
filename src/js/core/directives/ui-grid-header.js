@@ -1,41 +1,39 @@
-(function(){
+(function() {
   'use strict';
 
   angular.module('ui.grid').directive('uiGridHeader', ['$templateCache', '$compile', 'uiGridConstants', 'gridUtil', '$timeout', 'ScrollEvent',
     function($templateCache, $compile, uiGridConstants, gridUtil, $timeout, ScrollEvent) {
-    var defaultTemplate = 'ui-grid/ui-grid-header';
-    var emptyTemplate = 'ui-grid/ui-grid-no-header';
+    var defaultTemplate = 'ui-grid/ui-grid-header',
+      emptyTemplate = 'ui-grid/ui-grid-no-header';
 
     return {
       restrict: 'EA',
-      // templateUrl: 'ui-grid/ui-grid-header',
       replace: true,
-      // priority: 1000,
       require: ['^uiGrid', '^uiGridRenderContainer'],
       scope: true,
-      compile: function($elm, $attrs) {
+      compile: function() {
         return {
           pre: function ($scope, $elm, $attrs, controllers) {
-            var uiGridCtrl = controllers[0];
-            var containerCtrl = controllers[1];
+            var uiGridCtrl = controllers[0],
+              containerCtrl = controllers[1];
 
             $scope.grid = uiGridCtrl.grid;
             $scope.colContainer = containerCtrl.colContainer;
 
             updateHeaderReferences();
-            
+
             var headerTemplate;
             if (!$scope.grid.options.showHeader) {
               headerTemplate = emptyTemplate;
             }
             else {
-              headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;            
+              headerTemplate = ($scope.grid.options.headerTemplate) ? $scope.grid.options.headerTemplate : defaultTemplate;
             }
 
             gridUtil.getTemplate(headerTemplate)
               .then(function (contents) {
                 var template = angular.element(contents);
-                
+
                 var newElm = $compile(template)($scope);
                 $elm.replaceWith(newElm);
 
@@ -74,7 +72,7 @@
               }
             }
 
-            function scrollHandler(evt) {
+            function scrollHandler() {
               if (uiGridCtrl.grid.isScrollingHorizontally) {
                 return;
               }
@@ -83,7 +81,7 @@
 
               var scrollEvent = new ScrollEvent(uiGridCtrl.grid, null, containerCtrl.colContainer, ScrollEvent.Sources.ViewPortScroll);
               scrollEvent.newScrollLeft = newScrollLeft;
-              if ( horizScrollPercentage > -1 ){
+              if ( horizScrollPercentage > -1 ) {
                 scrollEvent.x = { percentage: horizScrollPercentage };
               }
 
@@ -107,7 +105,7 @@
               // already being populated correctly
 
               var columnCache = containerCtrl.colContainer.visibleColumnCache;
-              
+
               // Build the CSS
               // uiGridCtrl.grid.columns.forEach(function (column) {
               var ret = '';
@@ -118,19 +116,19 @@
               });
 
               containerCtrl.colContainer.canvasWidth = canvasWidth;
-              
+
               // Return the styles back to buildStyles which pops them into the `customStyles` scope variable
               return ret;
             }
-            
+
             containerCtrl.header = $elm;
-            
+
             var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
             if (headerViewport) {
               containerCtrl.headerViewport = headerViewport;
             }
 
-            //todo: remove this if by injecting gridCtrl into unit tests
+            // todo: remove this if by injecting gridCtrl into unit tests
             if (uiGridCtrl) {
               uiGridCtrl.grid.registerStyleComputation({
                 priority: 15,
@@ -142,5 +140,4 @@
       }
     };
   }]);
-
 })();

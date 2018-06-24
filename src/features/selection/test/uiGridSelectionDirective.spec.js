@@ -66,7 +66,7 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
   it('should add cellFocus to the row header columnDef"', function() {
     for (var i = 0; i < gridCtrl.grid.columns.length; i++) {
       var currentCol = gridCtrl.grid.columns[i];
-      if (currentCol.name === "selectionRowHeaderCol"){
+      if (currentCol.name === "selectionRowHeaderCol") {
         expect(currentCol.colDef.allowCellFocus).toBe(true);
       }
     }

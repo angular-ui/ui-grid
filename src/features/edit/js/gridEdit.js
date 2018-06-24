@@ -30,7 +30,7 @@
    */
   module.constant('uiGridEditConstants', {
     EDITABLE_CELL_TEMPLATE: /EDITABLE_CELL_TEMPLATE/g,
-    //must be lowercase because template bulder converts to lower
+    // must be lowercase because template bulder converts to lower
     EDITABLE_CELL_DIRECTIVE: /editable_cell_directive/g,
     events: {
       BEGIN_CELL_EDIT: 'uiGridEventBeginCellEdit',
@@ -72,7 +72,7 @@
                  * @eventOf  ui.grid.edit.api:PublicApi
                  * @description raised when cell editing is complete
                  * <pre>
-                 *      gridApi.edit.on.afterCellEdit(scope,function(rowEntity, colDef){})
+                 *      gridApi.edit.on.afterCellEdit(scope,function(rowEntity, colDef) {})
                  * </pre>
                  * @param {object} rowEntity the options.data element that was edited
                  * @param {object} colDef the column that was edited
@@ -87,7 +87,7 @@
                  * @eventOf  ui.grid.edit.api:PublicApi
                  * @description raised when cell editing starts on a cell
                  * <pre>
-                 *      gridApi.edit.on.beginCellEdit(scope,function(rowEntity, colDef){})
+                 *      gridApi.edit.on.beginCellEdit(scope,function(rowEntity, colDef) {})
                  * </pre>
                  * @param {object} rowEntity the options.data element that was edited
                  * @param {object} colDef the column that was edited
@@ -102,7 +102,7 @@
                  * @eventOf  ui.grid.edit.api:PublicApi
                  * @description raised when cell editing is cancelled on a cell
                  * <pre>
-                 *      gridApi.edit.on.cancelCellEdit(scope,function(rowEntity, colDef){})
+                 *      gridApi.edit.on.cancelCellEdit(scope,function(rowEntity, colDef) {})
                  * </pre>
                  * @param {object} rowEntity the options.data element that was edited
                  * @param {object} colDef the column that was edited
@@ -117,8 +117,7 @@
           };
 
           grid.api.registerEventsFromObject(publicApi.events);
-          //grid.api.registerMethodsFromObject(publicApi.methods);
-
+          // grid.api.registerMethodsFromObject(publicApi.methods);
         },
 
         defaultGridOptions: function (gridOptions) {
@@ -147,7 +146,7 @@
            *  If false, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope, triggerEvent){
+           *  function($scope, triggerEvent) {
            *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
@@ -170,7 +169,7 @@
            *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
            *  <br/>_requires cellNav feature and the edit feature to be enabled_
            */
-            //enableCellEditOnFocus can only be used if cellnav module is used
+            // enableCellEditOnFocus can only be used if cellnav module is used
           gridOptions.enableCellEditOnFocus = gridOptions.enableCellEditOnFocus === undefined ? false : gridOptions.enableCellEditOnFocus;
         },
 
@@ -209,7 +208,7 @@
            *  @description If specified, either a value or function evaluated before editing cell.  If falsy, then editing of cell is not allowed.
            *  @example
            *  <pre>
-           *  function($scope, triggerEvent){
+           *  function($scope, triggerEvent) {
            *    //use $scope.row.entity, $scope.col.colDef and triggerEvent to determine if editing is allowed
            *    return true;
            *  }
@@ -246,7 +245,7 @@
            *  @description If true, then editor is invoked as soon as cell receives focus. Default false.
            *  <br>_requires both the cellNav feature and the edit feature to be enabled_
            */
-            //enableCellEditOnFocus can only be used if cellnav module is used
+            // enableCellEditOnFocus can only be used if cellnav module is used
           colDef.enableCellEditOnFocus = colDef.enableCellEditOnFocus === undefined ? gridOptions.enableCellEditOnFocus : colDef.enableCellEditOnFocus;
 
 
@@ -255,13 +254,13 @@
            *  @name editModelField
            *  @propertyOf  ui.grid.edit.api:ColumnDef
            *  @description a bindable string value that is used when binding to edit controls instead of colDef.field
-           *  <br/> example: You have a complex property on and object like state:{abbrev:'MS',name:'Mississippi'}.  The
+           *  <br/> example: You have a complex property on and object like state:{abbrev: 'MS',name: 'Mississippi'}.  The
            *  grid should display state.name in the cell and sort/filter based on the state.name property but the editor
            *  requires the full state object.
            *  <br/>colDef.field = 'state.name'
            *  <br/>colDef.editModelField = 'state'
            */
-          //colDef.editModelField
+          // colDef.editModelField
 
           return $q.all(promises);
         },
@@ -276,7 +275,7 @@
          * @returns {boolean} true if an edit should start
          */
         isStartEditKey: function (evt) {
-          if (evt.metaKey ||
+          return !(evt.metaKey ||
               evt.keyCode === uiGridConstants.keymap.ESC ||
               evt.keyCode === uiGridConstants.keymap.SHIFT ||
               evt.keyCode === uiGridConstants.keymap.CTRL ||
@@ -294,14 +293,8 @@
             (evt.keyCode === uiGridConstants.keymap.ENTER && evt.shiftKey) ||
 
             evt.keyCode === uiGridConstants.keymap.DOWN ||
-            evt.keyCode === uiGridConstants.keymap.ENTER) {
-            return false;
-
-          }
-          return true;
+            evt.keyCode === uiGridConstants.keymap.ENTER);
         }
-
-
       };
 
       return service;
@@ -371,7 +364,7 @@
     function ( uiGridEditConstants) {
       return {
         replace: true,
-        priority: -99998, //run before cellNav
+        priority: -99998, // run before cellNav
         require: ['^uiGrid', '^uiGridRenderContainer'],
         scope: false,
         compile: function () {
@@ -383,19 +376,18 @@
               if (!uiGridCtrl.grid.api.edit || !uiGridCtrl.grid.api.cellNav) { return; }
 
               var containerId =  controllers[1].containerId;
-              //no need to process for other containers
+              // no need to process for other containers
               if (containerId !== 'body') {
                 return;
               }
 
-              //refocus on the grid
+              // refocus on the grid
               $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
                 uiGridCtrl.focus();
               });
               $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
                 uiGridCtrl.focus();
               });
-
             }
           };
         }
@@ -470,11 +462,11 @@
           scope: false,
           require: '?^uiGrid',
           link: function ($scope, $elm, $attrs, uiGridCtrl) {
-            var html;
-            var origCellValue;
-            var inEdit = false;
-            var cellModel;
-            var cancelTouchstartTimeout;
+            var html,
+              origCellValue,
+              cellModel,
+              cancelTouchstartTimeout,
+              inEdit = false;
 
             var editCellScope;
 
@@ -488,7 +480,7 @@
 
             var setEditable = function() {
               if ($scope.col.colDef.enableCellEdit && $scope.row.enableCellEdit !== false) {
-                if (!$scope.beginEditEventsWired) { //prevent multiple attachments
+                if (!$scope.beginEditEventsWired) { // prevent multiple attachments
                   registerBeginEditEvents();
                 }
               } else {
@@ -527,7 +519,7 @@
                   }
 
                   if (rowCol.row === $scope.row && rowCol.col === $scope.col && !$scope.col.colDef.enableCellEditOnFocus) {
-                    //important to do this before scrollToIfNecessary
+                    // important to do this before scrollToIfNecessary
                     beginEditKeyDown(evt);
                   }
                 });
@@ -571,7 +563,7 @@
             }
 
             // Cancel any touchstart timeout
-            function touchEnd(event) {
+            function touchEnd() {
               $timeout.cancel(cancelTouchstartTimeout);
               $elm.off('touchend', touchEnd);
             }
@@ -600,7 +592,7 @@
 
 
             function beginEdit(triggerEvent) {
-              //we need to scroll the cell into focus before invoking the editor
+              // we need to scroll the cell into focus before invoking the editor
               $scope.grid.api.core.scrollToIfNecessary($scope.row, $scope.col)
                 .then(function () {
                   beginEditAfterScroll(triggerEvent);
@@ -742,7 +734,7 @@
 
               cellModel = $parse(modelField);
 
-              //get original value from the cell
+              // get original value from the cell
               origCellValue = cellModel($scope);
 
               html = $scope.col.editableCellTemplate;
@@ -753,7 +745,7 @@
               html = html.replace(uiGridConstants.CUSTOM_FILTERS, optionFilter);
 
               var inputType = 'text';
-              switch ($scope.col.colDef.type){
+              switch ($scope.col.colDef.type) {
                 case 'boolean':
                   inputType = 'checkbox';
                   break;
@@ -788,8 +780,7 @@
               $scope.editDropdownIdLabel = $scope.col.colDef.editDropdownIdLabel ? $scope.col.colDef.editDropdownIdLabel : 'id';
               $scope.editDropdownValueLabel = $scope.col.colDef.editDropdownValueLabel ? $scope.col.colDef.editDropdownValueLabel : 'value';
 
-              var cellElement;
-              var createEditor = function(){
+              var createEditor = function() {
                 inEdit = true;
                 cancelBeginEditEvents();
                 var cellElement = angular.element(html);
@@ -805,7 +796,7 @@
                 createEditor();
               }
 
-              //stop editing when grid is scrolled
+              // stop editing when grid is scrolled
               var deregOnGridScroll = $scope.col.grid.api.core.on.scrollBegin($scope, function () {
                 if ($scope.grid.disableScrolling) {
                   return;
@@ -817,7 +808,7 @@
                 deregOnCancelCellEdit();
               });
 
-              //end editing
+              // end editing
               var deregOnEndCellEdit = $scope.$on(uiGridEditConstants.events.END_CELL_EDIT, function () {
                 endEdit();
                 $scope.grid.api.edit.raise.afterCellEdit($scope.row.entity, $scope.col.colDef, cellModel($scope), origCellValue);
@@ -826,7 +817,7 @@
                 deregOnCancelCellEdit();
               });
 
-              //cancel editing
+              // cancel editing
               var deregOnCancelCellEdit = $scope.$on(uiGridEditConstants.events.CANCEL_CELL_EDIT, function () {
                 cancelEdit();
                 deregOnCancelCellEdit();
@@ -847,15 +838,15 @@
                 return;
               }
 
-              //sometimes the events can't keep up with the keyboard and grid focus is lost, so always focus
-              //back to grid here. The focus call needs to be before the $destroy and removal of the control,
-              //otherwise ng-model-options of UpdateOn: 'blur' will not work.
+              // sometimes the events can't keep up with the keyboard and grid focus is lost, so always focus
+              // back to grid here. The focus call needs to be before the $destroy and removal of the control,
+              // otherwise ng-model-options of UpdateOn: 'blur' will not work.
               if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                 uiGridCtrl.focus();
               }
 
               var gridCellContentsEl = angular.element($elm.children()[0]);
-              //remove edit element
+              // remove edit element
               editCellScope.$destroy();
               var children = $elm.children();
               for (var i = 1; i < children.length; i++) {
@@ -933,32 +924,32 @@
                 if (controllers[1]) { renderContainerCtrl = controllers[1]; }
                 if (controllers[2]) { ngModel = controllers[2]; }
 
-                //set focus at start of edit
-                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function (evt,triggerEvent) {
+                // set focus at start of edit
+                $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
                   // must be in a timeout since it requires a new digest cycle
                   $timeout(function () {
                     $elm[0].focus();
-                    //only select text if it is not being replaced below in the cellNav viewPortKeyPress
+                    // only select text if it is not being replaced below in the cellNav viewPortKeyPress
                     if ($elm[0].select && ($scope.col.colDef.enableCellEditOnFocus || !(uiGridCtrl && uiGridCtrl.grid.api.cellNav))) {
                       $elm[0].select();
                     }
                     else {
-                      //some browsers (Chrome) stupidly, imo, support the w3 standard that number, email, ...
-                      //fields should not allow setSelectionRange.  We ignore the error for those browsers
-                      //https://www.w3.org/Bugs/Public/show_bug.cgi?id=24796
+                      // some browsers (Chrome) stupidly, imo, support the w3 standard that number, email, ...
+                      // fields should not allow setSelectionRange.  We ignore the error for those browsers
+                      // https://www.w3.org/Bugs/Public/show_bug.cgi?id=24796
                       try {
                         $elm[0].setSelectionRange($elm[0].value.length, $elm[0].value.length);
                       }
                       catch (ex) {
-                        //ignore
+                        // ignore
                       }
                     }
                   });
 
-                  //set the keystroke that started the edit event
-                  //we must do this because the BeginEdit is done in a different event loop than the intitial
-                  //keydown event
-                  //fire this event for the keypress that is received
+                  // set the keystroke that started the edit event
+                  // we must do this because the BeginEdit is done in a different event loop than the intitial
+                  // keydown event
+                  // fire this event for the keypress that is received
                   if (uiGridCtrl && uiGridCtrl.grid.api.cellNav) {
                     var viewPortKeyDownUnregister = uiGridCtrl.grid.api.cellNav.on.viewPortKeyPress($scope, function (evt, rowCol) {
                       if (uiGridEditService.isStartEditKey(evt)) {
@@ -1035,7 +1026,7 @@
                     }
                   }
                   else {
-                    //handle enter and tab for editing not using cellNav
+                    // handle enter and tab for editing not using cellNav
                     switch (evt.keyCode) {
                       case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
                       case uiGridConstants.keymap.TAB:
@@ -1095,9 +1086,7 @@
         priority: -100, // run after default uiGridEditor directive
         require: '?ngModel',
         link: function (scope, element, attrs, ngModel) {
-
           if (angular.version.minor === 2 && attrs.type && attrs.type === 'date' && ngModel) {
-
             ngModel.$formatters.push(function (modelValue) {
               ngModel.$setValidity(null,(!modelValue || !isNaN(modelValue.getTime())));
               return $filter('date')(modelValue, 'yyyy-MM-dd');
@@ -1151,9 +1140,9 @@
                 var uiGridCtrl = controllers[0];
                 var renderContainerCtrl = controllers[1];
 
-                //set focus at start of edit
+                // set focus at start of edit
                 $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
-                  $timeout(function(){
+                  $timeout(function() {
                     $elm[0].focus();
                   });
 
@@ -1184,7 +1173,7 @@
                     }
                   }
                   else {
-                    //handle enter and tab for editing not using cellNav
+                    // handle enter and tab for editing not using cellNav
                     switch (evt.keyCode) {
                       case uiGridConstants.keymap.ENTER: // Enter (Leave Field)
                       case uiGridConstants.keymap.TAB:
@@ -1260,13 +1249,13 @@
                      *
                      *  @example
                      *  <pre>
-                     *  editFileChooserCallBack: function(gridRow, gridCol, files ){
+                     *  editFileChooserCallBack: function(gridRow, gridCol, files ) {
                      *    // ignore all but the first file, it can only choose one anyway
                      *    // set the filename into this column
                      *    gridRow.entity.filename = file[0].name;
                      *
                      *    // read the file and set it into a hidden column, which we may do stuff with later
-                     *    var setFile = function(fileContent){
+                     *    var setFile = function(fileContent) {
                      *      gridRow.entity.file = fileContent.currentTarget.result;
                      *    };
                      *    var reader = new FileReader();

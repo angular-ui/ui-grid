@@ -82,7 +82,7 @@
         uiGridEditService.defaultGridOptions(options);
         expect(options.enableCellEdit).toBe(false);
 
-        function myFunc(){}
+        function myFunc() {}
         options.cellEditableCondition = myFunc;
         uiGridEditService.defaultGridOptions(options);
         expect(options.cellEditableCondition).toBe(myFunc);
@@ -141,7 +141,7 @@
         grid.options.columnDefs = [
           {field: 'col1', enableCellEdit: true}
         ];
-        $timeout(function(){
+        $timeout(function() {
           uiGridEditService.defaultGridOptions(grid.options);
           grid.buildColumns();
         });
@@ -228,14 +228,14 @@
 
         grid.options.enableCellEdit = false;
         grid.options.columnDefs = [
-          {field: 'col1', enableCellEdit:true},
-          {field: 'col2', enableCellEdit:false}
+          {field: 'col1', enableCellEdit: true},
+          {field: 'col2', enableCellEdit: false}
         ];
         grid.buildColumns();
 
         var colDef = grid.options.columnDefs[0];
         var col = grid.columns[0];
-        $timeout(function(){
+        $timeout(function() {
           uiGridEditService.defaultGridOptions(grid.options);
           uiGridEditService.editColumnBuilder(colDef,col,grid.options);
         });
@@ -255,8 +255,8 @@
 
         grid.options.enableCellEdit = true;
         grid.options.columnDefs = [
-          {field: 'col1', enableCellEdit:false},
-          {field: 'col2', enableCellEdit:true}
+          {field: 'col1', enableCellEdit: false},
+          {field: 'col2', enableCellEdit: true}
         ];
         grid.buildColumns();
 

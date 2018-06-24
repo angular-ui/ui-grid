@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  
+
   /**
    * @ngdoc overview
    * @name ui.grid.validate
@@ -16,7 +16,7 @@
    * -------------------
    *
    * Validation is not based on angularjs validation, since it would work only when editing the field.
-   * 
+   *
    * Instead it adds custom properties to any field considered as invalid.
    *
    * <br/>
@@ -24,10 +24,8 @@
    *
    * <div doc-module-components="ui.grid.expandable"></div>
    */
-
   var module = angular.module('ui.grid.validate', ['ui.grid']);
-  
-  
+
   /**
    *  @ngdoc service
    *  @name ui.grid.validate.service:uiGridValidateService
@@ -37,7 +35,7 @@
   module.service('uiGridValidateService', ['$sce', '$q', '$http', 'i18nService', 'uiGridConstants', function ($sce, $q, $http, i18nService, uiGridConstants) {
 
     var service = {
-      
+
       /**
        *  @ngdoc object
        *  @name validatorFactories
@@ -61,7 +59,6 @@
        */
       validatorFactories: {},
 
-      
       /**
        * @ngdoc service
        * @name setExternalFactoryFunction
@@ -70,13 +67,13 @@
        * <p>Validators from this external service have a higher priority than default
        * ones
        * @param {function} externalFactoryFunction a function that accepts name and argument to pass to a
-       * validator factory and that returns an object with the same properties as 
+       * validator factory and that returns an object with the same properties as
        * you can see in {@link ui.grid.validate.service:uiGridValidateService#properties_validatorFactories validatorFactories}
        */
       setExternalFactoryFunction: function(externalFactoryFunction) {
         service.externalFactoryFunction = externalFactoryFunction;
       },
-      
+
       /**
        * @ngdoc service
        * @name clearExternalFactory
@@ -99,7 +96,7 @@
       getValidatorFromExternalFactory: function(name, argument) {
         return service.externalFactoryFunction(name, argument).validatorFactory(argument);
       },
-      
+
       /**
        * @ngdoc service
        * @name getMessageFromExternalFactory
@@ -111,7 +108,7 @@
       getMessageFromExternalFactory: function(name, argument) {
         return service.externalFactoryFunction(name, argument).messageFunction(argument);
       },
-      
+
       /**
        * @ngdoc service
        * @name setValidator
@@ -155,7 +152,7 @@
        * @ngdoc service
        * @name getMessage
        * @methodOf ui.grid.validate.service:uiGridValidateService
-       * @description Returns the error message related to the validator 
+       * @description Returns the error message related to the validator
        * @param {string} name the name of the validator
        * @param {object} argument an argument to pass to the message function
        * @returns {string} the error message related to the validator
@@ -174,7 +171,7 @@
        * @ngdoc service
        * @name isInvalid
        * @methodOf ui.grid.validate.service:uiGridValidateService
-       * @description Returns true if the cell (identified by rowEntity, colDef) is invalid 
+       * @description Returns true if the cell (identified by rowEntity, colDef) is invalid
        * @param {object} rowEntity the row entity of the cell
        * @param {object} colDef the colDef of the cell
        * @returns {boolean} true if the cell is invalid
@@ -194,7 +191,7 @@
       setInvalid: function (rowEntity, colDef) {
         rowEntity['$$invalid'+colDef.name] = true;
       },
-    
+
       /**
        * @ngdoc service
        * @name setValid
@@ -240,7 +237,7 @@
             delete rowEntity['$$errors'+colDef.name][validatorName];
         }
       },
-      
+
       /**
        * @ngdoc function
        * @name getErrorMessages
@@ -260,10 +257,10 @@
         Object.keys(rowEntity['$$errors'+colDef.name]).sort().forEach(function(validatorName) {
           errors.push(service.getMessage(validatorName, colDef.validators[validatorName]));
         });
-        
+
         return errors;
       },
-      
+
       /**
        * @ngdoc function
        * @name getFormattedErrors
@@ -275,15 +272,13 @@
        * message inside the page (i.e. inside a div)
        */
       getFormattedErrors: function(rowEntity, colDef) {
+        var msgString = "",
+          errors = service.getErrorMessages(rowEntity, colDef);
 
-        var msgString = "";
-
-        var errors = service.getErrorMessages(rowEntity, colDef);
-        
         if (!errors.length) {
           return;
         }
-        
+
         errors.forEach(function(errorMsg) {
           msgString += errorMsg + "<br/>";
         });
@@ -295,7 +290,7 @@
        * @ngdoc function
        * @name getTitleFormattedErrors
        * @methodOf ui.grid.validate.service:uiGridValidateService
-       * @description returns the error i18n-ed and formatted in javaScript to be shown inside an html 
+       * @description returns the error i18n-ed and formatted in javaScript to be shown inside an html
        * title attribute.
        * @param {object} rowEntity gridOptions.data[] array instance whose errors we are looking for
        * @param {object} colDef the column whose errors we are looking for
@@ -303,17 +298,14 @@
        * message inside an html title attribute
        */
       getTitleFormattedErrors: function(rowEntity, colDef) {
+        var newLine = "\n",
+          msgString = "",
+          errors = service.getErrorMessages(rowEntity, colDef);
 
-        var newLine = "\n";
-
-        var msgString = "";
-        
-        var errors = service.getErrorMessages(rowEntity, colDef);
-        
         if (!errors.length) {
           return;
         }
-        
+
         errors.forEach(function(errorMsg) {
           msgString += errorMsg + newLine;
         });
@@ -332,18 +324,17 @@
        * @param {object} oldValue the value the field had before
        */
       runValidators: function(rowEntity, colDef, newValue, oldValue, grid) {
-        
         if (newValue === oldValue) {
           // If the value has not changed we perform no validation
           return;
         }
-        
+
         if (typeof(colDef.name) === 'undefined' || !colDef.name) {
           throw new Error('colDef.name is required to perform validation');
         }
-        
+
         service.setValid(rowEntity, colDef);
-        
+
         var validateClosureFactory = function(rowEntity, colDef, validatorName) {
           return function(value) {
             if (!value) {
@@ -360,16 +351,16 @@
 
         for (var validatorName in colDef.validators) {
           service.clearError(rowEntity, colDef, validatorName);
-          var msg;
           var validatorFunction = service.getValidator(validatorName, colDef.validators[validatorName]);
-          // We pass the arguments as oldValue, newValue so they are in the same order 
+
+          // We pass the arguments as oldValue, newValue so they are in the same order
           // as ng-model validators (modelValue, viewValue)
-          var promise = $q
-                        .when(validatorFunction(oldValue, newValue, rowEntity, colDef))
-                        .then(validateClosureFactory(rowEntity, colDef, validatorName));
+          var promise = $q.when(validatorFunction(oldValue, newValue, rowEntity, colDef))
+            .then(validateClosureFactory(rowEntity, colDef, validatorName));
+
           promises.push(promise);
         }
-        
+
         return $q.all(promises);
       },
 
@@ -380,58 +371,52 @@
        * @description adds the basic validators to the list of service validators
        */
       createDefaultValidators: function() {
-        service.setValidator('minLength',
-                             function (argument) {
-                               return function (oldValue, newValue, rowEntity, colDef) {
-                                 if (newValue === undefined || newValue === null || newValue === '') {
-                                   return true;
-                                 }
-                                 return newValue.length >= argument;
-                               };
-                             },
-                               function(argument) {
-                                 return i18nService.getSafeText('validate.minLength').replace('THRESHOLD', argument);
-                               });
-        
-        service.setValidator('maxLength',
-                             function (argument) {
-                               return function (oldValue, newValue, rowEntity, colDef) {
-                                 if (newValue === undefined || newValue === null || newValue === '') {
-                                   return true;
-                                 }
-                                 return newValue.length <= argument;
-                               };
-                             },
-                             function(threshold) {
-                               return i18nService.getSafeText('validate.maxLength').replace('THRESHOLD', threshold);
-                             });
-        
-        service.setValidator('required',
-                             function (argument) {
-                               return function (oldValue, newValue, rowEntity, colDef) {
-                                 if (argument) {
-                                   return !(newValue === undefined || newValue === null || newValue === '');
-                                 }
-                                 return true;
-                               };
-                             },
-                             function(argument) {
-                               return i18nService.getSafeText('validate.required');
-                             });
+        service.setValidator('minLength', function (argument) {
+          return function (oldValue, newValue) {
+            if (newValue === undefined || newValue === null || newValue === '') {
+              return true;
+            }
+            return newValue.length >= argument;
+          };
+        }, function(argument) {
+          return i18nService.getSafeText('validate.minLength').replace('THRESHOLD', argument);
+        });
+
+        service.setValidator('maxLength', function (argument) {
+          return function (oldValue, newValue) {
+            if (newValue === undefined || newValue === null || newValue === '') {
+              return true;
+            }
+            return newValue.length <= argument;
+          };
+        }, function(threshold) {
+          return i18nService.getSafeText('validate.maxLength').replace('THRESHOLD', threshold);
+        });
+
+        service.setValidator('required', function (argument) {
+          return function (oldValue, newValue) {
+            if (argument) {
+              return !(newValue === undefined || newValue === null || newValue === '');
+            }
+            return true;
+          };
+        }, function() {
+          return i18nService.getSafeText('validate.required');
+        });
       },
 
       initializeGrid: function (scope, grid) {
         grid.validate = {
-        
+
           isInvalid: service.isInvalid,
 
           getFormattedErrors: service.getFormattedErrors,
-         
+
           getTitleFormattedErrors: service.getTitleFormattedErrors,
 
           runValidators: service.runValidators
         };
-        
+
         /**
          *  @ngdoc object
          *  @name ui.grid.validate.api:PublicApi
@@ -444,8 +429,8 @@
               /**
                * @ngdoc event
                * @name validationFailed
-               * @eventOf  ui.grid.validate.api:PublicApi
-               * @description raised when one or more failure happened during validation 
+               * @eventOf ui.grid.validate.api:PublicApi
+               * @description raised when one or more failure happened during validation
                * <pre>
                *      gridApi.validate.on.validationFailed(scope, function(rowEntity, colDef, newValue, oldValue){...})
                * </pre>
@@ -463,7 +448,7 @@
               /**
                * @ngdoc function
                * @name isInvalid
-               * @methodOf  ui.grid.validate.api:PublicApi
+               * @methodOf ui.grid.validate.api:PublicApi
                * @description checks if a cell (identified by rowEntity, colDef) is invalid
                * @param {object} rowEntity gridOptions.data[] array instance we want to check
                * @param {object} colDef the column whose errors we want to check
@@ -475,7 +460,7 @@
               /**
                * @ngdoc function
                * @name getErrorMessages
-               * @methodOf  ui.grid.validate.api:PublicApi
+               * @methodOf ui.grid.validate.api:PublicApi
                * @description returns an array of i18n-ed error messages.
                * @param {object} rowEntity gridOptions.data[] array instance whose errors we are looking for
                * @param {object} colDef the column whose errors we are looking for
@@ -487,7 +472,7 @@
               /**
                * @ngdoc function
                * @name getFormattedErrors
-               * @methodOf  ui.grid.validate.api:PublicApi
+               * @methodOf ui.grid.validate.api:PublicApi
                * @description returns the error i18n-ed and formatted in html to be shown inside the page.
                * @param {object} rowEntity gridOptions.data[] array instance whose errors we are looking for
                * @param {object} colDef the column whose errors we are looking for
@@ -500,8 +485,8 @@
               /**
                * @ngdoc function
                * @name getTitleFormattedErrors
-               * @methodOf  ui.grid.validate.api:PublicApi
-               * @description returns the error i18n-ed and formatted in javaScript to be shown inside an html 
+               * @methodOf ui.grid.validate.api:PublicApi
+               * @description returns the error i18n-ed and formatted in javaScript to be shown inside an html
                * title attribute.
                * @param {object} rowEntity gridOptions.data[] array instance whose errors we are looking for
                * @param {object} colDef the column whose errors we are looking for
@@ -511,10 +496,10 @@
               getTitleFormattedErrors: function (rowEntity, colDef) {
                 return grid.validate.getTitleFormattedErrors(rowEntity, colDef);
               }
-            } 
+            }
           }
         };
-        
+
         grid.api.registerEventsFromObject(publicApi.events);
         grid.api.registerMethodsFromObject(publicApi.methods);
 
@@ -526,13 +511,11 @@
 
         service.createDefaultValidators();
       }
-      
     };
-  
+
     return service;
   }]);
-  
-  
+
   /**
    *  @ngdoc directive
    *  @name ui.grid.validate.directive:uiGridValidate
