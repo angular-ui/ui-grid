@@ -1,4 +1,4 @@
-(function(){
+(function() {
 
 angular.module('ui.grid')
 
@@ -237,9 +237,10 @@ angular.module('ui.grid')
 
     var viewportWidth = self.grid.gridWidth;
 
-    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-    //  viewPortWidth = viewPortWidth - self.grid.verticalScrollbarWidth;
-    //}
+    // if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined &&
+    //  self.grid.verticalScrollbarWidth > 0) {
+    //   viewPortWidth = viewPortWidth - self.grid.verticalScrollbarWidth;
+    // }
 
     // var viewportWidth = 0;\
     // self.visibleColumnCache.forEach(function (column) {
@@ -254,18 +255,7 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.getHeaderViewportWidth = function getHeaderViewportWidth() {
-    var self = this;
-
-    var viewportWidth = this.getViewportWidth();
-
-    //if (typeof(self.grid.verticalScrollbarWidth) !== 'undefined' && self.grid.verticalScrollbarWidth !== undefined && self.grid.verticalScrollbarWidth > 0) {
-    //  viewPortWidth = viewPortWidth + self.grid.verticalScrollbarWidth;
-    //}
-
-    // var adjustment = self.getViewportAdjustment();
-    // viewPortWidth = viewPortWidth + adjustment.width;
-
-    return viewportWidth;
+    return this.getViewportWidth();
   };
 
 
@@ -287,7 +277,7 @@ angular.module('ui.grid')
 
     self.$$canvasHeight = 0;
 
-    self.visibleRowCache.forEach(function(row){
+    self.visibleRowCache.forEach(function(row) {
       self.$$canvasHeight += row.height;
     });
 
@@ -321,8 +311,6 @@ angular.module('ui.grid')
   };
 
   GridRenderContainer.prototype.setRenderedColumns = function setRenderedColumns(newColumns) {
-    var self = this;
-
     // OLD:
     this.renderedColumns.length = newColumns.length;
     for (var i = 0; i < newColumns.length; i++) {
@@ -356,8 +344,6 @@ angular.module('ui.grid')
 
       vertScrollPercentage = newScrollTop / vertScrollLength;
 
-      // console.log('vert', vertScrollPercentage, newScrollTop, vertScrollLength);
-
       if (vertScrollPercentage > 1) { vertScrollPercentage = 1; }
       if (vertScrollPercentage < 0) { vertScrollPercentage = 0; }
 
@@ -366,7 +352,7 @@ angular.module('ui.grid')
     }
   };
 
-  GridRenderContainer.prototype.scrollHorizontal = function(newScrollLeft){
+  GridRenderContainer.prototype.scrollHorizontal = function(newScrollLeft) {
     var horizScrollPercentage = -1;
 
     // Handle RTL here
@@ -432,16 +418,12 @@ angular.module('ui.grid')
 
     var maxRowIndex = rowCache.length - minRows;
 
-    // console.log('scroll%1', scrollPercentage);
-
     // Calculate the scroll percentage according to the scrollTop location, if no percentage was provided
     if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollTop) {
       scrollPercentage = scrollTop / self.getVerticalScrollLength();
     }
 
     var rowIndex = Math.ceil(Math.min(maxRowIndex, maxRowIndex * scrollPercentage));
-
-    // console.log('maxRowIndex / scroll%', maxRowIndex, scrollPercentage, rowIndex);
 
     // Define a max row index that we can't scroll past
     if (rowIndex > maxRowIndex) {
@@ -455,7 +437,7 @@ angular.module('ui.grid')
         if ( !self.grid.suppressParentScrollDown && self.prevScrollTop < scrollTop && rowIndex < self.prevRowScrollIndex + self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
           return;
         }
-        //Have we hit the threshold going up?
+        // Have we hit the threshold going up?
         if ( !self.grid.suppressParentScrollUp && self.prevScrollTop > scrollTop && rowIndex > self.prevRowScrollIndex - self.grid.options.scrollThreshold && rowIndex < maxRowIndex) {
           return;
         }
@@ -498,17 +480,6 @@ angular.module('ui.grid')
 
     var newRange = [];
     if (columnCache.length > self.grid.options.columnVirtualizationThreshold && self.getCanvasWidth() > self.getViewportWidth()) {
-      /* Commented the following lines because otherwise the moved column wasn't visible immediately on the new position
-       * in the case of many columns with horizontal scroll, one had to scroll left or right and then return in order to see it
-      // Have we hit the threshold going down?
-      if (self.prevScrollLeft < scrollLeft && colIndex < self.prevColumnScrollIndex + self.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
-        return;
-      }
-      //Have we hit the threshold going up?
-      if (self.prevScrollLeft > scrollLeft && colIndex > self.prevColumnScrollIndex - self.grid.options.horizontalScrollThreshold && colIndex < maxColumnIndex) {
-        return;
-      }*/
-
       var rangeStart = Math.max(0, colIndex - self.grid.options.excessColumns);
       var rangeEnd = Math.min(columnCache.length, colIndex + minCols + self.grid.options.excessColumns);
 
@@ -743,8 +714,8 @@ angular.module('ui.grid')
     // all that was across all the renderContainers, now we need to work out what that calculation decided for
     // our renderContainer
     var canvasWidth = 0;
-    self.visibleColumnCache.forEach(function(column){
-      if ( column.visible ){
+    self.visibleColumnCache.forEach(function(column) {
+      if ( column.visible ) {
         canvasWidth = canvasWidth + column.drawnWidth;
       }
     });

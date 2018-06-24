@@ -3,7 +3,7 @@
 
   angular.module('ui.grid').directive('uiGridFooterCell', ['$timeout', 'gridUtil', 'uiGridConstants', '$compile',
   function ($timeout, gridUtil, uiGridConstants, $compile) {
-    var uiGridFooterCell = {
+    return {
       priority: 0,
       scope: {
         col: '=',
@@ -12,10 +12,11 @@
       },
       replace: true,
       require: '^uiGrid',
-      compile: function compile(tElement, tAttrs, transclude) {
+      compile: function compile() {
         return {
-          pre: function ($scope, $elm, $attrs, uiGridCtrl) {
+          pre: function ($scope, $elm) {
             var template = $scope.col.footerCellTemplate;
+
             if (template === undefined && $scope.col.providedFooterCellTemplate !== '') {
               if ($scope.col.footerCellTemplatePromise) {
                 $scope.col.footerCellTemplatePromise.then(function () {
@@ -29,21 +30,24 @@
             }
           },
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
-            //$elm.addClass($scope.col.getColClass(false));
+            // $elm.addClass($scope.col.getColClass(false));
             $scope.grid = uiGridCtrl.grid;
 
             var initColClass = $scope.col.getColClass(false);
+
             $elm.addClass(initColClass);
 
             // apply any footerCellClass
             var classAdded;
-            var updateClass = function( grid ){
+
+            var updateClass = function() {
               var contents = $elm;
-              if ( classAdded ){
+
+              if ( classAdded ) {
                 contents.removeClass( classAdded );
                 classAdded = null;
               }
-  
+
               if (angular.isFunction($scope.col.footerCellClass)) {
                 classAdded = $scope.col.footerCellClass($scope.grid, $scope.row, $scope.col, $scope.rowRenderIndex, $scope.colRenderIndex);
               }
@@ -52,31 +56,16 @@
               }
               contents.addClass(classAdded);
             };
-  
+
             if ($scope.col.footerCellClass) {
               updateClass();
             }
 
             $scope.col.updateAggregationValue();
 
-            // Watch for column changes so we can alter the col cell class properly
-/* shouldn't be needed any more, given track by col.name
-            $scope.$watch('col', function (n, o) {
-              if (n !== o) {
-                // See if the column's internal class has changed
-                var newColClass = $scope.col.getColClass(false);
-                if (newColClass !== initColClass) {
-                  $elm.removeClass(initColClass);
-                  $elm.addClass(newColClass);
-                  initColClass = newColClass;
-                }
-              }
-            });
-*/
-
-
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateClass, [uiGridConstants.dataChange.COLUMN]);
+
             // listen for visible rows change and update aggregation values
             $scope.grid.api.core.on.rowsRendered( $scope, $scope.col.updateAggregationValue );
             $scope.grid.api.core.on.rowsRendered( $scope, updateClass );
@@ -85,8 +74,5 @@
         };
       }
     };
-
-    return uiGridFooterCell;
   }]);
-
 })();

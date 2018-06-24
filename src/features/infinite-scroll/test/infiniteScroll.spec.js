@@ -34,7 +34,7 @@
         spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreData');
         spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreDataTop');
 
-        grid.options.data = [{col1:'a'},{col1:'b'}];
+        grid.options.data = [{col1: 'a'},{col1: 'b'}];
 
         grid.buildColumns();
       });
@@ -274,7 +274,7 @@
         beforeEach(function() {
           spyOn(uiGridInfiniteScrollService, 'loadData').and.callFake(angular.noop);
           var arrayOf100 = [];
-          for ( var i = 0; i < 100; i++ ){
+          for ( var i = 0; i < 100; i++ ) {
             arrayOf100.push(i);
           }
           grid.renderContainers = { body: { visibleRowCache: arrayOf100}};

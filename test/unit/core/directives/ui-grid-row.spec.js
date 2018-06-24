@@ -2,10 +2,10 @@ describe('uiGridRow', function () {
   var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, GridRow, gridUtil, $timeout;
 
   data = [
-    { "name": "Bob", "age": 35 },
-    { "name": "Bill", "age": 25 },
-    { "name": "Sam", "age": 17 },
-    { "name": "Jane", "age": 19 }
+    { name: 'Bob', age: 35 },
+    { name: 'Bill', age: 25 },
+    { name: 'Sam', age: 17 },
+    { name: 'Jane', age: 19 }
   ];
 
   columnDefs = [
@@ -27,7 +27,7 @@ describe('uiGridRow', function () {
     $scope.gridOpts = {
       columnDefs: columnDefs,
       data: data,
-      onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
+      onRegisterApi: function( gridApi ) { $scope.gridApi = gridApi; }
     };
 
     $scope.extScope = 'test';
@@ -47,9 +47,7 @@ describe('uiGridRow', function () {
     beforeEach(inject(function($templateCache, $q) {
       $templateCache.put('customRowTemplate', '<div><div>The name is: {{ row.entity.name }}</div></div>');
 
-      $scope.gridApi.grid.registerRowsProcessor(function alterTemplates(rows, cols) {
-        var grid = this;
-
+      $scope.gridApi.grid.registerRowsProcessor(function alterTemplates(rows) {
         rows.forEach(function (row) {
           if (row.entity.name === 'Sam') {
             row.rowTemplate = 'customRowTemplate';
@@ -79,7 +77,7 @@ describe('uiGridRow', function () {
       beforeEach(function(done) {
         $scope.gridApi.grid.sortColumn($scope.gridApi.grid.columns[0], uiGridConstants.ASC)
           .then(function () {
-            $scope.gridApi.grid.refresh().then(function(){
+            $scope.gridApi.grid.refresh().then(function() {
               refreshed = true;
               setTimeout(function() {
                 done();

@@ -21,7 +21,6 @@
    *  @description Service for infinite scroll features
    */
   module.service('uiGridInfiniteScrollService', ['gridUtil', '$compile', '$rootScope', 'uiGridConstants', 'ScrollEvent', '$q', function (gridUtil, $compile, $rootScope, uiGridConstants, ScrollEvent, $q) {
-
     var service = {
 
       /**
@@ -34,7 +33,7 @@
       initializeGrid: function(grid, $scope) {
         service.defaultGridOptions(grid.options);
 
-        if (!grid.options.enableInfiniteScroll){
+        if (!grid.options.enableInfiniteScroll) {
           return;
         }
 
@@ -103,11 +102,9 @@
               dataLoaded: function( scrollUp, scrollDown ) {
                 service.setScrollDirections(grid, scrollUp, scrollDown);
 
-                var promise = service.adjustScroll(grid).then(function() {
+                return service.adjustScroll(grid).then(function() {
                   grid.infiniteScroll.dataLoading = false;
                 });
-
-                return promise;
               },
 
               /**
@@ -196,7 +193,7 @@
 
 
       defaultGridOptions: function (gridOptions) {
-        //default option to true unless it was explicitly set to false
+        // default option to true unless it was explicitly set to false
         /**
          *  @ngdoc object
          *  @name ui.grid.infiniteScroll.api:GridOptions
@@ -283,7 +280,7 @@
        */
       handleScroll:  function (args) {
         // don't request data if already waiting for data, or if source is coming from ui.grid.adjustInfiniteScrollPosition() function
-        if ( args.grid.infiniteScroll && args.grid.infiniteScroll.dataLoading || args.source === 'ui.grid.adjustInfiniteScrollPosition' ){
+        if ( args.grid.infiniteScroll && args.grid.infiniteScroll.dataLoading || args.source === 'ui.grid.adjustInfiniteScrollPosition' ) {
           return;
         }
 
@@ -294,20 +291,24 @@
           if (args.y.percentage === 0) {
             args.grid.scrollDirection = uiGridConstants.scrollDirection.UP;
             service.loadData(args.grid);
-          } else if (args.y.percentage === 1) {
+          }
+          else if (args.y.percentage === 1) {
             args.grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
             service.loadData(args.grid);
-          } else { // Scroll position is somewhere in between top/bottom, so determine whether it's far enough to load more data.
-            var percentage;
-            var targetPercentage = args.grid.options.infiniteScrollRowsFromEnd / args.grid.renderContainers.body.visibleRowCache.length;
+          }
+          else { // Scroll position is somewhere in between top/bottom, so determine whether it's far enough to load more data.
+            var percentage,
+              targetPercentage = args.grid.options.infiniteScrollRowsFromEnd / args.grid.renderContainers.body.visibleRowCache.length;
+
             if (args.grid.scrollDirection === uiGridConstants.scrollDirection.UP ) {
               percentage = args.y.percentage;
-              if (percentage <= targetPercentage){
+              if (percentage <= targetPercentage) {
                 service.loadData(args.grid);
               }
-            } else if (args.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN) {
+            }
+            else if (args.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN) {
               percentage = 1 - args.y.percentage;
-              if (percentage <= targetPercentage){
+              if (percentage <= targetPercentage) {
                 service.loadData(args.grid);
               }
             }
@@ -335,7 +336,8 @@
         if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp ) {
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreDataTop();
-        } else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown ) {
+        }
+        else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown ) {
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreData();
         }
@@ -363,15 +365,15 @@
        * @param {Grid} grid the grid we're working on
        * @returns {promise} a promise that is resolved when scrolling has finished
        */
-      adjustScroll: function(grid){
+      adjustScroll: function(grid) {
         var promise = $q.defer();
         $rootScope.$applyAsync(function () {
-          var newPercentage, viewportHeight, rowHeight, newVisibleRows, oldTop, newTop;
+          var viewportHeight, rowHeight, newVisibleRows, oldTop, newTop;
 
           viewportHeight = grid.getViewportHeight() + grid.headerHeight - grid.renderContainers.body.headerHeight - grid.scrollbarHeight;
           rowHeight = grid.options.rowHeight;
 
-          if ( grid.infiniteScroll.direction === undefined ){
+          if ( grid.infiniteScroll.direction === undefined ) {
             // called from initialize, tweak our scroll up a little
             service.adjustInfiniteScrollPosition(grid, 0);
           }
@@ -384,7 +386,7 @@
             grid.api.infiniteScroll.raise.needLoadMoreData();
           }
 
-          if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ){
+          if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.UP ) {
             oldTop = grid.infiniteScroll.prevScrollTop || 0;
             newTop = oldTop + (newVisibleRows - grid.infiniteScroll.previousVisibleRows)*rowHeight;
             service.adjustInfiniteScrollPosition(grid, newTop);
@@ -393,7 +395,7 @@
             });
           }
 
-          if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ){
+          if ( grid.infiniteScroll.direction === uiGridConstants.scrollDirection.DOWN ) {
             newTop = grid.infiniteScroll.prevScrollTop || (grid.infiniteScroll.previousVisibleRows*rowHeight - viewportHeight);
             service.adjustInfiniteScrollPosition(grid, newTop);
             $rootScope.$applyAsync( function() {
@@ -421,7 +423,7 @@
           rowHeight = grid.options.rowHeight,
           scrollHeight = visibleRows*rowHeight-viewportHeight;
 
-        //for infinite scroll, if there are pages upwards then never allow it to be at the zero position so the up button can be active
+        // for infinite scroll, if there are pages upwards then never allow it to be at the zero position so the up button can be active
         if (scrollTop === 0 && grid.infiniteScroll.scrollUp) {
           // using pixels results in a relative scroll, hence we have to use percentage
           scrollEvent.y = {percentage: 1/scrollHeight};
@@ -478,6 +480,7 @@
        */
       dataRemovedBottom: function( grid, scrollUp, scrollDown ) {
         var newTop;
+
         service.setScrollDirections( grid, scrollUp, scrollDown );
 
         newTop = grid.infiniteScroll.prevScrollTop;
@@ -526,7 +529,7 @@
         priority: -200,
         scope: false,
         require: '^uiGrid',
-        compile: function($scope, $elm, $attr){
+        compile: function() {
           return {
             pre: function($scope, $elm, $attr, uiGridCtrl) {
               uiGridInfiniteScrollService.initializeGrid(uiGridCtrl.grid, $scope);
@@ -537,5 +540,4 @@
         }
       };
     }]);
-
 })();

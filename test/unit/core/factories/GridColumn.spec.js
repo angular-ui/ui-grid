@@ -64,7 +64,7 @@ describe('GridColumn factory', function () {
     });
 
     describe('should not update sort when updating a column, but visible flag does update', function () {
-      beforeEach(function(complete){
+      beforeEach(function(complete) {
         grid.options.columnDefs[0].sort = { priority: 0, direction: 'asc' };
         grid.options.columnDefs[0].visible = false;
         buildCols(complete);
@@ -129,9 +129,9 @@ describe('GridColumn factory', function () {
       it('should not change the displayNames if they are provided', function () {
         grid.options.columnDefs = [
           { field: 'age' },
-          { field: 'name', displayName:'First Name' },
-          { field: 'name', displayName:'First Name' },
-          { field: 'name', displayName:'First Name' }
+          { field: 'name', displayName: 'First Name' },
+          { field: 'name', displayName: 'First Name' },
+          { field: 'name', displayName: 'First Name' }
         ];
 
         buildCols();
@@ -225,7 +225,7 @@ describe('GridColumn factory', function () {
       grid.options.columnDefs[0].aggregationType = uiGridConstants.aggregationTypes.count;
       grid.options.columnDefs[0].aggregationHideLabel = true;
 
-      buildCols(function(){});
+      buildCols(function() {});
       grid.modifyRows(grid.options.data);
 
       // this would be called by the footer cell if it were rendered
@@ -414,7 +414,7 @@ describe('GridColumn factory', function () {
 
     it('raise event', function() {
       var sortChanged = false;
-      grid.api.core.on.sortChanged( $scope, function(){ sortChanged = true; });
+      grid.api.core.on.sortChanged( $scope, function() { sortChanged = true; });
 
       grid.columns[0].unsort();
       expect( sortChanged ).toEqual(true);

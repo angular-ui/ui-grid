@@ -46,7 +46,7 @@ describe('ui.grid.exporter', function() {
       uiGridPinningService.initializeGrid(grid);
       var data = [];
       for (var i = 0; i < 3; i++) {
-        data.push({col1:'a_'+i, col2:'b_'+i, col3:'c_'+i, col4:'d_'+i});
+        data.push({col1: 'a_'+i, col2: 'b_'+i, col3: 'c_'+i, col4: 'd_'+i});
       }
       grid.options.data = data;
 
@@ -827,7 +827,7 @@ describe('ui.grid.exporter', function() {
       });
 
       it('gets all headers using headerFilter', function() {
-        grid.options.exporterHeaderFilter = function( displayName ){ return 'mapped_' + displayName; };
+        grid.options.exporterHeaderFilter = function( displayName ) { return 'mapped_' + displayName; };
 
         expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
           {name: 'col1', displayName: 'mapped_Col1', width: 50, align: 'left'},
@@ -839,7 +839,7 @@ describe('ui.grid.exporter', function() {
 
       it('gets all headers using headerFilter, passing name not displayName', function() {
         grid.options.exporterHeaderFilterUseName = true;
-        grid.options.exporterHeaderFilter = function( name ){ return 'mapped_' + name; };
+        grid.options.exporterHeaderFilter = function( name ) { return 'mapped_' + name; };
 
         expect(uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.ALL)).toEqual([
           {name: 'col1', displayName: 'mapped_col1', width: 50, align: 'left'},
@@ -856,19 +856,19 @@ describe('ui.grid.exporter', function() {
       beforeEach(function() {
         aNode = {
           children: [
-            {children: [{col1:'a_1', col2:'b_1', col3:'c_1', children: []}]},
-            {col1:'a_2', col2:'b_2', col3:'c_2', children: []},
-            {col1:'a_3', col2:'b_3', col3:'c_3', children: []},
-            {col1:'a_4', col2:'b_4', col3:'c_4', children: []}
+            {children: [{col1: 'a_1', col2: 'b_1', col3: 'c_1', children: []}]},
+            {col1: 'a_2', col2: 'b_2', col3: 'c_2', children: []},
+            {col1: 'a_3', col2: 'b_3', col3: 'c_3', children: []},
+            {col1: 'a_4', col2: 'b_4', col3: 'c_4', children: []}
           ]
         };
       });
       it('should return rows from the node passed in', function() {
         expect(uiGridExporterService.getRowsFromNode(aNode)).toEqual([
-          {col1:'a_1', col2:'b_1', col3:'c_1', children: []},
-          {col1:'a_2', col2:'b_2', col3:'c_2', children: []},
-          {col1:'a_3', col2:'b_3', col3:'c_3', children: []},
-          {col1:'a_4', col2:'b_4', col3:'c_4', children: []}
+          {col1: 'a_1', col2: 'b_1', col3: 'c_1', children: []},
+          {col1: 'a_2', col2: 'b_2', col3: 'c_2', children: []},
+          {col1: 'a_3', col2: 'b_3', col3: 'c_3', children: []},
+          {col1: 'a_4', col2: 'b_4', col3: 'c_4', children: []}
         ]);
       });
     });
@@ -887,10 +887,10 @@ describe('ui.grid.exporter', function() {
           numberLevels: 1,
           tree: [{
             children: [
-              {children: [{row:'a_1', children: []}]},
-              {row:'a_2', children: []},
-              {row:'a_3', children: []},
-              {row:'a_4', children: []}
+              {children: [{row: 'a_1', children: []}]},
+              {row: 'a_2', children: []},
+              {row: 'a_3', children: []},
+              {row: 'a_4', children: []}
             ]
           }]
         };
@@ -955,8 +955,8 @@ describe('ui.grid.exporter', function() {
       });
 
       it('maps data using objectCallback', function() {
-        grid.options.exporterFieldCallback = function( grid, row, col, value ){
-          if ( col.name === 'col2' ){
+        grid.options.exporterFieldCallback = function( grid, row, col, value ) {
+          if ( col.name === 'col2' ) {
             return 'translated';
           } else {
             return value;

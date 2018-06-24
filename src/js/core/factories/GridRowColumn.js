@@ -1,4 +1,4 @@
-(function(){
+(function() {
   'use strict';
   /**
    * @ngdoc object
@@ -10,9 +10,9 @@
    */
   angular.module('ui.grid')
   .factory('GridRowColumn', ['$parse', '$filter',
-    function GridRowColumnFactory($parse, $filter){
+    function GridRowColumnFactory($parse, $filter) {
       var GridRowColumn = function GridRowColumn(row, col) {
-        if ( !(this instanceof GridRowColumn)){
+        if ( !(this instanceof GridRowColumn)) {
           throw "Using GridRowColumn as a function insead of as a constructor. Must be called with `new` keyword";
         }
 
@@ -40,7 +40,7 @@
        * @returns {String|Number|Object} The value from the grid data that this GridRowColumn points too.
        *          If the column has a cellFilter this will NOT return the filtered value.
        */
-      GridRowColumn.prototype.getIntersectionValueRaw = function(){
+      GridRowColumn.prototype.getIntersectionValueRaw = function() {
         var getter = $parse(this.row.getEntityQualifiedColField(this.col));
         var context = this.row;
         return getter(context);

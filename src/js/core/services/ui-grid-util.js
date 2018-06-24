@@ -182,8 +182,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @name createBoundedWrapper
      * @methodOf ui.grid.service:GridUtil
      *
-     * @param {object} Object to bind 'this' to
-     * @param {method} Method to bind
+     * @param {object} object to bind 'this' to
+     * @param {method} method to bind
      * @returns {Function} The wrapper that performs the binding
      *
      * @description
@@ -294,7 +294,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       var item = data[0];
 
       angular.forEach(item,function (prop, propName) {
-        if ( excludeProperties.indexOf(propName) === -1){
+        if ( excludeProperties.indexOf(propName) === -1) {
           columnDefs.push({
             name: propName
           });
@@ -333,7 +333,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @methodOf ui.grid.service:GridUtil
      * @description Get's template from cache / element / url
      *
-     * @param {string|element|promise} Either a string representing the template id, a string representing the template url,
+     * @param {string|element|promise} template Either a string representing the template id, a string representing the template url,
      *   an jQuery/Angualr element, or a promise that returns the template contents to use.
      * @returns {object} a promise resolving to template contents
      *
@@ -361,8 +361,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
           return $q.when(template).then(s.postProcessTemplate).catch(angular.noop);
         }
       }
-      catch (err){
-        //do nothing; not valid html
+      catch (err) {
+        // do nothing; not valid html
       }
 
       // s.logDebug('fetching url', template);
@@ -372,7 +372,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         .then(
           function (result) {
             var templateHtml = result.data.trim();
-            //put in templateCache for next call
+            // put in templateCache for next call
             $templateCache.put(template, templateHtml);
             return templateHtml;
           },
@@ -434,7 +434,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     * @name elementWidth
     * @methodOf ui.grid.service:GridUtil
     *
-    * @param {element} element DOM element
+    * @param {element} elem DOM element
     * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
     *
     * @returns {number} Element width in pixels, accounting for any borders, etc.
@@ -448,7 +448,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     * @name elementHeight
     * @methodOf ui.grid.service:GridUtil
     *
-    * @param {element} element DOM element
+    * @param {element} elem DOM element
     * @param {string} [extra] Optional modifier for calculation. Use 'margin' to account for margins on element
     *
     * @returns {number} Element height in pixels, accounting for any borders, etc.
@@ -460,6 +460,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     // Thanks to http://stackoverflow.com/a/13382873/888165
     getScrollbarWidth: function() {
         var outer = document.createElement("div");
+
         outer.style.visibility = "hidden";
         outer.style.width = "100px";
         outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
@@ -607,7 +608,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     // Stolen from Modernizr
     // TODO: make this, and everythign that flows from it, robust
-    //http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+    // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
     isTouchEnabled: function() {
       var bool;
 
@@ -638,13 +639,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         });
         return found;
     },
-
-    //// Shim requestAnimationFrame
-    //requestAnimationFrame: $window.requestAnimationFrame && $window.requestAnimationFrame.bind($window) ||
-    //                       $window.webkitRequestAnimationFrame && $window.webkitRequestAnimationFrame.bind($window) ||
-    //                       function(fn) {
-    //                         return $timeout(fn, 10, false);
-    //                       },
 
     numericAndNullSort: function (a, b) {
       if (a === null) { return 1; }
@@ -728,7 +722,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         key = obj;
       }
 
-      return objType + ':' + key;
+      return objType + ': ' + key;
     },
 
     resetUids: function () {
@@ -745,8 +739,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @param {string} logMessage message to be logged to the console
      *
      */
-    logError: function( logMessage ){
-      if ( uiGridConstants.LOG_ERROR_MESSAGES ){
+    logError: function( logMessage ) {
+      if ( uiGridConstants.LOG_ERROR_MESSAGES ) {
         $log.error( logMessage );
       }
     },
@@ -761,8 +755,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @param {string} logMessage message to be logged to the console
      *
      */
-    logWarn: function( logMessage ){
-      if ( uiGridConstants.LOG_WARN_MESSAGES ){
+    logWarn: function( logMessage ) {
+      if ( uiGridConstants.LOG_WARN_MESSAGES ) {
         $log.warn( logMessage );
       }
     },
@@ -777,7 +771,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      *
      */
     logDebug: function() {
-      if ( uiGridConstants.LOG_DEBUG_MESSAGES ){
+      if ( uiGridConstants.LOG_DEBUG_MESSAGES ) {
         $log.debug.apply($log, arguments);
       }
     }
@@ -803,7 +797,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    */
   s.focus = {
     queue: [],
-    //http://stackoverflow.com/questions/25596399/set-element-focus-in-angular-way
+    // http://stackoverflow.com/questions/25596399/set-element-focus-in-angular-way
     /**
      * @ngdoc method
      * @methodOf ui.grid.service:GridUtil.focus
@@ -842,15 +836,15 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
      * then the promise will fail with the `'canceled'` reason.
      */
-    byElement: function(element){
-      if (!angular.isElement(element)){
+    byElement: function(element) {
+      if (!angular.isElement(element)) {
         s.logWarn("Trying to focus on an element that isn\'t an element.");
         return $q.reject('not-element');
       }
       element = angular.element(element);
       this._purgeQueue();
-      var promise = $timeout(function(){
-        if (element){
+      var promise = $timeout(function() {
+        if (element) {
           element[0].focus();
         }
       }, 0, false);
@@ -869,20 +863,20 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
      * @returns {Promise} The `$timeout` promise that will be resolved once focus is set. If another focus is requested before this request is evaluated.
      * then the promise will fail with the `'canceled'` reason.
      */
-    bySelector: function(parentElement, querySelector, aSync){
+    bySelector: function(parentElement, querySelector, aSync) {
       var self = this;
-      if (!angular.isElement(parentElement)){
+      if (!angular.isElement(parentElement)) {
         throw new Error("The parent element is not an element.");
       }
       // Ensure that this is an angular element.
       // It is fine if this is already an angular element.
       parentElement = angular.element(parentElement);
-      var focusBySelector = function(){
+      var focusBySelector = function() {
         var element = parentElement[0].querySelector(querySelector);
         return self.byElement(element);
       };
       this._purgeQueue();
-      if (aSync){ //Do this asynchronysly
+      if (aSync) { // Do this asynchronysly
         var promise = $timeout(focusBySelector, 0, false);
         this.queue.push(promise);
         return promise;
@@ -890,8 +884,8 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         return focusBySelector();
       }
     },
-    _purgeQueue: function(){
-      this.queue.forEach(function(element){
+    _purgeQueue: function() {
+      this.queue.forEach(function(element) {
         $timeout.cancel(element);
       });
       this.queue = [];
@@ -1150,7 +1144,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    * Takes a function, decorates it to execute only 1 time after multiple calls, and returns the decorated function
    * @example
    * <pre>
-   * var debouncedFunc =  gridUtil.debounce(function(){alert('debounced');}, 500);
+   * var debouncedFunc =  gridUtil.debounce(function() {alert('debounced');}, 500);
    * debouncedFunc();
    * debouncedFunc();
    * debouncedFunc();
@@ -1159,7 +1153,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
   s.debounce =  function (func, wait, immediate) {
     var timeout, args, context, result;
     function debounce() {
-      /* jshint validthis:true */
+      /* jshint validthis: true */
       context = this;
       args = arguments;
       var later = function () {
@@ -1192,7 +1186,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *
    * @param {function} func function to throttle
    * @param {number} wait milliseconds to delay after first trigger
-   * @param {Object} params to use in throttle.
+   * @param {Object} options to use in throttle.
    *
    * @returns {function} A function that can be executed as throttled function
    *
@@ -1209,32 +1203,32 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    *
    * @example
    * <pre>
-   * var throttledFunc =  gridUtil.throttle(function(){console.log('throttled');}, 500, {trailing: true});
+   * var throttledFunc =  gridUtil.throttle(function() {console.log('throttled');}, 500, {trailing: true});
    * throttledFunc(); //=> logs throttled
    * throttledFunc(); //=> queues attempt to log throttled for ~500ms (since trailing param is truthy)
    * throttledFunc(); //=> updates arguments to keep most-recent request, but does not do anything else.
    * </pre>
    */
-  s.throttle = function(func, wait, options){
+  s.throttle = function(func, wait, options) {
     options = options || {};
     var lastCall = 0, queued = null, context, args;
 
-    function runFunc(endDate){
+    function runFunc(endDate) {
       lastCall = +new Date();
       func.apply(context, args);
-      $interval(function(){queued = null; }, 0, 1, false);
+      $interval(function() {queued = null; }, 0, 1, false);
     }
 
-    return function(){
-      /* jshint validthis:true */
+    return function() {
+      /* jshint validthis: true */
       context = this;
       args = arguments;
-      if (queued === null){
+      if (queued === null) {
         var sinceLast = +new Date() - lastCall;
-        if (sinceLast > wait){
+        if (sinceLast > wait) {
           runFunc();
         }
-        else if (options.trailing){
+        else if (options.trailing) {
           queued = $interval(runFunc, wait - sinceLast, 1, false);
         }
       }
@@ -1376,17 +1370,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     delta  = Math[ delta  >= 1 ? 'floor' : 'ceil' ](delta  / lowestDelta);
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
-
-    // Normalise offsetX and offsetY properties
-    // if ($elm[0].getBoundingClientRect ) {
-    //   var boundingRect = $(elm)[0].getBoundingClientRect();
-    //   offsetX = event.clientX - boundingRect.left;
-    //   offsetY = event.clientY - boundingRect.top;
-    // }
-
-    // event.deltaX = deltaX;
-    // event.deltaY = deltaY;
-    // event.deltaFactor = lowestDelta;
 
     var newEvent = {
       originalEvent: event,

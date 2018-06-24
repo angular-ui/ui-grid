@@ -1,8 +1,8 @@
-(function(){
+(function() {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil','ScrollEvent','uiGridConstants', '$log',
-    function(gridUtil, ScrollEvent, uiGridConstants, $log) {
+  angular.module('ui.grid').directive('uiGridViewport', ['gridUtil', 'ScrollEvent',
+    function(gridUtil, ScrollEvent) {
       return {
         replace: true,
         scope: {},
@@ -64,18 +64,7 @@
 
           var ignoreScroll = false;
 
-          function scrollHandler(evt) {
-            //Leaving in this commented code in case it can someday be used
-            //It does improve performance, but because the horizontal scroll is normalized,
-            //  using this code will lead to the column header getting slightly out of line with columns
-            //
-            //if (ignoreScroll && (grid.isScrollingHorizontally || grid.isScrollingHorizontally)) {
-            //  //don't ask for scrollTop if we just set it
-            //  ignoreScroll = false;
-            //  return;
-            //}
-            //ignoreScroll = true;
-
+          function scrollHandler() {
             var newScrollTop = $elm[0].scrollTop;
             var newScrollLeft = gridUtil.normalizeScrollLeft($elm, grid);
 
@@ -85,11 +74,11 @@
             var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.ViewPortScroll);
             scrollEvent.newScrollLeft = newScrollLeft;
             scrollEvent.newScrollTop = newScrollTop;
-            if ( horizScrollPercentage > -1 ){
+            if ( horizScrollPercentage > -1 ) {
               scrollEvent.x = { percentage: horizScrollPercentage };
             }
 
-            if ( vertScrollPercentage > -1 ){
+            if ( vertScrollPercentage > -1 ) {
               scrollEvent.y = { percentage: vertScrollPercentage };
             }
 
@@ -106,28 +95,29 @@
             grid.addHorizontalScrollSync($scope.$parent.containerId + 'footer', syncHorizontalFooter);
           }
 
-          function syncVerticalScroll(scrollEvent){
+          function syncVerticalScroll(scrollEvent) {
             containerCtrl.prevScrollArgs = scrollEvent;
-            var newScrollTop = scrollEvent.getNewScrollTop(rowContainer,containerCtrl.viewport);
-            $elm[0].scrollTop = newScrollTop;
-
+            $elm[0].scrollTop = scrollEvent.getNewScrollTop(rowContainer,containerCtrl.viewport);
           }
 
-          function syncHorizontalScroll(scrollEvent){
+          function syncHorizontalScroll(scrollEvent) {
             containerCtrl.prevScrollArgs = scrollEvent;
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
+
             $elm[0].scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
           }
 
-          function syncHorizontalHeader(scrollEvent){
+          function syncHorizontalHeader(scrollEvent) {
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
+
             if (containerCtrl.headerViewport) {
               containerCtrl.headerViewport.scrollLeft = gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
             }
           }
 
-          function syncHorizontalFooter(scrollEvent){
+          function syncHorizontalFooter(scrollEvent) {
             var newScrollLeft = scrollEvent.getNewScrollLeft(colContainer, containerCtrl.viewport);
+
             if (containerCtrl.footerViewport) {
               containerCtrl.footerViewport.scrollLeft =  gridUtil.denormalizeScrollLeft(containerCtrl.viewport,newScrollLeft, grid);
             }
@@ -138,15 +128,16 @@
           });
         },
         controller: ['$scope', function ($scope) {
-          this.rowStyle = function (index) {
+          this.rowStyle = function () {
             var rowContainer = $scope.rowContainer;
             var colContainer = $scope.colContainer;
 
             var styles = {};
 
-            if (rowContainer.currentTopRow !== 0){
-              //top offset based on hidden rows count
+            if (rowContainer.currentTopRow !== 0) {
+              // top offset based on hidden rows count
               var translateY = "translateY("+ (rowContainer.currentTopRow * rowContainer.grid.options.rowHeight)  +"px)";
+
               styles['transform'] = translateY;
               styles['-webkit-transform'] = translateY;
               styles['-ms-transform'] = translateY;

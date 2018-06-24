@@ -30,19 +30,19 @@ describe('i18nService', function () {
     });
     describe('add', function() {
       it('should add a language when langs is a string', function() {
-        i18nService.add('tst',{test:'testlang'});
+        i18nService.add('tst',{test: 'testlang'});
         i18nService.setCurrentLang('tst');
         expect(i18nService.get().test).toBe('testlang');
       });
       it('should add multiple languages when langs is an array', function() {
-        i18nService.add(['tst1', 'tst2'], {test:'testlang'});
+        i18nService.add(['tst1', 'tst2'], {test: 'testlang'});
         i18nService.setCurrentLang('tst1');
         expect(i18nService.get().test).toBe('testlang');
         i18nService.setCurrentLang('tst2');
         expect(i18nService.get().test).toBe('testlang');
       });
       it('should not add null languages', function() {
-        i18nService.add([null], {test:'testlang'});
+        i18nService.add([null], {test: 'testlang'});
         i18nService.setCurrentLang(null);
         expect(i18nService.get().test).toBeUndefined();
       });

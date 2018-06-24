@@ -1,4 +1,4 @@
-(function(){
+(function() {
 
 angular.module('ui.grid')
 .factory('GridRow', ['gridUtil', 'uiGridConstants', function(gridUtil, uiGridConstants) {
@@ -128,7 +128,7 @@ angular.module('ui.grid')
    *
    */
   GridRow.prototype.setRowInvisible = function ( row ) {
-    if (row && row.setThisRowInvisible){
+    if (row && row.setThisRowInvisible) {
       row.setThisRowInvisible( 'user' );
     }
   };
@@ -150,7 +150,7 @@ angular.module('ui.grid')
    *
    */
   GridRow.prototype.clearRowInvisible = function ( row ) {
-    if (row && row.clearThisRowInvisible){
+    if (row && row.clearThisRowInvisible) {
       row.clearThisRowInvisible( 'user' );
     }
   };
@@ -168,7 +168,7 @@ angular.module('ui.grid')
    * @param {boolean} fromRowsProcessor whether we were called from a rowsProcessor, passed through to evaluateRowVisibility
    */
   GridRow.prototype.setThisRowInvisible = function ( reason, fromRowsProcessor ) {
-    if ( !this.invisibleReason ){
+    if ( !this.invisibleReason ) {
       this.invisibleReason = {};
     }
     this.invisibleReason[reason] = true;
@@ -209,17 +209,17 @@ angular.module('ui.grid')
    */
   GridRow.prototype.evaluateRowVisibility = function ( fromRowProcessor ) {
     var newVisibility = true;
-    if ( typeof(this.invisibleReason) !== 'undefined' ){
-      angular.forEach(this.invisibleReason, function( value, key ){
-        if ( value ){
+    if ( typeof(this.invisibleReason) !== 'undefined' ) {
+      angular.forEach(this.invisibleReason, function( value, key ) {
+        if ( value ) {
           newVisibility = false;
         }
       });
     }
 
-    if ( typeof(this.visible) === 'undefined' || this.visible !== newVisibility ){
+    if ( typeof(this.visible) === 'undefined' || this.visible !== newVisibility ) {
       this.visible = newVisibility;
-      if ( !fromRowProcessor ){
+      if ( !fromRowProcessor ) {
         this.grid.queueGridRefresh();
         this.grid.api.core.raise.rowsVisibleChanged(this);
       }

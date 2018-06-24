@@ -11,7 +11,7 @@ describe('ui-grid', function() {
       data: [
         { col1: 'col1', col2: 'col2' }
       ],
-      onRegisterApi: function( api ){
+      onRegisterApi: function( api ) {
         gridApi = api;
       }
     };

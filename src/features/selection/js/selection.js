@@ -27,7 +27,7 @@
     selectionRowHeaderColName: 'selectionRowHeaderCol'
   });
 
-  //add methods to GridRow
+  // add methods to GridRow
   angular.module('ui.grid').config(['$provide', function ($provide) {
     $provide.decorator('GridRow', ['$delegate', function ($delegate) {
 
@@ -105,13 +105,13 @@
    *
    *  @description Services for selection features
    */
-  module.service('uiGridSelectionService', ['$q', '$templateCache', 'uiGridSelectionConstants', 'gridUtil',
-    function ($q, $templateCache, uiGridSelectionConstants, gridUtil) {
+  module.service('uiGridSelectionService',
+    function () {
       var service = {
 
         initializeGrid: function (grid) {
 
-          //add feature namespace and any properties to grid for needed
+          // add feature namespace and any properties to grid for needed
           /**
            *  @ngdoc object
            *  @name ui.grid.selection.grid:selection
@@ -397,7 +397,7 @@
         },
 
         defaultGridOptions: function (gridOptions) {
-          //default option to true unless it was explicitly set to false
+          // default option to true unless it was explicitly set to false
           /**
            *  @ngdoc object
            *  @name ui.grid.selection.api:GridOptions
@@ -511,6 +511,7 @@
            *  <br/>GridOptions.showGridFooter must also be set to true.
            */
           gridOptions.enableFooterTotalSelected = gridOptions.enableFooterTotalSelected !== false;
+
           /**
            *  @ngdoc object
            *  @name isRowSelectable
@@ -519,7 +520,7 @@
            */
           gridOptions.isRowSelectable = angular.isDefined(gridOptions.isRowSelectable) ? gridOptions.isRowSelectable : angular.noop;
         },
-  
+
         /**
          * @ngdoc function
          * @name toggleRowSelection
@@ -532,17 +533,18 @@
          * @param {bool} noUnselect if true then rows cannot be unselected
          */
         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
-          if ( row.enableSelection === false ){
+          if ( row.enableSelection === false ) {
             return;
           }
 
           var selected = row.isSelected,
-              selectedRows;
-          
+            selectedRows;
+
           if (!multiSelect) {
             if (!selected) {
               service.clearSelectedRows(grid, evt);
-            } else {
+            }
+            else {
               selectedRows = service.getSelectedRows(grid);
               if (selectedRows.length > 1) {
                 selected = false; // Enable reselect of the row
@@ -551,9 +553,8 @@
             }
           }
 
-          if (selected && noUnselect) {
-            // don't deselect the row
-          } else {
+          // only select row in this case
+          if (!(selected && noUnselect)) {
             row.setSelected(!selected);
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
@@ -582,7 +583,7 @@
           var selectedRows = service.getSelectedRows(grid);
           var fromRow = selectedRows.length > 0 ? grid.renderContainers.body.visibleRowCache.indexOf(grid.selection.lastSelectedRow) : 0;
           var toRow = grid.renderContainers.body.visibleRowCache.indexOf(row);
-          //reverse select direction
+          // reverse select direction
           if (fromRow > toRow) {
             var tmp = fromRow;
             fromRow = toRow;
@@ -650,7 +651,8 @@
         decideRaiseSelectionEvent: function (grid, row, changedRows, evt) {
           if (!grid.options.enableSelectionBatchEvent) {
             grid.api.selection.raise.rowSelectionChanged(row, evt);
-          } else {
+          }
+          else {
             changedRows.push(row);
           }
         },
@@ -674,8 +676,7 @@
       };
 
       return service;
-
-    }]);
+    });
 
   /**
    *  @ngdoc directive
@@ -837,7 +838,7 @@
         restrict: 'E',
         template: $templateCache.get('ui-grid/selectionSelectAllButtons'),
         scope: false,
-        link: function ($scope, $elm, $attrs, uiGridCtrl) {
+        link: function ($scope) {
           var self = $scope.col.grid;
 
           $scope.headerButtonKeyDown = function (evt) {
@@ -854,7 +855,8 @@
                 self.api.selection.selectRowByVisibleIndex(0, evt);
               }
               self.selection.selectAll = false;
-            } else if (self.options.multiSelect) {
+            }
+            else if (self.options.multiSelect) {
               self.api.selection.selectAllVisibleRows(evt);
               self.selection.selectAll = true;
             }
@@ -872,12 +874,11 @@
    *  for the grid row
    */
   module.directive('uiGridViewport',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
+      function () {
         return {
           priority: -200, // run after default  directive
           scope: false,
-          compile: function ($elm, $attrs) {
+          compile: function ($elm) {
             var rowRepeatDiv = angular.element($elm[0].querySelector('.ui-grid-canvas:not(.ui-grid-empty-base-layer-container)').children[0]),
               newNgClass = "'ui-grid-row-selected': row.isSelected, 'ui-grid-row-focused': row.isFocused}",
               existingNgClass = rowRepeatDiv.attr('ng-class');
@@ -895,7 +896,7 @@
             };
           }
         };
-      }]);
+      });
 
   /**
    *  @ngdoc directive
@@ -906,8 +907,8 @@
    *  @description Stacks on top of ui.grid.uiGridCell to provide selection feature
    */
   module.directive('uiGridCell',
-    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService', '$timeout',
-      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService, $timeout) {
+    ['$compile', 'uiGridConstants', 'uiGridSelectionConstants', 'gridUtil', '$parse', 'uiGridSelectionService',
+      function ($compile, uiGridConstants, uiGridSelectionConstants, gridUtil, $parse, uiGridSelectionService) {
         return {
           priority: -200, // run after default uiGridCell directive
           restrict: 'A',
@@ -934,16 +935,16 @@
                   $scope.$apply();
                 }
 
-                //  uiGridCellNavService.scrollToIfNecessary(uiGridCtrl.grid, rowCol.row, rowCol.col);
+                // uiGridCellNavService.scrollToIfNecessary(uiGridCtrl.grid, rowCol.row, rowCol.col);
               });
             }
 
-            //$elm.bind('keydown', function (evt) {
+            // $elm.bind('keydown', function (evt) {
             //  if (evt.keyCode === 32 && $scope.col.colDef.name === "selectionRowHeaderCol") {
             //    uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt, ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect), $scope.grid.options.noUnselect);
             //    $scope.$apply();
             //  }
-            //});
+            // });
 
             var selectCells = function (evt) {
               // if you click on expandable icon doesn't trigger selection
@@ -1029,7 +1030,8 @@
               if ($scope.grid.options.enableRowSelection && $scope.grid.options.enableFullRowSelection &&
                 !$scope.registered) {
                 registerRowSelectionEvents();
-              } else if ((!$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection) &&
+              }
+              else if ((!$scope.grid.options.enableRowSelection || !$scope.grid.options.enableFullRowSelection) &&
                 $scope.registered) {
                 unregisterRowSelectionEvents();
               }
@@ -1047,14 +1049,12 @@
       priority: -1000,
       require: '^uiGrid',
       scope: true,
-      compile: function ($elm, $attrs) {
+      compile: function () {
         return {
           pre: function ($scope, $elm, $attrs, uiGridCtrl) {
-
             if (!uiGridCtrl.grid.options.showGridFooter) {
               return;
             }
-
 
             gridUtil.getTemplate('ui-grid/gridFooterSelectedItems')
               .then(function (contents) {
@@ -1065,7 +1065,6 @@
                 angular.element($elm[0].getElementsByClassName('ui-grid-grid-footer')[0]).append(newElm);
               });
           },
-
           post: function ($scope, $elm, $attrs, controllers) {
 
           }

@@ -1,4 +1,4 @@
-(function(){
+(function() {
   'use strict';
 
   angular.module('ui.grid').directive('uiGridPinnedContainer', ['gridUtil', function (gridUtil) {

@@ -42,14 +42,13 @@
    *
    *  @description Services for saveState feature
    */
-  module.service('uiGridSaveStateService', ['$q', 'uiGridSaveStateConstants', 'gridUtil', '$compile', '$interval', 'uiGridConstants',
-    function ($q, uiGridSaveStateConstants, gridUtil, $compile, $interval, uiGridConstants ) {
-
+  module.service('uiGridSaveStateService',
+    function () {
       var service = {
 
         initializeGrid: function (grid) {
 
-          //add feature namespace and any properties to grid for needed state
+          // add feature namespace and any properties to grid for needed state
           grid.saveState = {};
           this.defaultGridOptions(grid.options);
 
@@ -96,11 +95,10 @@
           grid.api.registerEventsFromObject(publicApi.events);
 
           grid.api.registerMethodsFromObject(publicApi.methods);
-
         },
 
         defaultGridOptions: function (gridOptions) {
-          //default option to true unless it was explicitly set to false
+          // default option to true unless it was explicitly set to false
           /**
            * @ngdoc object
            * @name ui.grid.saveState.api:GridOptions
@@ -269,8 +267,6 @@
           gridOptions.saveTreeView = gridOptions.saveTreeView !== false;
         },
 
-
-
         /**
          * @ngdoc function
          * @name save
@@ -305,28 +301,28 @@
          * @param {object} state the state we'd like to restore
          * @returns {object} the promise created by refresh
          */
-        restore: function( grid, $scope, state ){
+        restore: function( grid, $scope, state ) {
           if ( state.columns ) {
             service.restoreColumns( grid, state.columns );
           }
 
-          if ( state.scrollFocus ){
+          if ( state.scrollFocus ) {
             service.restoreScrollFocus( grid, $scope, state.scrollFocus );
           }
 
-          if ( state.selection ){
+          if ( state.selection ) {
             service.restoreSelection( grid, state.selection );
           }
 
-          if ( state.grouping ){
+          if ( state.grouping ) {
             service.restoreGrouping( grid, state.grouping );
           }
 
-          if ( state.treeView ){
+          if ( state.treeView ) {
             service.restoreTreeView( grid, state.treeView );
           }
 
-          if ( state.pagination ){
+          if ( state.pagination ) {
             service.restorePagination( grid, state.pagination );
           }
 
@@ -349,29 +345,30 @@
          */
         saveColumns: function( grid ) {
           var columns = [];
+
           grid.getOnlyDataColumns().forEach( function( column ) {
             var savedColumn = {};
             savedColumn.name = column.name;
 
-            if ( grid.options.saveVisible ){
+            if ( grid.options.saveVisible ) {
               savedColumn.visible = column.visible;
             }
 
-            if ( grid.options.saveWidths ){
+            if ( grid.options.saveWidths ) {
               savedColumn.width = column.width;
             }
 
             // these two must be copied, not just pointed too - otherwise our saved state is pointing to the same object as current state
-            if ( grid.options.saveSort ){
+            if ( grid.options.saveSort ) {
               savedColumn.sort = angular.copy( column.sort );
             }
 
-            if ( grid.options.saveFilter ){
+            if ( grid.options.saveFilter ) {
               savedColumn.filters = [];
-              column.filters.forEach( function( filter ){
+              column.filters.forEach( function( filter ) {
                 var copiedFilter = {};
                 angular.forEach( filter, function( value, key) {
-                  if ( key !== 'condition' && key !== '$$hashKey' && key !== 'placeholder'){
+                  if ( key !== 'condition' && key !== '$$hashKey' && key !== 'placeholder') {
                     copiedFilter[key] = value;
                   }
                 });
@@ -379,7 +376,7 @@
               });
             }
 
-            if ( !!grid.api.pinning && grid.options.savePinning ){
+            if ( !!grid.api.pinning && grid.options.savePinning ) {
               savedColumn.pinned = column.renderContainer ? column.renderContainer : '';
             }
 
@@ -409,20 +406,20 @@
          * @param {Grid} grid the grid whose state we'd like to save
          * @returns {object} the selection state ready to be saved
          */
-        saveScrollFocus: function( grid ){
-          if ( !grid.api.cellNav ){
+        saveScrollFocus: function( grid ) {
+          if ( !grid.api.cellNav ) {
             return {};
           }
 
           var scrollFocus = {};
-          if ( grid.options.saveFocus ){
+          if ( grid.options.saveFocus ) {
             scrollFocus.focus = true;
             var rowCol = grid.api.cellNav.getFocusedCell();
             if ( rowCol !== null ) {
-              if ( rowCol.col !== null ){
+              if ( rowCol.col !== null ) {
                 scrollFocus.colName = rowCol.col.colDef.name;
               }
-              if ( rowCol.row !== null ){
+              if ( rowCol.row !== null ) {
                 scrollFocus.rowVal = service.getRowVal( grid, rowCol.row );
               }
             }
@@ -430,11 +427,11 @@
 
           if ( grid.options.saveScroll || grid.options.saveFocus && !scrollFocus.colName && !scrollFocus.rowVal ) {
             scrollFocus.focus = false;
-            if ( grid.renderContainers.body.prevRowScrollIndex ){
+            if ( grid.renderContainers.body.prevRowScrollIndex ) {
               scrollFocus.rowVal = service.getRowVal( grid, grid.renderContainers.body.visibleRowCache[ grid.renderContainers.body.prevRowScrollIndex ]);
             }
 
-            if ( grid.renderContainers.body.prevColScrollIndex ){
+            if ( grid.renderContainers.body.prevColScrollIndex ) {
               scrollFocus.colName = grid.renderContainers.body.visibleColumnCache[ grid.renderContainers.body.prevColScrollIndex ].name;
             }
           }
@@ -451,16 +448,14 @@
          * @param {Grid} grid the grid whose state we'd like to save
          * @returns {array} the selection state ready to be saved
          */
-        saveSelection: function( grid ){
-          if ( !grid.api.selection || !grid.options.saveSelection ){
+        saveSelection: function( grid ) {
+          if ( !grid.api.selection || !grid.options.saveSelection ) {
             return [];
           }
 
-          var selection = grid.api.selection.getSelectedGridRows().map( function( gridRow ) {
+          return grid.api.selection.getSelectedGridRows().map( function( gridRow ) {
             return service.getRowVal( grid, gridRow );
           });
-
-          return selection;
         },
 
 
@@ -472,8 +467,8 @@
          * @param {Grid} grid the grid whose state we'd like to save
          * @returns {object} the grouping state ready to be saved
          */
-        saveGrouping: function( grid ){
-          if ( !grid.api.grouping || !grid.options.saveGrouping ){
+        saveGrouping: function( grid ) {
+          if ( !grid.api.grouping || !grid.options.saveGrouping ) {
             return {};
           }
 
@@ -490,7 +485,7 @@
          * @returns {object} the pagination state ready to be saved
          */
         savePagination: function( grid ) {
-          if ( !grid.api.pagination || !grid.options.paginationPageSize ){
+          if ( !grid.api.pagination || !grid.options.paginationPageSize ) {
             return {};
           }
 
@@ -509,8 +504,8 @@
          * @param {Grid} grid the grid whose state we'd like to save
          * @returns {object} the tree view state ready to be saved
          */
-        saveTreeView: function( grid ){
-          if ( !grid.api.treeView || !grid.options.saveTreeView ){
+        saveTreeView: function( grid ) {
+          if ( !grid.api.treeView || !grid.options.saveTreeView ) {
             return {};
           }
 
@@ -529,16 +524,17 @@
          * @returns {object} an object containing { identity: true/false, row: rowNumber/rowIdentity }
          *
          */
-        getRowVal: function( grid, gridRow ){
+        getRowVal: function( grid, gridRow ) {
           if ( !gridRow ) {
             return null;
           }
 
           var rowVal = {};
-          if ( grid.options.saveRowIdentity ){
+          if ( grid.options.saveRowIdentity ) {
             rowVal.identity = true;
             rowVal.row = grid.options.saveRowIdentity( gridRow.entity );
-          } else {
+          }
+          else {
             rowVal.identity = false;
             rowVal.row = grid.renderContainers.body.visibleRowCache.indexOf( gridRow );
           }
@@ -556,45 +552,45 @@
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} columnsState the list of columns we had before, with their state
          */
-        restoreColumns: function( grid, columnsState ){
+        restoreColumns: function( grid, columnsState ) {
           var isSortChanged = false;
 
           columnsState.forEach( function( columnState, index ) {
             var currentCol = grid.getColumn( columnState.name );
 
-            if ( currentCol && !grid.isRowHeaderColumn(currentCol) ){
+            if ( currentCol && !grid.isRowHeaderColumn(currentCol) ) {
               if ( grid.options.saveVisible &&
                    ( currentCol.visible !== columnState.visible ||
-                     currentCol.colDef.visible !== columnState.visible ) ){
+                     currentCol.colDef.visible !== columnState.visible ) ) {
                 currentCol.visible = columnState.visible;
                 currentCol.colDef.visible = columnState.visible;
                 grid.api.core.raise.columnVisibilityChanged(currentCol);
               }
 
-              if ( grid.options.saveWidths && currentCol.width !== columnState.width){
+              if ( grid.options.saveWidths && currentCol.width !== columnState.width) {
                 currentCol.width = columnState.width;
                 currentCol.hasCustomWidth = true;
               }
 
               if ( grid.options.saveSort &&
                    !angular.equals(currentCol.sort, columnState.sort) &&
-                   !( currentCol.sort === undefined && angular.isEmpty(columnState.sort) ) ){
+                   !( currentCol.sort === undefined && angular.isEmpty(columnState.sort) ) ) {
                 currentCol.sort = angular.copy( columnState.sort );
                 isSortChanged = true;
               }
 
               if ( grid.options.saveFilter &&
-                   !angular.equals(currentCol.filters, columnState.filters ) ){
-                columnState.filters.forEach( function( filter, index ){
+                   !angular.equals(currentCol.filters, columnState.filters ) ) {
+                columnState.filters.forEach( function( filter, index ) {
                   angular.extend( currentCol.filters[index], filter );
-                  if ( typeof(filter.term) === 'undefined' || filter.term === null ){
+                  if ( typeof(filter.term) === 'undefined' || filter.term === null ) {
                     delete currentCol.filters[index].term;
                   }
                 });
                 grid.api.core.raise.filterChanged();
               }
 
-              if ( !!grid.api.pinning && grid.options.savePinning && currentCol.renderContainer !== columnState.pinned ){
+              if ( !!grid.api.pinning && grid.options.savePinning && currentCol.renderContainer !== columnState.pinned ) {
                 grid.api.pinning.pinColumn(currentCol, columnState.pinned);
               }
 
@@ -626,23 +622,24 @@
          * @param {scope} $scope a scope that we can broadcast on
          * @param {object} scrollFocusState the scroll/focus state ready to be restored
          */
-        restoreScrollFocus: function( grid, $scope, scrollFocusState ){
-          if ( !grid.api.cellNav ){
+        restoreScrollFocus: function( grid, $scope, scrollFocusState ) {
+          if ( !grid.api.cellNav ) {
             return;
           }
 
           var colDef, row;
-          if ( scrollFocusState.colName ){
+          if ( scrollFocusState.colName ) {
             var colDefs = grid.options.columnDefs.filter( function( colDef ) { return colDef.name === scrollFocusState.colName; });
-            if ( colDefs.length > 0 ){
+            if ( colDefs.length > 0 ) {
               colDef = colDefs[0];
             }
           }
 
-          if ( scrollFocusState.rowVal && scrollFocusState.rowVal.row ){
-            if ( scrollFocusState.rowVal.identity ){
+          if ( scrollFocusState.rowVal && scrollFocusState.rowVal.row ) {
+            if ( scrollFocusState.rowVal.identity ) {
               row = service.findRowByIdentity( grid, scrollFocusState.rowVal );
-            } else {
+            }
+            else {
               row = grid.renderContainers.body.visibleRowCache[ scrollFocusState.rowVal.row ];
             }
           }
@@ -650,9 +647,10 @@
           var entity = row && row.entity ? row.entity : null ;
 
           if ( colDef || entity ) {
-            if (scrollFocusState.focus ){
+            if (scrollFocusState.focus ) {
               grid.api.cellNav.scrollToFocus( entity, colDef );
-            } else {
+            }
+            else {
               grid.scrollTo( entity, colDef );
             }
           }
@@ -669,22 +667,23 @@
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} selectionState the selection state ready to be restored
          */
-        restoreSelection: function( grid, selectionState ){
-          if ( !grid.api.selection ){
+        restoreSelection: function( grid, selectionState ) {
+          if ( !grid.api.selection ) {
             return;
           }
 
           grid.api.selection.clearSelectedRows();
 
-          selectionState.forEach(  function( rowVal ) {
-            if ( rowVal.identity ){
+          selectionState.forEach(function( rowVal ) {
+            if ( rowVal.identity ) {
               var foundRow = service.findRowByIdentity( grid, rowVal );
 
-              if ( foundRow ){
+              if ( foundRow ) {
                 grid.api.selection.selectRow( foundRow.entity );
               }
 
-            } else {
+            }
+            else {
               grid.api.selection.selectRowByVisibleIndex( rowVal.row );
             }
           });
@@ -700,8 +699,8 @@
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} groupingState the grouping state ready to be restored
          */
-        restoreGrouping: function( grid, groupingState ){
-          if ( !grid.api.grouping || typeof(groupingState) === 'undefined' || groupingState === null || angular.equals(groupingState, {}) ){
+        restoreGrouping: function( grid, groupingState ) {
+          if ( !grid.api.grouping || typeof(groupingState) === 'undefined' || groupingState === null || angular.equals(groupingState, {}) ) {
             return;
           }
 
@@ -717,8 +716,8 @@
          * @param {Grid} grid the grid whose state we'd like to restore
          * @param {object} treeViewState the tree view state ready to be restored
          */
-        restoreTreeView: function( grid, treeViewState ){
-          if ( !grid.api.treeView || typeof(treeViewState) === 'undefined' || treeViewState === null || angular.equals(treeViewState, {}) ){
+        restoreTreeView: function( grid, treeViewState ) {
+          if ( !grid.api.treeView || typeof(treeViewState) === 'undefined' || treeViewState === null || angular.equals(treeViewState, {}) ) {
             return;
           }
 
@@ -735,8 +734,8 @@
          * @param {number} pagination.paginationCurrentPage the page number to restore
          * @param {number} pagination.paginationPageSize the number of items displayed per page
          */
-        restorePagination: function( grid, pagination ){
-          if ( !grid.api.pagination || !grid.options.paginationPageSize ){
+        restorePagination: function( grid, pagination ) {
+          if ( !grid.api.pagination || !grid.options.paginationPageSize ) {
             return;
           }
 
@@ -754,20 +753,16 @@
          * @param {object} rowVal the row we'd like to find
          * @returns {gridRow} the found row, or null if none found
          */
-        findRowByIdentity: function( grid, rowVal ){
-          if ( !grid.options.saveRowIdentity ){
+        findRowByIdentity: function( grid, rowVal ) {
+          if ( !grid.options.saveRowIdentity ) {
             return null;
           }
 
           var filteredRows = grid.rows.filter( function( gridRow ) {
-            if ( grid.options.saveRowIdentity( gridRow.entity ) === rowVal.row ){
-              return true;
-            } else {
-              return false;
-            }
+            return ( grid.options.saveRowIdentity( gridRow.entity ) === rowVal.row );
           });
 
-          if ( filteredRows.length > 0 ){
+          if ( filteredRows.length > 0 ) {
             return filteredRows[0];
           } else {
             return null;
@@ -776,9 +771,8 @@
       };
 
       return service;
-
     }
-  ]);
+  );
 
   /**
    *  @ngdoc directive
