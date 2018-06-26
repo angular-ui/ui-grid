@@ -43,7 +43,7 @@ install:
 
 before_script:
   - git fetch --tags
-  - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
+  - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./lib/build/travis_build.sh ./lib/build/travis_print_logs.sh
   - mkdir -p $LOGS_DIR
   - ./lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma-cli
@@ -53,14 +53,14 @@ before_script:
   - ./lib/sauce/sauce_connect_block.sh
 
 script:
-  - ./travis_build.sh
+  - ./lib/build/travis_build.sh
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && grunt release
 
 after_failure:
-  - ./travis_print_logs.sh
+  - ./lib/build/travis_print_logs.sh
 
 after_script:
   - killall -9 sc
-  - ./travis_print_logs.sh
+  - ./lib/build/travis_print_logs.sh

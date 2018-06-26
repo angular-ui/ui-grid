@@ -51,7 +51,7 @@ module.exports = function (grunt, options) {
     baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site'];
   }
 
   return baseTasks;
