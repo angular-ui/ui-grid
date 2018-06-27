@@ -782,14 +782,14 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
    * @ngdoc object
    * @name focus
    * @propertyOf ui.grid.service:GridUtil
-   * @description Provies a set of methods to set the document focus inside the grid.
+   * @description Provides a set of methods to set the document focus inside the grid.
    * See {@link ui.grid.service:GridUtil.focus} for more information.
    */
 
   /**
    * @ngdoc object
    * @name ui.grid.service:GridUtil.focus
-   * @description Provies a set of methods to set the document focus inside the grid.
+   * @description Provides a set of methods to set the document focus inside the grid.
    * Timeouts are utilized to ensure that the focus is invoked after any other event has been triggered.
    * e.g. click events that need to run before the focus or
    * inputs elements that are in a disabled state but are enabled when those events
