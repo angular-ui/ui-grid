@@ -196,7 +196,7 @@
      * @ngdoc object
      * @name dataChange
      * @propertyOf ui.grid.service:uiGridConstants
-     * @description Used with {@link ui.grid.core.api:PublicApi#methods_notifyDataChange PublicApi.notifyDataChange},
+     * @description Used with {@link ui.grid.api:PublicApi#methods_notifyDataChange PublicApi.notifyDataChange},
      * {@link ui.grid.class:Grid#methods_callDataChangeCallbacks Grid.callDataChangeCallbacks},
      * and {@link ui.grid.class:Grid#methods_registerDataChangeCallback Grid.registerDataChangeCallback}
      * to specify the type of the event(s).

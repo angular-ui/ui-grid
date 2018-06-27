@@ -99,7 +99,6 @@
           case uiGridCellNavConstants.direction.PG_DOWN:
             return this.getRowColPageDown(curRow, curCol);
         }
-
       };
 
       UiGridCellNav.prototype.initializeSelection = function () {
@@ -273,8 +272,8 @@
 
 
           /**
-           *  @ngdoc object
-           *  @name ui.grid.cellNav:Grid.cellNav
+           * @ngdoc object
+           * @name ui.grid.cellNav.Grid:cellNav
            * @description cellNav properties added to grid class
            */
           grid.cellNav = {};

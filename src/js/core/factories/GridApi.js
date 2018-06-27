@@ -26,7 +26,7 @@
           /**
            * @ngdoc function
            * @name renderingComplete
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Rendering is complete, called at the same
            * time as `onRegisterApi`, but provides a way to obtain
            * that same event within features without stopping end
@@ -49,7 +49,7 @@
           /**
            * @ngdoc event
            * @name filterChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the filter is changed.  The nature
            * of the watch expression doesn't allow notification of what changed,
            * so the receiver of this event will need to re-extract the filter
@@ -61,7 +61,7 @@
           /**
            * @ngdoc function
            * @name setRowInvisible
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Sets an override on the row to make it always invisible,
            * which will override any filtering or other visibility calculations.
            * If the row is currently visible then sets it to invisible and calls
@@ -73,7 +73,7 @@
           /**
            * @ngdoc function
            * @name clearRowInvisible
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Clears any override on visibility for the row so that it returns to
            * using normal filtering and other visibility calculations.
            * If the row is currently invisible then sets it to visible and calls
@@ -86,7 +86,7 @@
           /**
            * @ngdoc function
            * @name getVisibleRows
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Returns all visible rows
            * @param {Grid} grid the grid you want to get visible rows from
            * @returns {array} an array of gridRow
@@ -96,7 +96,7 @@
           /**
            * @ngdoc event
            * @name rowsVisibleChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the rows that are visible
            * change.  The filtering is zero-based, so it isn't possible
            * to say which rows changed (unlike in the selection feature).
@@ -111,7 +111,7 @@
           /**
            * @ngdoc event
            * @name rowsRendered
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the cache of visible rows is changed.
            */
           this.registerEvent( 'core', 'rowsRendered' );
@@ -120,7 +120,7 @@
           /**
            * @ngdoc event
            * @name scrollBegin
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when scroll begins.  Is throttled, so won't be raised too frequently
            */
           this.registerEvent( 'core', 'scrollBegin' );
@@ -128,7 +128,7 @@
           /**
            * @ngdoc event
            * @name scrollEnd
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when scroll has finished.  Is throttled, so won't be raised too frequently
            */
           this.registerEvent( 'core', 'scrollEnd' );
@@ -136,7 +136,7 @@
           /**
            * @ngdoc event
            * @name canvasHeightChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when the canvas height has changed
            * <br/>
            * arguments: oldHeight, newHeight
@@ -146,7 +146,7 @@
           /**
            * @ngdoc event
            * @name gridDimensionChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when the grid dimensions have changed (when autoResize is on)
            * <br/>
            * arguments: oldGridHeight, oldGridWidth, newGridHeight, newGridWidth
