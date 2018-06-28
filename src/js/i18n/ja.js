@@ -84,10 +84,10 @@
             pageForward: '次のページ',
             pageToLast: '最後のページ'
           },
-          sizes: '項目/ページ',
-          totalItems: '項目',
+          sizes: '件/ページ',
+          totalItems: '件',
           through: 'から',
-          of: '項目/全'
+          of: '件/全'
         },
         grouping: {
           group: 'グループ化',
