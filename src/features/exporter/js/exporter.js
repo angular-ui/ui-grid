@@ -608,7 +608,7 @@
            *   }
            * </pre>
            */
-          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return null; };
+          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return docDefinition; };
 
           /**
            * @ngdoc function
@@ -635,7 +635,7 @@
            *   }
            * </pre>
            */
-          gridOptions.exporterExcelHeader = gridOptions.exporterExcelHeader ? gridOptions.exporterExcelHeader : function( grid, workbook, sheet, docDefinition ) { return docDefinition; };
+          gridOptions.exporterExcelHeader = gridOptions.exporterExcelHeader ? gridOptions.exporterExcelHeader : function( grid, workbook, sheet, docDefinition ) { return null; };
 
 
           /**
