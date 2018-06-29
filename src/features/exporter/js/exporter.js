@@ -608,7 +608,7 @@
            *   }
            * </pre>
            */
-          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return null; };
+          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return docDefinition; };
 
           /**
            * @ngdoc function
