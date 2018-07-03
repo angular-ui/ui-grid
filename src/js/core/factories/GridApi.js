@@ -1,18 +1,18 @@
 (function () {
 
   angular.module('ui.grid')
-    .factory('GridApi', ['$q', '$rootScope', 'gridUtil', 'uiGridConstants', 'GridRow', 'uiGridGridMenuService',
-      function ($q, $rootScope, gridUtil, uiGridConstants, GridRow, uiGridGridMenuService) {
+    .factory('GridApi', ['$q', '$rootScope', 'gridUtil', 'uiGridConstants', 'GridRow',
+      function ($q, $rootScope, gridUtil, uiGridConstants, GridRow) {
         /**
          * @ngdoc function
          * @name ui.grid.class:GridApi
          * @description GridApi provides the ability to register public methods events inside the grid and allow
-         * for other components to use the api via featureName.raise.methodName and featureName.on.eventName(function(args){}.
+         * for other components to use the api via featureName.raise.methodName and featureName.on.eventName(function(args) {}.
          * <br/>
          * To listen to events, you must add a callback to gridOptions.onRegisterApi
          * <pre>
-         *   $scope.gridOptions.onRegisterApi = function(gridApi){
-         *      gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol){
+         *   $scope.gridOptions.onRegisterApi = function(gridApi) {
+         *      gridApi.cellNav.on.navigate($scope,function(newRowCol, oldRowCol) {
          *          $log.log('navigation event');
          *      });
          *   };
@@ -26,7 +26,7 @@
           /**
            * @ngdoc function
            * @name renderingComplete
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Rendering is complete, called at the same
            * time as `onRegisterApi`, but provides a way to obtain
            * that same event within features without stopping end
@@ -49,7 +49,7 @@
           /**
            * @ngdoc event
            * @name filterChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the filter is changed.  The nature
            * of the watch expression doesn't allow notification of what changed,
            * so the receiver of this event will need to re-extract the filter
@@ -61,7 +61,7 @@
           /**
            * @ngdoc function
            * @name setRowInvisible
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Sets an override on the row to make it always invisible,
            * which will override any filtering or other visibility calculations.
            * If the row is currently visible then sets it to invisible and calls
@@ -73,7 +73,7 @@
           /**
            * @ngdoc function
            * @name clearRowInvisible
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Clears any override on visibility for the row so that it returns to
            * using normal filtering and other visibility calculations.
            * If the row is currently invisible then sets it to visible and calls
@@ -86,7 +86,7 @@
           /**
            * @ngdoc function
            * @name getVisibleRows
-           * @methodOf  ui.grid.core.api:PublicApi
+           * @methodOf  ui.grid.api:PublicApi
            * @description Returns all visible rows
            * @param {Grid} grid the grid you want to get visible rows from
            * @returns {array} an array of gridRow
@@ -96,7 +96,7 @@
           /**
            * @ngdoc event
            * @name rowsVisibleChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the rows that are visible
            * change.  The filtering is zero-based, so it isn't possible
            * to say which rows changed (unlike in the selection feature).
@@ -111,7 +111,7 @@
           /**
            * @ngdoc event
            * @name rowsRendered
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised after the cache of visible rows is changed.
            */
           this.registerEvent( 'core', 'rowsRendered' );
@@ -120,7 +120,7 @@
           /**
            * @ngdoc event
            * @name scrollBegin
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when scroll begins.  Is throttled, so won't be raised too frequently
            */
           this.registerEvent( 'core', 'scrollBegin' );
@@ -128,7 +128,7 @@
           /**
            * @ngdoc event
            * @name scrollEnd
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when scroll has finished.  Is throttled, so won't be raised too frequently
            */
           this.registerEvent( 'core', 'scrollEnd' );
@@ -136,7 +136,7 @@
           /**
            * @ngdoc event
            * @name canvasHeightChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when the canvas height has changed
            * <br/>
            * arguments: oldHeight, newHeight
@@ -146,7 +146,7 @@
           /**
            * @ngdoc event
            * @name gridDimensionChanged
-           * @eventOf  ui.grid.core.api:PublicApi
+           * @eventOf  ui.grid.api:PublicApi
            * @description  is raised when the grid dimensions have changed (when autoResize is on)
            * <br/>
            * arguments: oldGridHeight, oldGridWidth, newGridHeight, newGridWidth
@@ -166,7 +166,7 @@
          * @param {object} callBackFn function to execute
          * @example
          * <pre>
-         *    var navigate = function (newRowCol, oldRowCol){
+         *    var navigate = function (newRowCol, oldRowCol) {
          *       //do something on navigate
          *    }
          *
@@ -175,35 +175,34 @@
          *
          *    //call the scrollTo event and suppress our navigate listener
          *    //scrollTo will still raise the event for other listeners
-         *    gridApi.suppressEvents(navigate, function(){
+         *    gridApi.suppressEvents(navigate, function() {
          *       gridApi.cellNav.scrollTo(aRow, aCol);
          *    });
          *
          * </pre>
          */
         GridApi.prototype.suppressEvents = function (listenerFuncs, callBackFn) {
-          var self = this;
-          var listeners = angular.isArray(listenerFuncs) ? listenerFuncs : [listenerFuncs];
+          var self = this,
+            listeners = angular.isArray(listenerFuncs) ? listenerFuncs : [listenerFuncs];
 
-          //find all registered listeners
+          // find all registered listeners
           var foundListeners = self.listeners.filter(function(listener) {
             return listeners.some(function(l) {
               return listener.handler === l;
             });
           });
 
-          //deregister all the listeners
-          foundListeners.forEach(function(l){
+          // deregister all the listeners
+          foundListeners.forEach(function(l) {
             l.dereg();
           });
 
           callBackFn();
 
-          //reregister all the listeners
-          foundListeners.forEach(function(l){
+          // reregister all the listeners
+          foundListeners.forEach(function(l) {
               l.dereg = registerEventWithAngular(l.eventId, l.handler, self.grid, l._this);
           });
-
         };
 
         /**
@@ -251,29 +250,29 @@
 
           // gridUtil.logDebug('Creating on event method ' + featureName + '.on.' + eventName);
           feature.on[eventName] = function (scope, handler, _this) {
-            if ( scope !== null && typeof(scope.$on) === 'undefined' ){
+            if ( scope !== null && typeof(scope.$on) === 'undefined' ) {
               gridUtil.logError('asked to listen on ' + featureName + '.on.' + eventName + ' but scope wasn\'t passed in the input parameters.  It is legitimate to pass null, but you\'ve passed something else, so you probably forgot to provide scope rather than did it deliberately, not registering');
               return;
             }
             var deregAngularOn = registerEventWithAngular(eventId, handler, self.grid, _this);
 
-            //track our listener so we can turn off and on
-            var listener = {handler: handler, dereg: deregAngularOn, eventId: eventId, scope: scope, _this:_this};
+            // track our listener so we can turn off and on
+            var listener = {handler: handler, dereg: deregAngularOn, eventId: eventId, scope: scope, _this: _this};
+
             self.listeners.push(listener);
 
-            var removeListener = function(){
+            var removeListener = function() {
               listener.dereg();
               var index = self.listeners.indexOf(listener);
               self.listeners.splice(index,1);
             };
 
-            //destroy tracking when scope is destroyed
+            // destroy tracking when scope is destroyed
             if (scope) {
               scope.$on('$destroy', function() {
                 removeListener();
               });
             }
-
 
             return removeListener;
           };
@@ -282,7 +281,7 @@
         function registerEventWithAngular(eventId, handler, grid, _this) {
           return $rootScope.$on(eventId, function (event) {
             var args = Array.prototype.slice.call(arguments);
-            args.splice(0, 1); //remove evt argument
+            args.splice(0, 1); // remove evt argument
             handler.apply(_this ? _this : grid.api, args);
           });
         }
@@ -296,16 +295,17 @@
          * <pre>
          * {featureName:
          *        {
-         *          eventNameOne:function(args){},
-         *          eventNameTwo:function(args){}
+         *          eventNameOne:function(args) {},
+         *          eventNameTwo:function(args) {}
          *        }
          *  }
          * </pre>
          * @param {object} eventObjectMap map of feature/event names
          */
         GridApi.prototype.registerEventsFromObject = function (eventObjectMap) {
-          var self = this;
-          var features = [];
+          var self = this,
+            features = [];
+
           angular.forEach(eventObjectMap, function (featProp, featPropName) {
             var feature = {name: featPropName, events: []};
             angular.forEach(featProp, function (prop, propName) {
@@ -319,7 +319,6 @@
               self.registerEvent(feature.name, event);
             });
           });
-
         };
 
         /**
@@ -351,10 +350,10 @@
          * <br>
          * {featureName:
          *        {
-         *          methodNameOne:function(args){},
-         *          methodNameTwo:function(args){}
+         *          methodNameOne:function(args) {},
+         *          methodNameTwo:function(args) {}
          *        }
-         * @param {object} eventObjectMap map of feature/event names
+         * @param {object} methodMap map of feature/event names
          * @param {object} _this binds this to _this for all functions.  Defaults to gridApi.grid
          */
         GridApi.prototype.registerMethodsFromObject = function (methodMap, _this) {
@@ -377,7 +376,5 @@
         };
 
         return GridApi;
-
       }]);
-
 })();

@@ -2,18 +2,18 @@ describe('uiGridFooterCell', function () {
   var grid, data, columnDefs, $scope, $compile, $document, recompile, uiGridConstants, $httpBackend;
 
   data = [
-    { "name": "Bob", "age": 35 },
-    { "name": "Bill", "age": 25 },
-    { "name": "Sam", "age": 17 },
-    { "name": "Jane", "age": 19 }
+    { name: 'Bob', age: 35 },
+    { name: 'Bill', age: 25 },
+    { name: 'Sam', age: 17 },
+    { name: 'Jane', age: 19 }
   ];
 
   columnDefs = [
     { name: 'name', footerCellClass: 'testClass' },
     {
       name: 'age',
-      footerCellClass: function(grid, row, col, rowRenderIndex, colRenderIndex) {
-        if ( col.colDef.noClass ){
+      footerCellClass: function(grid, row, col) {
+        if ( col.colDef.noClass ) {
           return '';
         } else {
           return 'funcCellClass';
@@ -35,7 +35,7 @@ describe('uiGridFooterCell', function () {
       showColumnFooter: true,
       columnDefs: columnDefs,
       data: data,
-      onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
+      onRegisterApi: function( gridApi ) { $scope.gridApi = gridApi; }
     };
 
     $scope.extScope = 'test';
@@ -79,9 +79,8 @@ describe('uiGridFooterCell', function () {
 
   describe('externalScope', function() {
     it('should be present', function () {
-      var elm = recompile();
-
       var header = $(grid).find('.ui-grid-header-cell:nth(0)');
+
       expect(header).toBeDefined();
       expect(header.scope().grid.appScope).toBeDefined();
       expect(header.scope().grid.appScope.extScope).toBe('test');

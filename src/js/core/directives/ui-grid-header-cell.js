@@ -1,13 +1,13 @@
-(function(){
+(function() {
   'use strict';
 
   angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'ScrollEvent', 'i18nService',
   function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, ScrollEvent, i18nService) {
     // Do stuff after mouse has been down this many ms on the header cell
-    var mousedownTimeout = 500;
-    var changeModeTimeout = 500;    // length of time between a touch event and a mouse event being recognised again, and vice versa
+    var mousedownTimeout = 500,
+      changeModeTimeout = 500; // length of time between a touch event and a mouse event being recognised again, and vice versa
 
-    var uiGridHeaderCell = {
+    return {
       priority: 0,
       scope: {
         col: '=',
@@ -18,7 +18,7 @@
       replace: true,
       compile: function() {
         return {
-          pre: function ($scope, $elm, $attrs) {
+          pre: function ($scope, $elm) {
             var template = $scope.col.headerCellTemplate;
             if (template === undefined && $scope.col.providedHeaderCellTemplate !== '') {
               if ($scope.col.headerCellTemplatePromise) {
@@ -42,17 +42,17 @@
               sort: i18nService.getSafeText('sort')
             };
             $scope.isSortPriorityVisible = function() {
-              //show sort priority if column is sorted and there is at least one other sorted column
-              return angular.isNumber($scope.col.sort.priority) && $scope.grid.columns.some(function(element, index){
+              // show sort priority if column is sorted and there is at least one other sorted column
+              return angular.isNumber($scope.col.sort.priority) && $scope.grid.columns.some(function(element, index) {
                   return angular.isNumber(element.sort.priority) && element !== $scope.col;
                 });
             };
-            $scope.getSortDirectionAriaLabel = function(){
+            $scope.getSortDirectionAriaLabel = function() {
               var col = $scope.col;
-              //Trying to recreate this sort of thing but it was getting messy having it in the template.
-              //Sort direction {{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending':'none')}}. {{col.sort.priority ? {{columnPriorityText}} {{col.sort.priority}} : ''}
-              var sortDirectionText = col.sort.direction === uiGridConstants.ASC ? $scope.i18n.sort.ascending : ( col.sort.direction === uiGridConstants.DESC ? $scope.i18n.sort.descending : $scope.i18n.sort.none);
-              var label = sortDirectionText;
+              // Trying to recreate this sort of thing but it was getting messy having it in the template.
+              // Sort direction {{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending': 'none')}}.
+              // {{col.sort.priority ? {{columnPriorityText}} {{col.sort.priority}} : ''}
+              var label = col.sort.direction === uiGridConstants.ASC ? $scope.i18n.sort.ascending : ( col.sort.direction === uiGridConstants.DESC ? $scope.i18n.sort.descending : $scope.i18n.sort.none);
 
               if ($scope.isSortPriorityVisible()) {
                 label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + (col.sort.priority + 1);
@@ -75,14 +75,12 @@
             $scope.desc = uiGridConstants.DESC;
 
             // Store a reference to menu element
-            var $colMenu = angular.element( $elm[0].querySelectorAll('.ui-grid-header-cell-menu') );
-
             var $contentsElm = angular.element( $elm[0].querySelectorAll('.ui-grid-cell-contents') );
 
 
             // apply any headerCellClass
-            var classAdded;
-            var previousMouseX;
+            var classAdded,
+              previousMouseX;
 
             // filter watchers
             var filterDeregisters = [];
@@ -108,8 +106,7 @@
              * will be a click event and that can cause the column menu to close
              *
              */
-
-            $scope.downFn = function( event ){
+            $scope.downFn = function( event ) {
               event.stopPropagation();
 
               if (typeof(event.originalEvent) !== 'undefined' && event.originalEvent !== undefined) {
@@ -134,16 +131,16 @@
               uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
 
               $scope.offAllEvents();
-              if ( event.type === 'touchstart'){
+              if ( event.type === 'touchstart') {
                 $document.on('touchend', $scope.upFn);
                 $document.on('touchmove', $scope.moveFn);
-              } else if ( event.type === 'mousedown' ){
+              } else if ( event.type === 'mousedown' ) {
                 $document.on('mouseup', $scope.upFn);
                 $document.on('mousemove', $scope.moveFn);
               }
             };
 
-            $scope.upFn = function( event ){
+            $scope.upFn = function( event ) {
               event.stopPropagation();
               $timeout.cancel($scope.mousedownTimeout);
               $scope.offAllEvents();
@@ -157,7 +154,7 @@
               }
               else {
                 // short click
-                if ( $scope.sortable ){
+                if ( $scope.sortable ) {
                   $scope.handleClick(event);
                 }
               }
@@ -169,10 +166,10 @@
               }
             };
 
-            $scope.moveFn = function( event ){
+            $scope.moveFn = function( event ) {
               // Chrome is known to fire some bogus move events.
               var changeValue = event.pageX - previousMouseX;
-              if ( changeValue === 0 ){ return; }
+              if ( changeValue === 0 ) { return; }
 
               // we're a move, so do nothing and leave for column move (if enabled) to take over
               $timeout.cancel($scope.mousedownTimeout);
@@ -180,13 +177,13 @@
               $scope.onDownEvents(event.type);
             };
 
-            $scope.clickFn = function ( event ){
+            $scope.clickFn = function ( event ) {
               event.stopPropagation();
               $contentsElm.off('click', $scope.clickFn);
             };
 
 
-            $scope.offAllEvents = function(){
+            $scope.offAllEvents = function() {
               $contentsElm.off('touchstart', $scope.downFn);
               $contentsElm.off('mousedown', $scope.downFn);
 
@@ -199,18 +196,18 @@
               $contentsElm.off('click', $scope.clickFn);
             };
 
-            $scope.onDownEvents = function( type ){
+            $scope.onDownEvents = function( type ) {
               // If there is a previous event, then wait a while before
               // activating the other mode - i.e. if the last event was a touch event then
               // don't enable mouse events for a wee while (500ms or so)
               // Avoids problems with devices that emulate mouse events when you have touch events
 
-              switch (type){
+              switch (type) {
                 case 'touchmove':
                 case 'touchend':
                   $contentsElm.on('click', $scope.clickFn);
                   $contentsElm.on('touchstart', $scope.downFn);
-                  $timeout(function(){
+                  $timeout(function() {
                     $contentsElm.on('mousedown', $scope.downFn);
                   }, changeModeTimeout);
                   break;
@@ -218,7 +215,7 @@
                 case 'mouseup':
                   $contentsElm.on('click', $scope.clickFn);
                   $contentsElm.on('mousedown', $scope.downFn);
-                  $timeout(function(){
+                  $timeout(function() {
                     $contentsElm.on('touchstart', $scope.downFn);
                   }, changeModeTimeout);
                   break;
@@ -230,9 +227,10 @@
             };
 
 
-            var updateHeaderOptions = function( grid ){
+            var updateHeaderOptions = function() {
               var contents = $elm;
-              if ( classAdded ){
+
+              if ( classAdded ) {
                 contents.removeClass( classAdded );
                 classAdded = null;
               }
@@ -259,8 +257,8 @@
               var oldFilterable = $scope.filterable;
               $scope.filterable = Boolean(uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering);
 
-              if ( oldFilterable !== $scope.filterable){
-                if ( typeof($scope.col.updateFilters) !== 'undefined' ){
+              if ( oldFilterable !== $scope.filterable) {
+                if ( typeof($scope.col.updateFilters) !== 'undefined' ) {
                   $scope.col.updateFilters($scope.filterable);
                 }
 
@@ -285,16 +283,11 @@
                     filterDeregister();
                   });
                 }
-
               }
 
               // figure out whether we support column menus
-              if ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false &&
-                      $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false){
-                $scope.colMenu = true;
-              } else {
-                $scope.colMenu = false;
-              }
+              $scope.colMenu = ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false &&
+                      $scope.col.colDef && $scope.col.colDef.enableColumnMenu !== false);
 
               /**
                * @ngdoc property
@@ -333,19 +326,6 @@
               }
             };
 
-/*
-            $scope.$watch('col', function (n, o) {
-              if (n !== o) {
-                // See if the column's internal class has changed
-                var newColClass = $scope.col.getColClass(false);
-                if (newColClass !== initColClass) {
-                  $elm.removeClass(initColClass);
-                  $elm.addClass(newColClass);
-                  initColClass = newColClass;
-                }
-              }
-            });
-*/
             updateHeaderOptions();
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
@@ -402,8 +382,5 @@
         };
       }
     };
-
-    return uiGridHeaderCell;
   }]);
-
 })();

@@ -64,7 +64,7 @@
 
         initializeGrid: function ($scope, grid) {
 
-          //add feature namespace and any properties to grid for needed state
+          // add feature namespace and any properties to grid for needed state
           grid.importer = {
             $scope: $scope
           };
@@ -104,13 +104,13 @@
 
           grid.api.registerMethodsFromObject(publicApi.methods);
 
-          if ( grid.options.enableImporter && grid.options.importerShowMenu ){
-            if ( grid.api.core.addToGridMenu ){
+          if ( grid.options.enableImporter && grid.options.importerShowMenu ) {
+            if ( grid.api.core.addToGridMenu ) {
               service.addToMenu( grid );
             } else {
               // order of registration is not guaranteed, register in a little while
               $interval( function() {
-                if (grid.api.core.addToGridMenu){
+                if (grid.api.core.addToGridMenu) {
                   service.addToMenu( grid );
                 }
               }, 100, 1);
@@ -120,7 +120,7 @@
 
 
         defaultGridOptions: function (gridOptions) {
-          //default option to true unless it was explicitly set to false
+          // default option to true unless it was explicitly set to false
           /**
            * @ngdoc object
            * @name ui.grid.importer.api:GridOptions
@@ -235,7 +235,7 @@
            * often the file content itself or the element that is in error
            *
            */
-          if ( !gridOptions.importerErrorCallback ||  typeof(gridOptions.importerErrorCallback) !== 'function' ){
+          if ( !gridOptions.importerErrorCallback ||  typeof(gridOptions.importerErrorCallback) !== 'function' ) {
             delete gridOptions.importerErrorCallback;
           }
 
@@ -333,7 +333,7 @@
             },
             {
               templateUrl: 'ui-grid/importerMenuItemContainer',
-              action: function ($event) {
+              action: function () {
                 this.grid.api.importer.importAFile( grid );
               },
               order: 151
@@ -353,14 +353,14 @@
          * javascript object
          */
         importThisFile: function ( grid, fileObject ) {
-          if (!fileObject){
+          if (!fileObject) {
             gridUtil.logError( 'No file object provided to importThisFile, should be impossible, aborting');
             return;
           }
 
           var reader = new FileReader();
 
-          switch ( fileObject.type ){
+          switch ( fileObject.type ) {
             case 'application/json':
               reader.onload = service.importJsonClosure( grid );
               break;
@@ -381,19 +381,19 @@
          * The json data is imported into new objects of type `gridOptions.importerNewObject`,
          * and if the rowEdit feature is enabled the rows are marked as dirty
          * @param {Grid} grid the grid we want to import into
-         * @param {FileObject} importFile the file that we want to import, as
-         * a FileObject
+         * @return {function} Function that receives the file that we want to import, as
+         * a FileObject as an argument
          */
         importJsonClosure: function( grid ) {
-          return function( importFile ){
-            var newObjects = [];
-            var newObject;
+          return function( importFile ) {
+            var newObjects = [],
+              newObject,
+              importArray = service.parseJson( grid, importFile );
 
-            var importArray = service.parseJson( grid, importFile );
-            if (importArray === null){
+            if (importArray === null) {
               return;
             }
-            importArray.forEach(  function( value, index ) {
+            importArray.forEach(  function( value ) {
               newObject = service.newObject( grid );
               angular.extend( newObject, value );
               newObject = grid.options.importerObjectCallback( grid, newObject );
@@ -401,7 +401,6 @@
             });
 
             service.addObjects( grid, newObjects );
-
           };
         },
 
@@ -417,8 +416,9 @@
          * a FileObject
          * @returns {array} array of objects from the imported json
          */
-        parseJson: function( grid, importFile ){
+        parseJson: function( grid, importFile ) {
           var loadedObjects;
+
           try {
             loadedObjects = JSON.parse( importFile.target.result );
           } catch (e) {
@@ -426,7 +426,7 @@
             return;
           }
 
-          if ( !Array.isArray( loadedObjects ) ){
+          if ( !Array.isArray( loadedObjects ) ) {
             service.alertError( grid, 'importer.jsonNotarray', 'Import failed, file is not an array, file was: ', importFile.target.result );
             return [];
           } else {
@@ -443,19 +443,21 @@
          * @description Creates a function that imports a csv file into the grid
          * (allowing it to be used in the reader.onload event)
          * @param {Grid} grid the grid that we want to import into
-         * @param {FileObject} importFile the file that we want to import, as
+         * @return {function} Function that receives the file that we want to import, as
          * a file object
          */
         importCsvClosure: function( grid ) {
-          return function( importFile ){
+          return function( importFile ) {
             var importArray = service.parseCsv( importFile );
-            if ( !importArray || importArray.length < 1 ){
+
+            if ( !importArray || importArray.length < 1 ) {
               service.alertError( grid, 'importer.invalidCsv', 'File could not be processed, is it valid csv? Content was: ', importFile.target.result );
               return;
             }
 
             var newObjects = service.createCsvObjects( grid, importArray );
-            if ( !newObjects || newObjects.length === 0 ){
+
+            if ( !newObjects || newObjects.length === 0 ) {
               service.alertError( grid, 'importer.noObjects', 'Objects were not able to be derived, content was: ', importFile.target.result );
               return;
             }
@@ -499,21 +501,23 @@
          * @param {Grid} grid the grid that we want to import into
          * @param {Array} importArray the data that we want to import, as an array
          */
-        createCsvObjects: function( grid, importArray ){
+        createCsvObjects: function( grid, importArray ) {
           // pull off header row and turn into headers
           var headerMapping = grid.options.importerProcessHeaders( grid, importArray.shift() );
-          if ( !headerMapping || headerMapping.length === 0 ){
+
+          if ( !headerMapping || headerMapping.length === 0 ) {
             service.alertError( grid, 'importer.noHeaders', 'Column names could not be derived, content was: ', importArray );
             return [];
           }
 
-          var newObjects = [];
-          var newObject;
-          importArray.forEach( function( row, index ) {
+          var newObjects = [],
+            newObject;
+
+          importArray.forEach( function( row ) {
             newObject = service.newObject( grid );
-            if ( row !== null ){
-              row.forEach( function( field, index ){
-                if ( headerMapping[index] !== null ){
+            if ( row !== null ) {
+              row.forEach( function( field, index ) {
+                if ( headerMapping[index] !== null ) {
                   newObject[ headerMapping[index] ] = field;
                 }
               });
@@ -541,21 +545,25 @@
          */
         processHeaders: function( grid, headerRow ) {
           var headers = [];
-          if ( !grid.options.columnDefs || grid.options.columnDefs.length === 0 ){
+
+          if ( !grid.options.columnDefs || grid.options.columnDefs.length === 0 ) {
             // we are going to create new columnDefs for all these columns, so just remove
             // spaces from the names to create fields
-            headerRow.forEach( function( value, index ) {
+            headerRow.forEach( function( value ) {
               headers.push( value.replace( /[^0-9a-zA-Z\-_]/g, '_' ) );
             });
             return headers;
-          } else {
+          }
+          else {
             var lookupHash = service.flattenColumnDefs( grid, grid.options.columnDefs );
-            headerRow.forEach(  function( value, index ) {
+            headerRow.forEach(  function( value ) {
               if ( lookupHash[value] ) {
                 headers.push( lookupHash[value] );
-              } else if ( lookupHash[ value.toLowerCase() ] ) {
+              }
+              else if ( lookupHash[ value.toLowerCase() ] ) {
                 headers.push( lookupHash[ value.toLowerCase() ] );
-              } else {
+              }
+              else {
                 headers.push( null );
               }
             });
@@ -577,25 +585,26 @@
          * @returns {hash} the flattened version of the column def information, allowing
          * us to look up a value by `flattenedHash[ headerValue ]`
          */
-        flattenColumnDefs: function( grid, columnDefs ){
+        flattenColumnDefs: function( grid, columnDefs ) {
           var flattenedHash = {};
-          columnDefs.forEach(  function( columnDef, index) {
-            if ( columnDef.name ){
+
+          columnDefs.forEach(  function( columnDef) {
+            if ( columnDef.name ) {
               flattenedHash[ columnDef.name ] = columnDef.field || columnDef.name;
               flattenedHash[ columnDef.name.toLowerCase() ] = columnDef.field || columnDef.name;
             }
 
-            if ( columnDef.field ){
+            if ( columnDef.field ) {
               flattenedHash[ columnDef.field ] = columnDef.field || columnDef.name;
               flattenedHash[ columnDef.field.toLowerCase() ] = columnDef.field || columnDef.name;
             }
 
-            if ( columnDef.displayName ){
+            if ( columnDef.displayName ) {
               flattenedHash[ columnDef.displayName ] = columnDef.field || columnDef.name;
               flattenedHash[ columnDef.displayName.toLowerCase() ] = columnDef.field || columnDef.name;
             }
 
-            if ( columnDef.displayName && grid.options.importerHeaderFilter ){
+            if ( columnDef.displayName && grid.options.importerHeaderFilter ) {
               flattenedHash[ grid.options.importerHeaderFilter(columnDef.displayName) ] = columnDef.field || columnDef.name;
               flattenedHash[ grid.options.importerHeaderFilter(columnDef.displayName).toLowerCase() ] = columnDef.field || columnDef.name;
             }
@@ -624,8 +633,8 @@
          * @param {array} newObjects the objects we want to insert into the grid data
          * @returns {object} the new object
          */
-        addObjects: function( grid, newObjects, $scope ){
-          if ( grid.api.rowEdit ){
+        addObjects: function( grid, newObjects ) {
+          if ( grid.api.rowEdit ) {
             var dataChangeDereg = grid.registerDataChangeCallback( function() {
               grid.api.rowEdit.setRowsDirty( newObjects );
               dataChangeDereg();
@@ -648,10 +657,11 @@
          * @param {Grid} grid the grid we're importing into
          * @returns {object} the new object
          */
-        newObject: function( grid ){
-          if ( typeof(grid.options) !== "undefined" && typeof(grid.options.importerNewObject) !== "undefined" ){
+        newObject: function( grid ) {
+          if ( typeof(grid.options) !== "undefined" && typeof(grid.options.importerNewObject) !== "undefined" ) {
             return new grid.options.importerNewObject();
-          } else {
+          }
+          else {
             return {};
           }
         },
@@ -669,10 +679,11 @@
          * @param {array} headerRow the header row that we wish to match against
          * the column definitions
          */
-        alertError: function( grid, alertI18nToken, consoleMessage, context ){
-          if ( grid.options.importerErrorCallback ){
+        alertError: function( grid, alertI18nToken, consoleMessage, context ) {
+          if ( grid.options.importerErrorCallback ) {
             grid.options.importerErrorCallback( grid, alertI18nToken, consoleMessage, context );
-          } else {
+          }
+          else {
             $window.alert(i18nService.getSafeText( alertI18nToken ));
             gridUtil.logError(consoleMessage + context );
           }
@@ -740,7 +751,8 @@
 
                 uiGridImporterService.importThisFile( grid, fileObject );
                 target.form.reset();
-              } else {
+              }
+              else {
                 gridUtil.logError('Could not import file because UI Grid was not found.');
               }
             }
@@ -748,9 +760,10 @@
 
           var fileChooser = $elm[0].querySelectorAll('.ui-grid-importer-file-chooser');
 
-          if ( fileChooser.length !== 1 ){
+          if ( fileChooser.length !== 1 ) {
             gridUtil.logError('Found > 1 or < 1 file choosers within the menu item, error, cannot continue');
-          } else {
+          }
+          else {
             fileChooser[0].addEventListener('change', handleFileSelect, false);
           }
         }

@@ -381,7 +381,7 @@ module.exports = {
   expectRowValuesMatch: function( gridId, expectedRow, expectedValueArray ) {
     var row = this.getRow( gridId, expectedRow );
 
-    for ( var i = 0; i < expectedValueArray.length; i++){
+    for ( var i = 0; i < expectedValueArray.length; i++) {
       expect(row.element( by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.uid').row(i)).getText()).toMatch(expectedValueArray[i], 'Expected to match: ' + expectedValueArray[i] + ' in column: ' + i);
     }
   },
@@ -726,9 +726,9 @@ module.exports = {
 
         return menuItems.map(function(elm) {
           return elm.isDisplayed();
-        }).then( function( displayedArray ){
-          for ( var i = 0; i < displayedArray.length; i++ ){
-            if ( displayedArray[i] ){
+        }).then( function( displayedArray ) {
+          for ( var i = 0; i < displayedArray.length; i++ ) {
+            if ( displayedArray[i] ) {
               displayedCount++;
             }
           }
@@ -762,9 +762,9 @@ module.exports = {
 
     menuItems.map(function(elm) {
       return elm.isDisplayed();
-    }).then( function( displayedArray ){
-      for ( var i = 0; i < displayedArray.length; i++ ){
-        if ( displayedArray[i] ){
+    }).then( function( displayedArray ) {
+      for ( var i = 0; i < displayedArray.length; i++ ) {
+        if ( displayedArray[i] ) {
           displayedCount++;
         }
       }

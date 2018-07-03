@@ -85,7 +85,7 @@
 
         initializeGrid: function (grid) {
 
-          //add feature namespace and any properties to grid for needed state
+          // add feature namespace and any properties to grid for needed state
           grid.exporter = {};
           this.defaultGridOptions(grid.options);
 
@@ -158,12 +158,12 @@
 
           grid.api.registerMethodsFromObject(publicApi.methods);
 
-          if (grid.api.core.addToGridMenu){
+          if (grid.api.core.addToGridMenu) {
             service.addToMenu( grid );
           } else {
             // order of registration is not guaranteed, register in a little while
             $interval( function() {
-              if (grid.api.core.addToGridMenu){
+              if (grid.api.core.addToGridMenu) {
                 service.addToMenu( grid );
               }
             }, this.delay, 1);
@@ -172,7 +172,7 @@
         },
 
         defaultGridOptions: function (gridOptions) {
-          //default option to true unless it was explicitly set to false
+          // default option to true unless it was explicitly set to false
           /**
            * @ngdoc object
            * @name ui.grid.exporter.api:GridOptions
@@ -418,7 +418,7 @@
           /**
            * @ngdoc object
            * @name exporterMenuAllData
-           * @porpertyOf  ui.grid.exporter.api:GridOptions
+           * @propertyOf ui.grid.exporter.api:GridOptions
            * @description Add export all data as cvs/pdf menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuAllData = gridOptions.exporterMenuAllData !== undefined ? gridOptions.exporterMenuAllData : true;
@@ -426,7 +426,7 @@
           /**
            * @ngdoc object
            * @name exporterMenuVisibleData
-           * @porpertyOf  ui.grid.exporter.api:GridOptions
+           * @propertyOf ui.grid.exporter.api:GridOptions
            * @description Add export visible data as cvs/pdf menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuVisibleData = gridOptions.exporterMenuVisibleData !== undefined ? gridOptions.exporterMenuVisibleData : true;
@@ -434,7 +434,7 @@
           /**
            * @ngdoc object
            * @name exporterMenuSelectedData
-           * @porpertyOf  ui.grid.exporter.api:GridOptions
+           * @propertyOf ui.grid.exporter.api:GridOptions
            * @description Add export selected data as cvs/pdf menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuSelectedData = gridOptions.exporterMenuSelectedData !== undefined ? gridOptions.exporterMenuSelectedData : true;
@@ -442,7 +442,7 @@
           /**
            * @ngdoc object
            * @name exporterMenuCsv
-           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @propertyOf ui.grid.exporter.api:GridOptions
            * @description Add csv export menu items to the ui-grid grid menu, if it's present.  Defaults to true.
            */
           gridOptions.exporterMenuCsv = gridOptions.exporterMenuCsv !== undefined ? gridOptions.exporterMenuCsv : true;
@@ -511,7 +511,7 @@
            *
            * @example
            * <pre>
-           *   gridOptions.exporterHeaderFilter = function( displayName ){ return 'col: ' + name; };
+           *   gridOptions.exporterHeaderFilter = function( displayName ) { return 'col: ' + name; };
            * </pre>
            * OR
            * <pre>
@@ -539,8 +539,8 @@
            *
            * @example
            * <pre>
-           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ){
-           *     if ( col.name === 'status' ){
+           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ) {
+           *     if ( col.name === 'status' ) {
            *       value = decodeStatus( value );
            *     }
            *     return value;
@@ -568,8 +568,8 @@
            *
            * @example
            * <pre>
-           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ){
-           *     if ( col.name === 'status' ){
+           *   gridOptions.exporterFieldCallback = function ( grid, row, col, value ) {
+           *     if ( col.name === 'status' ) {
            *       value = decodeStatus( value );
            *     }
            *     return value;
@@ -608,7 +608,7 @@
            *   }
            * </pre>
            */
-          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return null; };
+          gridOptions.exporterExcelCustomFormatters = gridOptions.exporterExcelCustomFormatters ? gridOptions.exporterExcelCustomFormatters : function( grid, workbook, docDefinition ) { return docDefinition; };
 
           /**
            * @ngdoc function
@@ -715,7 +715,7 @@
           grid.api.core.addToGridMenu( grid, [
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsCsv'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
@@ -725,7 +725,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -735,7 +735,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -746,7 +746,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
@@ -756,7 +756,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -766,7 +766,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -777,7 +777,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsExcel'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.excelExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
@@ -787,7 +787,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsExcel'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.excelExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -797,7 +797,7 @@
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsExcel'),
-              action: function ($event) {
+              action: function () {
                 grid.api.exporter.excelExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
@@ -889,36 +889,36 @@
          * uiGridExporterConstants.SELECTED
          */
         getColumnHeaders: function (grid, colTypes) {
-          var headers = [];
-          var columns;
+          var headers = [],
+            columns;
 
-          if ( colTypes === uiGridExporterConstants.ALL ){
+          if ( colTypes === uiGridExporterConstants.ALL ) {
             columns = grid.columns;
           } else {
-            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
-            var bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
-            var rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [],
+              bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [],
+              rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [];
 
-            columns = leftColumns.concat(bodyColumns,rightColumns);
+            columns = leftColumns.concat(bodyColumns, rightColumns);
           }
 
           columns.forEach( function( gridCol ) {
             // $$hashKey check since when grouping and sorting pragmatically this ends up in export. Filtering it out
             if ( gridCol.colDef.exporterSuppressExport !== true  && gridCol.field !== '$$hashKey' &&
-                 grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
+                 grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ) {
               var headerEntry = {
                 name: gridCol.field,
                 displayName: getDisplayName(grid, gridCol),
                 width: gridCol.drawnWidth ? gridCol.drawnWidth : gridCol.width,
                 align: gridCol.colDef.align ? gridCol.colDef.align : (gridCol.colDef.type === 'number' ? 'right' : 'left')
               };
+
               headers.push(headerEntry);
             }
           });
 
           return headers;
         },
-
 
         /**
          * @ngdoc property
@@ -929,12 +929,12 @@
          * valid pdfMake alignment option.
          */
 
-
         /**
          * @ngdoc object
          * @name ui.grid.exporter.api:GridRow
          * @description GridRow settings for exporter
          */
+
         /**
          * @ngdoc object
          * @name exporterEnableExporting
@@ -943,7 +943,6 @@
          * other settings
          * <br/>Defaults to true
          */
-
 
         /**
          * @ngdoc function
@@ -977,16 +976,9 @@
          * which is a row without children (a leaf). If the grid is not
          * grouped this will return just the raw rows
          * @param {Grid} grid the grid from which data should be exported
-         * @param {string} rowTypes which rows to export, valid values are
-         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
-         * uiGridExporterConstants.SELECTED
-         * @param {string} colTypes which columns to export, valid values are
-         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
-         * uiGridExporterConstants.SELECTED
-         * @param {boolean} applyCellFilters whether or not to get the display value or the raw value of the data
          * @returns {Array} an array of leaf nodes
          */
-        getDataSorted: function (grid, rowTypes, colTypes, applyCellFilters) {
+        getDataSorted: function (grid) {
           if (!grid.treeBase || grid.treeBase.numberLevels === 0) {
             return grid.rows;
           }
@@ -994,6 +986,7 @@
 
           for (var i = 0; i< grid.treeBase.tree.length; i++) {
             var nodeRows = this.getRowsFromNode(grid.treeBase.tree[i]);
+
             for (var j = 0; j<nodeRows.length; j++) {
               rows.push(nodeRows[j].row);
             }
@@ -1018,9 +1011,9 @@
          * @param {boolean} applyCellFilters whether or not to get the display value or the raw value of the data
          */
         getData: function (grid, rowTypes, colTypes, applyCellFilters) {
-          var data = [];
-          var rows;
-          var columns;
+          var data = [],
+            rows,
+            columns;
 
           switch ( rowTypes ) {
             case uiGridExporterConstants.ALL:
@@ -1030,7 +1023,7 @@
               rows = grid.getVisibleRows();
               break;
             case uiGridExporterConstants.SELECTED:
-              if ( grid.api.selection ){
+              if ( grid.api.selection ) {
                 rows = grid.api.selection.getSelectedGridRows();
               } else {
                 gridUtil.logError('selection feature must be enabled to allow selected rows to be exported');
@@ -1038,30 +1031,29 @@
               break;
           }
 
-          if ( colTypes === uiGridExporterConstants.ALL ){
+          if ( colTypes === uiGridExporterConstants.ALL ) {
             columns = grid.columns;
           } else {
-            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
-            var bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
-            var rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ){ return column.visible; } ) : [];
+            var leftColumns = grid.renderContainers.left ? grid.renderContainers.left.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [];
+            var bodyColumns = grid.renderContainers.body ? grid.renderContainers.body.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [];
+            var rightColumns = grid.renderContainers.right ? grid.renderContainers.right.visibleColumnCache.filter( function( column ) { return column.visible; } ) : [];
 
-            columns = leftColumns.concat(bodyColumns,rightColumns);
+            columns = leftColumns.concat(bodyColumns, rightColumns);
           }
 
-          rows.forEach( function( row, index ) {
-
+          rows.forEach(function( row ) {
             if (row.exporterEnableExporting !== false) {
               var extractedRow = [];
 
+              columns.forEach( function( gridCol ) {
+                // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
+                if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) &&
+                     gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
+                     grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ) {
+                  var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol ),
+                    extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) },
+                    extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue );
 
-              columns.forEach( function( gridCol, index ) {
-              // $$hashKey check since when grouping and sorting programmatically this ends up in export. Filtering it out
-              if ( (gridCol.visible || colTypes === uiGridExporterConstants.ALL ) &&
-                   gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
-                   grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ){
-                  var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol );
-                  var extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) };
-                  var extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue );
                   if (extension) {
                     Object.assign(extractedField, extension);
                   }
@@ -1094,11 +1086,9 @@
          * @returns {string} csv the formatted csv as a string
          */
         formatAsCsv: function (exportColumnHeaders, exportData, separator) {
-          var self = this;
-
-          var bareHeaders = exportColumnHeaders.map(function(header){return { value: header.displayName };});
-
-          var csv = bareHeaders.length > 0 ? (self.formatRowAsCsv(this, separator)(bareHeaders) + '\n') : '';
+          var self = this,
+            bareHeaders = exportColumnHeaders.map(function(header) { return { value: header.displayName };}),
+            csv = bareHeaders.length > 0 ? (self.formatRowAsCsv(this, separator)(bareHeaders) + '\n') : '';
 
           csv += exportData.map(this.formatRowAsCsv(this, separator)).join('\n');
 
@@ -1112,8 +1102,8 @@
          * @description Renders a single field as a csv field, including
          * quotes around the value
          * @param {exporterService} exporter pass in exporter
-         * @param {array} row the row to be turned into a csv string
-         * @returns {string} a csv-ified version of the row
+         * @param {string} separator the string to be used to join the row data
+         * @returns {function} A function that returns a csv-ified version of the row
          */
         formatRowAsCsv: function (exporter, separator) {
           return function (row) {
@@ -1148,11 +1138,10 @@
           return JSON.stringify(field.value);
         },
 
-
         /**
          * @ngdoc function
          * @name isIE
-         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @methodOf ui.grid.exporter.service:uiGridExporterService
          * @description Checks whether current browser is IE and returns it's version if it is
         */
         isIE: function () {
@@ -1170,22 +1159,23 @@
         /**
          * @ngdoc function
          * @name downloadFile
-         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @methodOf ui.grid.exporter.service:uiGridExporterService
          * @description Triggers download of a csv file.  Logic provided
          * by @cssensei (from his colleagues at https://github.com/ifeelgoods) in issue #2391
          * @param {string} fileName the filename we'd like our file to be
          * given
          * @param {string} csvContent the csv content that we'd like to
          * download as a file
+         * @param {string} columnSeparator The separator to be used by the columns
          * @param {boolean} exporterOlderExcelCompatibility whether or not we put a utf-16 BOM on the from (\uFEFF)
           * @param {boolean} exporterIsExcelCompatible whether or not we add separator header ('sep=X')
          */
         downloadFile: function (fileName, csvContent, columnSeparator, exporterOlderExcelCompatibility, exporterIsExcelCompatible) {
-          var D = document;
-          var a = D.createElement('a');
-          var strMimeType = 'application/octet-stream;charset=utf-8';
-          var rawFile;
-          var ieVersion = this.isIE();
+          var D = document,
+            a = D.createElement('a'),
+            strMimeType = 'application/octet-stream;charset=utf-8',
+            rawFile,
+            ieVersion = this.isIE();
 
           if (exporterIsExcelCompatible) {
               csvContent = 'sep=' + columnSeparator + '\r\n' + csvContent;
@@ -1203,6 +1193,7 @@
 
           if (ieVersion) {
             var frame = D.createElement('iframe');
+
             document.body.appendChild(frame);
 
             frame.contentWindow.document.open('text/html', 'replace');
@@ -1215,7 +1206,7 @@
             return true;
           }
 
-          //html5 A[download]
+          // html5 A[download]
           if ('download' in a) {
             var blob = new Blob(
               [exporterOlderExcelCompatibility ? "\uFEFF" : '', csvContent],
@@ -1224,7 +1215,7 @@
             rawFile = URL.createObjectURL(blob);
             a.setAttribute('download', fileName);
           } else {
-            rawFile = 'data:' + strMimeType + ',' + encodeURIComponent(csvContent);
+            rawFile = 'data: ' + strMimeType + ',' + encodeURIComponent(csvContent);
             a.setAttribute('target', '_blank');
           }
 
@@ -1264,12 +1255,13 @@
          */
         pdfExport: function (grid, rowTypes, colTypes) {
           var self = this;
-          this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
-            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes);
-            var exportData = self.getData(grid, rowTypes, colTypes);
-            var docDefinition = self.prepareAsPdf(grid, exportColumnHeaders, exportData);
 
-            if (self.isIE() || navigator.appVersion.indexOf("Edge") !== -1) {
+          this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
+            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes),
+              exportData = self.getData(grid, rowTypes, colTypes),
+              docDefinition = self.prepareAsPdf(grid, exportColumnHeaders, exportData);
+
+            if (self.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
               self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
             } else {
               pdfMake.createPdf(docDefinition).open();
@@ -1291,11 +1283,9 @@
          * and get a blob from
          */
         downloadPDF: function (fileName, docDefinition) {
-          var D = document;
-          var a = D.createElement('a');
-          var strMimeType = 'application/octet-stream;charset=utf-8';
-          var rawFile;
-          var ieVersion;
+          var D = document,
+            a = D.createElement('a'),
+            ieVersion;
 
           ieVersion = this.isIE(); // This is now a boolean value
           var doc = pdfMake.createPdf(docDefinition);
@@ -1318,7 +1308,7 @@
               var frame = D.createElement('iframe');
               document.body.appendChild(frame);
 
-              frame.contentWindow.document.open("text/html", "replace");
+              frame.contentWindow.document.open('text/html', 'replace');
               frame.contentWindow.document.write(blob);
               frame.contentWindow.document.close();
               frame.contentWindow.focus();
@@ -1374,19 +1364,19 @@
             defaultStyle: grid.options.exporterPdfDefaultStyle
           };
 
-          if ( grid.options.exporterPdfLayout ){
+          if ( grid.options.exporterPdfLayout ) {
             docDefinition.layout = grid.options.exporterPdfLayout;
           }
 
-          if ( grid.options.exporterPdfHeader ){
+          if ( grid.options.exporterPdfHeader ) {
             docDefinition.header = grid.options.exporterPdfHeader;
           }
 
-          if ( grid.options.exporterPdfFooter ){
+          if ( grid.options.exporterPdfFooter ) {
             docDefinition.footer = grid.options.exporterPdfFooter;
           }
 
-          if ( grid.options.exporterPdfCustomFormatter ){
+          if ( grid.options.exporterPdfCustomFormatter ) {
             docDefinition = grid.options.exporterPdfCustomFormatter( docDefinition );
           }
           return docDefinition;
@@ -1417,15 +1407,17 @@
          */
         calculatePdfHeaderWidths: function ( grid, exportHeaders ) {
           var baseGridWidth = 0;
-          exportHeaders.forEach( function(value){
-            if (typeof(value.width) === 'number'){
+
+          exportHeaders.forEach(function(value) {
+            if (typeof(value.width) === 'number') {
               baseGridWidth += value.width;
             }
           });
 
           var extraColumns = 0;
-          exportHeaders.forEach( function(value){
-            if (value.width === '*'){
+
+          exportHeaders.forEach(function(value) {
+            if (value.width === '*') {
               extraColumns += 100;
             }
             if (typeof(value.width) === 'string' && value.width.match(/(\d)*%/)) {
@@ -1441,7 +1433,6 @@
           return exportHeaders.map(function( header ) {
             return header.width === '*' ? header.width : header.width * grid.options.exporterPdfMaxGridWidth / gridWidth;
           });
-
         },
 
         /**
@@ -1474,6 +1465,7 @@
          */
         formatFieldAsPdfString: function (field) {
           var returnVal;
+
           if (field.value == null) { // we want to catch anything null-ish, hence just == not ===
             returnVal = '';
           } else if (typeof(field.value) === 'number') {
@@ -1490,7 +1482,7 @@
             returnVal = JSON.stringify(field.value).replace(/^"/,'').replace(/"$/,'');
           }
 
-          if (field.alignment && typeof(field.alignment) === 'string' ){
+          if (field.alignment && typeof(field.alignment) === 'string' ) {
             returnVal = { text: returnVal, alignment: field.alignment };
           }
 
@@ -1511,9 +1503,7 @@
          * @returns {string} csv the formatted excel as a string
          */
         formatAsExcel: function (exportColumnHeaders, exportData, workbook, sheet, docDefinition) {
-          var self = this;
-
-          var bareHeaders = exportColumnHeaders.map(function(header){return { value: header.displayName };});
+          var bareHeaders = exportColumnHeaders.map(function(header) {return { value: header.displayName };});
 
           var sheetData = [];
           var headerData = [];
@@ -1595,7 +1585,7 @@
             }
           };
 
-          if ( grid.options.exporterExcelCustomFormatters ){
+          if ( grid.options.exporterExcelCustomFormatters ) {
             docDefinition = grid.options.exporterExcelCustomFormatters( grid, workbook, docDefinition );
           }
           if ( grid.options.exporterExcelHeader ) {
@@ -1637,23 +1627,15 @@
 
             var exportData = self.getData(grid, rowTypes, colTypes, grid.options.exporterFieldApplyFilters);
 
-            // set column widhths. See function called from prepareAsExcel method
-            //sheet.setColumns(docDefinition.columnWidths);
-
-            //for (var i=0; i< grid.treeBase.tree.length; i++) {
-            //  console.log(grid.treeBase.tree[i]);
-            //}
             var excelContent = self.formatAsExcel(exportColumnHeaders, exportData, workbook, sheet, docDefinition);
             sheet.setData(sheet.data.concat(excelContent));
 
-            ExcelBuilder.Builder.createFile(workbook, {type:"blob"}).then(function(result) {
+            ExcelBuilder.Builder.createFile(workbook, {type: 'blob'}).then(function(result) {
               self.downloadFile (grid.options.exporterExcelFilename, result, grid.options.exporterCsvColumnSeparator,
                 grid.options.exporterOlderExcelCompatibility);
             });
-
           });
         }
-
       };
 
       function getDisplayName(grid, gridCol) {
@@ -1671,7 +1653,13 @@
       function defaultExporterFieldCallback(grid, row, col, value) {
         // fix to handle cases with 'number : 1' or 'date:MM-dd-YYYY', etc.. We needed to split the string
         if (col.cellFilter) {
-          return $filter(col.cellFilter.split(':')[0].trim())(value);
+					var args, filter, arg1, arg2;
+					// remove space, single/double to mantein retro-compatibility
+					args = col.cellFilter.replace(/[\'\"\s]/g, "").split(':');
+					filter = args[0] ? args[0] : null;
+					arg1 = args[1] ? args[1] : null;
+					arg2 = args[2] ? args[2] : null;
+          return $filter(filter)(value, arg1, arg2);
         } else {
           return value;
         }

@@ -17,8 +17,8 @@ describe('uiGridCell', function () {
     $scope.col = new GridColumn({name: 'col1', cellClass: 'testClass'}, 0, $scope.grid);
     $scope.col.cellTemplate = '<div class="ui-grid-cell-contents">{{COL_FIELD}}</div>';
 
-    //override getCellValue
-    $scope.grid.getCellValue = function (row, col) {
+    // override getCellValue
+    $scope.grid.getCellValue = function () {
       return 'val';
     };
     $scope.rowRenderIndex = 2;
@@ -31,7 +31,6 @@ describe('uiGridCell', function () {
 
       $scope.$digest();
     };
-
   }));
 
   describe('compile and link tests', function () {
@@ -43,14 +42,13 @@ describe('uiGridCell', function () {
 
     it('should have the cellClass class', inject(function () {
       recompile();
-      var displayHtml = gridCell.html();
       expect(gridCell.hasClass('testClass')).toBe(true);
     }));
 
     it('should get cellClass from function, and remove it when data changes', inject(function () {
       $scope.col.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
         if (rowRenderIndex === 2 && colRenderIndex === 2) {
-          if ( col.noClass ){
+          if ( col.noClass ) {
             return '';
           } else {
             return 'funcCellClass';
@@ -58,34 +56,12 @@ describe('uiGridCell', function () {
         }
       };
       recompile();
-      var displayHtml = gridCell.html();
       expect(gridCell.hasClass('funcCellClass')).toBe(true);
 
       $scope.col.noClass = true;
       $scope.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
       expect(gridCell.hasClass('funcCellClass')).toBe(false);
     }));
-
-/* Not a valid test - track by col.name
-    it('should notice col changes and update cellClass', inject(function () {
-      $scope.col.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
-        if (rowRenderIndex === 2 && colRenderIndex === 2) {
-          if ( col.noClass ){
-            return '';
-          } else {
-            return 'funcCellClass';
-          }
-        }
-      };
-      recompile();
-      var displayHtml = gridCell.html();
-      expect(gridCell.hasClass('funcCellClass')).toBe(true);
-
-      $scope.col = new GridColumn({name: 'col2'}, 0, $scope.grid);
-      $scope.$digest();
-      expect(gridCell.hasClass('funcCellClass')).toBe(false);
-    }));
-*/
   });
 
   // Don't run this on IE9. The behavior looks correct when testing interactively but these tests fail
@@ -100,7 +76,7 @@ describe('uiGridCell', function () {
         data: [
           { name: 'Bob', age: 50 }
         ],
-        onRegisterApi: function( gridApi ){ $scope.gridApi = gridApi; }
+        onRegisterApi: function( gridApi ) { $scope.gridApi = gridApi; }
       };
 
       // Create a grid elements
@@ -149,5 +125,4 @@ describe('uiGridCell', function () {
       angular.element(gridElm).remove();
     }));
   }
-
 });

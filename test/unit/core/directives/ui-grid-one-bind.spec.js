@@ -1,4 +1,4 @@
-//Tests the simple functionality on the basic directives
+// Tests the simple functionality on the basic directives
 angular.forEach([
 	{tag: 'id', method: 'attr'},
 	{tag: 'alt', method: 'attr'},
@@ -9,13 +9,12 @@ angular.forEach([
 	{tag: 'aria-labelledby', method: 'attr'},
 	{tag: 'html', method: 'html'},
 	{tag: 'text', method: 'text'}
-
 ], function(v) {
 	'use strict';
 
 	// Generate the directive name
 	var directiveName = 'ui-grid-one-bind-' + v.tag;
-	
+
 	describe(directiveName, function() {
 		var $scope, $compile, directiveElt, recompile;
 
@@ -27,7 +26,7 @@ angular.forEach([
 				$compile = _$compile_;
 			});
 
-			//Initialize the value
+			// Initialize the value
 			$scope.val = null;
 
 			recompile = function() {
@@ -64,7 +63,7 @@ angular.forEach([
 	});
 });
 
-//Tests for the directives that dynamically add the grid id to the parameters
+// Tests for the directives that dynamically add the grid id to the parameters
 angular.forEach([
 	{tag: 'id', directiveName: 'id-grid', method: 'attr'},
 	{tag: 'aria-labelledby', directiveName: 'aria-labelledby-grid', method: 'attr', supportsMultipleIds: true /*Supports multiple ids on this tag*/}
@@ -106,7 +105,8 @@ angular.forEach([
 				$scope.$digest();
 				if (v.method === 'attr') {
 					expect(directiveElt[v.method](v.tag)).toBe($scope.grid.id + '-' + $scope.val);
-				} else {
+				}
+				else {
 					expect(directiveElt[v.method]()).toBe($scope.grid.id + '-' + $scope.val);
 				}
 			});
@@ -118,7 +118,8 @@ angular.forEach([
 				$scope.$digest();
 				if (v.method === 'attr') {
 					expect(directiveElt[v.method](v.tag)).not.toBe($scope.grid.id + '-' + $scope.val);
-				} else {
+				}
+				else {
 					expect(directiveElt[v.method]()).not.toBe($scope.grid.id + '-' + $scope.val);
 				}
 			});
@@ -128,13 +129,14 @@ angular.forEach([
 					var valPt1 = 'aValue',
 						valPt2 = 'bValue',
 						expectedId = $scope.grid.id + '-' + valPt1 + ' ' + $scope.grid.id + '-' + valPt2;
-					
+
 					$scope.val = valPt1 + ' ' + valPt2;
 					$scope.$digest();
 
 					if (v.method === 'attr') {
 						expect(directiveElt[v.method](v.tag)).toBe(expectedId);
-					} else {
+					}
+					else {
 						expect(directiveElt[v.method]()).toBe(expectedId);
 					}
 				});
@@ -150,7 +152,7 @@ describe('ui-grid-one-bind-class', function() {
 
 	beforeEach(module('ui.grid'));
 
-	//Try out two different starting values
+	// Try out two different starting values
 	angular.forEach([null, undefined], function(startingValue) {
 		describe('basic "class" one bind using object with starting value "' + startingValue + '"', function() {
 			beforeEach(function() {

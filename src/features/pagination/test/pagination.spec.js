@@ -178,7 +178,7 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
       });
     });
 
-    it('changes labels according to i18nService', function(){
+    it('changes labels according to i18nService', function() {
       $rootScope.$digest();
       $timeout.flush();
 
@@ -193,7 +193,6 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
   });
 
   describe('custom pagination', function () {
-
     var pages = ['COSU', 'DJLPQTVX', 'ABFGHIKNRY', 'EMWZ'];
 
     function getPage(data, pageNumber) {
@@ -202,7 +201,7 @@ describe('ui.grid.pagination uiGridPaginationService', function () {
       });
     }
 
-    beforeEach(inject(function (_$rootScope_, _$timeout_, $compile) {
+    beforeEach(inject(function (_$rootScope_, _$timeout_) {
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
 

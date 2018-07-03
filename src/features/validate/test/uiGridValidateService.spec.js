@@ -1,10 +1,10 @@
-describe('ui.grid.validate uiGridValidateService', function () {
-  var uiGridValidateService;
-  var $rootScope;
+describe('ui.grid.validate uiGridValidateService', function() {
+  var uiGridValidateService,
+    $rootScope;
 
   beforeEach(module('ui.grid.validate'));
 
-  beforeEach(inject(function (_uiGridValidateService_, _$rootScope_) {
+  beforeEach(inject(function(_uiGridValidateService_, _$rootScope_) {
     uiGridValidateService = _uiGridValidateService_;
     $rootScope = _$rootScope_;
   }));
@@ -19,33 +19,33 @@ describe('ui.grid.validate uiGridValidateService', function () {
   });
 
   it('should return a validator function when calling getValidator with an argument', function() {
-    var fooFactory = function(argument) {
+    function fooFactory(argument) {
       return function() {
-        return 'foo'+argument;
+        return 'foo' + argument;
       };
-    };
+    }
     uiGridValidateService.setValidator('foo', fooFactory, angular.noop);
-    expect(uiGridValidateService.getValidator('foo','bar')()).toBe('foobar');
+    expect(uiGridValidateService.getValidator('foo', 'bar')()).toBe('foobar');
   });
 
   it('should return a message function when calling getMessage with an argument', function() {
-    var messageFunction = function(argument) {
-      return 'message'+argument;
-    };
+    function messageFunction(argument) {
+      return 'message' + argument;
+    }
     uiGridValidateService.setValidator('foo', angular.noop, messageFunction);
-    expect(uiGridValidateService.getMessage('foo','bar')).toBe('messagebar');
+    expect(uiGridValidateService.getMessage('foo', 'bar')).toBe('messagebar');
   });
 
   it('should return true when calling isInvalid on an invalid cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {'$$invalidfoo': true};
+    var colDef = {name: 'foo'},
+      entity = {'$$invalidfoo': true};
 
     expect(uiGridValidateService.isInvalid(entity, colDef)).toBe(true);
   });
 
   it('should return false when calling isInvalid on a valid cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {'$$invalidfoo': false};
+    var colDef = {name: 'foo'},
+      entity = {'$$invalidfoo': false};
 
     expect(uiGridValidateService.isInvalid(entity, colDef)).toBeFalsy();
 
@@ -54,8 +54,8 @@ describe('ui.grid.validate uiGridValidateService', function () {
   });
 
   it('should set a cell as invalid when calling setInvalid on a valid cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {};
+    var colDef = {name: 'foo'},
+      entity = {};
 
     uiGridValidateService.setInvalid(entity, colDef);
     expect(entity['$$invalidfoo']).toBe(true);
@@ -67,8 +67,8 @@ describe('ui.grid.validate uiGridValidateService', function () {
   });
 
   it('should set a cell as valid when calling setValid on an invalid cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {'$$invalidfoo': true};
+    var colDef = {name: 'foo'},
+      entity = {'$$invalidfoo': true};
 
     uiGridValidateService.setValid(entity, colDef);
 
@@ -76,8 +76,8 @@ describe('ui.grid.validate uiGridValidateService', function () {
   });
 
   it('should add an error to a cell when calling setError on that cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {};
+    var colDef = {name: 'foo'},
+      entity = {};
 
     uiGridValidateService.setError(entity, colDef, 'bar');
     expect(entity['$$errorsfoo'].bar).toBe(true);
@@ -89,35 +89,42 @@ describe('ui.grid.validate uiGridValidateService', function () {
   });
 
   it('should remove an error to a cell when calling clearError on that cell', function() {
-    var colDef = {name: 'foo'};
-    var entity = {'$$errorsfoo': {bar: true} };
+    var colDef = {name: 'foo'},
+      entity = {'$$errorsfoo': {bar: true}};
 
     uiGridValidateService.clearError(entity, colDef, 'bar');
     expect(entity['$$errorsfoo'].bar).toBeUndefined();
-
   });
 
   it('should return an array with all error messages (alphabetically sorted) when calling getErrorMessages on a cell', function() {
-    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};
-    var entity = {'$$errorstest': {foo: true, bar: true} };
+    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}},
+      entity = {'$$errorstest': {foo: true, bar: true}};
 
-    var fooMessage = function(argument) {return argument + 'Message';};
-    var barMessage = function(argument) {return argument + 'Message';};
+    function fooMessage(argument) {
+      return argument + 'Message';
+    }
+    function barMessage(argument) {
+      return argument + 'Message';
+    }
 
     uiGridValidateService.setValidator('foo', angular.noop, fooMessage);
     uiGridValidateService.setValidator('bar', angular.noop, barMessage);
 
     var messages = uiGridValidateService.getErrorMessages(entity, colDef);
+
     expect(messages[0]).toBe('barMessage');
     expect(messages[1]).toBe('fooMessage');
-
   });
 
   it('should execute all validators when calling runValidators on a cell and set/clear errors', function() {
-    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};
-    var entity = {};
+    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}},
+      entity = {};
 
-    var validatorFactory = function (argument) {return function() {return argument === 'foo';};};
+    function validatorFactory(argument) {
+      return function() {
+        return argument === 'foo';
+      };
+    }
 
     uiGridValidateService.setValidator('foo', validatorFactory, angular.noop);
     uiGridValidateService.setValidator('bar', validatorFactory, angular.noop);
@@ -130,21 +137,23 @@ describe('ui.grid.validate uiGridValidateService', function () {
     expect(entity['$$invalidtest']).toBe(true);
 
     expect(entity['$$errorstest'].foo).toBeFalsy();
-
-
   });
-  
-  it('should return a promise when calling runValidators on a cell', function() {
-    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};
-    var entity = {};
 
-    var validatorFactory = function (argument) {return function() {return argument === 'foo';};};
+  it('should return a promise when calling runValidators on a cell', function() {
+    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}},
+      entity = {};
+
+    function validatorFactory(argument) {
+      return function() {
+        return argument === 'foo';
+      };
+    }
 
     uiGridValidateService.setValidator('foo', validatorFactory, angular.noop);
     uiGridValidateService.setValidator('bar', validatorFactory, angular.noop);
 
     var promise = uiGridValidateService.runValidators(entity, colDef, 1, 0);
-    
+
     expect(promise).toBeDefined();
 
     $rootScope.$apply();
@@ -153,14 +162,17 @@ describe('ui.grid.validate uiGridValidateService', function () {
     expect(entity['$$invalidtest']).toBe(true);
 
     expect(entity['$$errorstest'].foo).toBeFalsy();
-
   });
 
   it('should not execute any validator when calling runValidators with newValue === oldValue', function() {
-    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}};
-    var entity = {};
+    var colDef = {name: 'test', validators: {foo: 'foo', bar: 'bar'}},
+      entity = {};
 
-    var validatorFactory = function (argument) {return function() {return argument === 'foo';};};
+    function validatorFactory(argument) {
+      return function() {
+        return argument === 'foo';
+      };
+    }
 
     uiGridValidateService.setValidator('foo', validatorFactory, angular.noop);
     uiGridValidateService.setValidator('bar', validatorFactory, angular.noop);
@@ -171,24 +183,30 @@ describe('ui.grid.validate uiGridValidateService', function () {
 
     expect(entity['$$errorstest']).toBeUndefined();
     expect(entity['$$invalidtest']).toBeUndefined();
-
   });
 
   it('should run an external validator if an external validator factory is set', function() {
+    var colDef = {name: 'test', validators: {foo: 'foo'}},
+      entity = {};
 
-    var colDef = {name: 'test', validators: {foo: 'foo'}};
-    var entity = {};
-
-    var externalFooValidator = function() {return function() {return false;};};
-    var externalFactoryFunction = function(name, argument) {
+    function externalFooValidator() {
+      return function() {
+        return false;
+      };
+    }
+    function externalFactoryFunction(name) {
       if (name === 'foo') {
         return {validatorFactory: externalFooValidator, messageFunction: angular.noop};
       }
-    };
+    }
 
     uiGridValidateService.setExternalFactoryFunction(externalFactoryFunction);
 
-    var validatorFactory = function (argument) {return function() {return argument === 'foo';};};
+    function validatorFactory(argument) {
+      return function() {
+        return argument === 'foo';
+      };
+    }
 
     uiGridValidateService.setValidator('foo', validatorFactory, angular.noop);
 
@@ -198,19 +216,18 @@ describe('ui.grid.validate uiGridValidateService', function () {
 
     expect(entity['$$errorstest'].foo).toBe(true);
     expect(entity['$$invalidtest']).toBe(true);
-
   });
 
   describe('should call setValidator three times when calling createDefaultValidators', function() {
     beforeEach(function() {
       spyOn(uiGridValidateService, 'setValidator');
     });
+
     it('', function() {
       uiGridValidateService.createDefaultValidators();
 
       expect(uiGridValidateService.setValidator.calls.count()).toBe(3);
     });
-
   });
 
   it('should initialize grid', function() {
@@ -230,5 +247,4 @@ describe('ui.grid.validate uiGridValidateService', function () {
     expect(grid.validate.getTitleFormattedErrors).toBeDefined();
     expect(grid.validate.runValidators).toBeDefined();
   });
-
 });

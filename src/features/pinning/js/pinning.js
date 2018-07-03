@@ -45,7 +45,7 @@
             pinning: {
               /**
                * @ngdoc event
-               * @name columnPin
+               * @name columnPinned
                * @eventOf ui.grid.pinning.api:PublicApi
                * @description raised when column pin state has changed
                * <pre>
@@ -84,7 +84,7 @@
       },
 
       defaultGridOptions: function (gridOptions) {
-        //default option to true unless it was explicitly set to false
+        // default option to true unless it was explicitly set to false
         /**
          *  @ngdoc object
          *  @name ui.grid.pinning.api:GridOptions
@@ -120,7 +120,7 @@
       },
 
       pinningColumnBuilder: function (colDef, col, gridOptions) {
-        //default to true unless gridOptions or colDef is explicitly false
+        // default to true unless gridOptions or colDef is explicitly false
 
         /**
          *  @ngdoc object
@@ -219,7 +219,7 @@
           }
         };
 
-        //// Skip from menu if hidePinLeft or hidePinRight is true
+        // Skip from menu if hidePinLeft or hidePinRight is true
         if (!colDef.hidePinLeft && !gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.pinning.pinLeft')) {
           col.menuItems.push(pinColumnLeftAction);
         }
@@ -272,6 +272,4 @@
         }
       };
     }]);
-
-
 })();

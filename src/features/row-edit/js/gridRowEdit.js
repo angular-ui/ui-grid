@@ -70,7 +70,7 @@
                  * whilst this promise is being resolved.
                  *
                  * <pre>
-                 *      gridApi.rowEdit.on.saveRow(scope,function(rowEntity){})
+                 *      gridApi.rowEdit.on.saveRow(scope,function(rowEntity) {})
                  * </pre>
                  * and somewhere within the event handler:
                  * <pre>
@@ -156,10 +156,11 @@
                  * @methodOf ui.grid.rowEdit.api:PublicApi
                  * @name setRowsDirty
                  * @description Sets each of the rows passed in dataRows
-                 * to be dirty.  note that if you have only just inserted the
+                 * to be dirty. Note that if you have only just inserted the
                  * rows into your data you will need to wait for a $digest cycle
                  * before the gridRows are present - so often you would wrap this
-                 * call in a $interval or $timeout
+                 * call in a $interval or $timeout. Also, you must pass row.entity
+                 * into this function rather than row objects themselves.
                  * <pre>
                  *      $interval( function() {
                  *        gridApi.rowEdit.setRowsDirty(myDataRows);
@@ -241,14 +242,14 @@
           return function() {
             gridRow.isSaving = true;
 
-            if ( gridRow.rowEditSavePromise ){
+            if ( gridRow.rowEditSavePromise ) {
               // don't save the row again if it's already saving - that causes stale object exceptions
               return gridRow.rowEditSavePromise;
             }
 
             var promise = grid.api.rowEdit.raise.saveRow( gridRow.entity );
 
-            if ( gridRow.rowEditSavePromise ){
+            if ( gridRow.rowEditSavePromise ) {
               gridRow.rowEditSavePromise.then( self.processSuccessPromise( grid, gridRow ), self.processErrorPromise( grid, gridRow ));
             } else {
               gridUtil.logError( 'A promise was not returned when saveRow event was raised, either nobody is listening to event, or event handler did not return a promise' );
@@ -323,10 +324,10 @@
 
             gridRow.isError = true;
 
-            if (!grid.rowEdit.errorRows){
+            if (!grid.rowEdit.errorRows) {
               grid.rowEdit.errorRows = [];
             }
-            if (!service.isRowPresent( grid.rowEdit.errorRows, gridRow ) ){
+            if (!service.isRowPresent( grid.rowEdit.errorRows, gridRow ) ) {
               grid.rowEdit.errorRows.push( gridRow );
             }
           };
@@ -343,13 +344,13 @@
          * @param {array} rowArray the array from which to remove the row
          * @param {GridRow} gridRow the row that should be removed
          */
-        removeRow: function( rowArray, removeGridRow ){
-          if (typeof(rowArray) === 'undefined' || rowArray === null){
+        removeRow: function( rowArray, removeGridRow ) {
+          if (typeof(rowArray) === 'undefined' || rowArray === null) {
             return;
           }
 
-          rowArray.forEach( function( gridRow, index ){
-            if ( gridRow.uid === removeGridRow.uid ){
+          rowArray.forEach( function( gridRow, index ) {
+            if ( gridRow.uid === removeGridRow.uid ) {
               rowArray.splice( index, 1);
             }
           });
@@ -365,10 +366,10 @@
          * @param {array} rowArray the array in which to look for the row
          * @param {GridRow} gridRow the row that should be looked for
          */
-        isRowPresent: function( rowArray, removeGridRow ){
+        isRowPresent: function( rowArray, removeGridRow ) {
           var present = false;
-          rowArray.forEach( function( gridRow, index ){
-            if ( gridRow.uid === removeGridRow.uid ){
+          rowArray.forEach( function( gridRow, index ) {
+            if ( gridRow.uid === removeGridRow.uid ) {
               present = true;
             }
           });
@@ -391,9 +392,9 @@
          * the individual save promises have been resolved.
          *
          */
-        flushDirtyRows: function(grid){
+        flushDirtyRows: function(grid) {
           var promises = [];
-          grid.api.rowEdit.getDirtyRows().forEach( function( gridRow ){
+          grid.api.rowEdit.getDirtyRows().forEach( function( gridRow ) {
             service.cancelTimer( grid, gridRow );
             service.saveRow( grid, gridRow )();
             promises.push( gridRow.rowEditSavePromise );
@@ -414,17 +415,17 @@
          * @param {object} rowEntity the data entity for which the cell
          * was edited
          */
-        endEditCell: function( rowEntity, colDef, newValue, previousValue ){
+        endEditCell: function( rowEntity, colDef, newValue, previousValue ) {
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, dirty flag cannot be set' ); return; }
+          if ( !gridRow ) { gridUtil.logError( 'Unable to find rowEntity in grid data, dirty flag cannot be set' ); return; }
 
-          if ( newValue !== previousValue || gridRow.isDirty ){
-            if ( !grid.rowEdit.dirtyRows ){
+          if ( newValue !== previousValue || gridRow.isDirty ) {
+            if ( !grid.rowEdit.dirtyRows ) {
               grid.rowEdit.dirtyRows = [];
             }
 
-            if ( !gridRow.isDirty ){
+            if ( !gridRow.isDirty ) {
               gridRow.isDirty = true;
               grid.rowEdit.dirtyRows.push( gridRow );
             }
@@ -448,10 +449,10 @@
          * @param {object} rowEntity the data entity for which the cell
          * editing has commenced
          */
-        beginEditCell: function( rowEntity, colDef ){
+        beginEditCell: function( rowEntity, colDef ) {
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be cancelled' ); return; }
+          if ( !gridRow ) { gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be cancelled' ); return; }
 
           service.cancelTimer( grid, gridRow );
         },
@@ -472,10 +473,10 @@
          * @param {object} rowEntity the data entity for which the cell
          * editing was cancelled
          */
-        cancelEditCell: function( rowEntity, colDef ){
+        cancelEditCell: function( rowEntity, colDef ) {
           var grid = this.grid;
           var gridRow = grid.getRow( rowEntity );
-          if ( !gridRow ){ gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be set' ); return; }
+          if ( !gridRow ) { gridUtil.logError( 'Unable to find rowEntity in grid data, timer cannot be set' ); return; }
 
           service.considerSetTimer( grid, gridRow );
         },
@@ -493,13 +494,13 @@
          * @param {object} oldRowCol the row and column that was left
          *
          */
-        navigate: function( newRowCol, oldRowCol ){
+        navigate: function( newRowCol, oldRowCol ) {
           var grid = this.grid;
-          if ( newRowCol.row.rowEditSaveTimer ){
+          if ( newRowCol.row.rowEditSaveTimer ) {
             service.cancelTimer( grid, newRowCol.row );
           }
 
-          if ( oldRowCol && oldRowCol.row && oldRowCol.row !== newRowCol.row ){
+          if ( oldRowCol && oldRowCol.row && oldRowCol.row !== newRowCol.row ) {
             service.considerSetTimer( grid, oldRowCol.row );
           }
         },
@@ -532,11 +533,11 @@
          * @param {GridRow} gridRow the row for which the timer should be adjusted
          *
          */
-        considerSetTimer: function( grid, gridRow ){
+        considerSetTimer: function( grid, gridRow ) {
           service.cancelTimer( grid, gridRow );
 
-          if ( gridRow.isDirty && !gridRow.isSaving ){
-            if ( grid.options.rowEditWaitInterval !== -1 ){
+          if ( gridRow.isDirty && !gridRow.isSaving ) {
+            if ( grid.options.rowEditWaitInterval !== -1 ) {
               var waitTime = grid.options.rowEditWaitInterval ? grid.options.rowEditWaitInterval : 2000;
               gridRow.rowEditSaveTimer = $interval( service.saveRow( grid, gridRow ), waitTime, 1);
             }
@@ -554,8 +555,8 @@
          * @param {GridRow} gridRow the row for which the timer should be adjusted
          *
          */
-        cancelTimer: function( grid, gridRow ){
-          if ( gridRow.rowEditSaveTimer && !gridRow.isSaving ){
+        cancelTimer: function( grid, gridRow ) {
+          if ( gridRow.rowEditSaveTimer && !gridRow.isSaving ) {
             $interval.cancel(gridRow.rowEditSaveTimer);
             delete gridRow.rowEditSaveTimer;
           }
@@ -583,14 +584,14 @@
          */
         setRowsDirty: function( grid, myDataRows ) {
           var gridRow;
-          myDataRows.forEach( function( value, index ){
+          myDataRows.forEach( function( value, index ) {
             gridRow = grid.getRow( value );
-            if ( gridRow ){
-              if ( !grid.rowEdit.dirtyRows ){
+            if ( gridRow ) {
+              if ( !grid.rowEdit.dirtyRows ) {
                 grid.rowEdit.dirtyRows = [];
               }
 
-              if ( !gridRow.isDirty ){
+              if ( !gridRow.isDirty ) {
                 gridRow.isDirty = true;
                 grid.rowEdit.dirtyRows.push( gridRow );
               }
@@ -620,9 +621,9 @@
         setRowsClean: function( grid, myDataRows ) {
           var gridRow;
 
-          myDataRows.forEach( function( value, index ){
+          myDataRows.forEach( function( value, index ) {
             gridRow = grid.getRow( value );
-            if ( gridRow ){
+            if ( gridRow ) {
               delete gridRow.isDirty;
               service.removeRow( grid.rowEdit.dirtyRows, gridRow );
               service.cancelTimer( grid, gridRow );

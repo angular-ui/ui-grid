@@ -47,9 +47,7 @@ describe('ui.grid.utilService', function() {
 	});
 
 	describe('throttle()', function() {
-		var $interval;
-		var x;
-		var func;
+		var $interval, x, func;
 
 		beforeEach(inject(function(_$interval_) {
 			$interval = _$interval_;
@@ -60,8 +58,8 @@ describe('ui.grid.utilService', function() {
 		}));
 
 		it('prevents multiple function calls', function() {
-
 			var throttledFunc = gridUtil.throttle(func, 10);
+
 			throttledFunc();
 			throttledFunc();
 			throttledFunc();
@@ -72,7 +70,6 @@ describe('ui.grid.utilService', function() {
 
 		// TODO(JLLeitschuh): WHY DOES THIS FAIL?! THIS SHOULD NOT FAIL!!
 		xit('queues a final event if trailing param is truthy', function() {
-
 			var throttledFunc = gridUtil.throttle(func, 10, {trailing: true});
 			throttledFunc();
 			throttledFunc();
@@ -81,7 +78,6 @@ describe('ui.grid.utilService', function() {
 			$interval.flush(15);
 			expect(x).toEqual(2);
 		});
-
 	});
 
 	describe('readableColumnName', function() {
@@ -108,8 +104,8 @@ describe('ui.grid.utilService', function() {
 			];
 
 			translationExpects.forEach(function(set) {
-				var strIn = set[0];
-				var strOut = set[1];
+				var strIn = set[0],
+					strOut = set[1];
 
 				expect(gridUtil.readableColumnName(strIn)).toEqual(strOut);
 			});
@@ -188,7 +184,7 @@ describe('ui.grid.utilService', function() {
 
 		describe('elementWidth()', function() {
 			it('should calculate element width', function() {
-				//var elm = angular.element('<div style="width: 200px">asdf</div>');
+				// var elm = angular.element('<div style="width: 200px">asdf</div>');
 				// dump(elm.ownerDocument.defaultView.getComputedStyle(elm, null)['width']);
 
 				var w = gridUtil.elementWidth(elm);
@@ -257,7 +253,7 @@ describe('ui.grid.utilService', function() {
 				$httpBackend.verifyNoOutstandingRequest();
 				expect(result).toEqual(html);
 
-				//call again should not do any http
+				// call again should not do any http
 				result = null;
 				$timeout(function() {
 					gridUtil.getTemplate(url).then(function(r) {
@@ -286,7 +282,7 @@ describe('ui.grid.utilService', function() {
 				$httpBackend.verifyNoOutstandingRequest();
 				expect(result).toEqual(html);
 
-				//call again should not do any http
+				// call again should not do any http
 				result = null;
 				$timeout(function() {
 					gridUtil.getTemplate(url).then(function(r) {

@@ -1,3 +1,35 @@
+<a name="4.6.0"></a>
+# [4.6.0](https://github.com/angular-ui/ui-grid/compare/v4.5.1...v4.6.0) (2018-06-21)
+
+
+### Bug Fixes
+
+* **gridContainer:** Revert body container id to previous. ([981e9e2](https://github.com/angular-ui/ui-grid/commit/981e9e2)), closes [#6096](https://github.com/angular-ui/ui-grid/issues/6096)
+* **selection:** Selected row style only applied to left container ([ab31e0b](https://github.com/angular-ui/ui-grid/commit/ab31e0b))
+* **uiGridHeaderCell:** Remove unncessary space ([5ea8e54](https://github.com/angular-ui/ui-grid/commit/5ea8e54))
+
+
+### Documentation
+
+* **scrollThreshold:** Add missing documentation details. ([cc0fdb7](https://github.com/angular-ui/ui-grid/commit/cc0fdb7))
+
+
+### Features
+
+* **es-ct:** Add catalan translations. ([f482800](https://github.com/angular-ui/ui-grid/commit/f482800)), closes [#5536](https://github.com/angular-ui/ui-grid/issues/5536)
+* **rs-lat:** Added Serbian translations. ([da57ad1](https://github.com/angular-ui/ui-grid/commit/da57ad1))
+* **i18n:** Add fallback lang support ([0e47f10](https://github.com/angular-ui/ui-grid/commit/0e47f10)), closes [#6396](https://github.com/angular-ui/ui-grid/issues/6396)
+
+
+### BREAKING CHANGES
+
+* **horizontalScrollThreshold:** Removed horizontalScrollThreshold as it is not being used by the grid.
+* **i18n:** getSafeText() will now return [MISSING] + the path to
+the missing property or the fallback value if the property is available
+on the fallback language.
+
+
+
 <a name="4.5.1"></a>
 ## [4.5.1](https://github.com/angular-ui/ui-grid/compare/v4.5.0...v4.5.1) (2018-06-18)
 
@@ -479,11 +511,7 @@ Closes #2273, #2552, #3593, #3854, #4439
 
 * **6123:** Allowing selection and tree-base to build columns. ([2ea9a06e](http://github.com/angular-ui/ng-grid/commit/2ea9a06e594601cc44947a997f08bce628e813f4))
 * **flatEntityAccess:**  getCellDisplayValue now returns the correct value. ([ba77c875](http://github.com/angular-ui/ng-grid/commit/ba77c8750431236ff4f729fe8a77eb44cbbfc9b7))
-
-
-#### Features
-
-* **japanese:** Update japanese translation. ([47e78d1](https://github.com/angular-ui/ui-grid/commit/47e78d16710a96033c692f800c5bb4874f694fc8))
+* **japanese:** Update japanese translation. ([47e78d1](https://github.com/angular-ui/ui-grid/commit/47e78d16710a96033c692f800c5bb4874f694fc8)), closes [#6089](https://github.com/angular-ui/ui-grid/issues/6089)
 
 <a name="v4.0.3"></a>
 ### v4.0.3 (2017-03-24)

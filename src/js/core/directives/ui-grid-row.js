@@ -1,15 +1,13 @@
-(function(){
+(function() {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridRow', ['gridUtil', function(gridUtil) {
+  angular.module('ui.grid').directive('uiGridRow', function() {
     return {
       replace: true,
-      // priority: 2001,
-      // templateUrl: 'ui-grid/ui-grid-row',
       require: ['^uiGrid', '^uiGridRenderContainer'],
       scope: {
          row: '=uiGridRow',
-         //rowRenderIndex is added to scope to give the true visual index of the row to any directives that need it
+         // rowRenderIndex is added to scope to give the true visual index of the row to any directives that need it
          rowRenderIndex: '='
       },
       compile: function() {
@@ -17,8 +15,6 @@
           pre: function($scope, $elm, $attrs, controllers) {
             var uiGridCtrl = controllers[0];
             var containerCtrl = controllers[1];
-
-            var grid = uiGridCtrl.grid;
 
             $scope.grid = uiGridCtrl.grid;
             $scope.colContainer = containerCtrl.colContainer;
@@ -59,12 +55,11 @@
               }
             });
           },
-          post: function($scope, $elm, $attrs, controllers) {
+          post: function($scope, $elm) {
             $scope.row.element = $elm;
           }
         };
       }
     };
-  }]);
-
+  });
 })();

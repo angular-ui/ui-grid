@@ -1,4 +1,4 @@
-(function(){
+(function() {
   'use strict';
   /**
    * @ngdoc overview
@@ -34,7 +34,7 @@
    * and {@link ui.grid.directive:uiGridOneBindAriaLabelledbyGrid uiGridOneBindAriaLabelledbyGrid} directives.
    *
    */
-  //https://github.com/joshkurz/Black-Belt-AngularJS-Directives/blob/master/directives/Optimization/oneBind.js
+  // https://github.com/joshkurz/Black-Belt-AngularJS-Directives/blob/master/directives/Optimization/oneBind.js
   var oneBinders = angular.module('ui.grid');
   angular.forEach([
       /**
@@ -137,7 +137,7 @@
        * This is done in order to ensure uniqueness of id tags across the grid.
        * This is to prevent two grids in the same document having duplicate id tags.
        */
-      {tag: 'Id', directiveName:'IdGrid', method: 'attr', appendGridId: true},
+      {tag: 'Id', directiveName: 'IdGrid', method: 'attr', appendGridId: true},
       /**
        * @ngdoc directive
        * @name ui.grid.directive:uiGridOneBindTitle
@@ -163,7 +163,7 @@
             <div ng-init="text='Add this text'" ui-grid-one-bind-aria-label="text" aria-label="Add this text"></div>
          </pre>
        */
-      {tag: 'Label', method: 'attr', aria:true},
+      {tag: 'Label', method: 'attr', aria: true},
       /**
        * @ngdoc directive
        * @name ui.grid.directive:uiGridOneBindAriaLabelledby
@@ -180,7 +180,7 @@
             <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-labelledby="anId" aria-labelledby="gridID32"></div>
          </pre>
        */
-      {tag: 'Labelledby', method: 'attr', aria:true},
+      {tag: 'Labelledby', method: 'attr', aria: true},
       /**
        * @ngdoc directive
        * @name ui.grid.directive:uiGridOneBindAriaLabelledbyGrid
@@ -199,7 +199,7 @@
             <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-labelledby-grid="anId" aria-labelledby-Grid="[grid.id]-gridID32"></div>
          </pre>
        */
-      {tag: 'Labelledby', directiveName:'LabelledbyGrid', appendGridId:true, method: 'attr', aria:true},
+      {tag: 'Labelledby', directiveName: 'LabelledbyGrid', appendGridId: true, method: 'attr', aria: true},
       /**
        * @ngdoc directive
        * @name ui.grid.directive:uiGridOneBindAriaDescribedby
@@ -216,7 +216,7 @@
             <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby="anId" aria-describedby="gridID32"></div>
          </pre>
        */
-      {tag: 'Describedby', method: 'attr', aria:true},
+      {tag: 'Describedby', method: 'attr', aria: true},
       /**
        * @ngdoc directive
        * @name ui.grid.directive:uiGridOneBindAriaDescribedbyGrid
@@ -235,48 +235,53 @@
             <div ng-init="anId = 'gridID32'" ui-grid-one-bind-aria-describedby-grid="anId" aria-describedby="[grid.id]-gridID32"></div>
          </pre>
        */
-      {tag: 'Describedby', directiveName:'DescribedbyGrid', appendGridId:true, method: 'attr', aria:true}],
-    function(v){
+      {tag: 'Describedby', directiveName: 'DescribedbyGrid', appendGridId: true, method: 'attr', aria: true}],
+    function(v) {
 
       var baseDirectiveName = 'uiGridOneBind';
-      //If it is an aria tag then append the aria label seperately
-      //This is done because the aria tags are formatted aria-* and the directive name can't have a '-' character in it.
-      //If the diretiveName has to be overridden then it does so here. This is because the tag being modified and the directive sometimes don't match up.
+      // If it is an aria tag then append the aria label seperately
+      // This is done because the aria tags are formatted aria-* and the directive name can't have a '-' character in it.
+      // If the diretiveName has to be overridden then it does so here. This is because the tag being modified and the directive sometimes don't
+      // match up.
       var directiveName = (v.aria ? baseDirectiveName + 'Aria' : baseDirectiveName) + (v.directiveName ? v.directiveName : v.tag);
-      oneBinders.directive(directiveName, ['gridUtil', function(gridUtil){
+      oneBinders.directive(directiveName, ['gridUtil', function(gridUtil) {
         return {
           restrict: 'A',
           require: ['?uiGrid','?^uiGrid'],
-          link: function(scope, iElement, iAttrs, controllers){
-            /* Appends the grid id to the beginnig of the value. */
-            var appendGridId = function(val){
-              var grid; //Get an instance of the grid if its available
-              //If its available in the scope then we don't need to try to find it elsewhere
+          link: function(scope, iElement, iAttrs, controllers) {
+            /* Appends the grid id to the beginning of the value. */
+            var appendGridId = function(val) {
+              var grid; // Get an instance of the grid if its available
+
+              // If its available in the scope then we don't need to try to find it elsewhere
               if (scope.grid) {
                 grid = scope.grid;
               }
-              //Another possible location to try to find the grid
-              else if (scope.col && scope.col.grid){
+
+              // Another possible location to try to find the grid
+              else if (scope.col && scope.col.grid) {
                 grid = scope.col.grid;
               }
-              //Last ditch effort: Search through the provided controllers.
-              else if (!controllers.some( //Go through the controllers till one has the element we need
-                function(controller){
+
+              // Last ditch effort: Search through the provided controllers.
+              else if (!controllers.some( // Go through the controllers till one has the element we need
+                function(controller) {
                   if (controller && controller.grid) {
                     grid = controller.grid;
-                    return true; //We've found the grid
+                    return true; // We've found the grid
                   }
-              })){
-                //We tried our best to find it for you
+              })) {
+                // We tried our best to find it for you
                 gridUtil.logError("["+directiveName+"] A valid grid could not be found to bind id. Are you using this directive " +
                                  "within the correct scope? Trying to generate id: [gridID]-" + val);
                 throw new Error("No valid grid could be found");
               }
 
-              if (grid){
+              if (grid) {
                 var idRegex = new RegExp(grid.id.toString());
-                //If the grid id hasn't been appended already in the template declaration
-                if (!idRegex.test(val)){
+
+                // If the grid id hasn't been appended already in the template declaration
+                if (!idRegex.test(val)) {
                   val = grid.id.toString() + '-' + val;
                 }
               }
@@ -284,13 +289,14 @@
             };
 
             // The watch returns a function to remove itself.
-            var rmWatcher = scope.$watch(iAttrs[directiveName], function(newV){
-              if (newV){
-                //If we are trying to add an id element then we also apply the grid id if it isn't already there
+            var rmWatcher = scope.$watch(iAttrs[directiveName], function(newV) {
+              if (newV) {
+                // If we are trying to add an id element then we also apply the grid id if it isn't already there
                 if (v.appendGridId) {
                   var newIdString = null;
-                  //Append the id to all of the new ids.
-                  angular.forEach( newV.split(' '), function(s){
+
+                  // Append the id to all of the new ids.
+                  angular.forEach( newV.split(' '), function(s) {
                     newIdString = (newIdString ? (newIdString + ' ') : '') +  appendGridId(s);
                   });
                   newV = newIdString;
@@ -298,27 +304,28 @@
 
                 // Append this newValue to the dom element.
                 switch (v.method) {
-                  case 'attr': //The attr method takes two paraams the tag and the value
+                  case 'attr': // The attr method takes two paraams the tag and the value
                     if (v.aria) {
-                      //If it is an aria element then append the aria prefix
+                      // If it is an aria element then append the aria prefix
                       iElement[v.method]('aria-' + v.tag.toLowerCase(),newV);
                     } else {
                       iElement[v.method](v.tag.toLowerCase(),newV);
                     }
                     break;
                   case 'addClass':
-                    //Pulled from https://github.com/Pasvaz/bindonce/blob/master/bindonce.js
+                    // Pulled from https://github.com/Pasvaz/bindonce/blob/master/bindonce.js
                     if (angular.isObject(newV) && !angular.isArray(newV)) {
-                      var results = [];
-                      var nonNullFound = false; //We don't want to remove the binding unless the key is actually defined
+                      var results = [],
+                        nonNullFound = false; // We don't want to remove the binding unless the key is actually defined
+
                       angular.forEach(newV, function (value, index) {
-                        if (value !== null && typeof(value) !== "undefined"){
-                          nonNullFound = true; //A non null value for a key was found so the object must have been initialized
+                        if (value !== null && typeof(value) !== "undefined") {
+                          nonNullFound = true; // A non null value for a key was found so the object must have been initialized
                           if (value) {results.push(index);}
                         }
                       });
-                      //A non null value for a key wasn't found so assume that the scope values haven't been fully initialized
-                      if (!nonNullFound){
+                      // A non null value for a key wasn't found so assume that the scope values haven't been fully initialized
+                      if (!nonNullFound) {
                         return; // If not initialized then the watcher should not be removed yet.
                       }
                       newV = results;
@@ -335,14 +342,14 @@
                     break;
                 }
 
-                //Removes the watcher on itself after the bind
+                // Removes the watcher on itself after the bind
                 rmWatcher();
               }
             // True ensures that equality is determined using angular.equals instead of ===
-            }, true); //End rm watchers
-          } //End compile function
-        }; //End directive return
+            }, true); // End rm watchers
+          } // End compile function
+        }; // End directive return
       } // End directive function
-    ]); //End directive
+    ]); // End directive
   }); // End angular foreach
 })();

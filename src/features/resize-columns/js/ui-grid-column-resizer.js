@@ -1,4 +1,4 @@
-(function(){
+(function() {
   'use strict';
 
   /**
@@ -16,10 +16,9 @@
 
   module.service('uiGridResizeColumnsService', ['gridUtil', '$q', '$rootScope',
     function (gridUtil, $q, $rootScope) {
-
-      var service = {
-        defaultGridOptions: function(gridOptions){
-          //default option to true unless it was explicitly set to false
+      return {
+        defaultGridOptions: function(gridOptions) {
+          // default option to true unless it was explicitly set to false
           /**
            *  @ngdoc object
            *  @name ui.grid.resizeColumns.api:GridOptions
@@ -37,16 +36,16 @@
            */
           gridOptions.enableColumnResizing = gridOptions.enableColumnResizing !== false;
 
-          //legacy support
-          //use old name if it is explicitly false
-          if (gridOptions.enableColumnResize === false){
+          // legacy support
+          // use old name if it is explicitly false
+          if (gridOptions.enableColumnResize === false) {
             gridOptions.enableColumnResizing = false;
           }
         },
 
         colResizerColumnBuilder: function (colDef, col, gridOptions) {
-
           var promises = [];
+
           /**
            *  @ngdoc object
            *  @name ui.grid.resizeColumns.api:ColumnDef
@@ -62,12 +61,12 @@
            *  @description Enable column resizing on an individual column
            *  <br/>Defaults to GridOptions.enableColumnResizing
            */
-          //default to true unless gridOptions or colDef is explicitly false
+          // default to true unless gridOptions or colDef is explicitly false
           colDef.enableColumnResizing = colDef.enableColumnResizing === undefined ? gridOptions.enableColumnResizing : colDef.enableColumnResizing;
 
 
-          //legacy support of old option name
-          if (colDef.enableColumnResize === false){
+          // legacy support of old option name
+          if (colDef.enableColumnResize === false) {
             colDef.enableColumnResizing = false;
           }
 
@@ -88,7 +87,7 @@
                  * @eventOf  ui.grid.resizeColumns.api:PublicApi
                  * @description raised when column is resized
                  * <pre>
-                 *      gridApi.colResizable.on.columnSizeChanged(scope,function(colDef, deltaChange){})
+                 *      gridApi.colResizable.on.columnSizeChanged(scope,function(colDef, deltaChange) {})
                  * </pre>
                  * @param {object} colDef the column that was resized
                  * @param {integer} delta of the column size change
@@ -104,7 +103,7 @@
 
         fireColumnSizeChanged: function (grid, colDef, deltaChange) {
           $rootScope.$applyAsync(function () {
-            if ( grid.api.colResizable ){
+            if ( grid.api.colResizable ) {
               grid.api.colResizable.raise.columnSizeChanged(colDef, deltaChange);
             } else {
               gridUtil.logError("The resizeable api is not registered, this may indicate that you've included the module but not added the 'ui-grid-resize-columns' directive to your grid definition.  Cannot raise any events.");
@@ -114,7 +113,7 @@
 
         // get either this column, or the column next to this column, to resize,
         // returns the column we're going to resize
-        findTargetCol: function(col, position, rtlMultiplier){
+        findTargetCol: function(col, position, rtlMultiplier) {
           var renderContainer = col.getRenderContainer();
 
           if (position === 'left') {
@@ -125,11 +124,7 @@
             return col;
           }
         }
-
       };
-
-      return service;
-
     }]);
 
 
@@ -205,17 +200,17 @@
               var columnResizerElm = $templateCache.get('ui-grid/columnResizer');
 
               var rtlMultiplier = 1;
-              //when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
+              // when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
               if (grid.isRTL()) {
                 $scope.position = 'left';
                 rtlMultiplier = -1;
               }
 
-              var displayResizers = function(){
+              var displayResizers = function() {
 
                 // remove any existing resizers.
                 var resizers = $elm[0].getElementsByClassName('ui-grid-column-resizer');
-                for ( var i = 0; i < resizers.length; i++ ){
+                for ( var i = 0; i < resizers.length; i++ ) {
                   angular.element(resizers[i]).remove();
                 }
 
@@ -302,7 +297,7 @@
   module.directive('uiGridColumnResizer', ['$document', 'gridUtil', 'uiGridConstants', 'uiGridResizeColumnsService', function ($document, gridUtil, uiGridConstants, uiGridResizeColumnsService) {
     var resizeOverlay = angular.element('<div class="ui-grid-resize-overlay"></div>');
 
-    var resizer = {
+    return {
       priority: 0,
       scope: {
         col: '=',
@@ -316,7 +311,7 @@
             gridLeft = 0,
             rtlMultiplier = 1;
 
-        //when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
+        // when in RTL mode reverse the direction using the rtlMultiplier and change the position to left
         if (uiGridCtrl.grid.isRTL()) {
           $scope.position = 'left';
           rtlMultiplier = -1;
@@ -340,7 +335,7 @@
 
         // Check that the requested width isn't wider than the maxWidth, or narrower than the minWidth
         // Returns the new recommended with, after constraints applied
-        function constrainWidth(col, width){
+        function constrainWidth(col, width) {
           var newWidth = width;
 
           // If the new width would be less than the column's allowably minimum width, don't allow it
@@ -398,7 +393,7 @@
         }
 
 
-        function upFunction(event, args) {
+        function upFunction(event) {
           if (event.originalEvent) { event = event.originalEvent; }
           event.preventDefault();
 
@@ -464,11 +459,12 @@
           // we were touchdown then we listen for touchmove and touchup.  Also remove the handler for the equivalent
           // down event - so if we're touchdown, then remove the mousedown handler until this event is over, if we're
           // mousedown then remove the touchdown handler until this event is over, this avoids processing duplicate events
-          if ( event.type === 'touchstart' ){
+          if ( event.type === 'touchstart' ) {
             $document.on('touchend', upFunction);
             $document.on('touchmove', moveFunction);
             $elm.off('mousedown', downFunction);
-          } else {
+          }
+          else {
             $document.on('mouseup', upFunction);
             $document.on('mousemove', moveFunction);
             $elm.off('touchstart', downFunction);
@@ -493,7 +489,7 @@
 
 
         // On doubleclick, resize to fit all rendered cells
-        var dblClickFn = function(event, args){
+        var dblClickFn = function(event, args) {
           event.stopPropagation();
 
           var col = uiGridResizeColumnsService.findTargetCol($scope.col, $scope.position, rtlMultiplier);
@@ -505,7 +501,6 @@
 
           // Go through the rendered rows and find out the max size for the data in this column
           var maxWidth = 0;
-          var xDiff = 0;
 
           // Get the parent render container element
           var renderContainerElm = gridUtil.closestElm($elm, '.ui-grid-render-container');
@@ -542,7 +537,7 @@
 
           // check we're not outside the allowable bounds for this column
           var newWidth = constrainWidth(col, maxWidth);
-          xDiff = newWidth - col.drawnWidth;
+          var xDiff = newWidth - col.drawnWidth;
           col.width = newWidth;
           col.hasCustomWidth = true;
 
@@ -557,8 +552,5 @@
         });
       }
     };
-
-    return resizer;
   }]);
-
 })();

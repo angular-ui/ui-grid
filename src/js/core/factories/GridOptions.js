@@ -1,7 +1,6 @@
-  (function(){
-
+(function() {
 angular.module('ui.grid')
-.factory('GridOptions', ['gridUtil','uiGridConstants', function(gridUtil,uiGridConstants) {
+.factory('GridOptions', ['gridUtil','uiGridConstants', function(gridUtil, uiGridConstants) {
 
   /**
    * @ngdoc function
@@ -25,8 +24,8 @@ angular.module('ui.grid')
    * To provide default options for all of the grids within your application, use an angular
    * decorator to modify the GridOptions factory.
    * <pre>
-   * app.config(function($provide){
-   *   $provide.decorator('GridOptions',function($delegate){
+   * app.config(function($provide) {
+   *   $provide.decorator('GridOptions',function($delegate) {
    *     var gridOptions;
    *     gridOptions = angular.copy($delegate);
    *     gridOptions.initialize = function(options) {
@@ -41,7 +40,7 @@ angular.module('ui.grid')
    * </pre>
    */
   return {
-    initialize: function( baseOptions ){
+    initialize: function( baseOptions ) {
       /**
        * @ngdoc function
        * @name onRegisterApi
@@ -114,7 +113,7 @@ angular.module('ui.grid')
        * </br>_field property can be used in place of name for backwards compatibility with 2.x_
        *  @example
        *
-       * <pre>var columnDefs = [{name:'field1'}, {name:'field2'}];</pre>
+       * <pre>var columnDefs = [{name: 'field1'}, {name: 'field2'}];</pre>
        *
        */
       baseOptions.columnDefs = baseOptions.columnDefs || [];
@@ -125,7 +124,7 @@ angular.module('ui.grid')
        * @description Definition / configuration of an individual column, which would typically be
        * one of many column definitions within the gridOptions.columnDefs array
        * @example
-       * <pre>{name:'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
+       * <pre>{name: 'field1', field: 'field1', filter: { term: 'xxx' }}</pre>
        *
        */
 
@@ -216,13 +215,19 @@ angular.module('ui.grid')
        */
       baseOptions.showHeader = typeof(baseOptions.showHeader) !== "undefined" ? baseOptions.showHeader : true;
 
-      /* (NOTE): Don't show this in the docs. We only use it internally
+      /**
        * @ngdoc property
        * @name headerRowHeight
        * @propertyOf ui.grid.class:GridOptions
-       * @description The height of the header in pixels, defaults to 30
+       * @description The height of the header in pixels, defaults to 30.
+       * Although, we recommend that you alter header height with CSS rather than using this option:
        *
-       */
+       * <pre>
+       *     .grid .ui-grid-header-cell {
+       *         height: 60px;
+       *     }
+       * </pre>
+       **/
       if (!baseOptions.showHeader) {
         baseOptions.headerRowHeight = 0;
       }
@@ -317,11 +322,13 @@ angular.module('ui.grid')
        * Defaults to 4
        */
       baseOptions.excessRows = typeof(baseOptions.excessRows) !== "undefined" ? baseOptions.excessRows : 4;
+
       /**
        * @ngdoc property
        * @name scrollThreshold
        * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 4
+       * @description Throttles the grid scrolling by the amount of rows set, which helps with smoothness of scrolling.
+       * Defaults to 4.
        */
       baseOptions.scrollThreshold = typeof(baseOptions.scrollThreshold) !== "undefined" ? baseOptions.scrollThreshold : 4;
 
@@ -333,14 +340,6 @@ angular.module('ui.grid')
        * Defaults to 4
        */
       baseOptions.excessColumns = typeof(baseOptions.excessColumns) !== "undefined" ? baseOptions.excessColumns : 4;
-      /**
-       * @ngdoc property
-       * @name horizontalScrollThreshold
-       * @propertyOf ui.grid.class:GridOptions
-       * @description Defaults to 4
-       */
-      baseOptions.horizontalScrollThreshold = typeof(baseOptions.horizontalScrollThreshold) !== "undefined" ? baseOptions.horizontalScrollThreshold : 2;
-
 
       /**
        * @ngdoc property
@@ -534,8 +533,5 @@ angular.module('ui.grid')
       return baseOptions;
     }
   };
-
-
 }]);
-
 })();
