@@ -213,4 +213,22 @@ describe('ui.grid.validate uiGridValidateService', function () {
 
   });
 
+  it('should initialize grid', function() {
+    var scope = {};
+    var grid = {
+      api: {
+        registerEventsFromObject: function() {},
+        registerMethodsFromObject: function() {}
+      }
+    };
+
+    uiGridValidateService.initializeGrid(scope, grid);
+
+    expect(grid.validate.isInvalid).toBeDefined();
+    expect(grid.validate.getErrorMessages).toBeDefined();
+    expect(grid.validate.getFormattedErrors).toBeDefined();
+    expect(grid.validate.getTitleFormattedErrors).toBeDefined();
+    expect(grid.validate.runValidators).toBeDefined();
+  });
+
 });
