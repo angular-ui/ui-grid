@@ -410,6 +410,8 @@
 
           isInvalid: service.isInvalid,
 
+          getErrorMessages: service.getErrorMessages,
+
           getFormattedErrors: service.getFormattedErrors,
 
           getTitleFormattedErrors: service.getTitleFormattedErrors,
