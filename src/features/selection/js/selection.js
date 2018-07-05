@@ -955,7 +955,8 @@
               }
               else if ($scope.grid.options.enableSelectRowOnFocus) {
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
-                  false, $scope.grid.options.noUnselect);
+                  ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect),
+                  $scope.grid.options.noUnselect);
               }
               $scope.row.setFocused(!$scope.row.isFocused);
               $scope.grid.api.selection.raise.rowFocusChanged($scope.row, evt);
