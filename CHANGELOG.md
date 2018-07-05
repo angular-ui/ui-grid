@@ -1,3 +1,24 @@
+<a name="4.6.1"></a>
+## [4.6.1](https://github.com/angular-ui/ui-grid/compare/v4.6.0...v4.6.1) (2018-07-05)
+
+
+### Bug Fixes
+
+* **exporter:** Handle filters with 3 arguments ([3207b29](https://github.com/angular-ui/ui-grid/commit/3207b29)), closes [#6784](https://github.com/angular-ui/ui-grid/issues/6784)
+* **exporter:** exporterExcelCustomFormatter should return the unmodified docDefinition ([7fc39ad](https://github.com/angular-ui/ui-grid/commit/7fc39ad)), closes [#6774](https://github.com/angular-ui/ui-grid/issues/6774) [#6774](https://github.com/angular-ui/ui-grid/issues/6774)
+* **i18n:** Fix Japanese translation. ([#6781](https://github.com/angular-ui/ui-grid/issues/6781)) ([9ab0a4c](https://github.com/angular-ui/ui-grid/commit/9ab0a4c))
+* **selection:** Fix multiSelect + modifierKeysToMultiSelect ([2bc8c7b](https://github.com/angular-ui/ui-grid/commit/2bc8c7b)), closes [#6793](https://github.com/angular-ui/ui-grid/issues/6793) [#6791](https://github.com/angular-ui/ui-grid/issues/6791)
+* **selection:** Remove focus rows styles. ([a8480a2](https://github.com/angular-ui/ui-grid/commit/a8480a2)), closes [#6782](https://github.com/angular-ui/ui-grid/issues/6782)
+* **validate:** missing getErrorMessages method ([588c868](https://github.com/angular-ui/ui-grid/commit/588c868))
+
+
+### Documentation
+
+* **ui-grid.info:** Clean up API documentation. ([a535bea](https://github.com/angular-ui/ui-grid/commit/a535bea96109540f6ca66f42646321e785f62136))
+* **ui-grid.info:** Added missing documentation. ([71c3db8](https://github.com/angular-ui/ui-grid/commit/71c3db8157159193c1fc7ce310c8c8b48f140760))
+
+
+
 <a name="4.6.0"></a>
 # [4.6.0](https://github.com/angular-ui/ui-grid/compare/v4.5.1...v4.6.0) (2018-06-21)
 
