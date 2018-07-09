@@ -23,11 +23,10 @@
 				compile: function() {
 					return {
 						pre: function prelink($scope, $elm, $attrs, controllers) {
-							var rowContainer, colContainer, gridContainerPrefix,
+							var rowContainer, colContainer,
 								uiGridCtrl = controllers[0],
 								containerCtrl = controllers[1],
-								grid = $scope.grid = uiGridCtrl.grid,
-								gridContainerId = 'grid-container';
+								grid = $scope.grid = uiGridCtrl.grid;
 
 							// Verify that the render container for this element exists
 							if (!$scope.rowContainerName) {
@@ -46,13 +45,10 @@
 
 							rowContainer = $scope.rowContainer = grid.renderContainers[$scope.rowContainerName];
 							colContainer = $scope.colContainer = grid.renderContainers[$scope.colContainerName];
-							gridContainerPrefix = $scope.containerId !== 'body' ? $scope.containerId + '-' : '';
 
-							containerCtrl.gridContainerId = gridContainerPrefix + gridContainerId;
 							containerCtrl.containerId = $scope.containerId;
 							containerCtrl.rowContainer = rowContainer;
 							containerCtrl.colContainer = colContainer;
-							containerCtrl.grid = grid;
 						},
 						post: function postlink($scope, $elm, $attrs, controllers) {
 							var uiGridCtrl = controllers[0],
@@ -70,6 +66,7 @@
 							// Scroll the render container viewport when the mousewheel is used
 							gridUtil.on.mousewheel($elm, function(event) {
 								var scrollEvent = new ScrollEvent(grid, rowContainer, colContainer, ScrollEvent.Sources.RenderContainerMouseWheel);
+
 								if (event.deltaY !== 0) {
 									var scrollYAmount = event.deltaY * -1 * event.deltaFactor;
 
@@ -107,23 +104,19 @@
 								}
 
 								// Let the parent container scroll if the grid is already at the top/bottom
-								if ((event.deltaY !== 0 && (scrollEvent.atTop(scrollTop) || scrollEvent.atBottom(scrollTop))) ||
-									(event.deltaX !== 0 && (scrollEvent.atLeft(scrollLeft) || scrollEvent.atRight(scrollLeft)))) {
-									// parent controller scrolls
-								}
-								else {
+								if (!((event.deltaY !== 0 && (scrollEvent.atTop(scrollTop) || scrollEvent.atBottom(scrollTop))) ||
+									(event.deltaX !== 0 && (scrollEvent.atLeft(scrollLeft) || scrollEvent.atRight(scrollLeft))))) {
 									event.preventDefault();
 									event.stopPropagation();
 									scrollEvent.fireThrottledScrollingEvent('', scrollEvent);
 								}
-
 							});
 
 							$elm.bind('$destroy', function() {
-								var eventsToUnbind = ['touchstart', 'touchmove', 'touchend', 'keydown', 'wheel', 'mousewheel',
-									'DomMouseScroll', 'MozMousePixelScroll'];
+								$elm.unbind('keydown');
 
-								eventsToUnbind.forEach(function(eventName) {
+								['touchstart', 'touchmove', 'touchend', 'keydown', 'wheel', 'mousewheel',
+									'DomMouseScroll', 'MozMousePixelScroll'].forEach(function(eventName) {
 									$elm.unbind(eventName);
 								});
 							});
@@ -136,11 +129,6 @@
 								var viewportWidth = colContainer.getViewportWidth();
 
 								var canvasHeight = rowContainer.getCanvasHeight();
-
-								// add additional height for scrollbar on left and right container
-								// if ($scope.containerId !== 'body') {
-								//   canvasHeight -= grid.scrollbarHeight;
-								// }
 
 								var viewportHeight = rowContainer.getViewportHeight();
 								// shorten the height to make room for a scrollbar placeholder

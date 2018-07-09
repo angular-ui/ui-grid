@@ -47,8 +47,8 @@
    *
    *  @description Services for i18n
    */
-  module.service('i18nService', ['$log', 'i18nConstants', '$rootScope',
-    function ($log, i18nConstants, $rootScope) {
+  module.service('i18nService', ['$log', '$parse', 'i18nConstants', '$rootScope',
+    function ($log, $parse, i18nConstants, $rootScope) {
 
       var langCache = {
         _langs: {},
@@ -59,7 +59,7 @@
             fallbackLang = self.getFallbackLang();
 
           if (lang !== self.fallback) {
-            return angular.merge({}, self._langs[fallbackLang],
+            return angular.extend({}, self._langs[fallbackLang],
               self._langs[lang.toLowerCase()]);
           }
 
@@ -106,7 +106,7 @@
          * @methodOf ui.grid.i18n.service:i18nService
          * @description  Adds the languages and strings to the cache. Decorate this service to
          * add more translation strings
-         * @param {string} lang language to add
+         * @param {string} langs languages to add
          * @param {object} stringMaps of strings to add grouped by property names
          * @example
          * <pre>
@@ -174,24 +174,14 @@
         getSafeText: function (path, lang) {
           var language = lang || service.getCurrentLang(),
             trans = langCache.get(language),
-            missing = i18nConstants.MISSING + path;
+            missing = i18nConstants.MISSING + path,
+            getter = $parse(path);
 
           if (!trans) {
             return missing;
           }
 
-          var paths = path.split('.');
-          var current = trans;
-
-          for (var i = 0; i < paths.length; ++i) {
-            if (current[paths[i]] === undefined || current[paths[i]] === null) {
-              return missing;
-            } else {
-              current = current[paths[i]];
-            }
-          }
-
-          return current;
+          return getter(trans) || missing;
         },
 
         /**
@@ -199,7 +189,7 @@
          * @name setCurrentLang
          * @methodOf ui.grid.i18n.service:i18nService
          * @description sets the current language to use in the application
-         * $broadcasts and $emits the i18nConstants.UPDATE_EVENT on the $rootScope
+         * $broadcasts the i18nConstants.UPDATE_EVENT on the $rootScope
          * @param {string} lang to set
          * @example
          * <pre>
@@ -210,7 +200,6 @@
           if (lang) {
             langCache.setCurrent(lang);
             $rootScope.$broadcast(i18nConstants.UPDATE_EVENT);
-            $rootScope.$emit(i18nConstants.UPDATE_EVENT);
           }
         },
 
