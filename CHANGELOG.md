@@ -1,3 +1,13 @@
+<a name="4.6.2"></a>
+## [4.6.2](https://github.com/angular-ui/ui-grid/compare/v4.6.1...v4.6.2) (2018-07-09)
+
+
+### Performance Improvements
+
+* **ui-grid.core:** Remove unnecessary code. ([cfec75c](https://github.com/angular-ui/ui-grid/commit/cfec75c))
+
+
+
 <a name="4.6.1"></a>
 ## [4.6.1](https://github.com/angular-ui/ui-grid/compare/v4.6.0...v4.6.1) (2018-07-05)
 
