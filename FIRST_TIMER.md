@@ -27,7 +27,7 @@ pull request.
 
 In order to contribute an update your basic process is:
 
-- Fork the ui-grid repository in github, giving you your own copy in which you 
+- Fork the ui-grid repository in github, giving you your own copy in which you
 can work, and over which you have access permissions
 - Clone that repository
 - Setup the toolset on your local machine
@@ -39,7 +39,7 @@ can work, and over which you have access permissions
 We'll go through each step in turn.
 
 ### Fork the ui-grid repository ###
-This is the easiest step.  Get yourself a github logon, and navigate to the 
+This is the easiest step.  Get yourself a github logon, and navigate to the
 [ui-grid github page](https://github.com/angular-ui/ui-grid). Click the
 fork button in the top left.  This should navigate you to your list of
 projects in github, with a new fork of ui-grid.
@@ -63,7 +63,7 @@ Links to try might include:
 In your github repository, on the right hand side underneath settings you'll see
 a box with "clone url" written in it.  Copy this clone url.
 
-Using the command line (terminal in OSX or linux, cmd in windows) 
+Using the command line (terminal in OSX or linux, cmd in windows)
 go to the directory in which you store your projects.  Type:
 `git clone <url you copied>`
 
@@ -86,7 +86,7 @@ This allows you to get the latest code from upstream by:
 We'll discuss these steps later, for now we just want the setup done.
 
 ## Setup the toolset ###
-Before we do anything else we'll check that we can compile the code and run all 
+Before we do anything else we'll check that we can compile the code and run all
 the tests - if there are problems here then we want to know it's something wrong
 in the install rather than a change that you've made.
 
@@ -98,7 +98,7 @@ tells the node package manager (npm) what to install, bower.json tells bower wha
 
 The installation process is to first install the global packages:
 `  npm install -g grunt-cli`
-If you're on a unix derived machine (OSX, Linux) you may need elevated privileges to do 
+If you're on a unix derived machine (OSX, Linux) you may need elevated privileges to do
 this install:
 `  sudo npm install -g grunt-cli`
 
@@ -112,7 +112,7 @@ Next, run the build process to verify that it builds successfully and all the un
 pass.  The build process is driven by a tool called grunt - think of this as being similar
 to make (for c++), rake (for ruby on rails), ant, cake, or any other build tool.
 
-The core grunt configuration lives in `Gruntfile.js`, in general you shouldn't need to 
+The core grunt configuration lives in `Gruntfile.js`, in general you shouldn't need to
 change this, but if you get difficulties this is where you'd trouble shoot.
 
 To run a basic build, including unit tests, we can run the grunt default task:
@@ -125,7 +125,7 @@ something has gone wrong.  Tell us about it, and help to improve this guide by a
 common errors and resolutions here:
 
 - So far, no common errors.
- 
+
 Next, we want to run the end to end tests.  This may require installing protractor
 and selenium.  Start by running the grunt install task:
 `  grunt install`
@@ -155,7 +155,7 @@ and add `ddescribe` in there.  `iit` has a similar effect.  Remember to take thi
 again before submitting a pull request.
 
 ### Make documentation changes ###
-Before making any changes, create a feature branch.  This means that you branch the code 
+Before making any changes, create a feature branch.  This means that you branch the code
 base before you commit anything, and this branch is what you'll do a pull request against.
 `  git fetch upstream`
 `  git checkout upstream/master`
@@ -166,25 +166,25 @@ The documentation for ui-grid comes in three components:
 
 1. The .md files within the root directory of the project.  These are visible only
 on github, through clicking on them.  They generally deal with information for a contributor,
-such as this guide.  These can be edited directly, then submitted.  They are authored in 
+such as this guide.  These can be edited directly, then submitted.  They are authored in
 markdown format, and can only be viewed in their rendered format on github - so you edit them
 then push to your fork, and look at them on github.
-2. The tutorial files.  These are in misc/tutorial/*.ngdoc, and are built by the grunt-ngdocs
+2. The tutorial files.  These are in misc/tutorial/*.ngdoc, and are built by the grunt-uidocs-generator
 processor into the dist/docs/partials directory.  You can preview your changes through running
 `grunt dev` and looking at http://localhost:9003.  These are again in markdown, but in a special
 ngdoc version of markdown.  They can include end-to-end tests, and examples that are exportable
 to plunkr.  The biggest gotcha is being careful with where you put the ":" in the name
 3. The api documentation.  This is extracted from the comment blocks in the javascript (`src/` folder).  
-It uses ngdoc format and is processed by the grunt-ngdocs tool.  Edits to this are done within
+It uses ngdoc format and is processed by the grunt-uidocs-generator tool.  Edits to this are done within
 the comment blocks in the code.
 
 All of this content can be edited with a text editor.
 
-The ngdoc generator has some tricks and tips.  It is somewhat fussy about integrity - if you declare
+The uidocs generator has some tricks and tips.  It is somewhat fussy about integrity - if you declare
 a method to be `@methodOf` something, then that something must exist.  If it doesn't then you'll get
-an obscure error from grunt-ngdocs.  The best advice is to save often and keep checking that it's 
+an obscure error from grunt-uidocs-generator.  The best advice is to save often and keep checking that it's
 extracting and rendering properly - then if something gives an error you'll have a good idea of what
-you changed.  If you make bulk changes then run grunt-ngdocs, and you get an error, you'll have very 
+you changed.  If you make bulk changes then run grunt-uidocs-generator, and you get an error, you'll have very
 poor information about where the error is within the documentation set.
 
 ### Run the unit and e2e tests ###
@@ -204,8 +204,8 @@ To commit to git, you can:
 In your commit message, follow the guidelines from [CONTRIBUTING.md](https://github.com/angular-ui/ui-grid/blob/master/CONTRIBUTING.md):
 
 - Please adhere to these [git commit message guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
-  or your code is unlikely be merged into the main project. 
-  
+  or your code is unlikely be merged into the main project.
+
 If you've made multiple commits to the code, you need to squash them into a single commit so that
 we don't end up with lots of small/junk commits in the overall project history.  To do this you
 use the interactive rebase function of git:
@@ -242,9 +242,7 @@ license your work under the the terms of the [MIT License](LICENSE.md).
 
 Remember that this is a volunteer only open source project.  Most of the developers are working on their
 own areas of the functionality, and usually doing that in stolen moments of time.  They generally prefer to
-spend time coding their own stuff rather than reviewing the pull requests of others.  Typically it'll take a 
+spend time coding their own stuff rather than reviewing the pull requests of others.  Typically it'll take a
 couple of days for someone to find the time to review and comment on your pull request.  Most people will
 have a few updates they're requested to make on the first couple, whilst they learn the ropes, so be prepared
 for that.
-
-

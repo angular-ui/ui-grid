@@ -10,7 +10,7 @@ module.exports = function (grunt, options) {
     'default': ['before-test', 'test:single', 'after-test'],
 
     // Build with no testing
-    'build': ['ngtemplates', 'concat', 'uglify', 'less', 'ngdocs', 'copy:font_dist', 'copy:site', 'copy:less_customizer',],
+    'build': ['ngtemplates', 'concat', 'uglify', 'less', 'uidocs-generator', 'copy:font_dist', 'copy:site', 'copy:less_customizer',],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],
@@ -51,7 +51,7 @@ module.exports = function (grunt, options) {
     baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release'];
   }
 
   return baseTasks;

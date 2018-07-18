@@ -6,7 +6,7 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
 [![devDependencies Status](https://david-dm.org/angular-ui/ui-grid/dev-status.svg)](https://david-dm.org/angular-ui/ui-grid?type=dev)
-[![OpenCollective](https://opencollective.com/ui-grid/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/ui-grid/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/ui-grid/sponsors/badge.svg)](#sponsors)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
@@ -88,14 +88,14 @@ like your plugin added to that list, please [edit the tutorial page](misc/tutori
 
 # Building
 
-The first step is to install dependencies. `git` is required and must be available from the command line. If you don't have it, install git and ensure that the executable is in your path. If you are new to git, the easiest way to install is by installing the github client. 
+The first step is to install dependencies. `git` is required and must be available from the command line. If you don't have it, install git and ensure that the executable is in your path. If you are new to git, the easiest way to install is by installing the github client.
 
 The `grunt` command line utility is also required.
 
     # If you don't already have the grunt-cli installed:
     > npm install -g grunt-cli
 
-With `git` and `grunt-cli` installed you simply run the following commands to install all dependencies. 
+With `git` and `grunt-cli` installed you simply run the following commands to install all dependencies.
 
     > npm install
     > grunt install
@@ -109,7 +109,7 @@ The default grunt task will test and build files into `dist/`
 Development "watch" task. This will automatically rebuild from source on changes, reload Gruntfile.js if you change it, and rebuild the docs.
 
 1. A server on localhost:9002 serving whichever directory you checked out, with livereload. Navigate to http://localhost:9002/misc/demo to see the [demo files](http://localhost:9002/misc/demo/grid-directive.html).
-2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with a custom grunt-ngdocs that should work with Angular 1.6.x.
+2. A server on localhost:9003 serving the ./docs directory. These are the docs built from source with grunt-uidocs-generator.
 
 
 
@@ -252,5 +252,3 @@ Become a sponsor and get your logo on our website and on our README on Github wi
 <a href="https://opencollective.com/ui-grid/sponsor/27/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/27/avatar.svg"></a>
 <a href="https://opencollective.com/ui-grid/sponsor/28/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/28/avatar.svg"></a>
 <a href="https://opencollective.com/ui-grid/sponsor/29/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/29/avatar.svg"></a>
-
-
