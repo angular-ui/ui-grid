@@ -6,7 +6,7 @@ module.exports = function( grunt, options ){
 
     gruntfile: {
       files: ['<%= jshint.gruntfile.src %>', 'grunt/*.js'],
-      tasks: ['jshint:gruntfile', 'ngdocs']
+      tasks: ['jshint:gruntfile', 'uidocs-generator']
     },
 
     ngtemplates: {
@@ -17,7 +17,7 @@ module.exports = function( grunt, options ){
 
     rebuild: {
       files: util.testFiles.unit,
-      tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'ngdocs'],
+      tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'uidocs-generator'],
     },
 
     protractor: {
@@ -27,12 +27,12 @@ module.exports = function( grunt, options ){
 
     less: {
       files: 'src/**/*.less',
-      tasks: ['less', 'ngdocs', 'concat:customizer_less']
+      tasks: ['less', 'uidocs', 'concat:customizer_less']
     },
 
     docs: {
       files: ['misc/tutorial/**/*.ngdoc', 'misc/api/**/*.ngdoc', 'misc/doc/**'],
-      tasks: 'ngdocs'
+      tasks: 'uidocs-generator'
     },
 
     copy: {
