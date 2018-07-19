@@ -110,6 +110,7 @@ and changes things like the treeAggregationFn, or the customTreeAggregationFinal
 For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
 <pre>
   <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.tree-base.min.js"></script>
   <script src="/release/ui-grid.grouping.min.js"></script>
 </pre>
 
