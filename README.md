@@ -253,7 +253,3 @@ Become a sponsor and get your logo on our website and on our README on Github wi
 <a href="https://opencollective.com/ui-grid/sponsor/27/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/27/avatar.svg"></a>
 <a href="https://opencollective.com/ui-grid/sponsor/28/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/28/avatar.svg"></a>
 <a href="https://opencollective.com/ui-grid/sponsor/29/website" target="_blank"><img src="https://opencollective.com/ui-grid/sponsor/29/avatar.svg"></a>
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid?ref=badge_large)
