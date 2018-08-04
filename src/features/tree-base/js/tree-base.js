@@ -1371,26 +1371,34 @@
        * @param {array} parents the parents that we would want to aggregate onto
        */
       aggregate: function( grid, row, parents ) {
-        if ( parents.length === 0 && row.treeNode && row.treeNode.aggregations ) {
+        if (parents.length === 0 && row.treeNode && row.treeNode.aggregations) {
           row.treeNode.aggregations.forEach(function(aggregation) {
             // Calculate aggregations for footer even if there are no grouped rows
-            if ( typeof(aggregation.col.treeFooterAggregation) !== 'undefined' ) {
+            if (typeof(aggregation.col.treeFooterAggregation) !== 'undefined') {
               var fieldValue = grid.getCellValue(row, aggregation.col);
               var numValue = Number(fieldValue);
-              aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
+              if (aggregation.col.treeAggregationFn) {
+                aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
+              } else {
+                aggregation.col.treeFooterAggregation.value = undefined;
+              }
             }
           });
         }
 
         parents.forEach( function( parent, index ) {
-          if ( parent.treeNode.aggregations ) {
+          if (parent.treeNode.aggregations) {
             parent.treeNode.aggregations.forEach( function( aggregation ) {
               var fieldValue = grid.getCellValue(row, aggregation.col);
               var numValue = Number(fieldValue);
               aggregation.col.treeAggregationFn(aggregation, fieldValue, numValue, row);
 
-              if ( index === 0 && typeof(aggregation.col.treeFooterAggregation) !== 'undefined' ) {
-                aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
+              if (index === 0 && typeof(aggregation.col.treeFooterAggregation) !== 'undefined') {
+                if (aggregation.col.treeAggregationFn) {
+                  aggregation.col.treeAggregationFn(aggregation.col.treeFooterAggregation, fieldValue, numValue, row);
+                } else {
+                  aggregation.col.treeFooterAggregation.value = undefined;
+                }
               }
             });
           }
