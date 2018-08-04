@@ -27,7 +27,7 @@ module.exports = function( grunt, options ){
 
     less: {
       files: 'src/**/*.less',
-      tasks: ['less', 'uidocs', 'concat:customizer_less']
+      tasks: ['less', 'uidocs-generator', 'concat:customizer_less']
     },
 
     docs: {
