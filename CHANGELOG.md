@@ -1,3 +1,17 @@
+<a name="4.6.3"></a>
+## [4.6.3](https://github.com/angular-ui/ui-grid/compare/v4.6.2...v4.6.3) (2018-08-04)
+
+
+### Bug Fixes
+
+* **fonts:** changed space endings on font files ([ed8ebba](https://github.com/angular-ui/ui-grid/commit/ed8ebba)), closes [#6809](https://github.com/angular-ui/ui-grid/issues/6809)
+* **header:** Change grid header css to flexbox ([f9ac3e5](https://github.com/angular-ui/ui-grid/commit/f9ac3e5)), closes [#6799](https://github.com/angular-ui/ui-grid/issues/6799) [#2592](https://github.com/angular-ui/ui-grid/issues/2592)
+* **less:** create a core.less file for import ([6866583](https://github.com/angular-ui/ui-grid/commit/6866583)), closes [#4659](https://github.com/angular-ui/ui-grid/issues/4659)
+* **less:** remove bootstrap dependency ([a480900](https://github.com/angular-ui/ui-grid/commit/a480900)), closes [#4173](https://github.com/angular-ui/ui-grid/issues/4173) [#5435](https://github.com/angular-ui/ui-grid/issues/5435)
+* **tree-base:** agg: remove now works ([4a37231](https://github.com/angular-ui/ui-grid/commit/4a37231)), closes [#5682](https://github.com/angular-ui/ui-grid/issues/5682)
+
+
+
 <a name="4.6.2"></a>
 ## [4.6.2](https://github.com/angular-ui/ui-grid/compare/v4.6.1...v4.6.2) (2018-07-09)
 
@@ -130,12 +144,12 @@ show in the grid.
 * **exporter.js:** Eliminate selection column. Add export scale factor for excel and fonts ([d96f43d](https://github.com/angular-ui/ui-grid/commit/d96f43d))
 * **cellnav.js:** Do not trigger edit on undefined event. ([615fe49](https://github.com/angular-ui/ui-grid/commit/615fe49))
 * **Grid.js:** Use scrollbarHeight instead of scrollbarWidth for vertical scroll calculations. ([1b01490](https://github.com/angular-ui/ui-grid/commit/1b01490)), closes [#6653](https://github.com/angular-ui/ui-grid/issues/6653)
-* **selection.js:** 
+* **selection.js:**
   * Allow group header selection. ([9718d8b](https://github.com/angular-ui/ui-grid/commit/9718d8b)), closes [#6698](https://github.com/angular-ui/ui-grid/issues/6698)
   * Check if column is row header before disabling selection. ([dff19a7](https://github.com/angular-ui/ui-grid/commit/dff19a7)), closes [#5239](https://github.com/angular-ui/ui-grid/issues/5239)
   * getSelectedRows will work on primitive data types. ([39a5439](https://github.com/angular-ui/ui-grid/commit/39a5439)), closes [#6704](https://github.com/angular-ui/ui-grid/issues/6704)
   * Raise rowSelectionChangedBatch after toggling selectAll flag. ([bff5bb2](https://github.com/angular-ui/ui-grid/commit/bff5bb2)), closes [#5411](https://github.com/angular-ui/ui-grid/issues/5411)
-* **tree-base.js:** 
+* **tree-base.js:**
   * Allow treeIndent to be 0. ([68be14e](https://github.com/angular-ui/ui-grid/commit/68be14e))
   * Call updateRowHeaderWidth even when no data exists. ([49678eb](https://github.com/angular-ui/ui-grid/commit/49678eb)), closes [#5430](https://github.com/angular-ui/ui-grid/issues/5430)
 
