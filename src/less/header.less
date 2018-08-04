@@ -12,12 +12,10 @@
 
 .ui-grid-top-panel {
     position: relative;
-    // border-bottom: 1px solid @borderColor; // #D4D4D4
 
-    overflow: hidden;  // Disable so menus show up
+    overflow: hidden; // Disable so menus show up
     font-weight: bold;
 
-    // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
     .ui-grid-top-panel-background;
 
     .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
@@ -29,7 +27,6 @@
 }
 
 .ui-grid-header-canvas {
-
   // Clearfix for floating header cells
   &:before, &:after {
     content: "";
@@ -41,8 +38,6 @@
   &:after {
     clear:both;
   }
-
-  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
 }
 
 
@@ -108,8 +103,6 @@
   position: absolute;
   right: @gridBorderWidth; // So it doesn't overlay the vertical bar
   top: 0;
-  // bottom: 0;
-  // .ui-grid-top-panel-background;
 
   .ui-grid-icon-angle-down {
     vertical-align: sub;

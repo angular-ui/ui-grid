@@ -30,9 +30,6 @@
   ],
   "author": "UI Grid Team",
   "license": "MIT",
-  "dependencies": {
-    "bootstrap": "~3.3.5"
-  },
   "devDependencies": {
     "bower": "^1.8.2",
     "canonical-path": "0.0.2",
@@ -73,6 +70,7 @@
     "karma-requirejs": "~1.1.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-script-launcher": "~1.0.0",
+    "less": "^3.8.0",
     "load-grunt-config": "^0.19.2",
     "marked": "^0.3.19",
     "phantomjs-prebuilt": "^2.1.16",
