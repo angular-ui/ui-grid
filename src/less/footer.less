@@ -9,14 +9,11 @@
 @topPanelRadius: @gridBorderRadius - @gridBorderWidth;
 .ui-grid-footer-panel {
   position: relative;
-  // z-index: 1;
-  // background-color: @darkGray; // #EAEAEA
   border-bottom: 1px solid @borderColor; // #D4D4D4
   border-top: 1px solid @borderColor;
   overflow: hidden;  // Disable so menus show up
   font-weight: bold;
 
-  // .gradient(@headerBackgroundColor, @headerGradientStart, @headerGradientStop);
   .ui-grid-footer-panel-background;
 
   .border-radius(@topPanelRadius, 0, 0, @topPanelRadius);
@@ -51,8 +48,6 @@
   &:after {
     clear:both;
   }
-
-  // .border-radius(@gridBorderRadius, 0, 0, @gridBorderRadius);
 }
 
 .ui-grid-footer-cell-wrapper {
@@ -68,7 +63,6 @@
 
 .ui-grid-footer-cell {
   overflow: hidden;
-  // position: relative; // NOTE: removing so border is visible
   background-color: inherit;
   border-right: @gridBorderWidth solid;
   border-color: @borderColor;
