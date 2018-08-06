@@ -2,13 +2,11 @@
 
 [![Build Status](https://travis-ci.org/angular-ui/ui-grid.svg?branch=master)](https://travis-ci.org/angular-ui/ui-grid)
 [![Coverage Status](https://coveralls.io/repos/github/angular-ui/ui-grid/badge.svg?branch=master)](https://coveralls.io/github/angular-ui/ui-grid?branch=master)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid?ref=badge_shield)
 [![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
-[![devDependencies Status](https://david-dm.org/angular-ui/ui-grid/dev-status.svg)](https://david-dm.org/angular-ui/ui-grid?type=dev)
 [![OpenCollective](https://opencollective.com/ui-grid/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/ui-grid/sponsors/badge.svg)](#sponsors)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid?ref=badge_shield)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui/ui-grid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/nggrid.svg)](https://saucelabs.com/u/nggrid)
 
