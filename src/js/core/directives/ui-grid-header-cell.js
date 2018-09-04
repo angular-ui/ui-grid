@@ -60,6 +60,8 @@
               return label;
             };
 
+            $scope.uiGridCtrl = uiGridCtrl;
+
             $scope.grid = uiGridCtrl.grid;
 
             $scope.renderContainer = uiGridCtrl.grid.renderContainers[renderContainerCtrl.containerId];
