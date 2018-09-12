@@ -210,7 +210,7 @@ describe('ui.grid.edit uiGridCellNavService', function() {
 			});
 			$timeout.flush();
 
-			expect(Math.round(args.y.percentage * 10) / 10).toBe(0.1);
+			expect(args.y.percentage).toBeCloseTo(0.15, 0.01);
 		});
 
 		it('should request scroll to row only - last row', function() {
