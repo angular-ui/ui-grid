@@ -1134,7 +1134,9 @@
           if (typeof(field.value) === 'string') {
             return '"' + field.value.replace(/"/g,'""') + '"';
           }
-
+          if (typeof (field.value) === 'object') {
+            return field.value.text;
+          }
           return JSON.stringify(field.value);
         },
 
