@@ -1137,7 +1137,6 @@
           if (typeof (field.value) === 'object') {
             return field.value.text;
           }
-          
           return JSON.stringify(field.value);
         },
 
