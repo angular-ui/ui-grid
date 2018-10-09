@@ -1,5 +1,5 @@
 @ngdoc overview
-@name Tutorial: 112 Add/Delete/Swap Data
+@name Tutorial: 112 Add Delete Swap Data
 @description
 
 You can swap out data in the grid by simply providing a different reference.
