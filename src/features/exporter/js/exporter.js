@@ -1134,8 +1134,8 @@
           if (typeof(field.value) === 'string') {
             return '"' + field.value.replace(/"/g,'""') + '"';
           }
-
-          return JSON.stringify(field.value);
+          // if field type is date, object, numberStr
+          return '"' + JSON.stringify(field.value).replace(/"/g,'""') + '"';
         },
 
         /**
