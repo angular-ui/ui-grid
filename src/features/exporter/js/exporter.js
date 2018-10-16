@@ -1134,7 +1134,10 @@
           if (typeof(field.value) === 'string') {
             return '"' + field.value.replace(/"/g,'""') + '"';
           }
-
+          if (typeof(field.value) === 'object' && !(field.value instanceof Date)) {
+            return '"' + JSON.stringify(field.value).replace(/"/g,'""') + '"';
+          }
+          // if field type is date, numberStr
           return JSON.stringify(field.value);
         },
 
