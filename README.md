@@ -44,10 +44,10 @@ Need Some Inspiration? Have a look at our open [good first issue](https://github
 
 ## CDN
 
-You can use [rawgit.com](https://rawgit.com/)'s cdn url to access the files in the Bower repository. These files are hosted by [MaxCDN](https://www.maxcdn.com/). Just alter the version as you need.
+You can use [jsdelivr.com](https://www.jsdelivr.com)'s cdn url to access the files. Just alter the version as you need.
 
-* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js
-* https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css
+* https://cdn.jsdelivr.net/gh/angular-ui/bower-ui-grid/ui-grid.min.js
+* https://cdn.jsdelivr.net/gh/angular-ui/bower-ui-grid/ui-grid.min.css
 
 # Angular Compatibility
 
