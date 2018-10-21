@@ -685,7 +685,7 @@
 
         column.treeAggregation = { type: uiGridGroupingConstants.aggregation.COUNT, source: 'grouping' };
 
-        if ( typeof(column.colDef.customTreeAggregationFn) !== 'undefined' ) {
+        if ( column.colDef && angular.isFunction(column.colDef.customTreeAggregationFn) ) {
           column.treeAggregationFn = column.colDef.customTreeAggregationFn;
         } else {
           column.treeAggregationFn = uiGridTreeBaseService.nativeAggregations()[uiGridGroupingConstants.aggregation.COUNT].aggregationFn;
