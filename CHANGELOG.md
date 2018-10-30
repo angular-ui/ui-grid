@@ -1,3 +1,15 @@
+<a name="4.6.4"></a>
+## [4.6.4](https://github.com/angular-ui/ui-grid/compare/v4.6.3...v4.6.4) (2018-10-30)
+
+
+### Bug Fixes
+
+* **exporter:** Allow csv export for object field type ([#6870](https://github.com/angular-ui/ui-grid/issues/6870)) ([24d4224](https://github.com/angular-ui/ui-grid/commit/24d4224))
+* **grouping:** respect customTreeAggregationFn on grouped columns ([#6868](https://github.com/angular-ui/ui-grid/issues/6868)) ([e2a7310](https://github.com/angular-ui/ui-grid/commit/e2a7310)), closes [#6402](https://github.com/angular-ui/ui-grid/issues/6402)
+* **treeBase:** allow setting row.$$treeLevel to undefined ([#6867](https://github.com/angular-ui/ui-grid/issues/6867)) ([3057b46](https://github.com/angular-ui/ui-grid/commit/3057b46)), closes [#5548](https://github.com/angular-ui/ui-grid/issues/5548)
+
+
+
 <a name="4.6.3"></a>
 ## [4.6.3](https://github.com/angular-ui/ui-grid/compare/v4.6.2...v4.6.3) (2018-08-04)
 
