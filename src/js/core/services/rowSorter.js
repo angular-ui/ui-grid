@@ -456,17 +456,21 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
 
         sortFn = rowSorter.getSortFn(grid, col, r);
 
-        var propA, propB;
-
-        if ( col.sortCellFiltered ) {
-          propA = grid.getCellDisplayValue(rowA, col);
-          propB = grid.getCellDisplayValue(rowB, col);
-        } else {
-          propA = grid.getCellValue(rowA, col);
-          propB = grid.getCellValue(rowB, col);
-        }
-
-        tem = sortFn(propA, propB, rowA, rowB, direction, col);
+        // Webpack's compress will hoist and combine propA, propB into one var and break sorting functionality
+        // Wrapping in IIFE prevents that unexpected behavior
+        (function () {
+          var propA, propB;
+  
+          if ( col.sortCellFiltered ){
+            propA = grid.getCellDisplayValue(rowA, col);
+            propB = grid.getCellDisplayValue(rowB, col);
+          } else {
+            propA = grid.getCellValue(rowA, col);
+            propB = grid.getCellValue(rowB, col);
+          }
+  
+          tem = sortFn(propA, propB, rowA, rowB, direction, col);
+        })();
 
         idx++;
       }
