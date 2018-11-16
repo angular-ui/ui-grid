@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "4.6.5",
+  "version": "4.6.6",
   "description": "A data grid for Angular",
   "directories": {
     "test": "test"
