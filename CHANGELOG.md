@@ -4,7 +4,7 @@
 
 ### Bug Fixes
 
-* **customizer:** update comments for customizer ([ee5f27d](https://github.com/angular-ui/ui-grid/commit/ee5f27d)), closes [#6834](https://github.com/angular-ui/ui-grid/issues/6834)
+* **customizer:** fix customizer ([ee5f27d](https://github.com/angular-ui/ui-grid/commit/ee5f27d)), closes [#6834](https://github.com/angular-ui/ui-grid/issues/6834)
 * **rowSorter.js:** wrap rowSortFn while innards in function to prevent issue with webpack compress. ([21fa2af](https://github.com/angular-ui/ui-grid/commit/21fa2af))
 * **sort:** add an extra check for sort data ([045b77c](https://github.com/angular-ui/ui-grid/commit/045b77c))
 
