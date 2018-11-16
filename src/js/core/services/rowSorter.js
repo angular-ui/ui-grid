@@ -343,7 +343,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.prioritySort = function (a, b) {
     // Both columns have a sort priority
-    if (a.sort.priority !== undefined && b.sort.priority !== undefined) {
+    if (a.sort && a.sort.priority !== undefined && b.sort && b.sort.priority !== undefined) {
       // A is higher priority
       if (a.sort.priority < b.sort.priority) {
         return -1;
@@ -358,11 +358,11 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
     }
     // Only A has a priority
-    else if (a.sort.priority !== undefined) {
+    else if (a.sort && a.sort.priority !== undefined) {
       return -1;
     }
     // Only B has a priority
-    else if (b.sort.priority !== undefined) {
+    else if (b.sort && b.sort.priority !== undefined) {
       return 1;
     }
     // Neither has a priority

@@ -43,7 +43,7 @@
             };
             $scope.isSortPriorityVisible = function() {
               // show sort priority if column is sorted and there is at least one other sorted column
-              return angular.isNumber($scope.col.sort.priority) && $scope.grid.columns.some(function(element, index) {
+              return $scope.col && $scope.col.sort && angular.isNumber($scope.col.sort.priority) && $scope.grid.columns.some(function(element, index) {
                   return angular.isNumber(element.sort.priority) && element !== $scope.col;
                 });
             };
@@ -52,7 +52,7 @@
               // Trying to recreate this sort of thing but it was getting messy having it in the template.
               // Sort direction {{col.sort.direction == asc ? 'ascending' : ( col.sort.direction == desc ? 'descending': 'none')}}.
               // {{col.sort.priority ? {{columnPriorityText}} {{col.sort.priority}} : ''}
-              var label = col.sort.direction === uiGridConstants.ASC ? $scope.i18n.sort.ascending : ( col.sort.direction === uiGridConstants.DESC ? $scope.i18n.sort.descending : $scope.i18n.sort.none);
+              var label = col.sort && col.sort.direction === uiGridConstants.ASC ? $scope.i18n.sort.ascending : ( col.sort && col.sort.direction === uiGridConstants.DESC ? $scope.i18n.sort.descending : $scope.i18n.sort.none);
 
               if ($scope.isSortPriorityVisible()) {
                 label = label + '. ' + $scope.i18n.headerCell.priority + ' ' + (col.sort.priority + 1);
