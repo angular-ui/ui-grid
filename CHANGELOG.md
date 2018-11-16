@@ -1,3 +1,20 @@
+<a name="4.6.5"></a>
+## [4.6.5](https://github.com/angular-ui/ui-grid/compare/v4.6.4...v4.6.5) (2018-11-16)
+
+
+### Bug Fixes
+
+* **customizer:** update comments for customizer ([ee5f27d](https://github.com/angular-ui/ui-grid/commit/ee5f27d)), closes [#6834](https://github.com/angular-ui/ui-grid/issues/6834)
+* **rowSorter.js:** wrap rowSortFn while innards in function to prevent issue with webpack compress. ([21fa2af](https://github.com/angular-ui/ui-grid/commit/21fa2af))
+* **sort:** add an extra check for sort data ([045b77c](https://github.com/angular-ui/ui-grid/commit/045b77c))
+
+
+### Features
+
+* **sv.js:** Added missing Swedish translations ([6dfbad3](https://github.com/angular-ui/ui-grid/commit/6dfbad3))
+
+
+
 <a name="4.6.4"></a>
 ## [4.6.4](https://github.com/angular-ui/ui-grid/compare/v4.6.3...v4.6.4) (2018-10-30)
 
