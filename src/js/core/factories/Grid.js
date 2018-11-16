@@ -1969,7 +1969,7 @@ angular.module('ui.grid')
 
     if (!direction) {
       // Find the current position in the cycle (or -1).
-      var i = column.sortDirectionCycle.indexOf(column.sort.direction ? column.sort.direction : null);
+      var i = column.sortDirectionCycle.indexOf(column.sort && column.sort.direction ? column.sort.direction : null);
       // Proceed to the next position in the cycle (or start at the beginning).
       i = (i+1) % column.sortDirectionCycle.length;
       // If suppressRemoveSort is set, and the next position in the cycle would
