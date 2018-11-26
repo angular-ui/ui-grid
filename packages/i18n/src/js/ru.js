@@ -71,7 +71,10 @@
           exporterAllAsPdf: 'Экспортировать всё в PDF',
           exporterVisibleAsPdf: 'Экспортировать видимые данные в PDF',
           exporterSelectedAsPdf: 'Экспортировать выбранные данные в PDF',
-          clearAllFilters: 'Очистите все фильтры'
+          exporterAllAsExcel: 'Экспортировать всё в Excel',
+          exporterVisibleAsExcel: 'Экспортировать видимые данные в Excel',
+          exporterSelectedAsExcel: 'Экспортировать выбранные данные в Excel',
+          clearAllFilters: 'Очистить все фильтры'
         },
         importer: {
           noHeaders: 'Не удалось получить названия столбцов, есть ли в файле заголовок?',
