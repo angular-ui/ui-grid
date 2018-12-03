@@ -1,8 +1,8 @@
 (function() {
   'use strict';
 
-  angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'ScrollEvent', 'i18nService',
-  function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, ScrollEvent, i18nService) {
+  angular.module('ui.grid').directive('uiGridHeaderCell', ['$compile', '$timeout', '$window', '$document', 'gridUtil', 'uiGridConstants', 'ScrollEvent', 'i18nService', '$rootScope',
+  function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, ScrollEvent, i18nService, $rootScope) {
     // Do stuff after mouse has been down this many ms on the header cell
     var mousedownTimeout = 500,
       changeModeTimeout = 500; // length of time between a touch event and a mouse event being recognised again, and vice versa
@@ -226,6 +226,35 @@
               }
             };
 
+            var setFilter = function (updateFilters) {
+              if ( updateFilters ) {
+                if ( typeof($scope.col.updateFilters) !== 'undefined' ) {
+                  $scope.col.updateFilters($scope.col.filterable);
+                }
+
+                // if column is filterable add a filter watcher
+                if ($scope.col.filterable) {
+                  $scope.col.filters.forEach( function(filter, i) {
+                    filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
+                      if (n !== o) {
+                        uiGridCtrl.grid.api.core.raise.filterChanged();
+                        uiGridCtrl.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
+                        uiGridCtrl.grid.queueGridRefresh();
+                      }
+                    }));
+                  });
+                  $scope.$on('$destroy', function() {
+                    filterDeregisters.forEach( function(filterDeregister) {
+                      filterDeregister();
+                    });
+                  });
+                } else {
+                  filterDeregisters.forEach( function(filterDeregister) {
+                    filterDeregister();
+                  });
+                }
+              }
+            };
 
             var updateHeaderOptions = function() {
               var contents = $elm;
@@ -254,36 +283,12 @@
               $scope.sortable = Boolean($scope.col.enableSorting);
 
               // Figure out whether this column is filterable or not
-              var oldFilterable = $scope.filterable;
-              $scope.filterable = Boolean(uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering);
+              var oldFilterable = $scope.col.filterable;
+              $scope.col.filterable = Boolean(uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering);
 
-              if ( oldFilterable !== $scope.filterable) {
-                if ( typeof($scope.col.updateFilters) !== 'undefined' ) {
-                  $scope.col.updateFilters($scope.filterable);
-                }
-
-                // if column is filterable add a filter watcher
-                if ($scope.filterable) {
-                  $scope.col.filters.forEach( function(filter, i) {
-                    filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
-                      if (n !== o) {
-                        uiGridCtrl.grid.api.core.raise.filterChanged();
-                        uiGridCtrl.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
-                        uiGridCtrl.grid.queueGridRefresh();
-                      }
-                    }));
-                  });
-                  $scope.$on('$destroy', function() {
-                    filterDeregisters.forEach( function(filterDeregister) {
-                      filterDeregister();
-                    });
-                  });
-                } else {
-                  filterDeregisters.forEach( function(filterDeregister) {
-                    filterDeregister();
-                  });
-                }
-              }
+              $scope.$applyAsync(function () {
+                setFilter(oldFilterable !== $scope.col.filterable);
+              });
 
               // figure out whether we support column menus
               $scope.colMenu = ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false &&
@@ -327,6 +332,14 @@
             };
 
             updateHeaderOptions();
+
+            if ($scope.col.filterContainer === 'columnMenu' && $scope.col.filterable) {
+              $rootScope.$on('menu-shown', function() {
+                $scope.$applyAsync(function () {
+                  setFilter($scope.col.filterable);
+                });
+              });
+            }
 
             // Register a data change watch that would get triggered whenever someone edits a cell or modifies column defs
             var dataChangeDereg = $scope.grid.registerDataChangeCallback( updateHeaderOptions, [uiGridConstants.dataChange.COLUMN]);

@@ -28,6 +28,9 @@
           leave-open="item.leaveOpen"
           screen-reader-only="item.screenReaderOnly">
         </li>
+        <li ng-if="col.filterable && col.filterContainer === 'columnMenu'">
+          <div ui-grid-filter></div>
+        </li>
       </ul>
     </div>
   </div>

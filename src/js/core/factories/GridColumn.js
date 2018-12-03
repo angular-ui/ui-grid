@@ -751,6 +751,9 @@ angular.module('ui.grid')
     // Turn on filtering by default (it's disabled by default at the Grid level)
     self.enableFiltering = typeof(colDef.enableFiltering) !== 'undefined' ? colDef.enableFiltering : true;
 
+    // Place the filter in the header cell by default
+    self.filterContainer = typeof(colDef.filterContainer) !== 'undefined' ? colDef.filterContainer : self.grid.options.filterContainer;
+
     // self.menuItems = colDef.menuItems;
     self.setPropertyOrDefault(colDef, 'menuItems', []);
 
