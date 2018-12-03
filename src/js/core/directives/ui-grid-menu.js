@@ -37,7 +37,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     scope: {
       // shown: '&',
       menuItems: '=',
-      autoHide: '=?'
+      autoHide: '=?',
+      col: '=?'
     },
     require: '?^uiGrid',
     templateUrl: 'ui-grid/uiGridMenu',
@@ -157,8 +158,15 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
 
     // *** Auto hide when click elsewhere ******
-      var applyHideMenu = function() {
+      var applyHideMenu = function(event) {
         if ($scope.shown) {
+          if ($scope.col && $scope.col.filterContainer === 'columnMenu') {
+            var elm = document.querySelector('.ui-grid-column-menu').querySelector('[ui-grid-filter]');
+            if (elm && elm.contains(event.target)) {
+              return false;
+            }
+          }
+
           $scope.$apply(function () {
             $scope.hideMenu();
           });

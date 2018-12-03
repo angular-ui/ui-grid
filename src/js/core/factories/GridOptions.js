@@ -388,6 +388,17 @@ angular.module('ui.grid')
       baseOptions.enableFiltering = baseOptions.enableFiltering === true;
 
       /**
+       * @ngdoc string
+       * @name filterContainer
+       * @propertyOf ui.grid.class:GridOptions
+       * @description Sets the parent element for the column filter. `headerCell` places
+       * it in the header cell. `columnMenu` places it in the column menu.
+       * Can be changed for individual columns using the columnDefs.
+       * Defaults to `headerCell`
+       */
+      baseOptions.filterContainer = typeof(baseOptions.filterContainer) !== "undefined" ? baseOptions.filterContainer : "headerCell";
+
+      /**
        * @ngdoc boolean
        * @name enableColumnMenus
        * @propertyOf ui.grid.class:GridOptions
