@@ -397,8 +397,15 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         $timeout(function() {
           uiGridColumnMenuService.repositionMenu( $scope, $scope.col, $scope.colElementPosition, $elm, $scope.colElement );
 
+          var hasVisibleMenuItems = $scope.menuItems.some(function (menuItem) {
+              return menuItem.shown();
+          });
+
           // automatically set the focus to the first button element in the now open menu.
-          gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
+          if (hasVisibleMenuItems) {
+            gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
+          }
+
           delete $scope.colElementPosition;
           delete $scope.columnElement;
           addKeydownHandlersToMenu();
