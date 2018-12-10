@@ -381,7 +381,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
           if ($scope.col && $scope.col.visible) {
             // Focus on the menu button
-            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false);
+            gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false)
+                .catch(angular.noop);
           }
         }
 
@@ -403,7 +404,8 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
           // automatically set the focus to the first button element in the now open menu.
           if (hasVisibleMenuItems) {
-            gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true);
+            gridUtil.focus.bySelector($document, '.ui-grid-menu-items .ui-grid-menu-item:not(.ng-hide)', true)
+                .catch(angular.noop);
           }
 
           delete $scope.colElementPosition;
