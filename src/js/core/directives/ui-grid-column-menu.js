@@ -379,7 +379,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
         } else {
           $scope.hideMenu( true );
 
-          if ($scope.col) {
+          if ($scope.col && $scope.col.visible) {
             // Focus on the menu button
             gridUtil.focus.bySelector($document, '.ui-grid-header-cell.' + $scope.col.getColClass()+ ' .ui-grid-column-menu-button', $scope.col.grid, false);
           }
