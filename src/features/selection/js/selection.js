@@ -916,7 +916,9 @@
           scope: false,
           link: function ($scope, $elm, $attrs, uiGridCtrl) {
             var touchStartTime = 0,
-              touchTimeout = 300;
+              touchStartPos = {},
+              touchTimeout = 300,
+              touchPosDiff = 100;
 
             // Bind to keydown events in the render container
             if (uiGridCtrl.grid.api.cellNav) {
@@ -969,8 +971,9 @@
               }, touchTimeout);
             };
 
-            var touchStart = function () {
+            var touchStart = function (evt) {
               touchStartTime = (new Date()).getTime();
+              touchStartPos = evt.changedTouches[0];
 
               // if we get a touch event, then stop listening for click
               $elm.off('click', selectCells);
@@ -978,11 +981,17 @@
 
             var touchEnd = function (evt) {
               var touchEndTime = (new Date()).getTime();
+              var touchEndPos = evt.changedTouches[0];
               var touchTime = touchEndTime - touchStartTime;
+              var touchXDiff = Math.abs(touchStartPos.clientX - touchEndPos.clientX)
+              var touchYDiff = Math.abs(touchStartPos.clientY - touchEndPos.clientY)
 
-              if (touchTime < touchTimeout) {
+
+              if (touchXDiff < touchPosDiff && touchYDiff < touchPosDiff) {
+                if (touchTime < touchPosDiff) {
                 // short touch
-                selectCells(evt);
+                  selectCells(evt);
+                }
               }
 
               // don't re-enable the click handler for a little while - some devices generate both, and it will
