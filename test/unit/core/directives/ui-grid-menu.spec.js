@@ -258,9 +258,10 @@ describe('ui-grid-menu', function() {
 		});
 	});
 
-	describe('custom gridMenu templates', function() {
+	describe('custom templates', function() {
 		var $timeout;
-		var customGridMenu = '<div ui-grid-menu-custom menu-items="items"></div>';
+    var customGridMenu = '<div ui-grid-menu-custom menu-items="items"></div>';
+    var customGridMenuButton = '<div role="button"></div>';
 
 		beforeEach(inject(function(_$timeout_) {
 			$timeout = _$timeout_;
@@ -270,6 +271,7 @@ describe('ui-grid-menu', function() {
 				var element = angular.element('<div ui-grid="gridOptions"></div>');
 				$scope.gridOptions = {};
 				$scope.gridOptions.gridMenuTemplate = customGridMenu;
+				$scope.gridOptions.menuButtonTemplate = customGridMenuButton;
 				$scope.gridOptions.onRegisterApi = function(gridApi) {
 					$scope.grid = gridApi.grid;
 				};
@@ -284,6 +286,10 @@ describe('ui-grid-menu', function() {
 
 		it('should have gridMenuTemplate defined in grid options', function() {
 			expect($scope.grid.options.gridMenuTemplate).toEqual(customGridMenu);
+		});
+
+		it('should have menuButtonTemplate defined in grid options', function() {
+			expect($scope.grid.options.menuButtonTemplate).toEqual(customGridMenuButton);
 		});
 	});
 

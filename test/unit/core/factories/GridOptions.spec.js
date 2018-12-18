@@ -51,6 +51,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'ui-grid/ui-grid-grid-footer',
         rowTemplate: 'ui-grid/ui-grid-row',
         gridMenuTemplate: 'ui-grid/uiGridMenu',
+        menuButtonTemplate: 'ui-grid/ui-grid-menu-button',
+        menuItemTemplate: 'ui-grid/uiGridMenuItem',
         appScopeProvider: null
       });
     });
@@ -96,6 +98,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
+        menuButtonTemplate: 'testMenuButton',
+        menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       };
@@ -139,6 +143,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
+        menuButtonTemplate: 'testMenuButton',
+        menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
         appScopeProvider : 'anotherRef'
       });
@@ -185,6 +191,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
+        menuButtonTemplate: 'testMenuButton',
+        menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -227,6 +235,8 @@ describe('GridOptions factory', function () {
         gridFooterTemplate: 'testGridFooter',
         rowTemplate: 'testRow',
         gridMenuTemplate: 'testGridMenu',
+        menuButtonTemplate: 'testMenuButton',
+        menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
         appScopeProvider : null
       });
