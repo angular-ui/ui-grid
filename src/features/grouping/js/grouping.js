@@ -167,7 +167,7 @@
                * <pre>
                *      gridApi.grouping.on.aggregationChanged(scope,function(col) {})
                * </pre>
-               * @param {GridColumn} col the column which on which aggregation changed. The aggregation
+               * @param {GridColumn} col the column on which aggregation changed. The aggregation
                * type is available as `col.treeAggregation.type`
                */
               aggregationChanged: {},
@@ -180,7 +180,7 @@
                * <pre>
                *      gridApi.grouping.on.groupingChanged(scope,function(col) {})
                * </pre>
-               * @param {GridColumn} col the column which on which grouping changed. The new grouping is
+               * @param {GridColumn} col the column on which grouping changed. The new grouping is
                * available as `col.grouping`
                */
               groupingChanged: {}
