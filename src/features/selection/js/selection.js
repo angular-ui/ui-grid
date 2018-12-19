@@ -988,7 +988,7 @@
 
 
               if (touchXDiff < touchPosDiff && touchYDiff < touchPosDiff) {
-                if (touchTime < touchPosDiff) {
+                if (touchTime < touchTimeout) {
                 // short touch
                   selectCells(evt);
                 }
