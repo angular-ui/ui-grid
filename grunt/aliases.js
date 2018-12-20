@@ -11,6 +11,7 @@ module.exports = function (grunt, options) {
 
     // Build with no testing
     'build': ['ngtemplates', 'concat', 'uglify', 'less', 'uidocs-generator', 'copy:font_dist', 'copy:site', 'copy:less_customizer',],
+    'build:less_dist': ['copy:less_dist', 'replace:less_dist'],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],
@@ -48,10 +49,10 @@ module.exports = function (grunt, options) {
   var currentTag = semver.clean( util.getCurrentTag() );
 
   if (currentTag) {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release'];
   }
 
   return baseTasks;
