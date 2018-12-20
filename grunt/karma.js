@@ -16,7 +16,7 @@ module.exports = function( grunt ){
       reporters: ['progress'],
       reportSlowerThan: 200,
       preprocessors: {
-        'src/**/*.js': ['coverage'],
+        'packages/**/*.js': ['coverage'],
         '**/*.html': ['ng-html2js']
       },
       ngHtml2JsPreprocessor: {

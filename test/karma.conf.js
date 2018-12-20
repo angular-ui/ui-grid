@@ -23,11 +23,9 @@ module.exports = function(config) {
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
-      'src/js/core/bootstrap.js',
-      'src/js/**/*.js',
-      'src/features/**/js/**/*.js',
-      'test/unit/**/*.spec.js',
-      'src/features/**/test/**/*.spec.js',
+      'packages/core/src/bootstrap.js',
+      'packages/**/src/js/**/*.js',
+      'packages/**/test/**/*.spec.js',
 
       'dist/release/ui-grid.css',
 
@@ -44,7 +42,7 @@ module.exports = function(config) {
 
     preprocessors: {
       // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
-      'src/**/!(*.spec)+(.js)': ['coverage']
+      'packages/**/!(*.spec)+(.js)': ['coverage']
     },
 
     coverageReporter: {
