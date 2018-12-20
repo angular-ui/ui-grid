@@ -4,17 +4,29 @@ module.exports = {
     options: {
       banner: '<%= banner %>'
     },
-    files: {
-      'dist/release/<%= pkg.name %>.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
-    }
+    files: [
+      {
+        src: ['packages/core/src/less/main.less', 'packages/*/src/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
+        dest: 'dist/release/<%= pkg.name %>.css',
+        filter: function(filepath) {
+          return filepath === 'packages/core/src/less/main.less' || !filepath.includes('packages/core/src/less/');
+        }
+      }
+    ]
   },
   min: {
     options: {
       banner: '<%= banner %>',
       compress: true
     },
-    files: {
-      'dist/release/<%= pkg.name %>.min.css': ['src/less/main.less', 'src/features/*/less/**/*.less', '.tmp/font/ui-grid-codes.css']
-    }
+    files: [
+      {
+        src: ['packages/core/src/less/main.less', 'packages/*/src/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
+        dest: 'dist/release/<%= pkg.name %>.min.css',
+        filter: function(filepath) {
+          return filepath === 'packages/core/src/less/main.less' || !filepath.includes('packages/core/src/less/');
+        }
+      }
+    ]
   }
 };

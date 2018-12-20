@@ -22,25 +22,25 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'src/font',
+          cwd: 'packages/core/src/font',
           src: '**/*.eot',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'src/font',
+          cwd: 'packages/core/src/font',
           src: '**/*.svg',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'src/font',
+          cwd: 'packages/core/src/font',
           src: '**/*.ttf',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'src/font',
+          cwd: 'packages/core/src/font',
           src: '**/*.woff',
           dest: '<%= dist %>/release/fonts'
         }
@@ -70,15 +70,19 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'src/less',
+          cwd: 'packages/core/src/less',
           src: '**/*.less',
           dest: '<%= dist %>/less'
         },
         {
           expand: true,
-          cwd: 'src/features',
+          flatten: true,
+          cwd: 'packages',
           src: '**/*.less',
-          dest: '<%= dist %>/less'
+          dest: '<%= dist %>/less',
+          filter: function(filepath) {
+            return !filepath.includes('packages/core/src/less');
+          }
         },
         {
           expand: true,
@@ -92,15 +96,19 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'src/less',
+          cwd: 'packages/core/src/less',
           src: '**/*.less',
           dest: '<%= dist %>/release/less'
         },
         {
           expand: true,
-          cwd: 'src/features',
+          flatten: true,
+          cwd: 'packages',
           src: '**/*.less',
-          dest: '<%= dist %>/release/less'
+          dest: '<%= dist %>/release/less',
+          filter: function(filepath) {
+            return !filepath.includes('packages/core/src/less');
+          }
         }
       ]
     },

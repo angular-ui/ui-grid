@@ -10,7 +10,7 @@ module.exports = function( grunt, options ){
     },
 
     ngtemplates: {
-      // files: ['src/templates/**/*.html', 'src/features/*/templates/**/*.html'],
+      // files: ['packages/*/src/templates/**/*.html'],
       files: '<%= ngtemplates.uigrid.src %>',
       tasks: ['ngtemplates']
     },
