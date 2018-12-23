@@ -6,10 +6,10 @@ module.exports = {
     },
     files: [
       {
-        src: ['packages/core/src/less/main.less', 'packages/*/src/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
+        src: ['packages/core/less/main.less', 'packages/*/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
         dest: 'dist/release/<%= pkg.name %>.css',
         filter: function(filepath) {
-          return filepath === 'packages/core/src/less/main.less' || !filepath.includes('packages/core/src/less/');
+          return filepath === 'packages/core/less/main.less' || !filepath.includes('packages/core/less/');
         }
       }
     ]
@@ -21,10 +21,10 @@ module.exports = {
     },
     files: [
       {
-        src: ['packages/core/src/less/main.less', 'packages/*/src/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
+        src: ['packages/core/less/main.less', 'packages/*/less/**/*.less', '.tmp/font/ui-grid-codes.css'],
         dest: 'dist/release/<%= pkg.name %>.min.css',
         filter: function(filepath) {
-          return filepath === 'packages/core/src/less/main.less' || !filepath.includes('packages/core/src/less/');
+          return filepath === 'packages/core/less/main.less' || !filepath.includes('packages/core/less/');
         }
       }
     ]

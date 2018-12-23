@@ -22,25 +22,25 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'packages/core/src/font',
+          cwd: 'packages/core/font',
           src: '**/*.eot',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/src/font',
+          cwd: 'packages/core/font',
           src: '**/*.svg',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/src/font',
+          cwd: 'packages/core/font',
           src: '**/*.ttf',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/src/font',
+          cwd: 'packages/core/font',
           src: '**/*.woff',
           dest: '<%= dist %>/release/fonts'
         }
@@ -70,7 +70,7 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'packages/core/src/less',
+          cwd: 'packages/core/less',
           src: '**/*.less',
           dest: '<%= dist %>/less'
         },
@@ -81,7 +81,7 @@ module.exports = function ( grunt ) {
           src: '**/*.less',
           dest: '<%= dist %>/less',
           filter: function(filepath) {
-            return !filepath.includes('packages/core/src/less');
+            return !filepath.includes('packages/core/less');
           }
         },
         {
@@ -96,7 +96,7 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'packages/core/src/less',
+          cwd: 'packages/core/less',
           src: '**/*.less',
           dest: '<%= dist %>/release/less'
         },
@@ -107,7 +107,7 @@ module.exports = function ( grunt ) {
           src: '**/*.less',
           dest: '<%= dist %>/release/less',
           filter: function(filepath) {
-            return !filepath.includes('packages/core/src/less');
+            return !filepath.includes('packages/core/less');
           }
         }
       ]
