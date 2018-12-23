@@ -3,7 +3,7 @@ module.exports = {
         options: {
             patterns: [
                 {
-                    match: /..\/..\/..\/core\/src\/less\//g,
+                    match: /..\/..\/core\/less\//g,
                     replace: './'
                 }
             ]
