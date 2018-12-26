@@ -1,7 +1,33 @@
-var util = require('../lib/grunt/utils.js');
-var semver = require('semver');
-var currentTag = semver.clean( util.getCurrentTag() );
+const fs = require('fs');
+const path = require('path');
+const util = require('../lib/grunt/utils.js');
+const semver = require('semver');
+const currentTag = semver.clean(util.getCurrentTag());
+
+const getDirectories = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory());
+
 module.exports = function ( grunt ) {
+  function getPackagesFiles() {
+    const packages = getDirectories('packages/');
+
+    const npmIgnoreFiles = packages.map(function(feat) {
+      return {
+        flatten: true,
+        src: 'misc/publish/.npmignore',
+        dest: `packages/${feat}/.npmignore`
+      }
+    });
+
+    const licenseFiles = packages.map(function(feat) {
+      return {
+        flatten: true,
+        src: 'LICENSE.md',
+        dest: `packages/${feat}/LICENSE.md`
+      }
+    });
+
+    return npmIgnoreFiles.concat(licenseFiles);
+  }
   return {
     site: {
       options: {
@@ -53,6 +79,28 @@ module.exports = function ( grunt ) {
           cwd: '<%= dist %>/release/fonts',
           src: '**/*',
           dest: '<%= dist %>/release/' + currentTag + '/fonts'
+        }
+      ]
+    },
+    js_dist: {
+      files: [
+        {
+          expand: true,
+          flatten: true,
+          cwd: 'packages',
+          src: '*/*.js',
+          dest: '<%= dist %>/release',
+          filter: function(filepath) {
+            return !filepath.includes('packages/i18n')
+          }
+        },
+        {
+          expand: true,
+          flatten: true,
+          cwd: 'packages',
+          src: '*/*.js',
+          dest: '<%= dist %>/release/i18n',
+          filter: 'isFile'
         }
       ]
     },
@@ -121,6 +169,9 @@ module.exports = function ( grunt ) {
           dest: '<%= dist %>/release/' + currentTag + '/less'
         }
       ]
+    },
+    packages_publish: {
+      files: getPackagesFiles()
     }
   };
 };

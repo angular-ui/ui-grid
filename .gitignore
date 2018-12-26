@@ -167,6 +167,10 @@ var
 sdist
 develop-eggs
 .installed.cfg
+packages/**/*.css
+packages/**/ui-grid.*.js
+packages/**/LICENSE.md
+packages/**/.npmignore
 
 # Installer logs
 pip-log.txt
