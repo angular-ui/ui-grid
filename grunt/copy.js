@@ -44,6 +44,16 @@ module.exports = function ( grunt ) {
         }
       ]
     },
+    css_cut_release: {
+      files: [
+        {
+          expand: true,
+          cwd: '<%= dist %>/release/css',
+          src: '**/*',
+          dest: `<%= dist %>/release/${currentTag}/css`
+        }
+      ]
+    },
     font_dist: {
       files: [
         {
@@ -79,28 +89,6 @@ module.exports = function ( grunt ) {
           cwd: '<%= dist %>/release/fonts',
           src: '**/*',
           dest: '<%= dist %>/release/' + currentTag + '/fonts'
-        }
-      ]
-    },
-    js_dist: {
-      files: [
-        {
-          expand: true,
-          flatten: true,
-          cwd: 'packages',
-          src: '*/*.js',
-          dest: '<%= dist %>/release',
-          filter: function(filepath) {
-            return !filepath.includes('packages/i18n')
-          }
-        },
-        {
-          expand: true,
-          flatten: true,
-          cwd: 'packages',
-          src: '*/*.js',
-          dest: '<%= dist %>/release/i18n',
-          filter: 'isFile'
         }
       ]
     },
@@ -167,6 +155,36 @@ module.exports = function ( grunt ) {
           cwd: '<%= dist %>/release/less',
           src: '**/*.less',
           dest: '<%= dist %>/release/' + currentTag + '/less'
+        }
+      ]
+    },
+    packages_dist: {
+      files: [
+        {
+          expand: true,
+          flatten: true,
+          cwd: 'packages',
+          src: '*/*.js',
+          dest: '<%= dist %>/release',
+          filter: function(filepath) {
+            return !filepath.includes('packages/i18n')
+          }
+        },
+        {
+          expand: true,
+          flatten: true,
+          cwd: 'packages',
+          src: '*/*.js',
+          dest: '<%= dist %>/release/i18n',
+          filter: 'isFile'
+        },
+        {
+          expand: true,
+          flatten: true,
+          cwd: 'packages',
+          src: '*/css/*.css',
+          dest: '<%= dist %>/release/css',
+          filter: 'isFile'
         }
       ]
     },

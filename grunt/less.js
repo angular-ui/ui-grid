@@ -20,17 +20,44 @@ function getFiles(compress) {
 	const packages = getDirectories('packages/');
 
 	packages.forEach((feat) => {
-    files.push({
-      src: `packages/${feat}/less/*.less`,
-      dest: `packages/${feat}/<%= pkg.name %>.${feat}.${suffix}`,
-      filter: filterCoreLessFiles
-    });
+    if (feat !== 'core') {
+      files.push({
+        src: `packages/${feat}/less/*.less`,
+        dest: `packages/${feat}/css/<%= pkg.name %>.${feat}.${suffix}`,
+        filter: filterCoreLessFiles
+      });
+    }
   });
 
 	return files;
 }
 
 module.exports = {
+  core: {
+    options: {
+      banner: '<%= banner %>',
+      modifyVars: {
+        'font-path': '../fonts/' 
+      }
+    },
+    files: [{
+      src: 'packages/core/less/main.less',
+      dest: 'packages/core/css/<%= pkg.name %>.core.css'
+    }]
+  },
+  core_min: {
+    options: {
+      banner: '<%= banner %>',
+      modifyVars: {
+        'font-path': '../fonts/' 
+      },
+      compress: true
+    },
+    files: [{
+      src: 'packages/core/less/main.less',
+      dest: 'packages/core/css/<%= pkg.name %>.core.min.css'
+    }]
+  },
   dist: {
     options: {
       banner: '<%= banner %>'
