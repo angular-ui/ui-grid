@@ -1,0 +1,33 @@
+{
+    "name": "@ui-grid/edit",
+    "version": "4.6.6",
+    "description": "This module provides cell editing capability to ui.grid",
+    "main": "index.js",
+    "dependencies": {
+      "@ui-grid/core": "4.6.6",
+      "angular": ">=1.4.0 1.7.x"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/angular-ui/ui-grid.git"
+    },
+    "homepage": "http://ui-grid.info",
+    "bugs": { "url": "https://github.com/angular-ui/ui-grid/issues" },
+    "keywords": [
+      "angular",
+      "ng-grid",
+      "nggrid",
+      "grid",
+      "angularjs",
+      "slickgrid",
+      "kogrid",
+      "ui-grid",
+      "ui grid",
+      "data grid",
+      "ui-grid/edit",
+      "cell-edit"
+    ],
+    "author": "UI Grid Team",
+    "license": "MIT"
+}
+  
