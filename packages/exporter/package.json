@@ -5,7 +5,12 @@
     "main": "index.js",
     "dependencies": {
       "@ui-grid/core": "4.6.6",
-      "angular": ">=1.4.0 1.7.x"
+      "angular": ">=1.4.0 1.7.x",
+      "csv-js": "~1.0.0",
+      "excel-builder": "~2.0.2",
+      "jszip": "~2.6.1",
+      "lodash": "~2.4.1",
+      "pdfmake": "~0.1.8"
     },
     "repository": {
       "type": "git",
@@ -14,7 +19,7 @@
     "homepage": "http://ui-grid.info",
     "bugs": { "url": "https://github.com/angular-ui/ui-grid/issues" },
     "keywords": [
-      "angular",
+      "angularjs",
       "ng-grid",
       "nggrid",
       "grid",
@@ -25,6 +30,9 @@
       "ui grid",
       "data grid",
       "ui-grid/exporter",
+      "csv",
+      "excel",
+      "pdf",
       "export data"
     ],
     "author": "UI Grid Team",
