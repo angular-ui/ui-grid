@@ -1,0 +1,36 @@
+{
+    "name": "@ui-grid/tree-view",
+    "version": "4.6.6",
+    "description": "This ui-grid module provides a tree view of the data, with nodes and leaves",
+    "main": "index.js",
+    "dependencies": {
+      "@ui-grid/core": "4.6.6",
+      "@ui-grid/tree-base": "4.6.6",
+      "angular": ">=1.4.0 1.7.x"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/angular-ui/ui-grid.git"
+    },
+    "homepage": "http://ui-grid.info",
+    "bugs": { "url": "https://github.com/angular-ui/ui-grid/issues" },
+    "keywords": [
+      "angular",
+      "ng-grid",
+      "nggrid",
+      "grid",
+      "angularjs",
+      "slickgrid",
+      "kogrid",
+      "ui-grid",
+      "ui grid",
+      "data grid",
+      "ui-grid/tree-base",
+      "ui-grid/tree-view",
+      "grouping",
+      "tree grid"
+    ],
+    "author": "UI Grid Team",
+    "license": "MIT"
+}
+  
