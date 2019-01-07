@@ -1,5 +1,7 @@
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const package = require('../package.json');
 const util = require('../lib/grunt/utils.js');
 const semver = require('semver');
 const currentTag = semver.clean(util.getCurrentTag());
@@ -10,20 +12,39 @@ module.exports = function ( grunt ) {
   function getPackagesFiles() {
     const packages = getDirectories('packages/');
 
-    const npmIgnoreFiles = packages.map(function(feat) {
-      return {
+    let npmIgnoreFiles = [],
+      licenseFiles = [];
+
+    packages.forEach(function(feat) {
+      let featModuleName = '.' + _.camelCase(feat);
+      let featMainPath = `./js/${package.name}.${feat}`;
+
+      switch(feat) {
+        case 'cellnav':
+          featModuleName = '.cellNav';
+          break;
+        case 'core':
+          featModuleName = '';
+          break;
+        case 'i18n':
+          featMainPath = `./js/${package.name}.language.all`;
+          featModuleName = '';
+          break;
+      }
+      fs.writeFileSync(
+        `packages/${feat}/index.js`,
+        `require('${featMainPath}')\nmodule.exports = 'ui.grid${featModuleName}';`
+      );
+      npmIgnoreFiles.push({
         flatten: true,
         src: 'misc/publish/.npmignore',
         dest: `packages/${feat}/.npmignore`
-      }
-    });
-
-    const licenseFiles = packages.map(function(feat) {
-      return {
+      });
+      licenseFiles.push({
         flatten: true,
         src: 'LICENSE.md',
         dest: `packages/${feat}/LICENSE.md`
-      }
+      });
     });
 
     return npmIgnoreFiles.concat(licenseFiles);
@@ -164,7 +185,7 @@ module.exports = function ( grunt ) {
           expand: true,
           flatten: true,
           cwd: 'packages',
-          src: '*/*.js',
+          src: '*/js/*.js',
           dest: '<%= dist %>/release',
           filter: function(filepath) {
             return !filepath.includes('packages/i18n')
@@ -174,7 +195,7 @@ module.exports = function ( grunt ) {
           expand: true,
           flatten: true,
           cwd: 'packages',
-          src: '*/*.js',
+          src: '*/js/*.js',
           dest: '<%= dist %>/release/i18n',
           filter: 'isFile'
         },
