@@ -6,7 +6,8 @@
     "dependencies": {
       "@ui-grid/core": "4.6.6",
       "@ui-grid/edit": "4.6.6",
-      "angular": ">=1.4.0 1.7.x"
+      "angular": ">=1.4.0 1.7.x",
+      "angular-ui-bootstrap": "0.13.4"
     },
     "repository": {
       "type": "git",
