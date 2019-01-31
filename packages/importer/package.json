@@ -5,7 +5,8 @@
     "main": "index.js",
     "dependencies": {
       "@ui-grid/core": "4.6.6",
-      "angular": ">=1.4.0 1.7.x"
+      "angular": ">=1.4.0 1.7.x",
+      "csv-js": "~1.0.0"
     },
     "repository": {
       "type": "git",
