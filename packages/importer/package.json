@@ -8,6 +8,9 @@
       "angular": ">=1.4.0 1.7.x",
       "csv-js": "~1.0.0"
     },
+    "publishConfig": {
+      "access": "public"
+    },
     "repository": {
       "type": "git",
       "url": "https://github.com/angular-ui/ui-grid.git"

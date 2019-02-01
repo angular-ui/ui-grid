@@ -12,6 +12,9 @@
       "lodash": "~2.4.1",
       "pdfmake": "~0.1.8"
     },
+    "publishConfig": {
+      "access": "public"
+    },
     "repository": {
       "type": "git",
       "url": "https://github.com/angular-ui/ui-grid.git"

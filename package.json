@@ -7,6 +7,10 @@
   },
   "main": "index.js",
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "bump": "lerna version",
+    "changed": "lerna changed",
+    "clean": "lerna clean",
     "postinstall": "grunt shell:protractor-install",
     "init": "validate-commit-msg",
     "test": "grunt",
@@ -73,6 +77,7 @@
     "karma-requirejs": "~1.1.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-script-launcher": "~1.0.0",
+    "lerna": "^3.10.7",
     "less": "^3.8.0",
     "load-grunt-config": "^0.19.2",
     "lodash": "^4.17.11",

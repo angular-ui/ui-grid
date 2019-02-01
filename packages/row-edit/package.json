@@ -9,6 +9,9 @@
       "@ui-grid/edit": "4.6.6",
       "angular": ">=1.4.0 1.7.x"
     },
+    "publishConfig": {
+      "access": "public"
+    },
     "repository": {
       "type": "git",
       "url": "https://github.com/angular-ui/ui-grid.git"
