@@ -1,40 +1,41 @@
 {
-    "name": "@ui-grid/validate",
-    "version": "4.6.6",
-    "description": "This ui-grid module provides the ability to validate cells upon change",
-    "main": "index.js",
-    "dependencies": {
-      "@ui-grid/core": "4.6.6",
-      "@ui-grid/edit": "4.6.6",
-      "angular": ">=1.4.0 1.7.x",
-      "angular-ui-bootstrap": "0.13.4"
-    },
-    "publishConfig": {
-      "access": "public"
-    },
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/angular-ui/ui-grid.git"
-    },
-    "homepage": "http://ui-grid.info",
-    "bugs": { "url": "https://github.com/angular-ui/ui-grid/issues" },
-    "keywords": [
-      "angular",
-      "ng-grid",
-      "nggrid",
-      "grid",
-      "angularjs",
-      "slickgrid",
-      "kogrid",
-      "ui-grid",
-      "ui grid",
-      "data grid",
-      "ui-grid/validate",
-      "ui-grid/edit",
-      "edit data",
-      "validation"
-    ],
-    "author": "UI Grid Team",
-    "license": "MIT"
+  "name": "@ui-grid/validate",
+  "version": "4.7.0",
+  "description": "This ui-grid module provides the ability to validate cells upon change",
+  "main": "index.js",
+  "dependencies": {
+    "@ui-grid/core": "^4.7.0",
+    "@ui-grid/edit": "^4.7.0",
+    "angular": ">=1.4.0 1.7.x",
+    "angular-ui-bootstrap": "0.13.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui/ui-grid.git"
+  },
+  "homepage": "http://ui-grid.info",
+  "bugs": {
+    "url": "https://github.com/angular-ui/ui-grid/issues"
+  },
+  "keywords": [
+    "angular",
+    "ng-grid",
+    "nggrid",
+    "grid",
+    "angularjs",
+    "slickgrid",
+    "kogrid",
+    "ui-grid",
+    "ui grid",
+    "data grid",
+    "ui-grid/validate",
+    "ui-grid/edit",
+    "edit data",
+    "validation"
+  ],
+  "author": "UI Grid Team",
+  "license": "MIT"
 }
-  

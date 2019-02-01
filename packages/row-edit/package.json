@@ -1,39 +1,40 @@
 {
-    "name": "@ui-grid/row-edit",
-    "version": "4.6.6",
-    "description": "This ui-grid module extends the edit feature to provide tracking and saving of rows of data",
-    "main": "index.js",
-    "dependencies": {
-      "@ui-grid/core": "4.6.6",
-      "@ui-grid/cell-nav": "4.6.6",
-      "@ui-grid/edit": "4.6.6",
-      "angular": ">=1.4.0 1.7.x"
-    },
-    "publishConfig": {
-      "access": "public"
-    },
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/angular-ui/ui-grid.git"
-    },
-    "homepage": "http://ui-grid.info",
-    "bugs": { "url": "https://github.com/angular-ui/ui-grid/issues" },
-    "keywords": [
-      "angular",
-      "ng-grid",
-      "nggrid",
-      "grid",
-      "angularjs",
-      "slickgrid",
-      "kogrid",
-      "ui-grid",
-      "ui grid",
-      "data grid",
-      "ui-grid/row-edit",
-      "row edit",
-      "edit data"
-    ],
-    "author": "UI Grid Team",
-    "license": "MIT"
+  "name": "@ui-grid/row-edit",
+  "version": "4.7.0",
+  "description": "This ui-grid module extends the edit feature to provide tracking and saving of rows of data",
+  "main": "index.js",
+  "dependencies": {
+    "@ui-grid/cell-nav": "^4.7.0",
+    "@ui-grid/core": "^4.7.0",
+    "@ui-grid/edit": "^4.7.0",
+    "angular": ">=1.4.0 1.7.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui/ui-grid.git"
+  },
+  "homepage": "http://ui-grid.info",
+  "bugs": {
+    "url": "https://github.com/angular-ui/ui-grid/issues"
+  },
+  "keywords": [
+    "angular",
+    "ng-grid",
+    "nggrid",
+    "grid",
+    "angularjs",
+    "slickgrid",
+    "kogrid",
+    "ui-grid",
+    "ui grid",
+    "data grid",
+    "ui-grid/row-edit",
+    "row edit",
+    "edit data"
+  ],
+  "author": "UI Grid Team",
+  "license": "MIT"
 }
-  

@@ -1,3 +1,38 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [4.7.0](https://github.com/angular-ui/ui-grid/compare/v4.6.6...v4.7.0) (2019-02-01)
+
+
+### Bug Fixes
+
+* **exporter:** add missing dependencies ([a86eb0e](https://github.com/angular-ui/ui-grid/commit/a86eb0e))
+* **grouping.js:** fix typo in description ([4597c69](https://github.com/angular-ui/ui-grid/commit/4597c69))
+* **less:** update less file references ([47c1239](https://github.com/angular-ui/ui-grid/commit/47c1239))
+* **selection:** prevent cell to be selected when user scroll ([a537f0c](https://github.com/angular-ui/ui-grid/commit/a537f0c))
+* **selection:** take in care about time touched properly ([0dbdafe](https://github.com/angular-ui/ui-grid/commit/0dbdafe))
+* **uiGridColumMenu:** Add missing promise catch handlers for focus.bySelector calls ([de57fdc](https://github.com/angular-ui/ui-grid/commit/de57fdc))
+* **uiGridColumMenu:** Check column visibility before trying to focus it in the menu-hidden callback ([3a8e87b](https://github.com/angular-ui/ui-grid/commit/3a8e87b))
+* **uiGridColumMenu:** Check for menu item visibility before trying to focus the first visible menu item ([3085417](https://github.com/angular-ui/ui-grid/commit/3085417))
+
+
+### Features
+
+* **css:** add feature based CSS files ([9e1c042](https://github.com/angular-ui/ui-grid/commit/9e1c042))
+* **filter:** add filterContainer option to allow a column filter to be placed in column menu ([bdb832a](https://github.com/angular-ui/ui-grid/commit/bdb832a)), closes [#3989](https://github.com/angular-ui/ui-grid/issues/3989)
+
+
+### BREAKING CHANGES
+
+* **less:** feature less files have been moved to the root of the
+less folder.
+
+
+
+
+
 <a name="4.6.5"></a>
 ## [4.6.5](https://github.com/angular-ui/ui-grid/compare/v4.6.4...v4.6.5) (2018-11-16)
 
