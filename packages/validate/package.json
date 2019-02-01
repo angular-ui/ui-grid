@@ -9,6 +9,9 @@
       "angular": ">=1.4.0 1.7.x",
       "angular-ui-bootstrap": "0.13.4"
     },
+    "publishConfig": {
+      "access": "public"
+    },
     "repository": {
       "type": "git",
       "url": "https://github.com/angular-ui/ui-grid.git"
