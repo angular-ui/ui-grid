@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "4.6.6",
+  "version": "4.7.0",
   "description": "A data grid for Angular",
   "directories": {
     "test": "test"
@@ -11,6 +11,7 @@
     "bump": "lerna version",
     "changed": "lerna changed",
     "clean": "lerna clean",
+    "prepare": "lerna publish",
     "postinstall": "grunt shell:protractor-install",
     "init": "validate-commit-msg",
     "test": "grunt",
