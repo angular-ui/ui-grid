@@ -11,7 +11,7 @@
     "bump": "lerna version",
     "changed": "lerna changed",
     "clean": "lerna clean",
-    "prepare": "lerna publish",
+    "release": "lerna publish",
     "postinstall": "grunt shell:protractor-install",
     "init": "validate-commit-msg",
     "test": "grunt",
