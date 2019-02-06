@@ -59,7 +59,7 @@ module.exports = {
     navTemplate: 'misc/doc/templates/nav.html'
   },
   api: {
-    src: ['src/**/*.js', 'misc/api/**/*.ngdoc', 'test/e2e/**/*.js'],
+    src: ['packages/*/src/**/*.js', 'misc/api/**/*.ngdoc', 'test/e2e/**/*.js'],
     title: 'API'
   },
   tutorial: {
