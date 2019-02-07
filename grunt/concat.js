@@ -9,7 +9,7 @@ const templateDirectories = getTemplateDirectories('packages/');
 
 function getFiles() {
 	const files = {
-		'<%= dist %>/release/<%= pkg.name %>.js': ['packages/core/src/js/bootstrap.js', 'packages/**/src/js/**/*.js', '.tmp/template.js'],
+		'<%= dist %>/release/<%= pkg.name %>.js': ['packages/core/src/js/bootstrap.js', 'packages/*/src/js/**/*.js', '.tmp/template.js'],
 		'packages/core/js/<%= pkg.name %>.core.js': ['src/js/core/bootstrap.js', 'packages/core/src/js/**/*.js', '.tmp/template-core.js']
 	};
 	const packages = getDirectories('packages/');
