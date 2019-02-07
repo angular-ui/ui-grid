@@ -1,10 +1,10 @@
 {
   "name": "@ui-grid/move-columns",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "description": "This module enables ui-grid users to change the position of columns",
   "main": "index.js",
   "dependencies": {
-    "@ui-grid/core": "^4.7.0",
+    "@ui-grid/core": "^4.7.1",
     "angular": ">=1.4.0 1.7.x"
   },
   "publishConfig": {
