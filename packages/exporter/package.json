@@ -8,8 +8,6 @@
     "angular": ">=1.4.0 1.7.x",
     "csv-js": "~1.0.0",
     "excel-builder": "~2.0.2",
-    "jszip": "~2.6.1",
-    "lodash": "~2.4.1",
     "pdfmake": "~0.1.8"
   },
   "publishConfig": {
