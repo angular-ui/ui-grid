@@ -20,9 +20,9 @@ Another option is to use the i18nService and use the setCurrentLang method
 For an example using angular-translate to translate your headers, refer to http://plnkr.co/edit/KnrKTst5dWXvlZNeIy9c?p=preview
 
 If you would like to get better performance out of your application, it is recommended that you take advantage of UI-Grid's multi-file
-support. By default ui-grid.base.js will contain just the english language, in order to load the other language follow the example bellow:
+support. By default ui-grid.core.js will contain just the english language, in order to load the other language follow the example bellow:
 <pre>
-   <script src="/release/ui-grid.base.js"></script>
+   <script src="/release/ui-grid.core.js"></script>
    <script src="/release/i18n/ui-grid.language.[YOUR_LANGUAGE_HERE].js"></script>
 
    <!-- Alternatively you can load all languages provided with you grid by loading the following -->
