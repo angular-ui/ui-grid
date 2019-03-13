@@ -237,7 +237,7 @@
                   $scope.col.filters.forEach( function(filter, i) {
                     filterDeregisters.push($scope.$watch('col.filters[' + i + '].term', function(n, o) {
                       if (n !== o) {
-                        uiGridCtrl.grid.api.core.raise.filterChanged();
+                        uiGridCtrl.grid.api.core.raise.filterChanged( $scope.col );
                         uiGridCtrl.grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
                         uiGridCtrl.grid.queueGridRefresh();
                       }
