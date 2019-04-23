@@ -64,6 +64,14 @@
           jsonNotArray: 'El archivo json importado debe contener un array, abortando.'
         },
         pagination: {
+          aria: {
+										pageToFirst: 'Página para primero',
+										pageBack: 'Página atrás',
+										pageSelected: 'Página seleccionada',
+										pageForward: 'Avance de página',
+										pageToLast: 'Página para durar'
+									},
+          through: 'mediante',
           sizes: 'registros por página',
           totalItems: 'registros',
           of: 'de'
