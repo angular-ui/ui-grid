@@ -62,7 +62,7 @@
     "grunt-protractor-runner": "^5.0.0",
     "grunt-replace": "^1.0.1",
     "grunt-shell-spawn": "^0.4.0",
-    "grunt-uidocs-generator": "^0.6.1",
+    "grunt-uidocs-generator": "^0.7.0",
     "hoek": "^5.0.3",
     "husky": "^0.14.3",
     "jasmine-core": "^2.4.1",
