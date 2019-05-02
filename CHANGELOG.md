@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/angular-ui/ui-grid/compare/v4.7.1...v4.8.0) (2019-05-02)
+
+
+### Bug Fixes
+
+* **exporter:** remove unnecessary dependencies ([c354e27](https://github.com/angular-ui/ui-grid/commit/c354e27))
+* **i18n:** add ru excel export values + fix clearAllFilters typo ([83b2aa1](https://github.com/angular-ui/ui-grid/commit/83b2aa1)), closes [#6841](https://github.com/angular-ui/ui-grid/issues/6841)
+* **less:** improve less compilation ([2ab139e](https://github.com/angular-ui/ui-grid/commit/2ab139e))
+* **ui-grid-site:** upgrade bootstrap to version 3.4.1 ([a125627](https://github.com/angular-ui/ui-grid/commit/a125627))
+
+
+### Features
+
+* **filterChanged:** pass the changed column as first argument to filterChanged function ([13eacc3](https://github.com/angular-ui/ui-grid/commit/13eacc3)), closes [#4775](https://github.com/angular-ui/ui-grid/issues/4775)
+
+
+
+
+
 # [4.7.1](https://github.com/angular-ui/ui-grid/compare/v4.7.0...v4.7.1) (2019-02-06)
 
 
