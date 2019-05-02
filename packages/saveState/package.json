@@ -1,14 +1,14 @@
 {
   "name": "@ui-grid/save-state",
-  "version": "4.7.1",
+  "version": "4.8.0",
   "description": "This ui-grid module provides the ability to save and restore the grid state",
   "main": "index.js",
   "dependencies": {
-    "@ui-grid/cell-nav": "^4.7.1",
-    "@ui-grid/core": "^4.7.1",
-    "@ui-grid/grouping": "^4.7.1",
-    "@ui-grid/selection": "^4.7.1",
-    "@ui-grid/tree-view": "^4.7.1",
+    "@ui-grid/cell-nav": "^4.8.0",
+    "@ui-grid/core": "^4.8.0",
+    "@ui-grid/grouping": "^4.8.0",
+    "@ui-grid/selection": "^4.8.0",
+    "@ui-grid/tree-view": "^4.8.0",
     "angular": ">=1.4.0 1.7.x"
   },
   "publishConfig": {
