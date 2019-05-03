@@ -8,13 +8,13 @@
   "main": "index.js",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "bump": "lerna version",
+    "bump": "lerna version --conventional-commits --no-push -m 'chore: Release %s'",
     "changed": "lerna changed",
-    "clean": "lerna clean",
-    "release": "lerna publish",
-    "postinstall": "grunt shell:protractor-install",
+    "clean": "lerna clean && grunt clean",
+    "release": "lerna publish from-package",
+    "postinstall": "webdriver-manager update",
     "init": "validate-commit-msg",
-    "test": "grunt",
+    "test": "grunt test",
     "commit": "git-cz",
     "start": "grunt dev --fast"
   },
