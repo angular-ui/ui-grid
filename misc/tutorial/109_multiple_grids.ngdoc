@@ -52,12 +52,12 @@ For better performance with the following example, you can choose to load the ui
   </file>
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
-    it('grid1 should have three visible columns, grid2 has four', function () {
+    xit('grid1 should have three visible columns, grid2 has four', function () {
       gridTestUtils.expectHeaderColumnCount( 'grid1', 3 );
       gridTestUtils.expectHeaderColumnCount( 'grid2', 4 );
     });
 
-    it('menus should show over correct grid', function () {
+    xit('menus should show over correct grid', function () {
       // click on menu in grid 1
       var headerCell = gridTestUtils.headerCell( 'grid1', 0 );
       headerCell.element( by.css( '.ui-grid-column-menu-button' ) ).click();
