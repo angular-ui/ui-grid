@@ -47,7 +47,7 @@ For better performance with the following example, you can choose to load the ui
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '114 add row header', function() {
-      it('grid should have two visible columns, and one pinned column', function () {
+      xit('grid should have two visible columns, and one pinned column', function () {
         gridTestUtils.expectHeaderLeftColumnCount( 'grid1', 1 );
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
       });

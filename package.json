@@ -11,12 +11,14 @@
     "bump": "lerna version --conventional-commits --no-push -m 'chore: Release %s'",
     "changed": "lerna changed",
     "clean": "lerna clean && grunt clean",
-    "release": "lerna publish from-package",
-    "postinstall": "webdriver-manager update",
-    "init": "validate-commit-msg",
-    "test": "grunt test",
     "commit": "git-cz",
-    "start": "grunt dev --fast"
+    "e2e": "grunt test:ci-e2e",
+    "init": "validate-commit-msg",
+    "lint": "grunt newer:jshint",
+    "postinstall": "webdriver-manager update",
+    "release": "lerna publish from-package",
+    "start": "grunt dev --fast",
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
