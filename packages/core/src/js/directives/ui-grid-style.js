@@ -27,7 +27,7 @@
    </div>
    </doc:source>
    <doc:scenario>
-      it('should apply the right class to the element', function () {
+      xit('should apply the right class to the element', function () {
         element(by.css('.blah')).getCssValue('border-top-width')
           .then(function(c) {
             expect(c).toContain('1px');
