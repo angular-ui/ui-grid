@@ -457,6 +457,10 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
     },
 
+    isVisible: function (elem) {
+      return !!( elem[0].offsetWidth || elem[0].offsetHeight || elem[0].getClientRects().length )
+    },
+
     // Thanks to http://stackoverflow.com/a/13382873/888165
     getScrollbarWidth: function() {
         var outer = document.createElement("div");
