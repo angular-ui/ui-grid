@@ -338,7 +338,7 @@ function uiGridDirective($window, gridUtil, uiGridConstants) {
 
           // Resize the grid on window resize events
           function gridResize() {
-            if (!!!( $elm[0].offsetWidth || $elm[0].offsetHeight || $elm[0].getClientRects().length )) {
+            if (!gridUtil.isVisible($elm)) {
               return;
             }
             grid.gridWidth = $scope.gridWidth = gridUtil.elementWidth($elm);
