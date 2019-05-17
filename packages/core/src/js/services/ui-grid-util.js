@@ -470,7 +470,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
         var widthNoScroll = outer.offsetWidth;
         // force scrollbars
         outer.style.overflow = "scroll";
-        outer.style.position = "absolute"; //force Firefox to draw a scrollbar
+        outer.style.position = "absolute"; // force Firefox to draw a scrollbar
 
         // add innerdiv
         var inner = document.createElement("div");
