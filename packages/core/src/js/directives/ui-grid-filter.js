@@ -26,6 +26,7 @@
             };
 
             $scope.$on( '$destroy', function() {
+              delete $scope.col.filterable;
               delete $scope.col.updateFilters;
             });
           },
