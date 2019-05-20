@@ -338,21 +338,25 @@
 
             $scope.$on( '$destroy', dataChangeDereg );
 
-            $scope.handleClick = function(event) {
-              // If the shift key is being held down, add this column to the sort
-              var add = false;
-              if (event.shiftKey) {
-                add = true;
-              }
-
+            function applySort(add) {
               // Sort this column then rebuild the grid's rows
               uiGridCtrl.grid.sortColumn($scope.col, add)
                 .then(function () {
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
                 }).catch(angular.noop);
+            }
+
+            $scope.handleClick = function(event) {
+              // If the shift key is being held down, add this column to the sort
+              applySort(event.shiftKey);
             };
 
+            $scope.handleKeyDown = function(event) {
+              if (event.keyCode === 32 || event.keyCode === 13) {
+                applySort(event.shiftKey);
+              }
+            };
 
             $scope.toggleMenu = function(event) {
               event.stopPropagation();
