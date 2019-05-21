@@ -353,7 +353,7 @@
             };
 
             $scope.handleKeyDown = function(event) {
-              if (event.keyCode === 32 || event.keyCode === 13) {
+              if (event.key === 'Enter' || event.key === ' ') {
                 applySort(event.shiftKey);
               }
             };
