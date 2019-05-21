@@ -147,7 +147,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
         });
         //automatically set the focus to the first button element in the now open menu.
-        gridUtil.focus.bySelector($elm, 'button[type=button]', true);
+        gridUtil.focus.bySelector($elm, 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', true);
       };
 
 
