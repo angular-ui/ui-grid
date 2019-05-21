@@ -35,8 +35,8 @@ When a field does not pass validation it gets a `invalid` class so you can custo
 
 The feature adds 2 templates to ui-grid:
 
-- `cellTitleValidator` wich adds the error message to the title attribute of the cell.
-- `cellTooltipValidator` wich depends on ui-bootstrap to add a tooltip.
+- `cellTitleValidator` which adds the error message to the title attribute of the cell.
+- `cellTooltipValidator` which depends on ui-bootstrap to add a tooltip.
 
 ## External Factory
 
