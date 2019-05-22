@@ -339,6 +339,7 @@
             $scope.$on( '$destroy', dataChangeDereg );
 
             function applySort(add) {
+              if ($scope.col.enableSorting === false) { return; }
               // Sort this column then rebuild the grid's rows
               uiGridCtrl.grid.sortColumn($scope.col, add)
                 .then(function () {
