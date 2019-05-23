@@ -215,7 +215,8 @@
         $timeout(function () {
           grid.api.core.notifyDataChange( uiGridConstants.dataChange.COLUMN );
           grid.api.colMovable.raise.columnPositionChanged(originalColumn.colDef, originalPosition, newPosition);
-          angular.element(`.ui-grid-header-cell.ui-grid-col${originalColumn.uid} .ui-grid-cell-contents`).focus();
+          var selector = '.ui-grid-header-cell.ui-grid-col' + originalColumn.uid + ' .ui-grid-cell-contents'
+          angular.element(selector).focus();
         });
       }
     };
