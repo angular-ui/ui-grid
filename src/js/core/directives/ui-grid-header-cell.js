@@ -348,6 +348,24 @@
                 }).catch(angular.noop);
             }
 
+            function applyMoveColumn(moveRight) {
+              if (!$scope.col) { return; }
+              if (!uiGridCtrl.grid.api.colMovable) { return; }
+
+              var columns = $scope.grid.columns;
+              var columnIndex = 0;
+              for (var i = 0; i < columns.length; i++) {
+                if (columns[i].colDef.name === $scope.col.colDef.name) {
+                  columnIndex = i;
+                  break;
+                }
+              }
+
+              // Move Column already handles checking valid index ranges.
+              var newIndex = moveRight ? columnIndex + 1 : columnIndex - 1;
+              uiGridCtrl.grid.api.colMovable.moveColumn(columnIndex, newIndex);
+            }
+
             $scope.handleClick = function(event) {
               // If the shift key is being held down, add this column to the sort
               applySort(event.shiftKey);
@@ -356,6 +374,10 @@
             $scope.handleKeyDown = function(event) {
               if (event.key === 'Enter' || event.key === ' ') {
                 applySort(event.shiftKey);
+              } else if (event.altKey && event.key ===  "ArrowLeft") {
+                applyMoveColumn(false);
+              } else if (event.altKey && event.key === "ArrowRight") {
+                applyMoveColumn(true);
               }
             };
 
