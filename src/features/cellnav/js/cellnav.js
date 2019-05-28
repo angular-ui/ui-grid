@@ -917,6 +917,10 @@
                 }
               });
 
+              focuser.on('blur', function (evt) {
+                uiGridCtrl.cellNav.clearFocus();
+              });
+
               uiGridCellnavCtrl.setAriaActivedescendant = function(id){
                 $elm.attr('aria-activedescendant', id);
               };
