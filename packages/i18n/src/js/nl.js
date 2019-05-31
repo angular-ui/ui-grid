@@ -54,7 +54,7 @@
           exporterAllAsExcel: 'Exporteer alle data als excel',
           exporterVisibleAsExcel: 'Exporteer zichtbare data als excel',
           exporterSelectedAsExcel: 'Exporteer alle data als excel',
-          clearAllFilters: 'Reinig alle filters'
+          clearAllFilters: 'Alle filters wissen'
         },
         importer: {
           noHeaders: 'Kolomnamen kunnen niet worden afgeleid. Heeft het bestand een header?',
