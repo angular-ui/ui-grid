@@ -374,9 +374,9 @@
             $scope.handleKeyDown = function(event) {
               if (event.key === 'Enter' || event.key === ' ') {
                 applySort(event.shiftKey);
-              } else if (event.altKey && event.key ===  "ArrowLeft") {
+              } else if (event.altKey && event.shiftKey && event.key ===  "ArrowLeft") {
                 applyMoveColumn(false);
-              } else if (event.altKey && event.key === "ArrowRight") {
+              } else if (event.altKey && event.shiftKey && event.key === "ArrowRight") {
                 applyMoveColumn(true);
               }
             };
