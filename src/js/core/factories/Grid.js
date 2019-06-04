@@ -513,6 +513,22 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc function
+   * @name unregisterColumnBulder
+   * @methodOf ui.grid.class:Grid
+   * @description When the build creates columns from column definitions, the columnbuilders will be called to add
+   * additional properties to the column.
+   * @param {function(colDef, col, gridOptions)} columnBuilder function to be called
+   */
+  Grid.prototype.unregisterColumnBulder = function unregisterColumnBulder(columnBuilder) {
+    var builder = this.columnBuilders.indexOf(columnBuilder);
+
+    if (builder !== -1) {
+      this.columnBuilders.splice(builder, 1);
+    }
+  };
+
+  /**
+   * @ngdoc function
    * @name buildColumnDefsFromData
    * @methodOf ui.grid.class:Grid
    * @description Populates columnDefs from the provided data
