@@ -954,6 +954,16 @@
                     }
                   }
                 });
+
+                focuser.on('focusout', function(evt) {
+                  uiGridCtrl.cellNav.clearFocus();
+                });
+
+                $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt, rowCol) {
+                  if (!focuser.is(':focus') && rowCol) {
+                    focuser.focus();
+                  }
+                });
   
                 uiGridCellnavCtrl.setAriaActivedescendant = function(id){
                   $elm.attr('aria-activedescendant', id);
@@ -1215,6 +1225,7 @@
               evt.stopPropagation();
               $scope.$apply();
             }
+
             $elm.on('focus', handleFocus);
             destroySteps.push(function() {
               $elm.off('focus', handleFocus);
