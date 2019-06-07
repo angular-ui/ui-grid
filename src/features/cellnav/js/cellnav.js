@@ -870,7 +870,7 @@
                   }
 
                   function getAppendedColumnHeaderText(col) {
-                    return col.displayName + ', ';
+                    return ', ' + i18nService.getSafeText('headerCell.aria.column') + ' ' + col.displayName;
                   }
 
                   function getCellDisplayValue(currentRowColumn) {
@@ -888,8 +888,12 @@
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    var cellDisplayValue = getAppendedColumnHeaderText(currentSelection[i].col) + getCellDisplayValue(currentSelection[i]);
-                    values.push(cellDisplayValue)
+                    var cellValue = getCellDisplayValue(currentSelection[i]);
+                    if (cellValue === '') {
+                        cellValue =  i18nService.getSafeText('headerCell.aria.empty');
+                    }
+                    var cellDisplayValue = cellValue + getAppendedColumnHeaderText(currentSelection[i].col);
+                    values.push(cellDisplayValue);
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
