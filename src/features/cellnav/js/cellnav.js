@@ -881,20 +881,21 @@
                       // is or is not currently selected.
                         return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
                       } else {
-                        return grid.getCellDisplayValue(currentRowColumn.row, currentSelection[i].col);
+                        return grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
                       }
                     }
 
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
-                  for (var i = 0; i < currentSelection.length; i++) {
-                    var cellValue = getCellDisplayValue(currentSelection[i]);
-                    if (cellValue === '') {
-                        cellValue =  i18nService.getSafeText('headerCell.aria.empty');
+                	var currentSelection = grid.api.cellNav.getCurrentSelection();
+                  currentSelection.forEach(function(selection) {
+                    var cellValue = getCellDisplayValue(selection);
+                    if (cellValue === undefined) {
+                        cellValue = i18nService.getSafeText('headerCell.aria.empty');
                     }
-                    var cellDisplayValue = cellValue + getAppendedColumnHeaderText(currentSelection[i].col);
+                    var cellDisplayValue = cellValue + getAppendedColumnHeaderText(selection.col);
                     values.push(cellDisplayValue);
-                  }
+                  });
                   var cellText = values.toString();
                   setNotifyText(cellText);
 
