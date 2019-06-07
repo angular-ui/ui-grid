@@ -887,7 +887,6 @@
 
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
-                	var currentSelection = grid.api.cellNav.getCurrentSelection();
                   currentSelection.forEach(function(selection) {
                     var cellValue = getCellDisplayValue(selection);
                     if (cellValue === undefined) {
