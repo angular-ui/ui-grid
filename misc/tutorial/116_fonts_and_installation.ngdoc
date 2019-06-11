@@ -3,7 +3,8 @@
 @description
 
 We get a lot of questions about fonts, and it seems to be a pain point for many users.  To date all
-of these problems have been diagnosed to a misconfigured build setup for the end user.
+of these problems have been diagnosed to a misconfigured build setup for the end user. Please also 
+double-check that you included the `ui-grid.css` stylesheet.
 
 This tutorial addresses the basics of the configuration.
 
