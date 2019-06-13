@@ -797,9 +797,11 @@
 
               $attrs.$observe('uiGridCellnav', function(value) {
                 updateGridState(value);
-                uiGridCtrl.grid.buildColumns().then(function() {
-                  _scope.$broadcast('uib.cellNavState', true);
-                });
+                if (value === undefined || value === 'true') {
+                  uiGridCtrl.grid.buildColumns().then(function() {
+                    _scope.$broadcast('uib.cellNavState', true);
+                  });
+                }
               });
 
               updateGridState($attrs.uiGridCellnav);
@@ -919,7 +921,7 @@
               var uiGridCtrl = controllers[0],
                  renderContainerCtrl = controllers[1],
                  uiGridCellnavCtrl = controllers[2];
-              var focuser;
+              var focuser, lastState;
 
               function setupFocuser() {
                 var containerId = renderContainerCtrl.containerId;
@@ -956,7 +958,9 @@
                 });
 
                 focuser.on('focusout', function(evt) {
-                  uiGridCtrl.cellNav.clearFocus();
+                  if (uiGridCtrl.cellNav) {
+                    uiGridCtrl.cellNav.clearFocus();
+                  }
                 });
 
                 $scope.$on(uiGridCellNavConstants.CELL_NAV_EVENT, function(evt, rowCol) {
@@ -1025,6 +1029,11 @@
               }
 
               function toggleFocuserFeature(state) {
+                if (state === lastState) {
+                  return;
+                }
+
+                lastState = state;
                 if (state) {
                   setupFocuser();
                 } else {
@@ -1153,6 +1162,7 @@
           var uiGridCtrl = controllers[0],
               uiGridCellnavCtrl = controllers[1];
           var destroySteps = [];
+          var lastState;
 
           function setupFeature() {
             if (!$scope.col.colDef.allowCellFocus) {
@@ -1177,9 +1187,10 @@
               $scope.$apply();
             }
 
-            $elm.find('div').on('click', clickHandler);
+            var clickElement = $elm.find('div');
+            clickElement.on('click', clickHandler);
             destroySteps.push(function() {
-              $elm.find('div').off('click', clickHandler);
+              clickElement.off('click', clickHandler);
             });
 
 
@@ -1282,14 +1293,19 @@
           }
 
           function teardownFeature() {
-            destroySteps.forEach(function(destory) {
-              destory();
+            destroySteps.forEach(function(destroy) {
+              destroy();
             });
 
             destroySteps = [];
           }
 
           function handleFeatureState(state) {
+            if (state === lastState) {
+              return;
+            }
+
+            lastState = state;
             if (state) {
               setupFeature();
             } else {
