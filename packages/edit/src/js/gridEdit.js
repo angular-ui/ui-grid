@@ -559,7 +559,7 @@
 
                 // Undbind the touchend handler, we don't need it anymore
                 $elm.off('touchend', touchEnd);
-              });
+              }).catch(angular.noop);
             }
 
             // Cancel any touchstart timeout
