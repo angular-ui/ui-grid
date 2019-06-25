@@ -78,7 +78,7 @@
           exporterAllAsExcel: 'Exportera all data till Excel',
           exporterVisibleAsExcel: 'Exportera synlig data till Excel',
           exporterSelectedAsExcel: 'Exportera markerad data till Excel',
-          clearAllFilters: 'Rengör alla filter'
+          clearAllFilters: 'Nollställ alla filter'
         },
         importer: {
           noHeaders: 'Kolumnnamn kunde inte härledas. Har filen ett sidhuvud?',
