@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.1](https://github.com/angular-ui/ui-grid/compare/v4.8.0...v4.8.1) (2019-06-27)
+
+
+### Bug Fixes
+
+* **core:** change translation in in i18n nl.js for clearAllFilters ([06c3d36](https://github.com/angular-ui/ui-grid/commit/06c3d36))
+* **core:** support jQlite ([78e44f9](https://github.com/angular-ui/ui-grid/commit/78e44f9))
+* handle rejection on timeout to avoid angularjs error message about possibly unhandled rejection ([635410c](https://github.com/angular-ui/ui-grid/commit/635410c))
+* **i18n:** improve Swedish translations ([2d3abfa](https://github.com/angular-ui/ui-grid/commit/2d3abfa))
+* **i18n:** translate clearAllFilters correctly in Swedish ([0fad621](https://github.com/angular-ui/ui-grid/commit/0fad621))
+* **ui-grid:** [#6937](https://github.com/angular-ui/ui-grid/issues/6937) fix linter error ([13bb9c0](https://github.com/angular-ui/ui-grid/commit/13bb9c0))
+* **ui-grid:** [#6937](https://github.com/angular-ui/ui-grid/issues/6937) getScrollBarWidth for Firefox ([6aee591](https://github.com/angular-ui/ui-grid/commit/6aee591))
+
+
+
+
+
 # [4.8.0](https://github.com/angular-ui/ui-grid/compare/v4.7.1...v4.8.0) (2019-05-02)
 
 
