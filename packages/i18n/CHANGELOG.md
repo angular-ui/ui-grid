@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.1](https://github.com/angular-ui/ui-grid/compare/v4.8.0...v4.8.1) (2019-06-27)
+
+
+### Bug Fixes
+
+* **core:** change translation in in i18n nl.js for clearAllFilters ([06c3d36](https://github.com/angular-ui/ui-grid/commit/06c3d36))
+* **i18n:** improve Swedish translations ([2d3abfa](https://github.com/angular-ui/ui-grid/commit/2d3abfa))
+* **i18n:** translate clearAllFilters correctly in Swedish ([0fad621](https://github.com/angular-ui/ui-grid/commit/0fad621))
+
+
+
+
+
 # [4.8.0](https://github.com/angular-ui/ui-grid/compare/v4.7.1...v4.8.0) (2019-05-02)
 
 
