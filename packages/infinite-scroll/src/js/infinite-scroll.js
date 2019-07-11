@@ -426,7 +426,7 @@
         // for infinite scroll, if there are pages upwards then never allow it to be at the zero position so the up button can be active
         if (scrollTop === 0 && grid.infiniteScroll.scrollUp) {
           // using pixels results in a relative scroll, hence we have to use percentage
-          scrollEvent.y = {percentage: 1/scrollHeight};
+          scrollEvent.y = {pixels: 1};
         }
         else {
           scrollEvent.y = {percentage: scrollTop/scrollHeight};
