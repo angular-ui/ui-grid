@@ -2332,8 +2332,8 @@ angular.module('ui.grid')
 
       /*-- Get the top, left, right, and bottom "scrolled" edges of the grid --*/
 
-      // The top boundary is the current Y scroll position PLUS the header height, because the header can obscure rows when the grid is scrolled downwards
-      var topBound = self.renderContainers.body.prevScrollTop + self.headerHeight;
+      // The top boundary is the current Y scroll position
+      var topBound = self.renderContainers.body.prevScrollTop;
 
       // Don't the let top boundary be less than 0
       topBound = (topBound < 0) ? 0 : topBound;
@@ -2372,7 +2372,7 @@ angular.module('ui.grid')
         // }
 
         // This is the minimum amount of pixels we need to scroll vertical in order to see this row.
-        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight + self.headerHeight);
+        var pixelsToSeeRow = (seekRowIndex * self.options.rowHeight);
 
         // Don't let the pixels required to see the row be less than zero
         pixelsToSeeRow = (pixelsToSeeRow < 0) ? 0 : pixelsToSeeRow;
@@ -2399,7 +2399,8 @@ angular.module('ui.grid')
           //   to get the full position we need
           scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
 
-          scrollEvent.y = getScrollY(scrollPixels, scrollLength,self.renderContainers.body.prevScrolltopPercentage);
+          // Scroll to full position plus the height of one row since scrollPixels points to the top pixel of the row
+          scrollEvent.y = getScrollY(scrollPixels + self.options.rowHeight, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
         }
       }
 
