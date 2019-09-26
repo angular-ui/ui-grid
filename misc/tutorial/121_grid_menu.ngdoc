@@ -5,7 +5,7 @@ adds a settings icon in the top right of the grid, which floats above the column
 menu by default gives access to show/hide columns, but can be customised to show additional
 actions.
 
-You can customize a the menu and provide your own functionality.  Each menu item can have:
+You can customize the menu options and provide your own functionality. Each menu item can have:
 
 - `shown`: a function that determines whether or not to display the item
 - `title`: the title you'd like to have displayed for the menu item (note that you can also
