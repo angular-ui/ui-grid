@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "bump": "lerna version --conventional-commits --no-push -m 'chore: Release %s'",
+    "bump": "lerna version --conventional-commits --no-push --no-git-tag-version",
     "changed": "lerna changed",
     "clean": "lerna clean && grunt clean",
     "commit": "git-cz",
