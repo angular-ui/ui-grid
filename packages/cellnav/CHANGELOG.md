@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.2](https://github.com/angular-ui/ui-grid/compare/v4.8.1...v4.8.2) (2019-10-07)
+
+
+### Bug Fixes
+
+* change Safari support to 12 - 13 ([6b0f21a](https://github.com/angular-ui/ui-grid/commit/6b0f21a))
+
+
+
+
+
 ## [4.8.1](https://github.com/angular-ui/ui-grid/compare/v4.8.0...v4.8.1) (2019-06-27)
 
 **Note:** Version bump only for package @ui-grid/cell-nav

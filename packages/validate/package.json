@@ -1,11 +1,11 @@
 {
   "name": "@ui-grid/validate",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "description": "This ui-grid module provides the ability to validate cells upon change",
   "main": "index.js",
   "dependencies": {
-    "@ui-grid/core": "^4.8.1",
-    "@ui-grid/edit": "^4.8.1",
+    "@ui-grid/core": "^4.8.2",
+    "@ui-grid/edit": "^4.8.2",
     "angular": ">=1.4.0 1.7.x",
     "angular-ui-bootstrap": "0.13.4"
   },
