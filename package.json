@@ -15,10 +15,10 @@
     "e2e": "grunt test:ci-e2e",
     "init": "validate-commit-msg",
     "lint": "grunt newer:jshint",
-    "postinstall": "webdriver-manager update",
     "release": "lerna publish from-package",
     "start": "grunt dev --fast",
-    "test": "grunt test"
+    "test": "grunt test",
+    "webdriver-manager": "webdriver-manager"
   },
   "repository": {
     "type": "git",
@@ -42,16 +42,17 @@
     "adm-zip": "^0.4.11",
     "bower": "^1.8.8",
     "canonical-path": "0.0.2",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.6",
     "cz-conventional-changelog": "^2.1.0",
-    "grunt": "^1.0.3",
-    "grunt-angular-templates": "^1.1.0",
+    "git-cz": "^3.2.1",
+    "grunt": "^1.0.4",
+    "grunt-angular-templates": "^1.2.0",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jasmine": "^2.0.3",
+    "grunt-contrib-jasmine": "^2.1.0",
     "grunt-contrib-jshint": "~1.1.0",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-uglify": "^3.3.0",
@@ -70,7 +71,7 @@
     "jasmine-core": "^2.4.1",
     "jit-grunt": "^0.10.0",
     "jshint-stylish": "^2.2.1",
-    "karma": "^4.0.0",
+    "karma": "^4.3.0",
     "karma-chrome-launcher": "~2.2.0",
     "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "~1.1.0",
@@ -84,7 +85,7 @@
     "less": "^3.8.0",
     "load-grunt-config": "^1.0.1",
     "lodash": "^4.17.11",
-    "marked": "^0.4.0",
+    "marked": "^0.7.0",
     "phantomjs-prebuilt": "^2.1.16",
     "protractor": "^5.4.0",
     "requirejs": "^2.3.5",
@@ -94,7 +95,7 @@
     "shelljs": "^0.8.2",
     "time-grunt": "^1.4.0",
     "validate-commit-message": "^3.0.1",
-    "webdriver-manager": "^12.1.0"
+    "webdriver-manager": "^12.1.7"
   },
   "config": {
     "commitizen": {

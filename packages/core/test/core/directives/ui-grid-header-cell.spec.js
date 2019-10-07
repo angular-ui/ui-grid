@@ -287,8 +287,8 @@ describe('uiGridHeaderCell', function() {
 			afterEach(function() {
 				event.preventDefault.calls.reset();
 			});
-			it('should not prevent default', function() {
-				expect(event.preventDefault).not.toHaveBeenCalled();
+			it('should prevent default', function() {
+				expect(event.preventDefault).toHaveBeenCalled();
 			});
 		});
 
