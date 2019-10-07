@@ -79,6 +79,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "~1.1.0",
+    "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-script-launcher": "~1.0.0",
     "lerna": "^3.10.7",
