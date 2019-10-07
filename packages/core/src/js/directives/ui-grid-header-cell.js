@@ -161,8 +161,9 @@
             };
 
             $scope.handleKeyDown = function(event) {
-              if (event.keyCode === 32) {
+              if (event.keyCode === 32 || event.keyCode === 13) {
                 event.preventDefault();
+                $scope.handleClick(event);
               }
             };
 
