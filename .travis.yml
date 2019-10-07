@@ -27,6 +27,9 @@ env:
     - secure: PWz5cYdlrucjbJxUj9WUGo55V8+z/fDST7ihx9uLuhllqaQ+fkdTX5ccn8sv+dp9OPs0ov3Gunv/GIWKB3E6HCsHQJsyZ1Tde3IvyWwz72YeQ5/IZVolX0T1dmX9sLYJxqKjO1/D/Zfj4NkCEjFQmyIB+47tgBTV1OA9h/4TiMk=
     - secure: BUUB8bjAXcUgq4GNYd0q1seAR26o8UJeIqAY1TcuV1p42d1w1mgBKz6oOEonX3NJTMI7bBNaSVYtpgxroesmVk25FMrsy5ynsY3fTAfiHbyd62IstJjtw0AcVWp+l7Z1WBe6XNhpaW8FS7wOi9jEyV/Ez/ffqgAMmMpG6BHzalk=
 
+addons:
+    sauce_connect: true
+
 branches:
   only:
     - master
@@ -42,14 +45,12 @@ install:
 
 before_script:
   - git fetch --tags
-  - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./lib/build/travis_build.sh ./lib/build/travis_print_logs.sh
+  - chmod +x ./lib/build/travis_build.sh ./lib/build/travis_print_logs.sh
   - mkdir -p $LOGS_DIR
-  - ./lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma-cli
   - npm install
   - bower install
   - grunt install
-  - ./lib/sauce/sauce_connect_block.sh
 
 script:
   - ./lib/build/travis_build.sh
