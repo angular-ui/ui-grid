@@ -1255,8 +1255,8 @@ describe('ui.grid.exporter', function() {
       it('should "FALSE" when the type of the field value is boolean', function() {
         expect(uiGridExporterService.formatFieldAsExcel({value: false})).toEqual('FALSE');
       });
-      it('should double the amount of double quotes when the type of the field value is string', function() {
-        expect(uiGridExporterService.formatFieldAsExcel({value: '"test"'})).toEqual('""test""');
+      it('should not double the amount of double quotes when the type of the field value is string', function() {
+        expect(uiGridExporterService.formatFieldAsExcel({value: '"test"'})).toEqual('"test"');
       });
       it('should transform the field value into a string when the type of the field value is anything else', function() {
         expect(uiGridExporterService.formatFieldAsExcel({value: {foo: 'bar'}})).toEqual('{"foo":"bar"}');
