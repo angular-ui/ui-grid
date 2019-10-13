@@ -28,7 +28,8 @@
   <div class="ui-grid-contents-wrapper" role="grid">
     <div ui-grid-menu-button ng-if="grid.options.enableGridMenu"></div>
 
-    <div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="'left'"></div>
+    <div ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="'right'"></div>
+    
 
     <div ui-grid-render-container
       container-id="'body'"
@@ -40,7 +41,7 @@
       enable-vertical-scrollbar="grid.options.enableVerticalScrollbar">
     </div>
 
-    <div ng-if="grid.hasRightContainer()" style="width: 0" ui-grid-pinned-container="'right'"></div>
+    <div ng-if="grid.hasLeftContainer()" style="width: 0" ui-grid-pinned-container="'left'"></div>
 
 
     <div ui-grid-grid-footer ng-if="grid.options.showGridFooter"></div>
