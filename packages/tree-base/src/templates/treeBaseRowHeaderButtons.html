@@ -1,6 +1,8 @@
 <div
   class="ui-grid-tree-base-row-header-buttons"
   ng-class="{'ui-grid-tree-base-header': row.treeLevel > -1 }"
+  tabindex = "0"
+  ng-keydown = "treeButtonKeyDown(row, $event)"
   ng-click="treeButtonClick(row, $event)">
   <i
     ng-class="treeButtonClass(row)"
