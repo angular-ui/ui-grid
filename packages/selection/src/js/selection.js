@@ -788,7 +788,7 @@
           }
 
           function selectButtonKeyDown(row, evt) {
-            if (evt.keyCode === 32) {
+            if (evt.keyCode === 32 || evt.keyCode === 13) {
               evt.preventDefault();
               selectButtonClick(row, evt);
             }

@@ -1609,6 +1609,11 @@
           evt.stopPropagation();
           uiGridTreeBaseService.toggleRowTreeState(self, row, evt);
         };
+        $scope.treeButtonKeyDown = function (row, evt) {
+          if (evt.keyCode === 32 || evt.keyCode === 13) {
+            $scope.treeButtonClick(row, evt);
+          }
+        };
       }
     };
   }]);
@@ -1643,6 +1648,11 @@
             uiGridTreeBaseService.collapseAllRows(self, evt);
           } else {
             uiGridTreeBaseService.expandAllRows(self, evt);
+          }
+        };
+        $scope.headerButtonKeyDown = function (evt) {
+          if (evt.keyCode === 32 || evt.keyCode === 13) {
+            $scope.headerButtonClick(self, evt);
           }
         };
       }
