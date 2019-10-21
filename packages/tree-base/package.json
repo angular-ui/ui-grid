@@ -1,6 +1,6 @@
 {
   "name": "@ui-grid/tree-base",
-  "version": "4.8.2",
+  "version": "4.8.3",
   "description": "This ui-grid module provides a tree view of the data, with nodes and leaves",
   "main": "index.js",
   "dependencies": {

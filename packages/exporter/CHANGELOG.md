@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.3](https://github.com/angular-ui/ui-grid/compare/v4.8.2...v4.8.3) (2019-10-21)
+
+
+### Bug Fixes
+
+* **exporter:** remove extra double quotes in excel export ([29c4fb1](https://github.com/angular-ui/ui-grid/commit/29c4fb1))
+
+
+
+
+
 ## [4.8.2](https://github.com/angular-ui/ui-grid/compare/v4.8.1...v4.8.2) (2019-10-07)
 
 **Note:** Version bump only for package @ui-grid/exporter

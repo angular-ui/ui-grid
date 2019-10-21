@@ -1,11 +1,11 @@
 {
   "name": "@ui-grid/grouping",
-  "version": "4.8.2",
+  "version": "4.8.3",
   "description": "This module provides ui-grid with grouping of rows based on the data in them",
   "main": "index.js",
   "dependencies": {
     "@ui-grid/core": "^4.8.2",
-    "@ui-grid/tree-base": "^4.8.2",
+    "@ui-grid/tree-base": "^4.8.3",
     "angular": ">=1.4.0 1.7.x"
   },
   "publishConfig": {

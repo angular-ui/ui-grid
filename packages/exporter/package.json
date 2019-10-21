@@ -1,6 +1,6 @@
 {
   "name": "@ui-grid/exporter",
-  "version": "4.8.2",
+  "version": "4.8.3",
   "description": "This module provides the ability to export data from ui-grid",
   "main": "index.js",
   "dependencies": {
