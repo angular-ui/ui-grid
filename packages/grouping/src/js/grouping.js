@@ -747,8 +747,9 @@
        * @param {Grid} grid grid object
        * @param {GridColumn} column the column we want to aggregate
        * @param {string} aggregationType of the recognised types from uiGridGroupingConstants or one of the custom aggregations from gridOptions
+       * @param {string} aggregationLabel to be used instead of the default label. If empty string is passed, label is omitted
        */
-      aggregateColumn: function( grid, column, aggregationType) {
+      aggregateColumn: function( grid, column, aggregationType, aggregationLabel ) {
         if (typeof(column.grouping) !== 'undefined' && typeof(column.grouping.groupPriority) !== 'undefined' && column.grouping.groupPriority >= 0) {
           service.ungroupColumn( grid, column );
         }
@@ -761,7 +762,12 @@
           aggregationDef = uiGridTreeBaseService.nativeAggregations()[aggregationType];
         }
 
-        column.treeAggregation = { type: aggregationType, label:  i18nService.get().aggregation[aggregationDef.label] || aggregationDef.label };
+        column.treeAggregation = {
+          type: aggregationType,
+          label: ( typeof aggregationLabel === 'string') ?
+            aggregationLabel :
+            i18nService.get().aggregation[aggregationDef.label] || aggregationDef.label
+        };
         column.treeAggregationFn = aggregationDef.aggregationFn;
         column.treeAggregationFinalizerFn = aggregationDef.finalizerFn;
 
