@@ -6,7 +6,7 @@ The grid allows you to override most of the templates, including cellTemplate, h
 and others.  You would typically do this to inject functionality like buttons or to get a very different look and
 feel that you couldn't achieve through cell classes and other settings.
 
-It is generally good practice to at least review the standard template in https://github.com/angular-ui/ui-grid/tree/master/src/templates/ui-grid
+It is generally good practice to at least review the standard template in https://github.com/angular-ui/ui-grid/tree/master/packages/core/src/templates/ui-grid
 to make sure there isn't functionality that you are overriding that you needed to keep.  In many cases it is desirable to
 use the standard template as a starting point, and add your customisations on top.  Also remember that new features
 or code changes may mean that you need to upgrade your custom template (if the standard template has been modified).
