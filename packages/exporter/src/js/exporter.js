@@ -137,6 +137,19 @@
                 },
                 /**
                  * @ngdoc function
+                 * @methodOf ui.grid.exporter.api:PublicApi
+                 * @description returns docDefinition compatible w/ pdfMake
+                 * @param {string} rowTypes which rows to export, valid values are
+                 * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+                 * uiGridExporterConstants.SELECTED
+                 * @param {string} colTypes which columns to export, valid values are
+                 * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE
+                 */
+                getDocDefinition: function(rowTypes , colTypes) {
+                  return service.getDocDefinition(grid, rowTypes, colTypes);
+                },
+                /**
+                 * @ngdoc function
                  * @name excelExport
                  * @methodOf  ui.grid.exporter.api:PublicApi
                  * @description Exports rows from the grid in excel format,
@@ -1259,20 +1272,37 @@
         pdfExport: function (grid, rowTypes, colTypes) {
           var self = this;
 
-          this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
-            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes),
-              exportData = self.getData(grid, rowTypes, colTypes),
-              docDefinition = self.prepareAsPdf(grid, exportColumnHeaders, exportData);
+          var docDefinition = this.getDocDefinition(grid, rowTypes, colTypes);
 
-            if (self.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
-              self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
-            } else {
-              pdfMake.createPdf(docDefinition).open();
-            }
-          });
+          if (self.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
+            self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
+          } else {
+            pdfMake.createPdf(docDefinition).open();
+          }
         },
 
+	      /**
+         * @ngdoc function
+         * @name getDocDefinition
+         * @methodOf  ui.grid.exporter.service:uiGridExporterService
+         * @description returns docDefinition for use w/ pdfMake or similar technology
+         * @param {Grid} grid the grid from which data should be exported
+         * @param {string} rowTypes which rows to export, valid values are
+         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+         * uiGridExporterConstants.SELECTED
+         * @param {string} colTypes which columns to export, valid values are
+         * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
+         * uiGridExporterConstants.SELECTED
+         */
+        getDocDefinition: function (grid, rowTypes, colTypes) {
+          var self = this;
 
+          return this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
+            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes);
+            var exportData = self.getData(grid, rowTypes, colTypes);
+            return self.prepareAsPdf(grid, exportColumnHeaders, exportData);
+          });
+        },
         /**
          * @ngdoc function
          * @name downloadPdf
