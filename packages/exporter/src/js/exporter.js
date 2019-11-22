@@ -1269,7 +1269,7 @@
          * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
          * uiGridExporterConstants.SELECTED
          */
-          pdfExport: function (grid, rowTypes, colTypes) {
+        pdfExport: function (grid, rowTypes, colTypes) {
           var docDefinition = this.getDocDefinition(grid, rowTypes, colTypes);
 
           if (this.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
