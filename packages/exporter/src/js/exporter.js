@@ -1269,13 +1269,11 @@
          * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE,
          * uiGridExporterConstants.SELECTED
          */
-        pdfExport: function (grid, rowTypes, colTypes) {
-          var self = this;
-
+          pdfExport: function (grid, rowTypes, colTypes) {
           var docDefinition = this.getDocDefinition(grid, rowTypes, colTypes);
 
-          if (self.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
-            self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
+          if (this.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
+            this.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
           } else {
             pdfMake.createPdf(docDefinition).open();
           }
@@ -1298,8 +1296,8 @@
           var self = this;
 
           return this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
-            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes);
-            var exportData = self.getData(grid, rowTypes, colTypes);
+            var exportColumnHeaders = self.getColumnHeaders(grid, colTypes),
+              exportData = self.getData(grid, rowTypes, colTypes);
             return self.prepareAsPdf(grid, exportColumnHeaders, exportData);
           });
         },
