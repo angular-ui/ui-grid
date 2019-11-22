@@ -145,7 +145,7 @@
                  * @param {string} colTypes which columns to export, valid values are
                  * uiGridExporterConstants.ALL, uiGridExporterConstants.VISIBLE
                  */
-                getDocDefinition: function(rowTypes , colTypes) {
+                getDocDefinition: function(rowTypes, colTypes) {
                   return service.getDocDefinition(grid, rowTypes, colTypes);
                 },
                 /**
