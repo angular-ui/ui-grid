@@ -43,7 +43,7 @@ For better performance with the following example, you can choose to load the ui
       };
 
       vm.remove = function() {
-        vm.columns.splice($scope.columns.length-1, 1);
+        vm.columns.splice(vm.columns.length-1, 1);
       };
 
       vm.add = function() {
