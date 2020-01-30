@@ -36,17 +36,20 @@ module.exports = function(config) {
     exclude: [
     ],
 
+    // list of plugins to load
+    plugins: [
+      'karma-*',
+      'karma-coverage-istanbul-reporter'
+    ],
+
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['dots', 'coverage'],
+    reporters: ['dots', 'coverage-istanbul'],
 
-    preprocessors: {
-      // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
-      'packages/**/!(*.spec)+(.js)': ['coverage']
-    },
-
-    coverageReporter: {
-      type: 'lcov',
+    coverageIstanbulReporter: {
+      // Omit files with no statements, no functions and no branches from the report
+      skipFilesWithNoCoverage: true,
+      reports: ['lcovonly'],
       dir:  'coverage',
       subdir: '.'
     },
