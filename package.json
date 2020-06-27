@@ -40,8 +40,8 @@
   "license": "MIT",
   "devDependencies": {
     "adm-zip": "^0.4.11",
-    "angular": "^1.7.9",
-    "angular-animate": "^1.7.9",
+    "angular": "^1.8.0",
+    "angular-animate": "^1.8.0",
     "bower": "^1.8.8",
     "canonical-path": "0.0.2",
     "coveralls": "^3.0.6",
