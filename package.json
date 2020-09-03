@@ -75,7 +75,7 @@
     "jshint-stylish": "^2.2.1",
     "karma": "^4.3.0",
     "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "^2.1.1",
+    "karma-coverage": "^2.0.3",
     "karma-firefox-launcher": "~1.1.0",
     "karma-ie-launcher": "^1.0.0",
     "karma-jasmine": "^1.1.2",

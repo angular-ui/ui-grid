@@ -36,20 +36,17 @@ module.exports = function(config) {
     exclude: [
     ],
 
-    // list of plugins to load
-    plugins: [
-      'karma-*',
-      'karma-coverage-istanbul-reporter'
-    ],
+    preprocessors: {
+      'packages/**/!(*.spec)+(.js)': ['coverage']
+    },
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['dots', 'coverage-istanbul'],
+    reporters: ['dots', 'coverage'],
 
-    coverageIstanbulReporter: {
-      // Omit files with no statements, no functions and no branches from the report
-      skipFilesWithNoCoverage: true,
-      reports: ['lcovonly'],
+    coverageReporter: {
+      type: 'lcov',
       dir:  'coverage',
       subdir: '.'
     },
