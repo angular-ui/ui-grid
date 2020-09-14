@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.4](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.4) (2020-09-14)
+
+
+### Bug Fixes
+
+* **grouping:** adds aggregationLabel to aggregateColumn call to match ([60fcedc](https://github.com/angular-ui/ui-grid/commit/60fcedcebd815661fbb7868a5d11e964c971c5b6))
+
+
+
+
+
 ## [4.8.3](https://github.com/angular-ui/ui-grid/compare/v4.8.2...v4.8.3) (2019-10-21)
 
 **Note:** Version bump only for package @ui-grid/grouping
