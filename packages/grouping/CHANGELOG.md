@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.8.5](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.5) (2020-09-14)
+
+
+### Bug Fixes
+
+* Add support for angular 1.8.0
+
+
+
+
 ## [4.8.4](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.4) (2020-09-14)
 
 
