@@ -9,7 +9,7 @@
     "@ui-grid/grouping": "^4.8.3",
     "@ui-grid/selection": "^4.8.3",
     "@ui-grid/tree-view": "^4.8.3",
-    "angular": ">=1.4.0 1.7.x"
+    "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {
     "access": "public"
