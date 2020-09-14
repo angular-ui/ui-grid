@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@ui-grid/core": "^4.8.2",
-    "angular": ">=1.4.0 1.7.x",
+    "angular": ">=1.4.0 1.8.x",
     "csv-js": "~1.0.0",
     "excel-builder": "~2.0.2",
     "pdfmake": "~0.1.8"
