@@ -60,11 +60,11 @@ describe('i18n Directives', function() {
 
       expect(element.find('p').text()).toBe('Search...');
     });
-    it('should get missing text for missing property', function() {
+    it('should get empty string for missing property', function() {
       element = angular.element('<div ui-i18n="en"><p ui-translate="search.bad.text"></p></div>');
       recompile();
 
-      expect(element.find('p').text()).toBe('[MISSING]search.bad.text');
+      expect(element.find('p').text()).toBe('');
     });
   });
 
@@ -98,15 +98,15 @@ describe('i18n Directives', function() {
 
       expect(element.find('p').text()).toBe('Search...');
     });
-    it('should get missing text for missing property', function() {
+    it('should get empty string for missing property', function() {
       element = angular.element('<div ui-i18n="en"><p ui-t="search.bad.text"></p></div>');
       recompile();
 
-      expect(element.find('p').text()).toBe('[MISSING]search.bad.text');
+      expect(element.find('p').text()).toBe('');
 
       $rootScope.$broadcast('$uiI18n');
 
-      expect(element.find('p').text()).toBe('[MISSING]search.bad.text');
+      expect(element.find('p').text()).toBe('');
     });
   });
 
@@ -120,11 +120,11 @@ describe('i18n Directives', function() {
 
       expect(element.find('p').text()).toBe('Search...');
     });
-    it('should get missing text for missing property', function() {
+    it('should get empty string for missing property', function() {
       element = angular.element('<div ui-i18n="en"><p>{{"search.bad.text" | t}}</p></div>');
       recompile();
 
-      expect(element.find('p').text()).toBe('[MISSING]search.bad.text');
+      expect(element.find('p').text()).toBe('');
     });
   });
 
@@ -144,11 +144,11 @@ describe('i18n Directives', function() {
 
       expect(element.find('p').text()).toBe('Search...');
     });
-    it('should get missing text for missing property', function() {
+    it('should get empty string for missing property', function() {
       element = angular.element('<div ui-i18n="en"><p>{{"search.bad.text" | uiTranslate}}</p></div>');
       recompile();
 
-      expect(element.find('p').text()).toBe('[MISSING]search.bad.text');
+      expect(element.find('p').text()).toBe('');
     });
   });
 });

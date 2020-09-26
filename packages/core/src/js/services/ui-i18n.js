@@ -98,6 +98,11 @@
         }
       };
 
+      function getMissingText(path) {
+        $log.warn(i18nConstants.MISSING + path);
+        return '';
+      }
+
       var service = {
 
         /**
@@ -174,14 +179,13 @@
         getSafeText: function (path, lang) {
           var language = lang || service.getCurrentLang(),
             trans = langCache.get(language),
-            missing = i18nConstants.MISSING + path,
             getter = $parse(path);
 
           if (!trans) {
-            return missing;
+            return getMissingText(path);
           }
 
-          return getter(trans) || missing;
+          return getter(trans) || getMissingText(path);
         },
 
         /**
