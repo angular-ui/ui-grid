@@ -51,7 +51,7 @@ You can use [jsdelivr.com](https://www.jsdelivr.com)'s cdn url to access the fil
 
 # Angular Compatibility
 
-UI-Grid is currently compatible with Angular versions ranging from 1.4.x to 1.7.x.
+UI-Grid is currently compatible with Angular versions ranging from 1.4.x to 1.8.x.
 
 # Feature Stability
 
