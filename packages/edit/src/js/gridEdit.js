@@ -976,6 +976,9 @@
                     }
                   });
 
+                  if ($elm[0]) {
+                    $elm[0].focus();
+                  }
                   $elm.on('blur', $scope.stopEdit);
                 });
 
