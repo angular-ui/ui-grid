@@ -1,12 +1,18 @@
 describe('i18nService', function () {
-  var i18nConstants, i18nService;
+  var $log, i18nConstants, i18nService;
 
   beforeEach(function() {
-    module('ui.grid');
+    $log = jasmine.createSpyObj('$log', ['warn']);
+    module('ui.grid', function($provide) {
+      $provide.value('$log', $log)
+    });
     inject(function (_i18nConstants_, _i18nService_) {
       i18nConstants = _i18nConstants_;
       i18nService = _i18nService_;
     });
+  });
+  afterEach(function() {
+    $log.warn.calls.reset();
   });
 
   describe('i18n service', function() {
@@ -77,30 +83,34 @@ describe('i18nService', function () {
       it('should get safe text when text is defined', function() {
         expect(i18nService.getSafeText('search.placeholder')).toBe('Search...');
       });
-      it('should get missing text for missing property', function() {
+      it('should get empty string for missing property', function() {
         var badText = 'search.bad.text';
 
-        expect(i18nService.getSafeText(badText)).toBe(i18nConstants.MISSING + badText);
+        expect(i18nService.getSafeText(badText)).toBe('');
+        expect($log.warn).toHaveBeenCalledWith(i18nConstants.MISSING + badText);
       });
       it('should get fallback text when language is missing or nonexistent', function() {
         expect(i18nService.getSafeText('search.placeholder', 'valerian')).toBe('Search...');
       });
-      it('should get missing text when language is missing or nonexistent and there is no fallback', function() {
+      it('should get empty string when language is missing or nonexistent and there is no fallback', function() {
         var badText = 'bad.text';
 
-        expect(i18nService.getSafeText(badText, 'valerian')).toBe(i18nConstants.MISSING + badText);
+        expect(i18nService.getSafeText(badText, 'valerian')).toBe('');
+        expect($log.warn).toHaveBeenCalledWith(i18nConstants.MISSING + badText);
       });
-      it('should get missing text when language is missing or nonexistent and the fallback language is the same', function() {
+      it('should get empty string when language is missing or nonexistent and the fallback language is the same', function() {
         var missingProperty = 'search.placeholder';
 
         i18nService.setFallbackLang('valerian');
-        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe(i18nConstants.MISSING + missingProperty);
+        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe('');
+        expect($log.warn).toHaveBeenCalledWith(i18nConstants.MISSING + missingProperty);
       });
-      it('should get missing text when language is missing or nonexistent and the fallback language is also missing it', function() {
+      it('should get empty string when language is missing or nonexistent and the fallback language is also missing it', function() {
         var missingProperty = 'search.placeholder';
 
         i18nService.setFallbackLang('orcish');
-        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe(i18nConstants.MISSING + missingProperty);
+        expect(i18nService.getSafeText(missingProperty, 'valerian')).toBe('');
+        expect($log.warn).toHaveBeenCalledWith(i18nConstants.MISSING + missingProperty);
       });
     });
   });
