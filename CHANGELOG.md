@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/angular-ui/ui-grid/compare/v4.8.5...v4.9.0) (2020-09-27)
+
+
+### Bug Fixes
+
+* 🐛 fixing firefox number edit ([b58f78d](https://github.com/angular-ui/ui-grid/commit/b58f78d6e175dce283a5c709041acbfa41d68e5e)), closes [#6953](https://github.com/angular-ui/ui-grid/issues/6953)
+* 🐛 replace missing string with empty string ([f7d48ee](https://github.com/angular-ui/ui-grid/commit/f7d48ee4e28f8a1233d0dc1bf4e10a5446df6e32)), closes [#7063](https://github.com/angular-ui/ui-grid/issues/7063)
+
+
+### Reverts
+
+* Revert "Revert "Update ui-grid-column-resizer.js"" ([fe09d9b](https://github.com/angular-ui/ui-grid/commit/fe09d9bee956c538bcef28c997d1da9ff0b200e1))
+* Revert "Update ui-grid-column-resizer.js" ([88191a0](https://github.com/angular-ui/ui-grid/commit/88191a00ccac5b6f4c9abb0bd62d62db64daa58f))
+
+
+### BREAKING CHANGES
+
+* MISSING string will no longer be displayed.
+
+
+
+
+
 ## [4.8.5](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.5) (2020-09-14)
 
 

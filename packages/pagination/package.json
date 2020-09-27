@@ -1,10 +1,10 @@
 {
   "name": "@ui-grid/pagination",
-  "version": "4.8.5",
+  "version": "4.9.0",
   "description": "This module provides pagination support to ui-grid",
   "main": "index.js",
   "dependencies": {
-    "@ui-grid/core": "^4.8.5",
+    "@ui-grid/core": "^4.9.0",
     "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {

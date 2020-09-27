@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/angular-ui/ui-grid/compare/v4.8.5...v4.9.0) (2020-09-27)
+
+
+### Bug Fixes
+
+* 🐛 fixing firefox number edit ([b58f78d](https://github.com/angular-ui/ui-grid/commit/b58f78d6e175dce283a5c709041acbfa41d68e5e)), closes [#6953](https://github.com/angular-ui/ui-grid/issues/6953)
+
+
+
+
+
 ## [4.8.5](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.5) (2020-09-14)
 
 **Note:** Add support for angular 1.8.0

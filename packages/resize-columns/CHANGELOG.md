@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/angular-ui/ui-grid/compare/v4.8.5...v4.9.0) (2020-09-27)
+
+
+### Reverts
+
+* Revert "Revert "Update ui-grid-column-resizer.js"" ([fe09d9b](https://github.com/angular-ui/ui-grid/commit/fe09d9bee956c538bcef28c997d1da9ff0b200e1))
+* Revert "Update ui-grid-column-resizer.js" ([88191a0](https://github.com/angular-ui/ui-grid/commit/88191a00ccac5b6f4c9abb0bd62d62db64daa58f))
+
+
+
+
+
 ## [4.8.5](https://github.com/angular-ui/ui-grid/compare/v4.8.3...v4.8.5) (2020-09-14)
 
 **Note:** Add support for angular 1.8.0
