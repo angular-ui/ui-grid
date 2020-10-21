@@ -952,21 +952,24 @@
          * recurse down into the children to get to the raw data element
          * which is a row without children (a leaf).
          * @param {Node} aNode the tree node on the grid
-         * @returns {Array} an array of leaf nodes
+         * @returns {Array} an array with all child nodes from aNode
          */
         getRowsFromNode: function(aNode) {
           var rows = [];
-          for (var i = 0; i<aNode.children.length; i++) {
-            if (aNode.children[i].children && aNode.children[i].children.length === 0) {
-              rows.push(aNode.children[i]);
-            } else {
-              var nodeRows = this.getRowsFromNode(aNode.children[i]);
-              rows = rows.concat(nodeRows);
-            }
+
+          // Push parent node if it is not undefined and has values other than 'children'
+          var nodeKeys = aNode ? Object.keys(aNode) : ['children'];
+          if (nodeKeys.length > 1 || nodeKeys[0] != 'children') {
+            rows.push(aNode);
+          }
+
+          if (aNode && aNode.children && aNode.children.length > 0) {
+              for (var i = 0; i < aNode.children.length; i++) {
+                  rows = rows.concat(this.getRowsFromNode(aNode.children[i]));
+              }
           }
           return rows;
         },
-
         /**
          * @ngdoc function
          * @name getDataSorted

@@ -871,6 +871,14 @@ describe('ui.grid.exporter', function() {
           {col1: 'a_4', col2: 'b_4', col3: 'c_4', children: []}
         ]);
       });
+      it('should return partent rows when they have their own data', function() {
+        var bNode = {col1: 'a_1', col2: 'b_1', children: [{col1: 'a_2', col2: 'b_2', col3: 'c_2', children: []}]};
+
+        expect(uiGridExporterService.getRowsFromNode(bNode)).toEqual([
+          {col1: 'a_1', col2: 'b_1', children: [{col1: 'a_2', col2: 'b_2', col3: 'c_2', children: []}]},
+          {col1: 'a_2', col2: 'b_2', col3: 'c_2', children: []}
+        ]);
+      });
     });
 
     describe('getDataSorted', function() {
