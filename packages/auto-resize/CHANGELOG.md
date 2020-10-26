@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
+
+**Note:** Version bump only for package @ui-grid/auto-resize
+
+
+
+
+
 # [4.9.0](https://github.com/angular-ui/ui-grid/compare/v4.8.5...v4.9.0) (2020-09-27)
 
 **Note:** Version bump only for package @ui-grid/auto-resize
