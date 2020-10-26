@@ -8,8 +8,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* 🐛 update rtl support function to fix rtl support ([75580b8](https://github.com/angular-ui/ui-grid/commit/75580b88c46a36029b3abb3b57eaccf1928c22ad)), closes [#7126](https://github.com/angular-ui/ui-grid/issues/7126)
-* pass both tree parent nodes and children nodes when exporting ([3a5ac8a](https://github.com/angular-ui/ui-grid/commit/3a5ac8adf83051b48081b2cc5d9d1bae77e5ef86)), closes [#7127](https://github.com/angular-ui/ui-grid/issues/7127) [#6819](https://github.com/angular-ui/ui-grid/issues/6819)
+* **core:** update rtl support function to fix rtl support ([75580b8](https://github.com/angular-ui/ui-grid/commit/75580b88c46a36029b3abb3b57eaccf1928c22ad)), closes [#7126](https://github.com/angular-ui/ui-grid/issues/7126)
+* **exporter:** pass both tree parent nodes and children nodes when exporting ([3a5ac8a](https://github.com/angular-ui/ui-grid/commit/3a5ac8adf83051b48081b2cc5d9d1bae77e5ef86)), closes [#7127](https://github.com/angular-ui/ui-grid/issues/7127) [#6819](https://github.com/angular-ui/ui-grid/issues/6819)
 
 
 
@@ -20,8 +20,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* 🐛 fixing firefox number edit ([b58f78d](https://github.com/angular-ui/ui-grid/commit/b58f78d6e175dce283a5c709041acbfa41d68e5e)), closes [#6953](https://github.com/angular-ui/ui-grid/issues/6953)
-* 🐛 replace missing string with empty string ([f7d48ee](https://github.com/angular-ui/ui-grid/commit/f7d48ee4e28f8a1233d0dc1bf4e10a5446df6e32)), closes [#7063](https://github.com/angular-ui/ui-grid/issues/7063)
+* **edit:** fixing firefox number edit ([b58f78d](https://github.com/angular-ui/ui-grid/commit/b58f78d6e175dce283a5c709041acbfa41d68e5e)), closes [#6953](https://github.com/angular-ui/ui-grid/issues/6953)
+* **core:** replace missing string with empty string ([f7d48ee](https://github.com/angular-ui/ui-grid/commit/f7d48ee4e28f8a1233d0dc1bf4e10a5446df6e32)), closes [#7063](https://github.com/angular-ui/ui-grid/issues/7063)
 
 
 ### Reverts
