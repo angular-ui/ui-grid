@@ -1125,7 +1125,6 @@
             parentsCache.hasOwnProperty(row.uid)
           ) {
             parents.push(parentsCache[row.uid]);
-            return
           }
 
           // aggregate if this is a leaf node
@@ -1134,13 +1133,15 @@
           }
 
           // add this node to the tree
-          service.addOrUseNode(grid, row, parents, aggregations);
+          if (!parentsCache.hasOwnProperty(row.uid)) {
+            service.addOrUseNode(grid, row, parents, aggregations);
+          }
 
           if ( typeof(row.treeLevel) !== 'undefined' && row.treeLevel !== null && row.treeLevel >= 0 ) {
             if (!parentsCache.hasOwnProperty(row.uid)) {
               parentsCache[row.uid] = row;
+              parents.push(row);
             }
-            parents.push(row);
             currentLevel++;
             currentState = service.setCurrentState(parents);
           }
