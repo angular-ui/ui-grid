@@ -40,12 +40,14 @@
         return array ? array.length : 0;
       }
 
-      // if fastWatch is set we watch only the length and the reference, not every individual object
+      
+      const watchScope = (self.grid.appScope instanceof $scope.constructor) ? self.grid.appScope : $scope.$parent;
+      // if fastWatch is set we watch only the length and the reference, not every individual object                  
       if (self.grid.options.fastWatch) {
         self.uiGrid = $scope.uiGrid;
         if (angular.isString($scope.uiGrid.data)) {
-          deregFunctions.push( self.grid.appScope.$watch($scope.uiGrid.data, dataWatchFunction) );
-          deregFunctions.push( self.grid.appScope.$watch(function() {
+          deregFunctions.push( watchScope.$watch($scope.uiGrid.data, dataWatchFunction) );
+          deregFunctions.push( watchScope.$watch(function() {
             if ( self.grid.appScope[$scope.uiGrid.data] ) {
               return self.grid.appScope[$scope.uiGrid.data].length;
             } else {
@@ -53,18 +55,18 @@
             }
           }, dataWatchFunction) );
         } else {
-          deregFunctions.push( self.grid.appScope.$watch(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
-          deregFunctions.push( self.grid.appScope.$watch(function() { return getSize($scope.uiGrid.data); }, function() { dataWatchFunction($scope.uiGrid.data); }) );
+          deregFunctions.push( watchScope.$watch(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
+          deregFunctions.push( watchScope.$watch(function() { return getSize($scope.uiGrid.data); }, function() { dataWatchFunction($scope.uiGrid.data); }) );
         }
-        deregFunctions.push( self.grid.appScope.$watch(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
-        deregFunctions.push( self.grid.appScope.$watch(function() { return getSize($scope.uiGrid.columnDefs); }, function() { columnDefsWatchFunction($scope.uiGrid.columnDefs); }) );
+        deregFunctions.push( watchScope.$watch(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
+        deregFunctions.push( watchScope.$watch(function() { return getSize($scope.uiGrid.columnDefs); }, function() { columnDefsWatchFunction($scope.uiGrid.columnDefs); }) );
       } else {
         if (angular.isString($scope.uiGrid.data)) {
-          deregFunctions.push( self.grid.appScope.$watchCollection($scope.uiGrid.data, dataWatchFunction) );
+          deregFunctions.push( watchScope.$watchCollection($scope.uiGrid.data, dataWatchFunction) );
         } else {
-          deregFunctions.push( self.grid.appScope.$watchCollection(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
+          deregFunctions.push( watchScope.$watchCollection(function() { return $scope.uiGrid.data; }, dataWatchFunction) );
         }
-        deregFunctions.push( self.grid.appScope.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
+        deregFunctions.push( watchScope.$watchCollection(function() { return $scope.uiGrid.columnDefs; }, columnDefsWatchFunction) );
       }
 
 
