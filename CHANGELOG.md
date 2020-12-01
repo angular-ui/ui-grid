@@ -8,8 +8,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* 🐛 update rtl support function to fix rtl support ([75580b8](https://github.com/angular-ui/ui-grid/commit/75580b88c46a36029b3abb3b57eaccf1928c22ad))
-* pass both tree parent nodes and children nodes when exporting ([3a5ac8a](https://github.com/angular-ui/ui-grid/commit/3a5ac8adf83051b48081b2cc5d9d1bae77e5ef86)), closes [#7127](https://github.com/angular-ui/ui-grid/issues/7127) [#6819](https://github.com/angular-ui/ui-grid/issues/6819)
 * **tree-base:** grouping showing duplicate rows ([685d3c7](https://github.com/angular-ui/ui-grid/commit/685d3c798a3417a1963241e1c7763dc9e60f9d8d))
 * **tree-base:** if parent exists in cache ([cf7a5bc](https://github.com/angular-ui/ui-grid/commit/cf7a5bc8ef4d592c0907a35df7779be00ba7feac))
 
