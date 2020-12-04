@@ -3,18 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.9.2](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.2) (2020-12-01)
-
-
-### Bug Fixes
-
-* **tree-base:** grouping showing duplicate rows ([685d3c7](https://github.com/angular-ui/ui-grid/commit/685d3c798a3417a1963241e1c7763dc9e60f9d8d))
-* **tree-base:** if parent exists in cache ([cf7a5bc](https://github.com/angular-ui/ui-grid/commit/cf7a5bc8ef4d592c0907a35df7779be00ba7feac))
-
-
-
-
-
 ## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
 
 **Note:** Version bump only for package @ui-grid/tree-base

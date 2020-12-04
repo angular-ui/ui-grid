@@ -3,17 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.9.2](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.2) (2020-12-01)
-
-
-### Bug Fixes
-
-* pass both tree parent nodes and children nodes when exporting ([3a5ac8a](https://github.com/angular-ui/ui-grid/commit/3a5ac8adf83051b48081b2cc5d9d1bae77e5ef86)), closes [#7127](https://github.com/angular-ui/ui-grid/issues/7127) [#6819](https://github.com/angular-ui/ui-grid/issues/6819)
-
-
-
-
-
 ## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
 
 

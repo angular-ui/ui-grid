@@ -3,17 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.9.2](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.2) (2020-12-01)
-
-
-### Bug Fixes
-
-* 🐛 update rtl support function to fix rtl support ([75580b8](https://github.com/angular-ui/ui-grid/commit/75580b88c46a36029b3abb3b57eaccf1928c22ad))
-
-
-
-
-
 ## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
 
 
