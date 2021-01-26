@@ -4,7 +4,8 @@
     <button type="button" class="ui-grid-icon-button clickable"
       ng-if="grid.options.showExpandAllButton"
       ng-class="{ 'ui-grid-icon-plus-squared' : !grid.expandable.expandedAll, 'ui-grid-icon-minus-squared' : grid.expandable.expandedAll }"
-      ng-click="grid.api.expandable.toggleAllRows()">
+      ng-click="grid.api.expandable.toggleAllRows()"
+      aria-expanded="{{grid.expandable.expandedAll}}">
     </button>
   </div>
 </div>

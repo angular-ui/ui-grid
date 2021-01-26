@@ -89,6 +89,36 @@ describe('ui.grid.expandable', function() {
         expect(element.find('.test').length).toBe(1);
       });
     });
+
+    it('expand row icon should set the accessibility property aria-expanded', function() {
+      scope.gridOptions.data.push({ col1: 'row2col1', col2: 'row2col2' });
+      scope.$apply();
+
+      var expandAllButton = element.find('.ui-grid-icon-button');
+      var expandRowIcons = element.find('.ui-grid-viewport .ui-grid-expandable-buttons-cell .clickable');
+
+      expect(expandAllButton.attr('aria-expanded')).toBe('false');
+      expect(expandRowIcons.eq(0).attr('aria-expanded')).toBe('false');
+      expect(expandRowIcons.eq(1).attr('aria-expanded')).toBe('false');
+
+      scope.gridApi.expandable.toggleRowExpansion(scope.grid.rows[0].entity);
+      scope.$apply();
+      expect(expandAllButton.attr('aria-expanded')).toBe('false');
+      expect(expandRowIcons.eq(0).attr('aria-expanded')).toBe('true');
+      expect(expandRowIcons.eq(1).attr('aria-expanded')).toBe('false');
+
+      scope.gridApi.expandable.toggleRowExpansion(scope.grid.rows[1].entity);
+      scope.$apply();
+      expect(expandAllButton.attr('aria-expanded')).toBe('true');
+      expect(expandRowIcons.eq(0).attr('aria-expanded')).toBe('true');
+      expect(expandRowIcons.eq(1).attr('aria-expanded')).toBe('true');
+
+      scope.gridApi.expandable.toggleAllRows();
+      scope.$apply();
+      expect(expandAllButton.attr('aria-expanded')).toBe('false');
+      expect(expandRowIcons.eq(0).attr('aria-expanded')).toBe('false');
+      expect(expandRowIcons.eq(1).attr('aria-expanded')).toBe('false');
+    });
   });
 
   describe('uiGridExpandableService', function() {
