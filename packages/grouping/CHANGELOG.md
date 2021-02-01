@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.10.0](https://github.com/angular-ui/ui-grid/compare/v4.9.1...v4.10.0) (2021-02-01)
+
+
+### Reverts
+
+* Revert "chore: update changelog" and "chore: Release v4.9.2" ([3a4a27f](https://github.com/angular-ui/ui-grid/commit/3a4a27f6f1283f9b785287a53c2acc3539de170b))
+
+
+
+
+
 ## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
 
 **Note:** Version bump only for package @ui-grid/grouping

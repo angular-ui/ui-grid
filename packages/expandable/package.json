@@ -1,6 +1,6 @@
 {
   "name": "@ui-grid/expandable",
-  "version": "4.9.1",
+  "version": "4.10.0",
   "description": "This module provides the ability to create subgrids inside ui-grid",
   "main": "index.js",
   "dependencies": {

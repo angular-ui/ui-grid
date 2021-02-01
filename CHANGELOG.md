@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.10.0](https://github.com/angular-ui/ui-grid/compare/v4.9.1...v4.10.0) (2021-02-01)
+
+
+### Bug Fixes
+
+* **tree-base:** grouping showing duplicate rows ([685d3c7](https://github.com/angular-ui/ui-grid/commit/685d3c798a3417a1963241e1c7763dc9e60f9d8d))
+* **tree-base:** if parent exists in cache ([cf7a5bc](https://github.com/angular-ui/ui-grid/commit/cf7a5bc8ef4d592c0907a35df7779be00ba7feac))
+
+
+### Features
+
+* 🎸 add 'aria-expanded' to expand buttons for accessibility ([2677f67](https://github.com/angular-ui/ui-grid/commit/2677f675c33d0584d6647d2f3903cd06ce36a659))
+
+
+### Reverts
+
+* Revert "chore: update changelog" and "chore: Release v4.9.2" ([3a4a27f](https://github.com/angular-ui/ui-grid/commit/3a4a27f6f1283f9b785287a53c2acc3539de170b))
+
+
+
+
+
 ## [4.9.1](https://github.com/angular-ui/ui-grid/compare/v4.9.0...v4.9.1) (2020-10-26)
 
 
