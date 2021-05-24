@@ -27,6 +27,10 @@
     "./ui-grid.js"
   ],
   "devDependencies": {
+    "angular": "1.8.2",
+    "angular-animate": "1.8.2",
+    "angular-aria": "1.8.2",
+    "angular-touch": "1.8.2",
     "google-code-prettify": "~1.0.2",
     "jquery": "~1.8.0",
     "lodash": "~2.4.1",
