@@ -18,10 +18,10 @@ module.exports = {
     },
     scripts: [
        // no jquery automatically loaded for tutorial!!!
-      '//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-touch.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-animate.js',
-      '//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-aria.js',
+      'bower_components/angular/angular.js',
+      'bower_components/angular-touch/angular-touch.js',
+      'bower_components/angular-animate/angular-animate.js',
+      'bower_components/angular-aria/angular-aria.js',
       'bower_components/csv-js/csv.js',
       'bower_components/pdfmake/build/pdfmake.js',
       'bower_components/pdfmake/build/vfs_fonts.js',

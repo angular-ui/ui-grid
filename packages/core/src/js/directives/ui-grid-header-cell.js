@@ -287,9 +287,7 @@
               var oldFilterable = $scope.col.filterable;
               $scope.col.filterable = Boolean(uiGridCtrl.grid.options.enableFiltering && $scope.col.enableFiltering);
 
-              $scope.$applyAsync(function () {
-                setFilter(oldFilterable !== $scope.col.filterable);
-              });
+              setFilter(oldFilterable !== $scope.col.filterable);
 
               // figure out whether we support column menus
               $scope.colMenu = ($scope.col.grid.options && $scope.col.grid.options.enableColumnMenus !== false &&
