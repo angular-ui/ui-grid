@@ -19,6 +19,9 @@
           previous: 'Página Anterior',
           last: 'Última Página'
         },
+        selection: {
+          selectAll: 'Seleccionar Todo'
+        },
         menu: {
           text: 'Elegir columnas:'
         },

@@ -53,7 +53,7 @@ describe('ui.grid.selection uiGridSelectionSelectAllButtons', function() {
 	it('should render the select all button', function() {
 		expect(selectAllButton.hasClass('ui-grid-selection-row-header-buttons')).toBe(true);
 		expect(selectAllButton.hasClass('ui-grid-icon-ok')).toBe(true);
-		expect(selectAllButton.attr('role')).toBe('button');
+		expect(selectAllButton.attr('role')).toBe('checkbox');
 	});
 	function testHeaderButtonAction(triggerAction) {
 		describe('when all of the rows are already selected', function() {

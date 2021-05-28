@@ -33,6 +33,9 @@
           previous: 'Pàgina Anterior',
           last: 'Última Pàgina'
         },
+        selection: {
+          selectAll: 'Seleccionar Todo'
+        },
         menu: {
           text: 'Triar Columnes:'
         },

@@ -22,6 +22,9 @@
           previous: 'Precedente',
           last: 'Ultima'
         },
+        selection: {
+          selectAll: 'Seleziona Tutto'
+        },
         menu: {
           text: 'Scegli le colonne:'
         },

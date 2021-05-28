@@ -36,6 +36,9 @@
           previous: 'Previous Page',
           last: 'Last Page'
         },
+        selection: {
+          selectAll: 'Select All'
+        },
         menu: {
           text: 'Choose Columns:'
         },
