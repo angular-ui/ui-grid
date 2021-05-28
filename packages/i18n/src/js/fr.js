@@ -28,6 +28,9 @@
           previous: 'Page précédente',
           last: 'Dernière page'
         },
+        selection: {
+          selectAll: 'Tout Sélectionner'
+        },
         menu: {
           text: 'Choisir des colonnes :'
         },
