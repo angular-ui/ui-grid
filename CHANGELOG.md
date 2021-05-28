@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.1](https://github.com/angular-ui/ui-grid/compare/v4.10.0...v4.10.1) (2021-05-28)
+
+
+### Bug Fixes
+
+* 🐛 ensure select all checkbox is announced correctly ([3b478fa](https://github.com/angular-ui/ui-grid/commit/3b478fa22fd6a438bc63331a36b4c0606d0edd36))
+* 🐛 remove extra $applyAsync from header-cell ([f9a84ff](https://github.com/angular-ui/ui-grid/commit/f9a84ff8cb314e6823bda53f174157b318b238d7))
+* clearSelectedRows should respect enableSelection ([fcad35c](https://github.com/angular-ui/ui-grid/commit/fcad35c432ad26468056451530d21d4a855c69c1))
+
+
+
+
+
 # [4.10.0](https://github.com/angular-ui/ui-grid/compare/v4.9.1...v4.10.0) (2021-02-01)
 
 
