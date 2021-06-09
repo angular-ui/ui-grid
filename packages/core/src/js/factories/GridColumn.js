@@ -260,6 +260,18 @@ angular.module('ui.grid')
 
   /**
    * @ngdoc property
+   * @name allowFloatWidth
+   * @propertyOf ui.grid.class:GridOptions.columnDef
+   * @description Allows float number in column width calculation
+   * @example
+   * <pre>  $scope.gridOptions.columnDefs = [ { field: 'field1', width: 50.5, allowFloatWidth: true},
+   *                                          { field: 'field2', width: '20%', allowFloatWidth: true},
+   *                                          { field: 'field3', width: '*', allowFloatWidth: true }]; </pre>
+   *
+   */
+
+  /**
+   * @ngdoc property
    * @name minWidth
    * @propertyOf ui.grid.class:GridOptions.columnDef
    * @description Sets the minimum column width.  Should be a number.
