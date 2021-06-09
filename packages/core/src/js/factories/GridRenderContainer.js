@@ -606,7 +606,7 @@ angular.module('ui.grid')
 
       if (angular.isNumber(column.width)) {
         // pixel width, set to this value
-        if(column.colDef.allowFloatWidth) {
+        if (column.colDef.allowFloatWidth) {
           width = parseFloat(column.width);
         } else {
           width = parseInt(column.width, 10);
@@ -620,7 +620,7 @@ angular.module('ui.grid')
         // percentage width, set to percentage of the viewport
         // round down to int - some browsers don't play nice with float maxWidth
         var percentageIntegerValue = parseInt(column.width.replace(/%/g, ''), 10);
-        if(column.colDef.allowFloatWidth) {
+        if (column.colDef.allowFloatWidth) {
           width = parseFloat(percentageIntegerValue / 100 * availableWidth);
         } else {
           width = parseInt(percentageIntegerValue / 100 * availableWidth, 10);
@@ -657,7 +657,7 @@ angular.module('ui.grid')
       asterisksArray.forEach(function (column) {
         var width = parseInt(column.width.length * asteriskVal, 10);
 
-        if(column.colDef.allowFloatWidth) {
+        if (column.colDef.allowFloatWidth) {
           width = parseFloat(column.width.length * asteriskVal);
         }
 
