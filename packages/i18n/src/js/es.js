@@ -20,7 +20,11 @@
           last: 'Última Página'
         },
         selection: {
-          selectAll: 'Seleccionar Todo'
+          aria: {
+            row: 'Fila'
+          },
+          selectAll: 'Seleccionar Todo',
+          displayName: 'Seleccionar Fila'
         },
         menu: {
           text: 'Elegir columnas:'

@@ -23,7 +23,11 @@
           last: 'Ultima'
         },
         selection: {
-          selectAll: 'Seleziona Tutto'
+          aria: {
+            row: 'Riga'
+          },
+          selectAll: 'Seleccionar Todo',
+          displayName: 'Seleziona Riga'
         },
         menu: {
           text: 'Scegli le colonne:'
