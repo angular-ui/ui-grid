@@ -6,6 +6,7 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
       $compile,
       $rootScope,
       $timeout,
+      i18nService,
       uiGridConstants;
 
   /*
@@ -27,10 +28,11 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
   beforeEach(function() {
     module('ui.grid.selection');
 
-    inject(function(_$compile_, _$rootScope_, _$timeout_, _uiGridConstants_) {
+    inject(function(_$compile_, _$rootScope_, _$timeout_, _i18nService_, _uiGridConstants_) {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
+      i18nService = _i18nService_;
       uiGridConstants = _uiGridConstants_;
     });
 
@@ -47,6 +49,9 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
       parentScope.options.data.push({id: i});
     }
 
+    spyOn(i18nService, 'getSafeText').and.callFake(function(key) {
+      return key;
+    });
     elm = compileUiGridSelectionDirective(parentScope);
     scope = elm.scope();
     gridCtrl = elm.controller('uiGrid');
@@ -63,10 +68,11 @@ describe('ui.grid.selection uiGridSelectionDirective', function() {
     }
   });
 
-  it('should add cellFocus to the row header columnDef"', function() {
+  it('should add cellFocus and displayName to the row header columnDef', function() {
     for (var i = 0; i < gridCtrl.grid.columns.length; i++) {
       var currentCol = gridCtrl.grid.columns[i];
       if (currentCol.name === "selectionRowHeaderCol") {
+        expect(currentCol.colDef.displayName).toEqual('selection.displayName');
         expect(currentCol.colDef.allowCellFocus).toBe(true);
       }
     }

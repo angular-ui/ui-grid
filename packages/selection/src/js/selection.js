@@ -710,8 +710,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridSelection', ['uiGridSelectionConstants', 'uiGridSelectionService', 'uiGridConstants',
-    function (uiGridSelectionConstants, uiGridSelectionService, uiGridConstants) {
+  module.directive('uiGridSelection', ['i18nService', 'uiGridSelectionConstants', 'uiGridSelectionService', 'uiGridConstants',
+    function (i18nService, uiGridSelectionConstants, uiGridSelectionService, uiGridConstants) {
       return {
         replace: true,
         priority: 0,
@@ -724,7 +724,7 @@
               if (uiGridCtrl.grid.options.enableRowHeaderSelection) {
                 var selectionRowHeaderDef = {
                   name: uiGridSelectionConstants.selectionRowHeaderColName,
-                  displayName: '',
+                  displayName: i18nService.getSafeText('selection.displayName'),
                   width: uiGridCtrl.grid.options.selectionRowHeaderWidth,
                   minWidth: 10,
                   cellTemplate: 'ui-grid/selectionRowHeader',

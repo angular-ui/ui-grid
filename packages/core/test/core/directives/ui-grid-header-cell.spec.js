@@ -1,8 +1,8 @@
 describe('uiGridHeaderCell', function() {
 	'use strict';
 
-	var grid, $scope, $compile, $document, $q, $timeout, $window, recompile, $animate, uiGridConstants, gridUtil, $httpBackend,
-		downEvent, upEvent, clickEvent,
+	var grid, $scope, $compile, $document, $timeout, recompile, uiGridConstants, gridUtil, $httpBackend,
+		downEvent, clickEvent,
 		data = [
 			{name: 'Ethel Price', gender: 'female', company: 'Enersol'},
 			{name: 'Claudine Neal', gender: 'female', company: 'Sealoud'},
@@ -26,14 +26,11 @@ describe('uiGridHeaderCell', function() {
 	beforeEach(function() {
 		module('ui.grid');
 
-		inject(function(_$compile_, $rootScope, _$document_, _$q_, _$timeout_, _$window_, _$animate_, _uiGridConstants_, _gridUtil_, _$httpBackend_) {
+		inject(function(_$compile_, $rootScope, _$document_, _$timeout_, _uiGridConstants_, _gridUtil_, _$httpBackend_) {
 			$scope = $rootScope;
 			$compile = _$compile_;
 			$document = _$document_;
-			$q = _$q_;
 			$timeout = _$timeout_;
-			$window = _$window_;
-			$animate = _$animate_;
 			uiGridConstants = _uiGridConstants_;
 			gridUtil = _gridUtil_;
 			$httpBackend = _$httpBackend_;
@@ -42,11 +39,9 @@ describe('uiGridHeaderCell', function() {
 		// Decide whether to use mouse or touch events based on which capabilities the browser has
 		if (gridUtil.isTouchEnabled()) {
 			downEvent = 'touchstart';
-			upEvent = 'touchend';
 			clickEvent = 'touchstart';
 		} else {
 			downEvent = 'mousedown';
-			upEvent = 'mouseup';
 			clickEvent = 'click';
 		}
 

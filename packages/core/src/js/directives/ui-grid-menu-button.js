@@ -376,6 +376,16 @@ function (gridUtil, uiGridConstants, uiGridGridMenuService, i18nService) {
 
       $scope.shown = false;
 
+      $scope.toggleOnKeydown = function(event) {
+        if (
+          event.keyCode === uiGridConstants.keymap.ENTER ||
+          event.keyCode === uiGridConstants.keymap.SPACE ||
+          (event.keyCode === uiGridConstants.keymap.ESC && $scope.shown)
+        ) {
+          $scope.toggleMenu();
+        }
+      };
+
       $scope.toggleMenu = function () {
         if ( $scope.shown ) {
           $scope.$broadcast('hide-menu');

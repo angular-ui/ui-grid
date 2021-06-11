@@ -31,6 +31,14 @@ angular.module('ui.grid')
       */
     this.entity = entity;
 
+    /**
+      *  @ngdoc object
+      *  @name index
+      *  @propertyOf  ui.grid.class:GridRow
+      *  @description The current position of the row in the array
+      */
+     this.index = index;
+
      /**
       *  @ngdoc object
       *  @name uid

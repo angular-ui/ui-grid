@@ -456,5 +456,39 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 			$scope.$broadcast('menu-hidden');
 			expect(gridUtil.focus.bySelector).toHaveBeenCalledWith(jasmine.any(Object), '.ui-grid-icon-container');
 		});
+		describe('toggleOnKeydown method', function() {
+			var event;
+
+			beforeEach(function() {
+				event = $.Event('keydown');
+				$scope.$broadcast('hide-menu');
+				spyOn(uiGridGridMenuService, 'getMenuItems').and.callThrough();
+			});
+			afterEach(function() {
+				uiGridGridMenuService.getMenuItems.calls.reset();
+			});
+			it('should toggle the menu on ENTER', function() {
+				event.keyCode = 13;
+				element.find('.ui-grid-icon-container').trigger(event);
+				expect(uiGridGridMenuService.getMenuItems).toHaveBeenCalled();
+			});
+			it('should toggle the menu on SPACE', function() {
+				event.keyCode = 32;
+				element.find('.ui-grid-icon-container').trigger(event);
+				expect(uiGridGridMenuService.getMenuItems).toHaveBeenCalled();
+			});
+			it('should not try to toggle the menu on ESC if it is closed', function() {
+				event.keyCode = 27;
+				element.find('.ui-grid-icon-container').trigger(event);
+				expect(uiGridGridMenuService.getMenuItems).not.toHaveBeenCalled();
+			});
+			it('should hide the menu on ESC if the menu is open', function() {
+				element.find('.ui-grid-icon-container').trigger('click');
+				uiGridGridMenuService.getMenuItems.calls.reset();
+				event.keyCode = 27;
+				element.find('.ui-grid-icon-container').trigger(event);
+				expect(uiGridGridMenuService.getMenuItems).not.toHaveBeenCalled();
+			});
+		});
 	});
 });

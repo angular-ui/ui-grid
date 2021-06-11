@@ -830,15 +830,16 @@
                   }
 
                   function getCellDisplayValue(currentRowColumn) {
+                    var prefix = '';
+
                     if (currentRowColumn.col.field === 'selectionRowHeaderCol') {
                       // This is the case when the 'selection' feature is used in the grid and the user has moved
                       // to or inside of the left grid container which holds the checkboxes for selecting rows.
                       // This is necessary for Accessibility. Without this a screen reader cannot determine if the row
                       // is or is not currently selected.
-                        return currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected');
-                      } else {
-                        return grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
+                        prefix = (currentRowColumn.row.isSelected ? i18nService.getSafeText('search.aria.selected') : i18nService.getSafeText('search.aria.notSelected')) + ', ';
                       }
+                      return prefix + grid.getCellDisplayValue(currentRowColumn.row, currentRowColumn.col);
                     }
 
                   var values = [];
@@ -847,9 +848,7 @@
                     var cellDisplayValue = getCellDisplayValue(currentSelection[i]) + getAppendedColumnHeaderText(currentSelection[i].col);
                     values.push(cellDisplayValue);
                   }
-                  var cellText = values.toString();
-                  setNotifyText(cellText);
-
+                  setNotifyText(values.toString());
                 });
               }
               // Only add the ngAria stuff it will be used

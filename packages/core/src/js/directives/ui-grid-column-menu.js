@@ -310,6 +310,11 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
       $scope.menuItems = $scope.defaultMenuItems;
       uiGridColumnMenuService.setColMenuItemWatch( $scope );
 
+      function updateCurrentColStatus(menuShown) {
+        if ($scope.col) {
+          $scope.col.menuShown = menuShown;
+        }
+      }
 
       /**
        * @ngdoc method
@@ -324,8 +329,11 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
        * @param {element} $columnElement the column element we want to position below
        */
       $scope.showMenu = function(column, $columnElement, event) {
+        // Update the menu status for the current column
+        updateCurrentColStatus(false);
         // Swap to this column
         $scope.col = column;
+        updateCurrentColStatus(true);
 
         // Get the position information for the column element
         var colElementPosition = uiGridColumnMenuService.getColumnElementPosition( $scope, column, $columnElement );
@@ -359,6 +367,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
        */
       $scope.hideMenu = function( broadcastTrigger ) {
         $scope.menuShown = false;
+        updateCurrentColStatus(false);
         if ( !broadcastTrigger ) {
           $scope.$broadcast('hide-menu');
         }
