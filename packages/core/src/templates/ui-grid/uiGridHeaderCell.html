@@ -38,6 +38,7 @@
     ng-click="toggleMenu($event)"
     ng-keydown="headerCellArrowKeyDown($event)"
     ui-grid-one-bind-aria-label="i18n.headerCell.aria.columnMenuButtonLabel"
+    aria-expanded="{{col.menuShown}}"
     aria-haspopup="true">
     <i
       class="ui-grid-icon-angle-down"

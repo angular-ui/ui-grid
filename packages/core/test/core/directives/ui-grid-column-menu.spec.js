@@ -579,6 +579,10 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
         $scope.$destroy();
         uiGrid.remove();
       });
+      it('should update the extended state of the relate menu button', function() {
+        expect($('.ui-grid-column-menu-button').first().attr('aria-expanded')).toEqual('true');
+      });
+
       it('should raise the sortChanged event when unsort is clicked', function() {
         $($('.ui-grid-menu-item')[2]).click();
         $timeout.flush();

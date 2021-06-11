@@ -226,8 +226,9 @@ describe('ui-grid-menu', function() {
 		});
 	});
 
-	describe('keyUp and keyDown actions', function() {
-		var timeout, menuItemButtons;
+	describe('keyDown actions', function() {
+		var timeout, menuItemButtons, e, focusSpy, hideSpy;
+
 		beforeEach(inject(function($timeout) {
 			timeout = $timeout;
 		}));
@@ -235,26 +236,32 @@ describe('ui-grid-menu', function() {
 			$scope.$broadcast('show-menu');
 			$scope.$digest();
 			timeout.flush();
+			e = $.Event("keydown");
+			menuItemButtons = menu.find('button');
+			focusSpy = spyOn(menuItemButtons[0], 'focus');
+			hideSpy = spyOn(isolateScope, 'hideMenu');
 		});
 
 		it('should focus on the first menu item after tabbing from the last menu item', function() {
-			menuItemButtons = menu.find('button');
-			var e = $.Event("keydown");
 			e.keyCode = 9;
-			var focusSpy = jasmine.createSpy('focusSpy');
-			focusSpy(menuItemButtons[0], 'focus');
+			e.target = menuItemButtons[menuItemButtons.length - 1];
+
 			// mock has 4 items, last one his hidden
-			$(menuItemButtons[2]).trigger(e);
+			isolateScope.checkKeyDown(e);
 			expect(focusSpy).toHaveBeenCalled();
 		});
 
 		it('should call hideMenu if ESC is pressed', function() {
-			var hideSpy = jasmine.createSpy('hideMenuSpy');
-			hideSpy(isolateScope, 'hideMenu');
-			var e = $.Event("keyup");
 			e.keyCode = 27;
-			$(menu).trigger(e);
+			isolateScope.checkKeyDown(e);
 			expect(hideSpy).toHaveBeenCalled();
+		});
+
+		it('should do nothing when other keys are pressed', function() {
+			e.keyCode = 13;
+			isolateScope.checkKeyDown(e);
+			expect(hideSpy).not.toHaveBeenCalled();
+			expect(focusSpy).not.toHaveBeenCalled();
 		});
 	});
 

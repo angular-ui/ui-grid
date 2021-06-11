@@ -1,5 +1,5 @@
-describe('GridRow factory', function () {
-  var $q, $scope, grid, Grid, GridRow, gridUtil, gridClassFactory, $timeout;
+describe('GridRow factory', function() {
+  var $q, $scope, Grid, GridRow, gridUtil, gridClassFactory, $timeout;
 
   beforeEach(module('ui.grid'));
 
@@ -13,10 +13,10 @@ describe('GridRow factory', function () {
     $timeout = _$timeout_;
   }));
 
-
- describe('binding', function() {
+  describe('binding', function() {
     var grid;
     var entity;
+
     beforeEach(inject(function (_$q_, _$rootScope_, _Grid_, _GridRow_, _gridUtil_) {
       grid = new Grid({id: 'a'});
 
@@ -36,19 +36,19 @@ describe('GridRow factory', function () {
       var col = {
         field: 'simpleProp'
       };
+      expect(gridRow.index).toBe(0);
       expect(gridRow.getQualifiedColField(col)).toBe('row.entity[\'simpleProp\']');
     });
 
     it('binds correctly to $$this', function() {
-      var gridRow = new GridRow(entity,0,grid);
+      var gridRow = new GridRow(entity, 1, grid);
       var col = {
         field: '$$this'
       };
+      expect(gridRow.index).toBe(1);
       expect(gridRow.getQualifiedColField(col)).toBe('row.entity');
     });
-
   });
-
 
   describe('row visibility', function() {
     var grid;
@@ -69,7 +69,7 @@ describe('GridRow factory', function () {
       grid.setVisibleRows(grid.rows);
     });
 
-    it('should set then unset forceInvisible on visible row, raising visible rows changed event', function () {
+    it('should set then unset forceInvisible on visible row, raising visible rows changed event', function() {
       grid.api.core.on.rowsVisibleChanged( $scope, function() { rowsVisibleChanged = true; });
 
       expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'all rows visible');
@@ -97,7 +97,7 @@ describe('GridRow factory', function () {
       expect(grid.api.core.getVisibleRows(grid).length).toEqual(10, 'should be visible again');
     });
 
-    it('should set forceInvisible on invisible row, then clear forceInvisible visible row, doesn\'t raise visible rows changed event', function () {
+    it('should set forceInvisible on invisible row, then clear forceInvisible visible row, doesn\'t raise visible rows changed event', function() {
       grid.api.core.on.rowsVisibleChanged( $scope, function() { rowsVisibleChanged = true; });
       grid.rows[0].visible = false;
 
@@ -116,7 +116,7 @@ describe('GridRow factory', function () {
       expect(rowsVisibleChanged).toEqual(false);
     });
 
-    it('row not found is OK, no event raised', function () {
+    it('row not found is OK, no event raised', function() {
       grid.api.core.on.rowsVisibleChanged( $scope, function() { rowsVisibleChanged = true; });
 
       grid.api.core.setRowInvisible(grid, {col1: 'not in grid'});
@@ -150,22 +150,16 @@ describe('GridRow factory', function () {
       expect(gridRow.$$height).toBe(99);
     });
 
-    it('should flag the grid render containers to upate canvas heights', function () {
+    it('should flag the grid render containers to upate canvas heights', function() {
       var gridRow = grid.rows[0];
       grid.renderContainers.body.getCanvasHeight();
       expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(false);
       expect(grid.renderContainers.body.$$canvasHeight).toBe(grid.options.data.length * grid.options.rowHeight);
-
 
       gridRow.height = grid.options.rowHeight * 2;
       expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(true);
       expect(grid.renderContainers.body.canvasHeightShouldUpdate).toBe(true);
       expect(grid.renderContainers.body.getCanvasHeight()).toBe((grid.options.data.length * grid.options.rowHeight) + grid.options.rowHeight);
     });
-
-
-
   });
-
 });
-

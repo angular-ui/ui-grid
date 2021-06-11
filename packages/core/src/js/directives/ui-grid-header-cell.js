@@ -69,6 +69,7 @@
 
             // Hide the menu by default
             $scope.menuShown = false;
+            $scope.col.menuShown = false;
 
             // Put asc and desc sort directions in scope
             $scope.asc = uiGridConstants.ASC;
@@ -347,13 +348,8 @@
 
             $scope.handleClick = function(event) {
               // If the shift key is being held down, add this column to the sort
-              var add = false;
-              if (event.shiftKey) {
-                add = true;
-              }
-
               // Sort this column then rebuild the grid's rows
-              uiGridCtrl.grid.sortColumn($scope.col, add)
+              uiGridCtrl.grid.sortColumn($scope.col, event.shiftKey)
                 .then(function () {
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
@@ -361,30 +357,21 @@
             };
 
             $scope.headerCellArrowKeyDown = function(event) {
-              if (event.keyCode === 32 || event.keyCode === 13) {
+              if (event.keyCode === uiGridConstants.keymap.SPACE || event.keyCode === uiGridConstants.keymap.ENTER) {
                 event.preventDefault();
                 $scope.toggleMenu(event);
               }
             };
 
             $scope.toggleMenu = function(event) {
-
               event.stopPropagation();
 
-              // If the menu is already showing...
-              if (uiGridCtrl.columnMenuScope.menuShown) {
-                // ... and we're the column the menu is on...
-                if (uiGridCtrl.columnMenuScope.col === $scope.col) {
-                  // ... hide it
-                  uiGridCtrl.columnMenuScope.hideMenu();
-                }
-                // ... and we're NOT the column the menu is on
-                else {
-                  // ... move the menu to our column
-                  uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);
-                }
+              // If the menu is already showing and we're the column the menu is on
+              if (uiGridCtrl.columnMenuScope.menuShown && uiGridCtrl.columnMenuScope.col === $scope.col) {
+                // ... hide it
+                uiGridCtrl.columnMenuScope.hideMenu();
               }
-              // If the menu is NOT showing
+              // If the menu is NOT showing or is showing in a different column
               else {
                 // ... show it on our column
                 uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm);

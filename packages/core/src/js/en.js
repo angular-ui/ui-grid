@@ -37,7 +37,11 @@
           last: 'Last Page'
         },
         selection: {
-          selectAll: 'Select All'
+          aria: {
+            row: 'Row'
+          },
+          selectAll: 'Select All',
+          displayName: 'Row Selection Checkbox'
         },
         menu: {
           text: 'Choose Columns:'

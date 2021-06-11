@@ -112,14 +112,10 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
         // Turn off an existing document click handler
         angular.element(document).off('click touchstart', applyHideMenu);
-        $elm.off('keyup', checkKeyUp);
-        $elm.off('keydown', checkKeyDown);
 
         // Turn on the document click handler, but in a timeout so it doesn't apply to THIS click if there is one
         $timeout(function() {
           angular.element(document).on(docEventType, applyHideMenu);
-          $elm.on('keyup', checkKeyUp);
-          $elm.on('keydown', checkKeyDown);
         });
       };
 
@@ -144,8 +140,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         }
 
         angular.element(document).off('click touchstart', applyHideMenu);
-        $elm.off('keyup', checkKeyUp);
-        $elm.off('keydown', checkKeyDown);
       };
 
       $scope.$on('hide-menu', function (event, args) {
@@ -173,28 +167,22 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
         }
       };
 
-      // close menu on ESC and keep tab cyclical
-      var checkKeyUp = function(event) {
-        if (event.keyCode === 27) {
-          $scope.hideMenu();
-        }
-      };
-
-      var checkKeyDown = function(event) {
+      $scope.checkKeyDown = function(event) {
         var setFocus = function(elm) {
           elm.focus();
           event.preventDefault();
-          return false;
         };
-        if (event.keyCode === 9) {
+        if (event.keyCode === uiGridConstants.keymap.ESC) {
+          $scope.hideMenu();
+        } else if (event.keyCode === uiGridConstants.keymap.TAB) {
           var firstMenuItem, lastMenuItem;
           var menuItemButtons = $elm[0].querySelectorAll('button:not(.ng-hide)');
           if (menuItemButtons.length > 0) {
             firstMenuItem = menuItemButtons[0];
             lastMenuItem = menuItemButtons[menuItemButtons.length - 1];
-            if (event.target === lastMenuItem && !event.shiftKey) {
+            if (event.target.parentElement.id === lastMenuItem.parentElement.id && !event.shiftKey) {
               setFocus(firstMenuItem);
-            } else if (event.target === firstMenuItem && event.shiftKey) {
+            } else if (event.target.parentElement.id === firstMenuItem.parentElement.id && event.shiftKey) {
               setFocus(lastMenuItem);
             }
           }
@@ -212,8 +200,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
       $scope.$on('$destroy', function unbindEvents() {
         angular.element($window).off('resize', applyHideMenu);
         angular.element(document).off('click touchstart', applyHideMenu);
-        $elm.off('keyup', checkKeyUp);
-        $elm.off('keydown', checkKeyDown);
       });
 
       if (uiGridCtrl) {
