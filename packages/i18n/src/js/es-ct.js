@@ -34,7 +34,11 @@
           last: 'Última Pàgina'
         },
         selection: {
-          selectAll: 'Seleccionar Todo'
+          aria: {
+            row: 'Fila'
+          },
+          selectAll: 'Seleccionar Todo',
+          displayName: 'Seleccionar Fila'
         },
         menu: {
           text: 'Triar Columnes:'

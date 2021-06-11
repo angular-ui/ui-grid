@@ -29,7 +29,11 @@
           last: 'Dernière page'
         },
         selection: {
-          selectAll: 'Tout Sélectionner'
+          aria: {
+            row: 'Ligne'
+          },
+          selectAll: 'Tout Sélectionner',
+          displayName: 'Sélectionnez la ligne'
         },
         menu: {
           text: 'Choisir des colonnes :'

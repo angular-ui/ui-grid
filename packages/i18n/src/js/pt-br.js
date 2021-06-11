@@ -37,7 +37,11 @@
           last: 'Última Página'
         },
         selection: {
-          selectAll: 'Selecionar Tudo'
+          aria: {
+            row: 'Linha'
+          },
+          selectAll: 'Selecionar Tudo',
+          displayName: 'Caixa de Seleção da Linha'
         },
         menu: {
           text: 'Selecione as colunas:'
