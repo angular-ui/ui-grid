@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.2](https://github.com/angular-ui/ui-grid/compare/v4.10.1...v4.10.2) (2021-06-14)
+
+
+### Bug Fixes
+
+* 🐛 add missing translations for es, fr, it and pt ([051b182](https://github.com/angular-ui/ui-grid/commit/051b1820a4a0bb97af86bba29f8889238c9b4907))
+* 🐛 improve accessibility in the grid menus and selection ([e5ae7c0](https://github.com/angular-ui/ui-grid/commit/e5ae7c085f4ac314dfbd4fab15b24f20730ee5cd))
+* **core:** use allowFloatWidth property to allow float calculations for width ([bb28b2f](https://github.com/angular-ui/ui-grid/commit/bb28b2fb523f5e47aa61a80bf70e4aabc49ab1e7))
+* **core:** use allowFloatWidth property to allow float calculations for width ([f4d3e22](https://github.com/angular-ui/ui-grid/commit/f4d3e222965d91a7faf0f4886ad6d4906789df9e))
+
+
+
+
+
 ## [4.10.1](https://github.com/angular-ui/ui-grid/compare/v4.10.0...v4.10.1) (2021-05-28)
 
 
