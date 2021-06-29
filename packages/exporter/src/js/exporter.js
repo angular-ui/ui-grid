@@ -1653,14 +1653,15 @@
       }
 
       function defaultExporterFieldCallback(grid, row, col, value) {
-        // fix to handle cases with 'number : 1' or 'date:MM-dd-YYYY', etc.. We needed to split the string
+        // fix to handle cases with 'number : 1' or 'date:"MM-dd-YYYY HH:mm"', etc.. We needed to split the string
         if (col.cellFilter) {
-					var args, filter, arg1, arg2;
-					// remove space, single/double to mantein retro-compatibility
-					args = col.cellFilter.replace(/[\'\"\s]/g, "").split(':');
-					filter = args[0] ? args[0] : null;
-					arg1 = args[1] ? args[1] : null;
-					arg2 = args[2] ? args[2] : null;
+          var args, filter, arg1, arg2;
+          // Split on ':' except when in double quotes.
+          args = col.cellFilter.match(/(?:[^:"]+|"[^"]*")+/g);
+          // remove space, single/double to maintain retro-compatibility, but keep spaces in second argument (arg[1])
+          filter = args[0] ? args[0].replace(/[\'\"\s]/g, "") : null;
+          arg1 = args[1] ? args[1].replace(/[\'\"]/g, "").trim() : null;
+          arg2 = args[2] ? args[2].replace(/[\'\"\s]/g, "") : null;
           return $filter(filter)(value, arg1, arg2);
         } else {
           return value;
