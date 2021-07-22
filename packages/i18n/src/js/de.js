@@ -1,6 +1,3 @@
-/**
- * Created by Tim on 2/1/14.
- */
 (function () {
   angular.module('ui.grid').config(['$provide', function ($provide) {
     $provide.decorator('i18nService', ['$delegate', function ($delegate) {
@@ -35,6 +32,13 @@
           next: 'Nächste Seite',
           previous: 'Vorherige Seite',
           last: 'Letzte Seite'
+        },
+        selection: {
+          aria: {
+            row: 'Zeile'
+          },
+          selectAll: 'Alle auswählen',
+          displayName: 'Zeilenauswahlkasten'
         },
         menu: {
           text: 'Spalten auswählen:'
@@ -109,6 +113,12 @@
             aggregate_min: 'Agg: Minimum',
             aggregate_avg: 'Agg: Mittelwert',
             aggregate_remove: 'Aggregation entfernen'
+        },
+        validate: {
+          error: 'Fehler:',
+          minLength: 'Der Wert sollte mindestens THRESHOLD Zeichen lang sein.',
+          maxLength: 'Der Wert sollte maximal THRESHOLD Zeichen lang sein.',
+          required: 'Ein Wert wird benötigt.'
         }
       });
       return $delegate;
