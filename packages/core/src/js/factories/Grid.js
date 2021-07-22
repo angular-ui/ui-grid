@@ -2250,13 +2250,12 @@ angular.module('ui.grid')
       var container = self.renderContainers[i],
         prevScrollTop = getPrevScrollValue(rowsAdded, container.prevScrollTop),
         prevScrollLeft = getPrevScrollValue(rowsAdded, container.prevScrollLeft),
-        prevScrolltopPercentage = rowsAdded || prevScrollTop > 0 ? null : container.prevScrolltopPercentage,
-        prevScrollleftPercentage = rowsAdded || prevScrollLeft > 0 ? null : container.prevScrollleftPercentage;
+        prevScrolltopPercentage = rowsAdded || prevScrollTop > 0 ? null : container.prevScrolltopPercentage;
 
       // gridUtil.logDebug('redrawing container', i);
 
       container.adjustRows(prevScrollTop, prevScrolltopPercentage);
-      container.adjustColumns(prevScrollLeft, prevScrollleftPercentage);
+      container.adjustColumns(prevScrollLeft);
     }
   };
 
