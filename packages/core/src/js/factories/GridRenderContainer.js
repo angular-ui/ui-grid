@@ -401,7 +401,7 @@ angular.module('ui.grid')
       scrollLeft = (this.getCanvasWidth() - this.getViewportWidth()) * scrollPercentage;
     }
 
-    this.adjustColumns(scrollLeft, scrollPercentage);
+    this.adjustColumns(scrollLeft);
 
     this.prevScrollLeft = scrollLeft;
     this.prevScrollleftPercentage = scrollPercentage;
@@ -458,7 +458,7 @@ angular.module('ui.grid')
     self.prevRowScrollIndex = rowIndex;
   };
 
-  GridRenderContainer.prototype.adjustColumns = function adjustColumns(scrollLeft, scrollPercentage) {
+  GridRenderContainer.prototype.adjustColumns = function adjustColumns(scrollLeft) {
     var self = this;
 
     var minCols = self.minColumnsToRender();
@@ -466,17 +466,7 @@ angular.module('ui.grid')
     var columnCache = self.visibleColumnCache;
     var maxColumnIndex = columnCache.length - minCols;
 
-    // Calculate the scroll percentage according to the scrollLeft location, if no percentage was provided
-    if ((typeof(scrollPercentage) === 'undefined' || scrollPercentage === null) && scrollLeft) {
-      scrollPercentage = scrollLeft / self.getHorizontalScrollLength();
-    }
-
-    var colIndex = Math.ceil(Math.min(maxColumnIndex, maxColumnIndex * scrollPercentage));
-
-    // Define a max row index that we can't scroll past
-    if (colIndex > maxColumnIndex) {
-      colIndex = maxColumnIndex;
-    }
+    var colIndex = Math.min(maxColumnIndex, self.getLeftIndex(scrollLeft));
 
     var newRange = [];
     if (columnCache.length > self.grid.options.columnVirtualizationThreshold && self.getCanvasWidth() > self.getViewportWidth()) {
@@ -495,6 +485,20 @@ angular.module('ui.grid')
 
     self.prevColumnScrollIndex = colIndex;
   };
+
+  GridRenderContainer.prototype.getLeftIndex = function getLeftIndex(scrollLeft) {
+    var wholeLeftWidth = 0;
+    var index = 0
+    for (index; index < this.visibleColumnCache.length; index++) {
+      if(this.visibleColumnCache[index] && this.visibleColumnCache[index].visible){
+        //accumulate the whole width of columns on the left side, till the point of visibility is surpassed, this is our wanted index
+        wholeLeftWidth += this.visibleColumnCache[index].drawnWidth;
+        if(wholeLeftWidth >= scrollLeft)
+          break;
+      }
+    }
+    return index;
+  }
 
   // Method for updating the visible rows
   GridRenderContainer.prototype.updateViewableRowRange = function updateViewableRowRange(renderedRange) {
