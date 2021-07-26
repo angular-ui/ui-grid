@@ -84,7 +84,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if (/\*/.test(term)) {//this would check only start and end -> /^\*|\*$/
       var regexpFlags = (!filter.flags || !filter.flags.caseSensitive) ? 'i' : '';
       term = escapeRegExp(term);
-      var reText = term.replace(/\\\*/g, '.*');//this would check only start and end -> /^\\\*|\\\*$/g
+      var reText = term.replace(/\\\*/g, '.*?');//this would check only start and end -> /^\\\*|\\\*$/g
       return new RegExp('^' + reText + '$', regexpFlags);
     }
     // Otherwise default to default condition
