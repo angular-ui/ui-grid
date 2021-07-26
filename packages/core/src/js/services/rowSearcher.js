@@ -3,7 +3,10 @@
 var module = angular.module('ui.grid');
 
 function escapeRegExp(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  // based on https://github.com/sindresorhus/escape-string-regexp
+  // Escape characters with special meaning either inside or outside character sets.
+  // Use a simple backslash escape when it’s always valid, and a `\xnn` escape when the simpler form would be disallowed by Unicode patterns’ stricter grammar.
+  return str.replace(/[|\\{}()[\]^$+?*.]/g, '\\$&').replace(/-/g, '\\x2d');
 }
 
 
@@ -78,13 +81,10 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
 
     var term = rowSearcher.getTerm(filter);
 
-    if (/\*/.test(term)) {
-      var regexpFlags = '';
-      if (!filter.flags || !filter.flags.caseSensitive) {
-        regexpFlags += 'i';
-      }
-
-      var reText = term.replace(/(\\)?\*/g, function ($0, $1) { return $1 ? $0 : '[\\s\\S]*?'; });
+    if (/\*/.test(term)) {//this would check only start and end -> /^\*|\*$/
+      var regexpFlags = (!filter.flags || !filter.flags.caseSensitive) ? 'i' : '';
+      term = escapeRegExp(term);
+      var reText = term.replace(/\\\*/g, '.*');//this would check only start and end -> /^\\\*|\\\*$/g
       return new RegExp('^' + reText + '$', regexpFlags);
     }
     // Otherwise default to default condition
