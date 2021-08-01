@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.3](https://github.com/angular-ui/ui-grid/compare/v4.10.2...v4.10.3) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 address linting issues and unit test failures ([a9cf59f](https://github.com/angular-ui/ui-grid/commit/a9cf59f6ff31f065332bdd20b0931dba0b982183))
+* export filter with time part ('date:"MM-dd-YYYY HH:mm'). ([29d4803](https://github.com/angular-ui/ui-grid/commit/29d4803d702409bffafc30b33cbbdeda53992776))
+* canvas now has a minimum height of 1px, which renders it even if it has no data ([07c26d5](https://github.com/angular-ui/ui-grid/commit/07c26d576fe6e012730fead14c9e9139d606ed13))
+* adjustColumns now calculates the colIndex instead of guessing it scrollpercentage ([ed76f02](https://github.com/angular-ui/ui-grid/commit/ed76f02090f3510d555cacdae03f1edad849d27a))
+
+
+
+
 ## [4.10.2](https://github.com/angular-ui/ui-grid/compare/v4.10.1...v4.10.2) (2021-06-14)
 
 

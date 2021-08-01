@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.3](https://github.com/angular-ui/ui-grid/compare/v4.10.2...v4.10.3) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 address linting issues and unit test failures ([a9cf59f](https://github.com/angular-ui/ui-grid/commit/a9cf59f6ff31f065332bdd20b0931dba0b982183))
+* Missing german translation for selection and validate ([3ff57e0](https://github.com/angular-ui/ui-grid/commit/3ff57e00893890b3be73ec3c350d30b3b2a91cdf))
+
+
+
+
+
 ## [4.10.2](https://github.com/angular-ui/ui-grid/compare/v4.10.1...v4.10.2) (2021-06-14)
 
 

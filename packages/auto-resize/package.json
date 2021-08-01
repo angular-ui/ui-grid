@@ -1,10 +1,10 @@
 {
   "name": "@ui-grid/auto-resize",
-  "version": "4.10.2",
+  "version": "4.10.3",
   "description": "This module provides auto-resizing functionality to UI-Grid",
   "main": "index.js",
   "dependencies": {
-    "@ui-grid/core": "^4.10.2",
+    "@ui-grid/core": "^4.10.3",
     "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {
