@@ -490,11 +490,12 @@ angular.module('ui.grid')
     var wholeLeftWidth = 0;
     var index = 0
     for (index; index < this.visibleColumnCache.length; index++) {
-      if(this.visibleColumnCache[index] && this.visibleColumnCache[index].visible){
-        //accumulate the whole width of columns on the left side, till the point of visibility is surpassed, this is our wanted index
+      if (this.visibleColumnCache[index] && this.visibleColumnCache[index].visible) {
+        // accumulate the whole width of columns on the left side, till the point of visibility is surpassed, this is our wanted index
         wholeLeftWidth += this.visibleColumnCache[index].drawnWidth;
-        if(wholeLeftWidth >= scrollLeft)
+        if (wholeLeftWidth >= scrollLeft) {
           break;
+        }
       }
     }
     return index;

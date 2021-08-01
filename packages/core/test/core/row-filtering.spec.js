@@ -1,11 +1,9 @@
 describe('rowSearcher', function() {
-  var grid, $scope, $compile, recompile,
-      rows, columns, rowSearcher, uiGridConstants, filter;
+  var grid, rows, columns, rowSearcher, uiGridConstants, filter;
 
   beforeEach(module('ui.grid'));
 
-  beforeEach(inject(function (_$compile_, $rootScope, _rowSearcher_, Grid, GridRow, GridColumn, _uiGridConstants_) {
-    $scope = $rootScope;
+  beforeEach(inject(function (_rowSearcher_, Grid, GridRow, GridColumn, _uiGridConstants_) {
     rowSearcher = _rowSearcher_;
     uiGridConstants = _uiGridConstants_;
 
@@ -40,7 +38,6 @@ describe('rowSearcher', function() {
   }
 
   afterEach(function () {
-    // angular.element(grid).remove();
     grid = null;
   });
 
@@ -48,7 +45,7 @@ describe('rowSearcher', function() {
     it('should create a RegExp when term ends with a *', function() {
       var filter = { term: 'blah*' };
 
-      var re = new RegExp(/^blah[\s\S]*?$/i);
+      var re = new RegExp(/^blah.*?$/i);
 
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
@@ -56,7 +53,7 @@ describe('rowSearcher', function() {
     it('should create a RegExp when term starts with a *', function() {
       var filter = { term: '*blah' };
 
-      var re = new RegExp(/^[\s\S]*?blah$/i);
+      var re = new RegExp(/^.*?blah$/i);
 
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
@@ -64,7 +61,7 @@ describe('rowSearcher', function() {
     it('should create a RegExp when term starts and ends with a *', function() {
       var filter = { term: '*blah*' };
 
-      var re = new RegExp(/^[\s\S]*?blah[\s\S]*?$/i);
+      var re = new RegExp(/^.*?blah.*?$/i);
 
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
@@ -72,7 +69,7 @@ describe('rowSearcher', function() {
     it('should create a RegExp when term has a * in the middle', function() {
       var filter = { term: 'bl*h' };
 
-      var re = new RegExp(/^bl[\s\S]*?h$/i);
+      var re = new RegExp(/^bl.*?h$/i);
 
       expect(rowSearcher.guessCondition(filter)).toEqual(re);
     });
@@ -82,8 +79,6 @@ describe('rowSearcher', function() {
 
       expect(rowSearcher.guessCondition(filter)).toEqual(uiGridConstants.filter.CONTAINS, 'CONTAINS');
     });
-
-
   });
 
   describe('getTerm', function() {
