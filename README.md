@@ -1,6 +1,6 @@
 # UI-Grid : An AngularJS data grid
 
-[![Build Status](https://travis-ci.org/angular-ui/ui-grid.svg?branch=master)](https://travis-ci.org/angular-ui/ui-grid)
+[![Build Status](https://travis-ci.com/angular-ui/ui-grid.svg?branch=master)](https://travis-ci.com/github/angular-ui/ui-grid)
 [![Coverage Status](https://coveralls.io/repos/github/angular-ui/ui-grid/badge.svg?branch=master)](https://coveralls.io/github/angular-ui/ui-grid?branch=master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fangular-ui%2Fui-grid?ref=badge_shield)
 [![npm](https://img.shields.io/npm/dm/angular-ui-grid.svg)](https://www.npmjs.com/package/angular-ui-grid)
