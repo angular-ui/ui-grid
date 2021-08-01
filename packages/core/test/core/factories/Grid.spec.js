@@ -1181,10 +1181,9 @@ describe('Grid factory', function() {
 					null
 				);
 			});
-			it('should call adjust columns with null for a scroll percentage and the prevScrollLeft value', function() {
+			it('should call adjust columns with the prevScrollLeft value', function() {
 				expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
-					grid.renderContainers.body.prevScrollLeft,
-					null
+					grid.renderContainers.body.prevScrollLeft
 				);
 			});
 		});
@@ -1197,13 +1196,10 @@ describe('Grid factory', function() {
 					null
 				);
 			});
-			it('should call adjust columns with null for a scroll percentage and the prevScrollLeft value if prevScrollLeft is greater than 0', function() {
+			it('should call adjust columns with the prevScrollLeft value if prevScrollLeft is greater than 0', function() {
 				grid.renderContainers.body.prevScrollLeft = 20;
 				grid.redrawInPlace(false);
-				expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
-					grid.renderContainers.body.prevScrollLeft,
-					null
-				);
+				expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(grid.renderContainers.body.prevScrollLeft);
 			});
 			it('should call adjust rows with null for a scroll top and the scroll percentage value if prevScrollTop is less or equal to 0', function() {
 				grid.renderContainers.body.prevScrollTop = 0;
@@ -1214,15 +1210,12 @@ describe('Grid factory', function() {
 					grid.renderContainers.body.prevScrolltopPercentage
 				);
 			});
-			it('should call adjust columns with null for a scroll left and the scroll percentage value if prevScrollLeft is less or equal to 0',
+			it('should call adjust columns with null for a scroll left if prevScrollLeft is less or equal to 0',
 				function() {
 					grid.renderContainers.body.prevScrollLeft = 0;
 					grid.renderContainers.body.prevScrollleftPercentage = 40;
 					grid.redrawInPlace(false);
-					expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(
-						null,
-						grid.renderContainers.body.prevScrollleftPercentage
-					);
+					expect(grid.renderContainers.body.adjustColumns).toHaveBeenCalledWith(null);
 				});
 		});
 	});
