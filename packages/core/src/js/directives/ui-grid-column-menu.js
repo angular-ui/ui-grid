@@ -64,6 +64,9 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       $scope.$on( '$destroy', deregFunction );
     },
 
+    getGridOption: function( $scope, option ) {
+      return typeof($scope.grid) !== 'undefined' && $scope.grid && $scope.grid.options && $scope.grid.options[option];
+    },
 
     /**
      * @ngdoc boolean
@@ -81,7 +84,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      *
      */
     sortable: function( $scope ) {
-      return Boolean( $scope.grid.options.enableSorting && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting);
+      return Boolean( this.getGridOption($scope, 'enableSorting') && typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.enableSorting);
     },
 
     /**
@@ -128,7 +131,12 @@ function ( i18nService, uiGridConstants, gridUtil ) {
      *
      */
     hideable: function( $scope ) {
-      return !(typeof($scope.col) !== 'undefined' && $scope.col && $scope.col.colDef && $scope.col.colDef.enableHiding === false );
+      return Boolean(
+        (this.getGridOption($scope, 'enableHiding') &&
+        typeof($scope.col) !== 'undefined' && $scope.col &&
+        ($scope.col.colDef && $scope.col.colDef.enableHiding !== false || !$scope.col.colDef)) ||
+        (!this.getGridOption($scope, 'enableHiding') && $scope.col && $scope.col.colDef && $scope.col.colDef.enableHiding)
+      );
     },
 
 

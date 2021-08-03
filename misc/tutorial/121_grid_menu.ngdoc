@@ -30,8 +30,9 @@ want them also internationalized in the grid menu.  The translate needs to retur
 or a promise that will resolve to a string.  In the example below we create a fake
 internationalization function that waits 1 second then prefixes each column with "col: ".
 
-You can suppress the ability to show and hide columns by setting the gridOption `gridMenuShowHideColumns: false`,
+You can suppress the ability to show and hide columns on the grid menu button by setting the gridOption `gridMenuShowHideColumns: false`,
 you can suppress the ability to hide individual columns by setting `enableHiding` on that columnDef to false.
+you can suppress the ability to hide all columns by setting `enableHiding` on that gridOptions to false.
 
 The gridMenu button is still a bit ugly.  If you have the skills to do so we'd welcome a PR that makes it pretty.
 In the meantime, you can override the height to fit with your application in your css:

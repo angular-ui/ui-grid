@@ -255,7 +255,7 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 				});
 				$scope.$digest();
 
-				expect(menuItems.length).toEqual(6, 'Should be 10 items, 1 columns header, 4 columns that allow hiding and Clean all filters');
+				expect(menuItems.length).toEqual(6, 'Should be 6 items, 1 columns header, 4 columns that allow hiding and Clean all filters');
 				expect(menuItems[0].title).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
 				expect(menuItems[1].title).toEqual('Columns:', 'Menu item 0 should be header');
 				expect(menuItems[1].templateUrl).toEqual('ui-grid/ui-grid-menu-header-item');
@@ -263,6 +263,23 @@ describe('ui-grid-menu-button uiGridGridMenuService', function() {
 				expect(menuItems[3].title).toEqual('resolve_1', 'Promise now resolved');
 				expect(menuItems[4].title).toEqual('resolve_2', 'Promise now resolved');
 				expect(menuItems[5].title).toEqual('resolve_3', 'Promise now resolved');
+			});
+			it('should not add any columns if enableHiding if false and not enable on any columns', function() {
+				grid.options.enableHiding = false;
+				menuItems = uiGridGridMenuService.getMenuItems($scope);
+
+				expect(menuItems.length).toEqual(1, 'Should be 1 items, the clear all filters button');
+				expect(menuItems[0].title).toEqual('Clear all filters', 'Menu item 0 should be Clear all filters');
+			});
+			it('should add any columns if enableHiding if false, but enabled on one columns', function() {
+				grid.options.enableHiding = false;
+				grid.options.columnDefs[1].enableHiding = true;
+				menuItems = uiGridGridMenuService.getMenuItems($scope);
+
+				expect(menuItems.length).toEqual(3, 'Should be 3 items, 1 columns header, 1 columns that allow hiding and Clean all filters');
+				expect(menuItems[1].title).toEqual('Columns:', 'Menu item 0 should be header');
+				expect(menuItems[1].templateUrl).toEqual('ui-grid/ui-grid-menu-header-item');
+				expect(menuItems[2].title).toEqual('Col2', 'Column heading');
 			});
 		});
 

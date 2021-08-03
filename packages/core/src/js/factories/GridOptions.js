@@ -368,6 +368,17 @@ angular.module('ui.grid')
 
       /**
        * @ngdoc boolean
+       * @name enableHiding
+       * @propertyOf ui.grid.class:GridOptions
+       * @description True by default. When enabled, this setting adds ability to hide
+       * the column headers, allowing hiding of the column from the grid.
+       * Column hiding can then be disabled / enabled on individual columns using the columnDefs,
+       * if it set, it will override GridOptions enableHiding setting.
+       */
+      baseOptions.enableHiding = baseOptions.enableHiding !== false;
+
+      /**
+       * @ngdoc boolean
        * @name enableSorting
        * @propertyOf ui.grid.class:GridOptions
        * @description True by default. When enabled, this setting adds sort
