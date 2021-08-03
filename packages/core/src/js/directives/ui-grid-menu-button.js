@@ -258,17 +258,10 @@ angular.module('ui.grid')
         return isColumnVisible(colDef) ? 'ui-grid-icon-ok' : 'ui-grid-icon-cancel';
       }
 
-      // add header for columns
-      showHideColumns.push({
-        title: i18nService.getSafeText('gridMenu.columns'),
-        order: 300,
-        templateUrl: 'ui-grid/ui-grid-menu-header-item'
-      });
-
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };
 
       $scope.grid.options.columnDefs.forEach( function( colDef, index ) {
-        if ( colDef.enableHiding !== false ) {
+        if ( $scope.grid.options.enableHiding !== false && colDef.enableHiding !== false || colDef.enableHiding ) {
           // add hide menu item - shows an OK icon as we only show when column is already visible
           var menuItem = {
             icon: getColumnIcon(colDef),
@@ -297,6 +290,16 @@ angular.module('ui.grid')
           showHideColumns.push( menuItem );
         }
       });
+
+      // add header for columns
+      if ( showHideColumns.length ) {
+        showHideColumns.unshift({
+          title: i18nService.getSafeText('gridMenu.columns'),
+          order: 300,
+          templateUrl: 'ui-grid/ui-grid-menu-header-item'
+        });
+      }
+
       return showHideColumns;
     },
 

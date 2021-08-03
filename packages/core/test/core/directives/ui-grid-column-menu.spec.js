@@ -196,14 +196,30 @@ describe('ui-grid-column-menu uiGridColumnMenuService', function() {
 		});
 
 		describe('hideable: ', function() {
-			it('everything present: is not hideable', function() {
-				$scope.col = {uid: 'ui-grid-01x', colDef: {enableHiding: false}};
+			it('grid.options missing', function() {
+				$scope.col = {uid: 'ui-grid-01x', enableHiding: true};
+				$scope.grid = {options: {}};
 
 				expect(uiGridColumnMenuService.hideable($scope)).toEqual(false);
 			});
 
+			it('everything present: is not hideable', function() {
+				$scope.col = {uid: 'ui-grid-01x', colDef: {enableHiding: false}};
+				$scope.grid = {options: {enableHiding: true}};
+
+				expect(uiGridColumnMenuService.hideable($scope)).toEqual(false);
+			});
+
+			it('everything present: is hideable', function() {
+				$scope.col = {uid: 'ui-grid-01x', colDef: {enableHiding: true}};
+				$scope.grid = {options: {enableHiding: false}};
+
+				expect(uiGridColumnMenuService.hideable($scope)).toEqual(true);
+			});
+
 			it('colDef missing: is  hideable', function() {
 				$scope.col = {uid: 'ui-grid-01x'};
+				$scope.grid = {options: {enableHiding: true}};
 
 				expect(uiGridColumnMenuService.hideable($scope)).toEqual(true);
 			});
