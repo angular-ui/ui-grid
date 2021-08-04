@@ -390,6 +390,16 @@ angular.module('ui.grid')
 
       /**
        * @ngdoc boolean
+       * @name suppressMultiSort
+       * @propertyOf ui.grid.class:GridOptions
+       * @description False by default. When enabled, this setting disables the ability
+       * to sort multiple columns by using the shift key or interacting with the column
+       * menu. Instead, each column sort will remove all other sorting.
+       */
+      baseOptions.suppressMultiSort = baseOptions.suppressMultiSort === true;
+
+      /**
+       * @ngdoc boolean
        * @name enableFiltering
        * @propertyOf ui.grid.class:GridOptions
        * @description False by default. When enabled, this setting adds filter

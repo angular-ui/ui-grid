@@ -11,6 +11,8 @@ UI-Grid allows you to sort rows. The feature is on by default. You can set the `
 Sorting can be disabled at the column level by setting `enableSorting: false` in the column def. See the last column below for an example.
 
 Multiple columns can be sorted by shift-clicking on the 2-n columns.  To see it in action, sort Gender then shift-click Name.
+This feature can be disabled by setting `suppressMultiSort: true`. When combined with the `suppressRemoveSort`, it allows you to at most sort one extra
+column beyond those with suppressRemoveSort turned on. This way, any column that is meant to stay sorted will not be modified.
 
 When sorting using the menus, the sorts are additive.  So if you have one column sorted and you pick another sort
 from a column menu, it will add on to the existing sort rather than replacing it.  You need to use the 'remove sort' option
@@ -59,6 +61,7 @@ For better performance with the following example, you can choose to load the ui
 
       vm.gridOptions1 = {
         enableSorting: true,
+        suppressMultiSort: true,
         columnDefs: [
           { field: 'name' },
           { field: 'gender' },
@@ -80,6 +83,7 @@ For better performance with the following example, you can choose to load the ui
 
        vm.gridOptions2 = {
         enableSorting: true,
+        suppressMultiSort: true,
         onRegisterApi: function( gridApi ) {
           vm.grid2Api = gridApi;
         },
@@ -122,7 +126,7 @@ For better performance with the following example, you can choose to load the ui
               }
             }
           },
-          { field: 'company', enableSorting: false  }
+          { field: 'company', enableSorting: true  }
         ]
       };
 

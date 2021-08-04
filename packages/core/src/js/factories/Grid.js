@@ -1957,7 +1957,7 @@ angular.module('ui.grid')
       direction = directionOrAdd;
     }
 
-    if (!add) {
+    if (!add || (self.options && self.options.suppressMultiSort)) {
       self.resetColumnSorting(column);
       column.sort.priority = undefined;
       // Get the actual priority since there may be columns which have suppressRemoveSort set

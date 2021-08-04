@@ -988,6 +988,10 @@ describe('Grid factory', function() {
 	});
 
 	describe('sortColumn', function() {
+		beforeEach(function() {
+			grid.options.suppressMultiSort = false;
+		});
+
 		it('should throw an exception if no column parameter is provided', function() {
 			expect(function() {
 				grid.sortColumn();
@@ -1060,6 +1064,17 @@ describe('Grid factory', function() {
 			expect(priorColumn.sort).toEqual({});
 		});
 
+		it('if another column has a sort, and both add and suppressMultiSort are set to true, that sort should be removed', function() {
+			var priorColumn = new GridColumn({name: 'b', sort: {direction: uiGridConstants.ASC}}, 0, grid);
+			grid.columns.push(priorColumn);
+			grid.options.suppressMultiSort = true;
+			grid.sortColumn(column, true);
+
+			expect(column.sort.direction).toEqual(uiGridConstants.ASC);
+			expect(column.sort.priority).toEqual(0);
+			expect(priorColumn.sort).toEqual({});
+		});
+
 		it('if another column has a sort, and add is set to true, then that sort should not be removed', function() {
 			var priorColumn = new GridColumn({name: 'b', sort: {direction: uiGridConstants.ASC, priority: 1}}, 0, grid);
 			grid.columns.push(priorColumn);
@@ -1077,6 +1092,18 @@ describe('Grid factory', function() {
 				grid.columns.push(priorColumn);
 
 				grid.sortColumn(column, false);
+
+				expect(column.sort.direction).toEqual(uiGridConstants.ASC);
+				expect(column.sort.priority).toEqual(2);
+				expect(priorColumn.sort).toEqual({direction: uiGridConstants.ASC, priority: 1});
+			});
+
+		it('if another column has a sort, and both add and suppressMultiSort are set to true, but that other column has suppressRemoveSort, then it shouldn\'t be removed',
+			function() {
+				var priorColumn = new GridColumn({name: 'b', sort: {direction: uiGridConstants.ASC, priority: 1}, suppressRemoveSort: true}, 0, grid);
+				grid.columns.push(priorColumn);
+				grid.options.suppressMultiSort = true;
+				grid.sortColumn(column, true);
 
 				expect(column.sort.direction).toEqual(uiGridConstants.ASC);
 				expect(column.sort.priority).toEqual(2);
