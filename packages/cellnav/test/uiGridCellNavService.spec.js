@@ -22,6 +22,7 @@ describe('ui.grid.edit uiGridCellNavService', function() {
 
 			grid = gridClassFactory.createGrid();
 			// throttled scrolling isn't working in tests for some reason
+			grid.gridHeight = 30;
 			grid.options.rowHeight = 30;
 			grid.options.scrollDebounce = 0;
 			grid.options.columnDefs = [
@@ -201,7 +202,7 @@ describe('ui.grid.edit uiGridCellNavService', function() {
 			$timeout.flush();
 
 			expect(args.grid).toEqual(grid);
-			expect(Math.round(args.y.percentage * 10) / 10).toBe(0.5);
+			expect(Math.round(args.y.percentage * 10) / 10).toBe(0.4);
 			expect(isNaN(args.x.percentage)).toEqual(true);
 		});
 
@@ -233,7 +234,7 @@ describe('ui.grid.edit uiGridCellNavService', function() {
 			});
 			$timeout.flush();
 
-			expect(Math.round(args.y.percentage * 10) / 10).toEqual(0.6);
+			expect(Math.round(args.y.percentage * 10) / 10).toEqual(0.5);
 			expect(args.x).toBe(null);
 		});
 
