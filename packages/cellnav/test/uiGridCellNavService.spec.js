@@ -22,9 +22,9 @@ describe('ui.grid.edit uiGridCellNavService', function() {
 
 			grid = gridClassFactory.createGrid();
 			// throttled scrolling isn't working in tests for some reason
-			grid.headerHeight = 0;
+			grid.headerHeight = 10;
 			grid.footerHeight = 0;
-			grid.gridHeight = 20;
+			grid.gridHeight = 15;
 			grid.options.rowHeight = 30;
 			grid.options.scrollDebounce = 0;
 			grid.options.columnDefs = [
