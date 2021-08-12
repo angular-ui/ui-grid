@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
+
+
+### Bug Fixes
+
+* 🐛 ensure viewport height cannot be negative ([a7111a1](https://github.com/angular-ui/ui-grid/commit/a7111a13b4c7d67068522881783925dedbacda88)), closes [#3034](https://github.com/angular-ui/ui-grid/issues/3034)
+
+
+### Features
+
+* 🎸 option to disable multi-column sorting ([c9abb8b](https://github.com/angular-ui/ui-grid/commit/c9abb8bab2101479b0498848b4a288c1ad7d17f9)), closes [#2913](https://github.com/angular-ui/ui-grid/issues/2913)
+* 🎸 the ability to disable hide columns on a grid level ([2dd1688](https://github.com/angular-ui/ui-grid/commit/2dd168859e03583cdc7e6ab671d146e343ae4275)), closes [#1604](https://github.com/angular-ui/ui-grid/issues/1604)
+
+
+
+
+
 ## [4.10.3](https://github.com/angular-ui/ui-grid/compare/v4.10.2...v4.10.3) (2021-08-01)
 
 

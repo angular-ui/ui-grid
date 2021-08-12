@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
+
+
+### Bug Fixes
+
+* 🐛 ensure viewport height cannot be negative ([a7111a1](https://github.com/angular-ui/ui-grid/commit/a7111a13b4c7d67068522881783925dedbacda88)), closes [#3034](https://github.com/angular-ui/ui-grid/issues/3034)
+
+
+
+
+
 ## [4.10.3](https://github.com/angular-ui/ui-grid/compare/v4.10.2...v4.10.3) (2021-08-01)
 
 **Note:** Version bump only for package @ui-grid/cell-nav
