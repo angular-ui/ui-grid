@@ -111,8 +111,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
   rowSearcher.setupFilters = function setupFilters( filters ) {
     var newFilters = [];
 
-    var filtersLength = filters.length;
-    for ( var i = 0; i < filtersLength; i++ ) {
+    for ( var i = 0; i < filters.length; i++ ) {
       var filter = filters[i];
 
       if ( filter.noTerm || !gridUtil.isNullOrUndefined(filter.term) ) {
@@ -131,30 +130,24 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
             newFilter.term = rowSearcher.stripTerm(filter);
           }
         }
+
         newFilter.noTerm = filter.noTerm;
-
-        if ( filter.condition ) {
-          newFilter.condition = filter.condition;
-        } else {
-          newFilter.condition = rowSearcher.guessCondition(filter);
-        }
-
+        newFilter.condition = filter.condition || rowSearcher.guessCondition(filter);
         newFilter.flags = angular.extend( { caseSensitive: false, date: false }, filter.flags );
 
-        if (newFilter.condition === uiGridConstants.filter.STARTS_WITH) {
-          newFilter.startswithRE = new RegExp('^' + newFilter.term, regexpFlags);
-        }
-
-         if (newFilter.condition === uiGridConstants.filter.ENDS_WITH) {
-          newFilter.endswithRE = new RegExp(newFilter.term + '$', regexpFlags);
-        }
-
-        if (newFilter.condition === uiGridConstants.filter.CONTAINS) {
-          newFilter.containsRE = new RegExp(newFilter.term, regexpFlags);
-        }
-
-        if (newFilter.condition === uiGridConstants.filter.EXACT) {
-          newFilter.exactRE = new RegExp('^' + newFilter.term + '$', regexpFlags);
+        switch (newFilter.condition) {
+          case uiGridConstants.filter.STARTS_WITH:
+            newFilter.startswithRE = new RegExp('^' + newFilter.term, regexpFlags);
+            break;
+          case uiGridConstants.filter.ENDS_WITH:
+            newFilter.endswithRE = new RegExp(newFilter.term + '$', regexpFlags);
+            break;
+          case uiGridConstants.filter.EXACT:
+            newFilter.exactRE = new RegExp('^' + newFilter.term + '$', regexpFlags);
+            break; 
+          case uiGridConstants.filter.CONTAINS:
+            newFilter.containsRE = new RegExp(newFilter.term, regexpFlags);
+            break;
         }
 
         newFilters.push(newFilter);
@@ -185,12 +178,9 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     var term = filter.term;
 
     // Get the column value for this row
-    var value;
-    if ( column.filterCellFiltered ) {
-      value = grid.getCellDisplayValue(row, column);
-    } else {
-      value = grid.getCellValue(row, column);
-    }
+    var value = column.filterCellFiltered ? grid.getCellDisplayValue(row, column) : grid.getCellValue(row, column);
+    if(value == void 0)
+      value = "";
 
 
     // If the filter's condition is a RegExp, then use it
@@ -220,8 +210,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     }
 
     if (filter.condition === uiGridConstants.filter.NOT_EQUAL) {
-      var regex = new RegExp('^' + term + '$');
-      return !regex.exec(value);
+      return !new RegExp('^' + term + '$').test(value);
     }
 
     if (typeof(value) === 'number' && typeof(term) === 'string' ) {
@@ -240,20 +229,15 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       term = new Date(term.replace(/\\/g, ''));
     }
 
-    if (filter.condition === uiGridConstants.filter.GREATER_THAN) {
-      return (value > term);
-    }
-
-    if (filter.condition === uiGridConstants.filter.GREATER_THAN_OR_EQUAL) {
-      return (value >= term);
-    }
-
-    if (filter.condition === uiGridConstants.filter.LESS_THAN) {
-      return (value < term);
-    }
-
-    if (filter.condition === uiGridConstants.filter.LESS_THAN_OR_EQUAL) {
-      return (value <= term);
+    switch (filter.condition) {
+      case uiGridConstants.filter.GREATER_THAN:
+        return (value > term);
+      case uiGridConstants.filter.GREATER_THAN_OR_EQUAL:
+        return (value >= term);
+      case uiGridConstants.filter.LESS_THAN:
+        return (value < term);
+      case uiGridConstants.filter.LESS_THAN_OR_EQUAL:
+        return (value <= term);
     }
 
     return true;
@@ -287,13 +271,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return true;
     }
 
-    var filtersLength = filters.length;
-    for (var i = 0; i < filtersLength; i++) {
+    for (var i = 0; i < filters.length; i++) {
       var filter = filters[i];
 
       if ( !gridUtil.isNullOrUndefined(filter.term) && filter.term !== '' || filter.noTerm ) {
-        var ret = rowSearcher.runColumnFilter(grid, row, column, filter);
-        if (!ret) {
+        if (!rowSearcher.runColumnFilter(grid, row, column, filter)) {
           return false;
         }
       }
@@ -333,8 +315,6 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     // Build list of filters to apply
     var filterData = [];
 
-    var colsLength = columns.length;
-
     var hasTerm = function( filters ) {
       var hasTerm = false;
 
@@ -347,7 +327,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return hasTerm;
     };
 
-    for (var i = 0; i < colsLength; i++) {
+    for (var i = 0; i < cols.length; i++) {
       var col = columns[i];
 
       if (typeof(col.filters) !== 'undefined' && hasTerm(col.filters) ) {
@@ -364,15 +344,13 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       };
 
       var foreachFilterCol = function(grid, filterData) {
-        var rowsLength = rows.length;
-        for ( var i = 0; i < rowsLength; i++) {
+        for ( var i = 0; i < rows.length; i++) {
           foreachRow(grid, rows[i], filterData.col, filterData.filters);
         }
       };
 
       // nested loop itself - foreachFilterCol, which in turn calls foreachRow
-      var filterDataLength = filterData.length;
-      for ( var j = 0; j < filterDataLength; j++) {
+      for ( var j = 0; j < filterData.length; j++) {
         foreachFilterCol( grid, filterData[j] );
       }
 
