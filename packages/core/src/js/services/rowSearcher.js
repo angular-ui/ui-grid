@@ -182,7 +182,6 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     if(value == void 0)
       value = "";
 
-
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {
       return filter.condition.test(value);
