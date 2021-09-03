@@ -99,7 +99,7 @@
         grouping: {
           group: 'Группировать',
           ungroup: 'Разгруппировать',
-          aggregate_count: 'Группировать: Count',
+          aggregate_count: 'Группировать: Количество',
           aggregate_sum: 'Для группы: Сумма',
           aggregate_max: 'Для группы: Максимум',
           aggregate_min: 'Для группы: Минимум',
