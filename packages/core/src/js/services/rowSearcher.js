@@ -179,7 +179,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
 
     // Get the column value for this row
     var value = column.filterCellFiltered ? grid.getCellDisplayValue(row, column) : grid.getCellValue(row, column);
-    if (value == void 0){
+    if (value == void 0) {
       value = "";
     }
 
