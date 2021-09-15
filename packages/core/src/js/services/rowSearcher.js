@@ -144,7 +144,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
             break;
           case uiGridConstants.filter.EXACT:
             newFilter.exactRE = new RegExp('^' + newFilter.term + '$', regexpFlags);
-            break; 
+            break;
           case uiGridConstants.filter.CONTAINS:
             newFilter.containsRE = new RegExp(newFilter.term, regexpFlags);
             break;
@@ -179,8 +179,9 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
 
     // Get the column value for this row
     var value = column.filterCellFiltered ? grid.getCellDisplayValue(row, column) : grid.getCellValue(row, column);
-    if(value == void 0)
+    if (value == void 0){
       value = "";
+    }
 
     // If the filter's condition is a RegExp, then use it
     if (filter.condition instanceof RegExp) {
