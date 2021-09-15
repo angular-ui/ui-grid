@@ -326,7 +326,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return hasTerm;
     };
 
-    for (var i = 0; i < cols.length; i++) {
+    for (var i = 0; i < columns.length; i++) {
       var col = columns[i];
 
       if (typeof(col.filters) !== 'undefined' && hasTerm(col.filters) ) {
