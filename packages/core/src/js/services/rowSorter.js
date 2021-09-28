@@ -384,9 +384,9 @@ module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
 
     // Now actually sort the data
     var rowSortFn = function (rowA, rowB) {
-    var tem = 0,
-        idx = 0,
-        sortFn;
+      var tem = 0,
+          idx = 0,
+          sortFn;
 
       while (tem === 0 && idx < sortCols.length) {
         // grab the metadata for the rest of the logic
