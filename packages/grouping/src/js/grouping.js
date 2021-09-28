@@ -953,7 +953,7 @@
           var fieldValue = grid.getCellValue(row, groupFieldState.col);
 
           // look for change of value - and insert a header
-          if ( !groupFieldState.initialised || rowSorter.getSortFn(grid, groupFieldState.col, renderableRows)(fieldValue, groupFieldState.currentValue) !== 0 ) {
+          if ( !groupFieldState.initialised || rowSorter.getSortFn(groupFieldState.col)(fieldValue, groupFieldState.currentValue) !== 0 ) {
             service.insertGroupHeader( grid, renderableRows, i, processingState, stateIndex );
             i++;
           }
