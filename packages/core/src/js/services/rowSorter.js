@@ -73,7 +73,7 @@ module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
       if (a == void 0) {
         return 1;
       }
-      return -1;//b == void 0
+      return -1;// b == void 0
     }
     return null;
   };
@@ -150,7 +150,7 @@ module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
         badB = isNaN(numB);
 
     // We want bad ones to get pushed to the bottom... which effectively is "greater than"
-    if(badA || badB){  
+    if (badA || badB) {
       return (badA && badB) ? 0 : (badA ? 1 : -1);
     }
 
@@ -381,10 +381,6 @@ module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
     rows.forEach(function (row, idx) {
       row.entity.$$uiGridIndex = idx;
     });
-
-    // IE9-11 HACK.... the 'rows' variable would be empty where we call rowSorter.getSortFn(...) below. We have to use a separate reference
-    // var d = data.slice(0);
-    //var r = rows.slice(0);
 
     // Now actually sort the data
     var rowSortFn = function (rowA, rowB) {
