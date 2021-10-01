@@ -11,17 +11,7 @@ var module = angular.module('ui.grid');
  *
  */
 
-module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGridConstants) {
-  var currencyRegexStr =
-    '(' +
-    uiGridConstants.CURRENCY_SYMBOLS
-      .map(function (a) { return '\\' + a; }) // Escape all the currency symbols ($ at least will jack up this regex)
-      .join('|') + // Join all the symbols together with |s
-    ')?';
-
-  // /^[-+]?[£$¤¥]?[\d,.]+%?$/
-  var numberStrRegex = new RegExp('^[-+]?' + currencyRegexStr + '[\\d,.]+' + currencyRegexStr + '%?$');
-
+module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
   var rowSorter = {
     // Cache of sorting functions. Once we create them, we don't want to keep re-doing it
     //   this takes a piece of data from the cell and tries to determine its type and what sorting
@@ -74,17 +64,16 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.handleNulls = function handleNulls(a, b) {
     // We want to allow zero values and false values to be evaluated in the sort function
-    if ((!a && a !== 0 && a !== false) || (!b && b !== 0 && b !== false)) {
+    if ((a == void 0) || (b == void 0)) {
       // We want to force nulls and such to the bottom when we sort... which effectively is "greater than"
-      if ((!a && a !== 0 && a !== false) && (!b && b !== 0 && b !== false)) {
+      if ((a == void 0) && (b == void 0)) {
         return 0;
       }
-      else if (!a && a !== 0 && a !== false) {
+
+      if (a == void 0) {
         return 1;
       }
-      else if (!b && b !== 0 && b !== false) {
-        return -1;
-      }
+      return -1;// b == void 0
     }
     return null;
   };
@@ -102,17 +91,18 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.basicSort = function basicSort(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
+    if (nulls !== null) {
       return nulls;
-    } else {
-      if (a === b) {
-        return 0;
-      }
-      if (a < b) {
-        return -1;
-      }
-      return 1;
     }
+
+    if (a === b) {
+      return 0;
+    }
+
+    if (a < b) {
+      return -1;
+    }
+    return 1;
   };
 
 
@@ -127,11 +117,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.sortNumber = function sortNumber(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
-      return nulls;
-    } else {
-      return a - b;
-    }
+    return (nulls !== null) ? nulls : a - b;
   };
 
 
@@ -155,45 +141,23 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.sortNumberStr = function sortNumberStr(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
+    if (nulls !== null) {
       return nulls;
-    } else {
-      var numA, // The parsed number form of 'a'
-          numB, // The parsed number form of 'b'
-          badA = false,
-          badB = false;
-
-      // Try to parse 'a' to a float
-      numA = parseNumStr(a);
-
-      // If 'a' couldn't be parsed to float, flag it as bad
-      if (isNaN(numA)) {
-          badA = true;
-      }
-
-      // Try to parse 'b' to a float
-      numB = parseNumStr(b);
-
-      // If 'b' couldn't be parsed to float, flag it as bad
-      if (isNaN(numB)) {
-          badB = true;
-      }
-
-      // We want bad ones to get pushed to the bottom... which effectively is "greater than"
-      if (badA && badB) {
-          return 0;
-      }
-
-      if (badA) {
-          return 1;
-      }
-
-      if (badB) {
-          return -1;
-      }
-
-      return numA - numB;
     }
+
+    var numA = parseNumStr(a), // The parsed number form of 'a'
+        numB = parseNumStr(b); // The parsed number form of 'b'
+
+    // If 'a' couldn't be parsed to float, flag it as bad
+    var badA = isNaN(numA),
+        badB = isNaN(numB);
+
+    // We want bad ones to get pushed to the bottom... which effectively is "greater than"
+    if (badA || badB) {
+      return (badA && badB) ? 0 : (badA ? 1 : -1);
+    }
+
+    return numA - numB;
   };
 
 
@@ -208,14 +172,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.sortAlpha = function sortAlpha(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
+    if (nulls !== null) {
       return nulls;
-    } else {
-      var strA = a.toString().toLowerCase(),
-          strB = b.toString().toLowerCase();
-
-      return strA === strB ? 0 : strA.localeCompare(strB);
     }
+
+    var strA = a.toString().toLowerCase(),
+        strB = b.toString().toLowerCase();
+    return strA === strB ? 0 : strA.localeCompare(strB);
   };
 
 
@@ -231,20 +194,13 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.sortDate = function sortDate(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
+    if (nulls !== null) {
       return nulls;
-    } else {
-      if (!(a instanceof Date)) {
-        a = new Date(a);
-      }
-      if (!(b instanceof Date)) {
-        b = new Date(b);
-      }
-      var timeA = a.getTime(),
-          timeB = b.getTime();
-
-      return timeA === timeB ? 0 : (timeA < timeB ? -1 : 1);
     }
+
+    var timeA = (a instanceof Date) ? a.getTime() : new Date(a).getTime();
+    var timeB = (b instanceof Date) ? b.getTime() : new Date(b).getTime();
+    return timeA === timeB ? 0 : (timeA < timeB ? -1 : 1);
   };
 
 
@@ -260,20 +216,14 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    */
   rowSorter.sortBool = function sortBool(a, b) {
     var nulls = rowSorter.handleNulls(a, b);
-    if ( nulls !== null ) {
+    if (nulls !== null) {
       return nulls;
-    } else {
-      if (a && b) {
-        return 0;
-      }
-
-      if (!a && !b) {
-        return 0;
-      }
-      else {
-        return a ? 1 : -1;
-      }
     }
+
+    if ((a && b) || (!a && !b)) {
+      return 0;
+    }
+    return a ? 1 : -1;
   };
 
 
@@ -298,43 +248,36 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
    * we might inspect the rows themselves to decide what sort of data might be there
    * @returns {function} the sort function chosen for the column
    */
-  rowSorter.getSortFn = function getSortFn(grid, col, rows) {
-    var sortFn, item;
-
+  rowSorter.getSortFn = function getSortFn(col) {
     // See if we already figured out what to use to sort the column and have it in the cache
     if (rowSorter.colSortFnCache[col.colDef.name]) {
-      sortFn = rowSorter.colSortFnCache[col.colDef.name];
+      return rowSorter.colSortFnCache[col.colDef.name];
     }
     // If the column has its OWN sorting algorithm, use that
-    else if (col.sortingAlgorithm !== undefined) {
-      sortFn = col.sortingAlgorithm;
+    if (col.sortingAlgorithm != void 0) {
       rowSorter.colSortFnCache[col.colDef.name] = col.sortingAlgorithm;
+      return col.sortingAlgorithm;
     }
     // Always default to sortAlpha when sorting after a cellFilter
-    else if ( col.sortCellFiltered && col.cellFilter ) {
-      sortFn = rowSorter.sortAlpha;
-      rowSorter.colSortFnCache[col.colDef.name] = sortFn;
+    if (col.sortCellFiltered && col.cellFilter) {
+      rowSorter.colSortFnCache[col.colDef.name] = rowSorter.sortAlpha;
+      return rowSorter.sortAlpha;
     }
+
     // Try and guess what sort function to use
-    else {
-      // Guess the sort function
-      sortFn = rowSorter.guessSortFn(col.colDef.type);
+    // Guess the sort function
+    var sortFn = rowSorter.guessSortFn(col.colDef.type);
 
-      // If we found a sort function, cache it
-      if (sortFn) {
-        rowSorter.colSortFnCache[col.colDef.name] = sortFn;
-      }
-      else {
-        // We assign the alpha sort because anything that is null/undefined will never get passed to
-        // the actual sorting function. It will get caught in our null check and returned to be sorted
-        // down to the bottom
-        sortFn = rowSorter.sortAlpha;
-      }
+    // If we found a sort function, cache it
+    if (sortFn) {
+      rowSorter.colSortFnCache[col.colDef.name] = sortFn;
+      return sortFn;
     }
-
-    return sortFn;
+    // We assign the alpha sort because anything that is null/undefined will never get passed to
+    // the actual sorting function. It will get caught in our null check and returned to be sorted
+    // down to the bottom
+    return rowSorter.sortAlpha;
   };
-
 
 
   /**
@@ -357,26 +300,22 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
         return -1;
       }
       // Equal
-      else if (a.sort.priority === b.sort.priority) {
+      if (a.sort.priority === b.sort.priority) {
         return 0;
       }
       // B is higher
-      else {
-        return 1;
-      }
+      return 1;
     }
     // Only A has a priority
-    else if (a.sort && a.sort.priority !== undefined) {
+    if (a.sort && a.sort.priority !== undefined) {
       return -1;
     }
     // Only B has a priority
-    else if (b.sort && b.sort.priority !== undefined) {
+    if (b.sort && b.sort.priority !== undefined) {
       return 1;
     }
     // Neither has a priority
-    else {
-      return 0;
-    }
+    return 0;
   };
 
 
@@ -442,14 +381,9 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
     var col, direction;
 
     // put a custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
-    var setIndex = function( row, idx ) {
+    rows.forEach(function (row, idx) {
       row.entity.$$uiGridIndex = idx;
-    };
-    rows.forEach(setIndex);
-
-    // IE9-11 HACK.... the 'rows' variable would be empty where we call rowSorter.getSortFn(...) below. We have to use a separate reference
-    // var d = data.slice(0);
-    var r = rows.slice(0);
+    });
 
     // Now actually sort the data
     var rowSortFn = function (rowA, rowB) {
@@ -462,14 +396,12 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
         col = sortCols[idx].col;
         direction = sortCols[idx].sort.direction;
 
-        sortFn = rowSorter.getSortFn(grid, col, r);
+        sortFn = rowSorter.getSortFn(col);
 
         // Webpack's compress will hoist and combine propA, propB into one var and break sorting functionality
         // Wrapping in function prevents that unexpected behavior
         var props = getCellValues(grid, rowA, rowB, col);
-        var propA = props[0];
-        var propB = props[1];
-        tem = sortFn(propA, propB, rowA, rowB, direction, col);
+        tem = sortFn(props[0], props[1], rowA, rowB, direction, col);
 
         idx++;
       }
@@ -483,20 +415,15 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
 
       // Made it this far, we don't have to worry about null & undefined
-      if (direction === uiGridConstants.ASC) {
-        return tem;
-      } else {
-        return 0 - tem;
-      }
+      return (direction === uiGridConstants.ASC) ? tem : 0 - tem;
     };
 
     var newRows = rows.sort(rowSortFn);
 
     // remove the custom index field on each row, used to make a stable sort out of unstable sorts (e.g. Chrome)
-    var clearIndex = function( row, idx ) {
-       delete row.entity.$$uiGridIndex;
-    };
-    rows.forEach(clearIndex);
+    rows.forEach(function (row, idx) {
+      delete row.entity.$$uiGridIndex;
+    });
 
     return newRows;
   };
