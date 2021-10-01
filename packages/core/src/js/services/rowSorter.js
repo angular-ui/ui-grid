@@ -135,6 +135,14 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
   };
 
 
+  function parseNumStr(numStr) {
+    if (/^\s*-?Infinity\s*$/.test(numStr)) {//check for positive or negative Infinity and return that
+      return parseFloat(numStr);
+    }
+    return parseFloat(numStr.replace(/[^0-9.eE-]/g, ''));
+  }
+
+
   /**
    * @ngdoc method
    * @methodOf ui.grid.class:rowSorter
@@ -156,7 +164,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
           badB = false;
 
       // Try to parse 'a' to a float
-      numA = parseFloat(a.replace(/[^0-9.-]/g, ''));
+      numA = parseNumStr(a);
 
       // If 'a' couldn't be parsed to float, flag it as bad
       if (isNaN(numA)) {
@@ -164,7 +172,7 @@ module.service('rowSorter', ['$parse', 'uiGridConstants', function ($parse, uiGr
       }
 
       // Try to parse 'b' to a float
-      numB = parseFloat(b.replace(/[^0-9.-]/g, ''));
+      numB = parseNumStr(b);
 
       // If 'b' couldn't be parsed to float, flag it as bad
       if (isNaN(numB)) {
