@@ -326,14 +326,19 @@
                  * @ngdoc function
                  * @name getSelectedRows
                  * @methodOf  ui.grid.selection.api:PublicApi
-                 * @description returns all selectedRow's entity references
+                 * @description returns all selected Row's entity references
                  */
                 getSelectedRows: function () {
-                  return service.getSelectedRows(grid).map(function (gridRow) {
-                    return gridRow.entity;
-                  }).filter(function (entity) {
-                    return entity.hasOwnProperty('$$hashKey') || !angular.isObject(entity);
-                  });
+                  return service.mapAndFilterRowsByEntity(service.getSelectedRows(grid));
+                },
+                /**
+                 * @ngdoc function
+                 * @name getUnSelectedRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description returns all unselected Row's entity references
+                 */
+                getUnSelectedRows: function () {
+                  return service.mapAndFilterRowsByEntity(service.getUnSelectedRows(grid));
                 },
                 /**
                  * @ngdoc function
@@ -343,6 +348,15 @@
                  */
                 getSelectedGridRows: function () {
                   return service.getSelectedRows(grid);
+                },
+                /**
+                 * @ngdoc function
+                 * @name getSelectedGridRows
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description returns all unselected Row's as gridRows
+                 */
+                getUnSelectedGridRows: function () {
+                  return service.getUnSelectedRows(grid);
                 },
                 /**
                  * @ngdoc function
@@ -613,6 +627,40 @@
         getSelectedRows: function (grid) {
           return grid.rows.filter(function (row) {
             return row.isSelected;
+          });
+        },
+        /**
+         * @ngdoc function
+         * @name getUnSelectedRows
+         * @methodOf  ui.grid.selection.service:uiGridSelectionService
+         * @description Returns all the unselected rows
+         * @param {Grid} grid grid object
+         */
+        getUnSelectedRows: function (grid) {
+          return grid.rows.filter(function (row) {
+            return !row.isSelected;
+          });
+        },
+        /**
+         * @ngdoc function
+         * @name mapAndFilterRowsByEntity
+         * @methodOf  ui.grid.selection.service:uiGridSelectionService
+         * @description Filters all rows by entity and then maps them to Array.
+         */
+        mapAndFilterRowsByEntity: function(gridRows) {
+          if(typeof gridRows.reduce === 'function') { // If reduce is available it will be taken, due to better performance
+            return gridRows.reduce(function (previousVal, currentRow) {
+              if (currentRow.entity.hasOwnProperty('$$hashKey') || !angular.isObject(currentRow.entity)) {
+                previousVal.push(currentRow.entity);
+              }
+              return previousVal;
+            }, []);
+          }
+
+          return gridRows.filter(function (gridRow) { // stays as polyfill
+            return gridRow.entity.hasOwnProperty('$$hashKey') || !angular.isObject(gridRow.entity);
+          }).map(function (gridRow) {
+            return gridRow.entity;
           });
         },
 
