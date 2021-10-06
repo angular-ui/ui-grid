@@ -648,7 +648,7 @@
          * @description Filters all rows by entity and then maps them to Array.
          */
         mapAndFilterRowsByEntity: function(gridRows) {
-          if(typeof gridRows.reduce === 'function') { // If reduce is available it will be taken, due to better performance
+          if (typeof gridRows.reduce === 'function') { // If reduce is available it will be taken, due to better performance
             return gridRows.reduce(function (previousVal, currentRow) {
               if (currentRow.entity.hasOwnProperty('$$hashKey') || !angular.isObject(currentRow.entity)) {
                 previousVal.push(currentRow.entity);
