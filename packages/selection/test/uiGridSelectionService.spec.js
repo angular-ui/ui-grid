@@ -115,7 +115,7 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			expect(grid.rows[0].isSelected).toBe(true);
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false, false);
 			expect(grid.rows[1].isSelected).toBe(false);
-			
+
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false, false);
 			expect(grid.rows[0].isSelected).toBe(false);
 		});
