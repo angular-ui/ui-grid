@@ -416,7 +416,7 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			expect(grid.api.selection.getUnSelectedGridRows().length).toEqual(10);
 		});
 
-		it('should retrieve the unselected rows that have a $$hashKey property', function() {			
+		it('should retrieve the unselected rows that have a $$hashKey property', function() {
 			grid.rows.forEach(function(row) {
 				row.isSelected = false;
 				row.entity = {
