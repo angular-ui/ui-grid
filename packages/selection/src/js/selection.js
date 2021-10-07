@@ -202,7 +202,7 @@
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
                 /**
@@ -216,7 +216,7 @@
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && !row.isSelected) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
                 /**
@@ -233,7 +233,7 @@
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
                   if (row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
                   }
                 },
                 /**
@@ -247,7 +247,7 @@
                 unSelectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
                   if (row !== null && row.isSelected) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
                 /**
@@ -264,7 +264,7 @@
                 unSelectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
                   if (row !== null && typeof (row) !== 'undefined' && row.isSelected) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
                   }
                 },
                 /**
@@ -545,38 +545,37 @@
          * @param {Event} evt object if resulting from event
          * @param {bool} multiSelect if false, only one row at time can be selected
          * @param {bool} noUnselect if true then rows cannot be unselected
+         * @param {bool} [canBeInvisible=true] if false, row can only be selected when it's (theoretically) visible
          */
-        toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect) {
+         toggleRowSelection: function (grid, row, evt, multiSelect, noUnselect, canBeInvisible) {
           if ( row.enableSelection === false ) {
             return;
           }
 
-          var selected = row.isSelected,
-            selectedRows;
+          if (canBeInvisible === void 0) {
+            canBeInvisible = true;
+          }
+
+          var selected = row.isSelected;
 
           if (!multiSelect) {
             if (!selected) {
               service.clearSelectedRows(grid, evt);
             }
-            else {
-              selectedRows = service.getSelectedRows(grid);
-              if (selectedRows.length > 1) {
-                selected = false; // Enable reselect of the row
-                service.clearSelectedRows(grid, evt);
-              }
+            else if (service.getSelectedRows(grid).length > 1) {
+              selected = false; // Enable reselect of the row
+              service.clearSelectedRows(grid, evt);
             }
           }
 
           // only select row in this case
-          if (!(selected && noUnselect)) {
+          if (!(selected && noUnselect) && (canBeInvisible || row.visible)) {
             row.setSelected(!selected);
             if (row.isSelected === true) {
               grid.selection.lastSelectedRow = row;
             }
 
-            selectedRows = service.getSelectedRows(grid);
-            grid.selection.selectAll = grid.rows.length === selectedRows.length;
-
+            grid.selection.selectAll = grid.rows.length === service.getSelectedRows(grid).length;
             grid.api.selection.raise.rowSelectionChanged(row, evt);
           }
         },
@@ -850,17 +849,17 @@
             }
             else if (evt.ctrlKey || evt.metaKey) {
               uiGridSelectionService.toggleRowSelection(self, row, evt,
-                self.options.multiSelect, self.options.noUnselect);
+                self.options.multiSelect, self.options.noUnselect, false);
             }
             else if (row.groupHeader) {
-              uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect);
+              uiGridSelectionService.toggleRowSelection(self, row, evt, self.options.multiSelect, self.options.noUnselect, false);
               for (var i = 0; i < row.treeNode.children.length; i++) {
-                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect);
+                uiGridSelectionService.toggleRowSelection(self, row.treeNode.children[i].row, evt, self.options.multiSelect, self.options.noUnselect, false);
               }
             }
             else {
               uiGridSelectionService.toggleRowSelection(self, row, evt,
-                (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect);
+                (self.options.multiSelect && !self.options.modifierKeysToMultiSelect), self.options.noUnselect, false);
             }
             self.options.enableFocusRowOnRowHeaderClick && row.setFocused(!row.isFocused) && self.api.selection.raise.rowFocusChanged(row, evt);
           }
@@ -981,7 +980,7 @@
                   evt.preventDefault();
                   uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
                     ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect),
-                    $scope.grid.options.noUnselect);
+                    $scope.grid.options.noUnselect, false);
                   $scope.$apply();
                 }
               });
@@ -1001,12 +1000,12 @@
               }
               else if (evt.ctrlKey || evt.metaKey) {
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
-                  $scope.grid.options.multiSelect, $scope.grid.options.noUnselect);
+                  $scope.grid.options.multiSelect, $scope.grid.options.noUnselect, false);
               }
               else if ($scope.grid.options.enableSelectRowOnFocus) {
                 uiGridSelectionService.toggleRowSelection($scope.grid, $scope.row, evt,
                   ($scope.grid.options.multiSelect && !$scope.grid.options.modifierKeysToMultiSelect),
-                  $scope.grid.options.noUnselect);
+                  $scope.grid.options.noUnselect, false);
               }
               $scope.row.setFocused(!$scope.row.isFocused);
               $scope.grid.api.selection.raise.rowFocusChanged($scope.row, evt);
