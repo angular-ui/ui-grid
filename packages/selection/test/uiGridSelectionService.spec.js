@@ -81,14 +81,14 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			grid.rows[0].visible = true;
 			grid.rows[1].visible = false;
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
 			expect(grid.rows[0].isSelected).toBe(true);
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false);
 			expect(grid.rows[1].isSelected).toBe(true);
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
 			expect(grid.rows[0].isSelected).toBe(false);
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false);
 			expect(grid.rows[1].isSelected).toBe(false);
 		});
 
@@ -96,14 +96,14 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			grid.rows[0].visible = true;
 			grid.rows[1].visible = false;
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false, true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, true);
 			expect(grid.rows[0].isSelected).toBe(true);
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true, false, true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, true);
 			expect(grid.rows[1].isSelected).toBe(true);
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false, true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, true);
 			expect(grid.rows[0].isSelected).toBe(false);
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true, false, true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, true);
 			expect(grid.rows[1].isSelected).toBe(false);
 		});
 
@@ -113,15 +113,15 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			grid.rows[2].visible = false;
 			grid.rows[2].isSelected = true;
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, false);
 			expect(grid.rows[0].isSelected).toBe(true);
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], true, false, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, false);
 			expect(grid.rows[1].isSelected).toBe(false);
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], true, false, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, false);
 			expect(grid.rows[0].isSelected).toBe(false);
 
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[2], true, false, false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[2], null, true, false, false);
 			expect(grid.rows[2].isSelected).toBe(true);
 		});
 
