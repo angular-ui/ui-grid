@@ -394,7 +394,7 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			};
 
 			expect(grid.api.selection.getSelectedRows().length).toEqual(2);
-			expect(grid.api.selection.getSelectedGridRows().length).toEqual(2);
+			expect(grid.api.selection.getSelectedGridRows().length).toEqual(3);
 		});
 
 		it('should retrieve correct data', function() {
@@ -430,7 +430,7 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			grid.rows[2].entity = {};
 			grid.rows[3].entity = {};
 
-			expect(grid.api.selection.getUnSelectedRows().length).toEqual(8);
+			expect(grid.api.selection.getUnSelectedRows().length).toEqual(6);
 			expect(grid.api.selection.getUnSelectedGridRows().length).toEqual(7);
 		});
 
