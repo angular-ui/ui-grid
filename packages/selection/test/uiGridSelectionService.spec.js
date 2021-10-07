@@ -77,6 +77,49 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			expect(grid.rows[1].isSelected).toBe(true);
 		});
 
+		it('should toggle selected with invisible rows using default', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false);
+			expect(grid.rows[1].isSelected).toBe(true);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false);
+			expect(grid.rows[0].isSelected).toBe(false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false);
+			expect(grid.rows[1].isSelected).toBe(false);
+		});
+
+		it('should toggle selected with invisible rows but not using default', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false, true);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false, true);
+			expect(grid.rows[1].isSelected).toBe(true);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false, true);
+			expect(grid.rows[0].isSelected).toBe(false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false, true);
+			expect(grid.rows[1].isSelected).toBe(false);
+		});
+
+		it('should toggle selected with visible rows', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false, false);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, false, false);
+			expect(grid.rows[1].isSelected).toBe(false);
+			
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, false, false);
+			expect(grid.rows[0].isSelected).toBe(false);
+		});
+
 		it('should not toggle selected with enableSelection: false', function() {
 			grid.rows[0].enableSelection = false;
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true);
