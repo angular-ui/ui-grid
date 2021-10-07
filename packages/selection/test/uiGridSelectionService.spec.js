@@ -110,6 +110,8 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 		it('should toggle selected with visible rows', function() {
 			grid.rows[0].visible = true;
 			grid.rows[1].visible = false;
+			grid.rows[2].visible = false;
+			grid.rows[2].isSelected = true;
 
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
 			expect(grid.rows[0].isSelected).toBe(true);
@@ -118,9 +120,9 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
 			expect(grid.rows[0].isSelected).toBe(false);
-			grid.rows[1].isSelected = true;
-			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false);
-			expect(grid.rows[1].isSelected).toBe(true);
+			
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[2], null, true, false);
+			expect(grid.rows[2].isSelected).toBe(true);
 		});
 
 		it('should not toggle selected with enableSelection: false', function() {
