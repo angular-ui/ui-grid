@@ -120,7 +120,7 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
 			expect(grid.rows[0].isSelected).toBe(false);
-			
+
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[2], null, true, false);
 			expect(grid.rows[2].isSelected).toBe(true);
 		});
