@@ -232,6 +232,13 @@
            * @description The default filename to use when saving the downloaded csv.
            * This will only work in some browsers.
            * <br/>Defaults to 'download.csv'
+           * <pre>
+           *   gridOptions.exporterCsvFilename = "rows.csv"
+           * </pre>
+           * <br/>Or a function returning a string:
+           * <pre>
+           *   gridOptions.exporterCsvFilename = function(grid, rowTypes, colTypes) { return "rows" + rowTypes + ".csv" };
+           * </pre>
            */
           gridOptions.exporterCsvFilename = gridOptions.exporterCsvFilename ? gridOptions.exporterCsvFilename : 'download.csv';
           /**
@@ -831,7 +838,8 @@
             var exportData = self.getData(grid, rowTypes, colTypes);
             var csvContent = self.formatAsCsv(exportColumnHeaders, exportData, grid.options.exporterCsvColumnSeparator);
 
-            self.downloadFile (grid.options.exporterCsvFilename, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility, grid.options.exporterIsExcelCompatible);
+            var fileName = angular.isFunction(grid.options.exporterCsvFilename) ? grid.options.exporterCsvFilename(grid, rowTypes, colTypes) : grid.options.exporterCsvFilename;
+            self.downloadFile(fileName, csvContent, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility, grid.options.exporterIsExcelCompatible);
           });
         },
 
