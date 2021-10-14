@@ -262,6 +262,13 @@
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default filename to use when saving the downloaded excel, only used in IE (other browsers open excels in a new window)
            * <br/>Defaults to 'download.xlsx'
+           * <pre>
+           *   gridOptions.exporterExcelFilename = "rows.xlsx"
+           * </pre>
+           * <br/>Or a function returning a string:
+           * <pre>
+           *   gridOptions.exporterExcelFilename = function(grid, rowTypes, colTypes) { return "rows" + rowTypes + ".xlsx" };
+           * </pre>
            */
           gridOptions.exporterExcelFilename = gridOptions.exporterExcelFilename ? gridOptions.exporterExcelFilename : 'download.xlsx';
 
@@ -271,6 +278,13 @@
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default sheetname to use when saving the downloaded to excel
            * <br/>Defaults to 'Sheet1'
+           * <pre>
+           *   gridOptions.exporterExcelSheetName = "HitListSheet"
+           * </pre>
+           * <br/>Or a function returning a string:
+           * <pre>
+           *   gridOptions.exporterExcelSheetName = function(grid, rowTypes, colTypes) { return "HitListSheet" + rowTypes };
+           * </pre>
            */
           gridOptions.exporterExcelSheetName = gridOptions.exporterExcelSheetName ? gridOptions.exporterExcelSheetName : 'Sheet1';
 
@@ -1624,9 +1638,13 @@
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
 
-            var workbook = new ExcelBuilder.Workbook();
-            var aName = grid.options.exporterExcelSheetName ? grid.options.exporterExcelSheetName : 'Sheet1';
+            var aName = 'Sheet1';
+            if (grid.options.exporterExcelSheetName) {
+              aName = angular.isFunction(grid.options.exporterExcelSheetName) ? grid.options.exporterExcelSheetName(grid, rowTypes, colTypes) : grid.options.exporterExcelSheetName;
+            }
+
             var sheet = new ExcelBuilder.Worksheet({name: aName});
+            var workbook = new ExcelBuilder.Workbook();
             workbook.addWorksheet(sheet);
             var docDefinition = self.prepareAsExcel(grid, workbook, sheet);
 
@@ -1649,8 +1667,8 @@
             sheet.setData(sheet.data.concat(excelContent));
 
             ExcelBuilder.Builder.createFile(workbook, {type: 'blob'}).then(function(result) {
-              self.downloadFile (grid.options.exporterExcelFilename, result, grid.options.exporterCsvColumnSeparator,
-                grid.options.exporterOlderExcelCompatibility);
+              var fileName = angular.isFunction(grid.options.exporterExcelFilename) ? grid.options.exporterExcelFilename(grid, rowTypes, colTypes) : grid.options.exporterExcelFilename;
+              self.downloadFile(fileName, result, grid.options.exporterCsvColumnSeparator, grid.options.exporterOlderExcelCompatibility);
             });
           });
         }
