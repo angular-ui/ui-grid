@@ -1059,10 +1059,9 @@ describe('ui.grid.exporter', function() {
         uiGridExporterService.pdfExport(grid, uiGridExporterConstants.ALL);
         expect(uiGridExporterService.loadAllDataIfNeeded).toHaveBeenCalled();
       });
-      
       it('calls exporterPdfFilename', function() {
         spyOn(uiGridExporterService, 'exporterPdfFilename');
-        grid.options.exporterCsvFilename = function(grid, rowTypes, colTypes) {
+        grid.options.exporterPdfFilename = function(grid, rowTypes, colTypes) {
           if (!grid) {
             throw Error("got erroneous Parameter: no grid");
           }
@@ -1076,9 +1075,8 @@ describe('ui.grid.exporter', function() {
         }
 
         uiGridExporterService.pdfExport(grid, uiGridExporterConstants.ALL);
-        expect(uiGridExporterService.exporterCsvFilename).toHaveBeenCalled();
+        expect(uiGridExporterService.exporterPdfFilename).toHaveBeenCalled();
       });
-      
     });
 
     describe('prepareAsPdf', function() {
@@ -1379,7 +1377,6 @@ describe('ui.grid.exporter', function() {
         uiGridExporterService.excelExport(grid, uiGridExporterConstants.ALL);
         expect(uiGridExporterService.exporterExcelFilename).toHaveBeenCalled();
       });
-      
       it('calls exporterExcelSheetName', function() {
         spyOn(uiGridExporterService, 'exporterExcelSheetName');
         grid.options.exporterExcelSheetName = function(grid, rowTypes, colTypes) {
