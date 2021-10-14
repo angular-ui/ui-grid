@@ -45,7 +45,9 @@
 
         if (interpolateFn) {
           $scope.$watch(interpolateFn, function(value) {
-            $elm.text(value);
+            for (let i = 0; i < $elm.length; i++) {
+              $elm[i].textContent = value;
+            }
           });
         }
       }
