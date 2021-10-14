@@ -247,6 +247,13 @@
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description The default filename to use when saving the downloaded pdf, only used in IE (other browsers open pdfs in a new window)
            * <br/>Defaults to 'download.pdf'
+           * <pre>
+           *   gridOptions.exporterPdfFilename = "rows.pdf"
+           * </pre>
+           * <br/>Or a function returning a string:
+           * <pre>
+           *   gridOptions.exporterPdfFilename = function(grid, rowTypes, colTypes) { return "rows" + rowTypes + ".pdf" };
+           * </pre>
            */
           gridOptions.exporterPdfFilename = gridOptions.exporterPdfFilename ? gridOptions.exporterPdfFilename : 'download.pdf';
           /**
@@ -1276,7 +1283,8 @@
               docDefinition = self.prepareAsPdf(grid, exportColumnHeaders, exportData);
 
             if (self.isIE() || navigator.appVersion.indexOf('Edge') !== -1) {
-              self.downloadPDF(grid.options.exporterPdfFilename, docDefinition);
+              var fileName = angular.isFunction(grid.options.exporterPdfFilename) ? grid.options.exporterPdfFilename(grid, rowTypes, colTypes) : grid.options.exporterPdfFilename;
+              self.downloadPDF(fileName, docDefinition);
             } else {
               pdfMake.createPdf(docDefinition).open();
             }
