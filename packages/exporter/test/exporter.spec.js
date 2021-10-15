@@ -738,19 +738,6 @@ describe('ui.grid.exporter', function() {
             callback();
           }
         });
-        spyOn(uiGridExporterService, 'exporterCsvFilename');
-        grid.options.exporterCsvFilename = function(grid, rowTypes, colTypes) {
-          if (!grid) {
-            throw Error("got erroneous Parameter: no grid");
-          }
-          if (rowTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: rowTypes != uiGridExporterConstants.VISIBLE");
-          }
-          if (colTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: colTypes != uiGridExporterConstants.VISIBLE");
-          }
-          return "test";
-        }
         uiGridExporterService.csvExport(grid, uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE);
       });
       afterEach(function() {
@@ -762,9 +749,6 @@ describe('ui.grid.exporter', function() {
       });
       it('calls downloadFile', function() {
         expect(uiGridExporterService.downloadFile).toHaveBeenCalled();
-      });
-      it('calls exporterCsvFilename', function() {
-        expect(uiGridExporterService.exporterCsvFilename).toHaveBeenCalled();
       });
     });
 
@@ -789,7 +773,7 @@ describe('ui.grid.exporter', function() {
         it('calls exporterAllDataFn', function() {
           expect(grid.options.exporterAllDataFn).toHaveBeenCalled();
         });
-        it('calls exporterAllDataFn', function() {
+        it('calls modifyRows', function() {
           expect(grid.modifyRows).toHaveBeenCalled();
         });
       });
@@ -1058,24 +1042,6 @@ describe('ui.grid.exporter', function() {
         });
         uiGridExporterService.pdfExport(grid, uiGridExporterConstants.ALL);
         expect(uiGridExporterService.loadAllDataIfNeeded).toHaveBeenCalled();
-      });
-      it('calls exporterPdfFilename', function() {
-        spyOn(uiGridExporterService, 'exporterPdfFilename');
-        grid.options.exporterPdfFilename = function(grid, rowTypes, colTypes) {
-          if (!grid) {
-            throw Error("got erroneous Parameter: no grid");
-          }
-          if (rowTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: rowTypes != uiGridExporterConstants.VISIBLE");
-          }
-          if (colTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: colTypes != uiGridExporterConstants.VISIBLE");
-          }
-          return "test";
-        }
-
-        uiGridExporterService.pdfExport(grid, uiGridExporterConstants.ALL);
-        expect(uiGridExporterService.exporterPdfFilename).toHaveBeenCalled();
       });
     });
 
@@ -1357,43 +1323,6 @@ describe('ui.grid.exporter', function() {
         });
         uiGridExporterService.excelExport(grid, uiGridExporterConstants.ALL);
         expect(uiGridExporterService.loadAllDataIfNeeded).toHaveBeenCalled();
-      });
-      
-      it('calls exporterExcelFilename', function() {
-        spyOn(uiGridExporterService, 'exporterExcelFilename');
-        grid.options.exporterExcelFilename = function(grid, rowTypes, colTypes) {
-          if (!grid) {
-            throw Error("got erroneous Parameter: no grid");
-          }
-          if (rowTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: rowTypes != uiGridExporterConstants.VISIBLE");
-          }
-          if (colTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: colTypes != uiGridExporterConstants.VISIBLE");
-          }
-          return "test";
-        }
-
-        uiGridExporterService.excelExport(grid, uiGridExporterConstants.ALL);
-        expect(uiGridExporterService.exporterExcelFilename).toHaveBeenCalled();
-      });
-      it('calls exporterExcelSheetName', function() {
-        spyOn(uiGridExporterService, 'exporterExcelSheetName');
-        grid.options.exporterExcelSheetName = function(grid, rowTypes, colTypes) {
-          if (!grid) {
-            throw Error("got erroneous Parameter: no grid");
-          }
-          if (rowTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: rowTypes != uiGridExporterConstants.VISIBLE");
-          }
-          if (colTypes != uiGridExporterConstants.VISIBLE) {
-            throw Error("got erroneous Parameter: colTypes != uiGridExporterConstants.VISIBLE");
-          }
-          return "test";
-        }
-
-        uiGridExporterService.excelExport(grid, uiGridExporterConstants.ALL);
-        expect(uiGridExporterService.exporterExcelSheetName).toHaveBeenCalled();
       });
     });
   });
