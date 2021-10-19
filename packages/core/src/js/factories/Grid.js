@@ -1093,6 +1093,50 @@ angular.module('ui.grid')
     return rows.length > 0 ? rows[0] : null;
   };
 
+  /**
+   * @ngdoc function
+   * @name getRowsByKey
+   * @methodOf ui.grid.class:Grid
+   * @description returns the GridRows who have an key that is equal to comparator
+   * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+   * @param {(string|number)} key the key to look for
+   * @param {any} comparator the value that key should have
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
+   * looks in grid.rows
+   */
+  Grid.prototype.getRowsByKey = function getRowsByKey(isInEntity, key, comparator, lookInRows) {
+    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    var func = isInEntity ? function (row) {
+      return row.entity != void 0 && row.entity[key] === comparator;
+    } : function (row) {
+      return row[key] === comparator;
+    }
+
+    return lookInRows.filter(func);
+  };
+
+  /**
+   * @ngdoc function
+   * @name findRowByKey
+   * @methodOf ui.grid.class:Grid
+   * @description returns the first GridRow which has an key that is equal to comparator
+   * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+   * @param {(string|number)} key the key to look for
+   * @param {any} comparator the value that key should have
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
+   * looks in grid.rows
+   */
+  Grid.prototype.findRowByKey = function findRowByKey(isInEntity, key, comparator, lookInRows) {
+    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    var func = isInEntity ? function (row) {
+      return row.entity != void 0 && row.entity[key] === comparator;
+    } : function (row) {
+      return row[key] === comparator;
+    }
+
+    rows = lookInRows.filter(func);
+    return rows.length > 0 ? rows[0] : null;
+  };
 
   /**
    * @ngdoc function
