@@ -324,14 +324,14 @@ describe('Grid factory', function() {
 		});
 	});
 
-	describe('getting Rows', function(){
-		it('should get Rows', function(){
+	describe('getting Rows', function() {
+		it('should get Rows', function() {
 			expect(grid.getRow()).toBe(null);
 			expect(grid.getRows(grid.rows[0].entity)).toBe(grid.rows[0]);
 			expect(grid.getRows(grid.rows[0].entity), [grid.rows[0]]).toBe(grid.rows[0]);
 		});
 
-		it('should get Rows by key', function(){
+		it('should get Rows by key', function() {
 			grid.rows[0].entity = {str: 'abc', num: 123, nll: null, multi: true};
 			grid.rows[1].entity = {multi: true};
 			grid.rows[0].str = 'abc';
@@ -356,7 +356,7 @@ describe('Grid factory', function() {
 			expect(grid.getRowsByKey(true, "innerMulti", false).length).toBe(2);
 		});
 
-		it('should find first Row by key', function(){
+		it('should find first Row by key', function() {
 			grid.rows[0].entity = {str: 'abc', num: 123, nll: null, multi: true};
 			grid.rows[1].entity = {multi: true};
 			grid.rows[0].str = 'abc';
