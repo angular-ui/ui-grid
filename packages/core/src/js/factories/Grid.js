@@ -686,10 +686,16 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
+    if (angular.isFunction(this.columns.find)) {
+      return this.columns.find(function (column) {
+        return column.colDef.name === name;
+      }) || null;
+    }
+
     var result = null;
-    lookInRows.every(function (row) {
+    this.columns.every(function (column) {
       if ( column.colDef.name === name ) {
-        result = row;
+        result = column;
         return false;
       }
       return true;
@@ -705,10 +711,16 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
+    if (angular.isFunction(this.options.columnsDefs.find)) {
+      return this.options.columnsDefs.find(function (colDef) {
+        return colDef.name === name;
+      }) || null;
+    }
+
     var result = null;
-    lookInRows.every(function (row) {
+    this.options.columnsDefs.every(function (colDef) {
       if ( colDef.name === name ) {
-        result = row;
+        result = colDef;
         return false;
       }
       return true;
@@ -1094,6 +1106,11 @@ angular.module('ui.grid')
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    if (angular.isFunction(lookInRows.find)) {
+      return lookInRows.find(function (row) {
+        return self.options.rowEquality(row.entity, rowEntity);
+      }) || null;
+    }
 
     var result = null;
     lookInRows.every(function (row) {
