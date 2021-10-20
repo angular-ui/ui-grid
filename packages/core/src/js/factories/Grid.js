@@ -1128,14 +1128,23 @@ angular.module('ui.grid')
    */
   Grid.prototype.findRowByKey = function findRowByKey(isInEntity, key, comparator, lookInRows) {
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    var result = null;
     var func = isInEntity ? function (row) {
-      return row.entity != void 0 && row.entity[key] === comparator;
+      if ( row.entity != void 0 && row.entity[key] === comparator ) {
+        result = row;
+        return false;
+      }
+      return true;
     } : function (row) {
-      return row[key] === comparator;
+      if ( row[key] === comparator ) {
+        result = row;
+        return false;
+      }
+      return true;
     }
 
-    rows = lookInRows.filter(func);
-    return rows.length > 0 ? rows[0] : null;
+    lookInRows.every(func);
+    return result
   };
 
   /**
