@@ -686,11 +686,15 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
-    var columns = this.columns.filter(function (column) {
-      return column.colDef.name === name;
+    var result = null;
+    lookInRows.every(function (row) {
+      if ( column.colDef.name === name ) {
+        result = row;
+        return false;
+      }
+      return true;
     });
-
-    return columns.length > 0 ? columns[0] : null;
+    return result;
   };
 
   /**
@@ -701,10 +705,15 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
-    var colDefs = this.options.columnDefs.filter(function (colDef) {
-      return colDef.name === name;
+    var result = null;
+    lookInRows.every(function (row) {
+      if ( colDef.name === name ) {
+        result = row;
+        return false;
+      }
+      return true;
     });
-    return colDefs.length > 0 ? colDefs[0] : null;
+    return result;
   };
 
   /**
@@ -1084,13 +1093,17 @@ angular.module('ui.grid')
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
+    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
 
-    lookInRows = typeof(lookInRows) === 'undefined' ? self.rows : lookInRows;
-
-    var rows = lookInRows.filter(function (row) {
-      return self.options.rowEquality(row.entity, rowEntity);
+    var result = null;
+    lookInRows.every(function (row) {
+      if ( self.options.rowEquality(row.entity, rowEntity) ) {
+        result = row;
+        return false;
+      }
+      return true;
     });
-    return rows.length > 0 ? rows[0] : null;
+    return result;
   };
 
 
