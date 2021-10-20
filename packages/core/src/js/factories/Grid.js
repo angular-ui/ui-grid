@@ -686,21 +686,9 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
-    if (this.columns && angular.isFunction(this.columns.find)) {
-      return this.columns.find(function (column) {
-        return column.colDef.name === name;
-      }) || null;
-    }
-
-    var result = null;
-    this.columns.every(function (column) {
-      if ( column.colDef.name === name ) {
-        result = column;
-        return false;
-      }
-      return true;
+    return arrayFinder(this.columns, function (column) {
+      return column.colDef.name === name;
     });
-    return result;
   };
 
   /**
@@ -711,21 +699,9 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
-    if (this.options.columnsDefs && angular.isFunction(this.options.columnsDefs.find)) {
-      return this.options.columnsDefs.find(function (colDef) {
-        return colDef.name === name;
-      }) || null;
-    }
-
-    var result = null;
-    this.options.columnsDefs.every(function (colDef) {
-      if ( colDef.name === name ) {
-        result = colDef;
-        return false;
-      }
-      return true;
+    return arrayFinder(this.options.columnDefs, function (colDef) {
+      return colDef.name === name;
     });
-    return result;
   };
 
   /**
@@ -1094,6 +1070,25 @@ angular.module('ui.grid')
     return t;
   };
 
+  var arrayFinder = function(array, func) {
+    if (array && array.length) {
+      var arr = [];
+      if (angular.isFunction(array.find)) {
+        return arr.push(array.find(func))[0] || null;
+      }
+
+      array.every(function (entry) {
+        if ( func(entry) ) {
+          arr.push(entry);
+          return false;
+        }
+        return true;
+      });
+      return arr.length ? arr[0] : null;
+    }
+    return null;
+  }
+
   /**
    * @ngdoc function
    * @name getRow
@@ -1106,21 +1101,9 @@ angular.module('ui.grid')
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
-    if (lookInRows && angular.isFunction(lookInRows.find)) {
-      return lookInRows.find(function (row) {
-        return self.options.rowEquality(row.entity, rowEntity);
-      }) || null;
-    }
-
-    var result = null;
-    lookInRows.every(function (row) {
-      if ( self.options.rowEquality(row.entity, rowEntity) ) {
-        result = row;
-        return false;
-      }
-      return true;
+    return arrayFinder(lookInRows, function (row) {
+      return self.options.rowEquality(row.entity, rowEntity);
     });
-    return result;
   };
 
 
