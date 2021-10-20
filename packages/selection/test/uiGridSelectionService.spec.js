@@ -230,8 +230,9 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 		});
 
 		it('select by key then unselect rows by key outside entity, including selecting rows already selected and unselecting rows not selected', function() {
-			grid.rows[4] = {str: 'abc'};
-			grid.rows[6] = {str: 'def'};
+			grid.rows[4].str = 'abc';
+			grid.rows[6].str = 'def';
+
 			grid.api.selection.selectRowByKey(false, "str", "abc");
 			expect(grid.rows[4].isSelected).toBe(true);
 

@@ -201,7 +201,7 @@
                  */
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null) {
+                  if (row != void 0) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -215,7 +215,7 @@
                  */
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && !row.isSelected) {
+                  if (row != void 0 && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -232,7 +232,7 @@
                  */
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
+                  if (row != void 0 && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -249,7 +249,7 @@
                 */
                 selectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
                   var row = grid.findRowByKey(isInEntity, key, comparator, lookInRows);
-                  if (row !== null && !row.isSelected) {
+                  if (row != void 0 && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -263,7 +263,7 @@
                  */
                 unSelectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && row.isSelected) {
+                  if (row != void 0 && row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -280,7 +280,7 @@
                  */
                 unSelectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof (row) !== 'undefined' && row.isSelected) {
+                  if (row != void 0 && row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },
@@ -297,7 +297,7 @@
                 */
                 unSelectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
                   var row = grid.findRowByKey(isInEntity, key, comparator, lookInRows);
-                  if (row !== null && !row.isSelected) {
+                  if (row != void 0 && row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect);
                   }
                 },

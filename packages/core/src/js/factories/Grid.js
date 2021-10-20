@@ -1105,11 +1105,15 @@ angular.module('ui.grid')
    * looks in grid.rows
    */
   Grid.prototype.getRowsByKey = function getRowsByKey(isInEntity, key, comparator, lookInRows) {
+    if ( key == void 0 ) {
+      return null;
+    }
+
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
     var func = isInEntity ? function (row) {
-      return row.entity != void 0 && row.entity[key] === comparator;
+      return row.entity != void 0 && row.entity.hasOwnProperty(key) && row.entity[key] === comparator;
     } : function (row) {
-      return row[key] === comparator;
+      return row.hasOwnProperty(key) && row[key] === comparator;
     }
 
     return lookInRows.filter(func);
@@ -1127,23 +1131,25 @@ angular.module('ui.grid')
    * looks in grid.rows
    */
   Grid.prototype.findRowByKey = function findRowByKey(isInEntity, key, comparator, lookInRows) {
-    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
     var result = null;
-    var func = isInEntity ? function (row) {
-      if ( row.entity != void 0 && row.entity[key] === comparator ) {
-        result = row;
-        return false;
+    if ( key != void 0 ) {
+      lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+      var func = isInEntity ? function (row) {
+        if ( row.entity != void 0 && row.entity.hasOwnProperty(key) && row.entity[key] === comparator ) {
+          result = row;
+          return false;
+        }
+        return true;
+      } : function (row) {
+        if ( row.hasOwnProperty(key) && row[key] === comparator ) {
+          result = row;
+          return false;
+        }
+        return true;
       }
-      return true;
-    } : function (row) {
-      if ( row[key] === comparator ) {
-        result = row;
-        return false;
-      }
-      return true;
-    }
 
-    lookInRows.every(func);
+      lookInRows.every(func);
+    }
     return result
   };
 
