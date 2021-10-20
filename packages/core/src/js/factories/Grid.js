@@ -686,7 +686,7 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
-    if (angular.isFunction(this.columns.find)) {
+    if (this.columns && angular.isFunction(this.columns.find)) {
       return this.columns.find(function (column) {
         return column.colDef.name === name;
       }) || null;
@@ -711,7 +711,7 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
-    if (angular.isFunction(this.options.columnsDefs.find)) {
+    if (this.options.columnsDefs && angular.isFunction(this.options.columnsDefs.find)) {
       return this.options.columnsDefs.find(function (colDef) {
         return colDef.name === name;
       }) || null;
@@ -1106,7 +1106,7 @@ angular.module('ui.grid')
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
-    if (angular.isFunction(lookInRows.find)) {
+    if (lookInRows && angular.isFunction(lookInRows.find)) {
       return lookInRows.find(function (row) {
         return self.options.rowEquality(row.entity, rowEntity);
       }) || null;
