@@ -686,7 +686,7 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
-    return arrayFinder(this.columns, function (column) {
+    return rowColumnFinder(this.columns, function (column) {
       return column.colDef.name === name;
     });
   };
@@ -699,7 +699,7 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
-    return arrayFinder(this.options.columnDefs, function (colDef) {
+    return rowColumnFinder(this.options.columnDefs, function (colDef) {
       return colDef.name === name;
     });
   };
@@ -1070,21 +1070,21 @@ angular.module('ui.grid')
     return t;
   };
 
-  var arrayFinder = function(array, func) {
+  var rowColumnFinder = function(array, func) {
     if (array && array.length) {
-      var arr = [];
       if (angular.isFunction(array.find)) {
-        return arr.push(array.find(func))[0] || null;
+        return array.find(func) || null;
       }
 
+      var result = null;
       array.every(function (entry) {
-        if ( func(entry) ) {
-          arr.push(entry);
+        if (func(entry)) {
+          result = entry;
           return false;
         }
         return true;
       });
-      return arr.length ? arr[0] : null;
+      return result;
     }
     return null;
   }
@@ -1101,7 +1101,7 @@ angular.module('ui.grid')
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
     lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
-    return arrayFinder(lookInRows, function (row) {
+    return rowColumnFinder(lookInRows, function (row) {
       return self.options.rowEquality(row.entity, rowEntity);
     });
   };
