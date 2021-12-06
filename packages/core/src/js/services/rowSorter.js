@@ -122,7 +122,10 @@ module.service('rowSorter', ['uiGridConstants', function (uiGridConstants) {
 
 
   function parseNumStr(numStr) {
-    return parseFloat(numStr.replace(/[^0-9.-]/g, ''));
+    if (/^\s*-?Infinity\s*$/.test(numStr)) { // check for positive or negative Infinity and return that
+      return parseFloat(numStr);
+    }
+    return parseFloat(numStr.replace(/[^0-9.eE-]/g, ''));
   }
 
 
