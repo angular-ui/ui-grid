@@ -773,7 +773,7 @@ describe('ui.grid.exporter', function() {
         it('calls exporterAllDataFn', function() {
           expect(grid.options.exporterAllDataFn).toHaveBeenCalled();
         });
-        it('calls exporterAllDataFn', function() {
+        it('calls modifyRows', function() {
           expect(grid.modifyRows).toHaveBeenCalled();
         });
       });

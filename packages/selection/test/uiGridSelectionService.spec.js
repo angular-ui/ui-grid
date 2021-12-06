@@ -77,6 +77,54 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			expect(grid.rows[1].isSelected).toBe(true);
 		});
 
+		it('should toggle selected with invisible rows using default', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false);
+			expect(grid.rows[1].isSelected).toBe(true);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false);
+			expect(grid.rows[0].isSelected).toBe(false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false);
+			expect(grid.rows[1].isSelected).toBe(false);
+		});
+
+		it('should toggle selected with invisible rows but not using default', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, true);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, true);
+			expect(grid.rows[1].isSelected).toBe(true);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, true);
+			expect(grid.rows[0].isSelected).toBe(false);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, true);
+			expect(grid.rows[1].isSelected).toBe(false);
+		});
+
+		it('should toggle selected with visible rows', function() {
+			grid.rows[0].visible = true;
+			grid.rows[1].visible = false;
+			grid.rows[2].visible = false;
+			grid.rows[2].isSelected = true;
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, false);
+			expect(grid.rows[0].isSelected).toBe(true);
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[1], null, true, false, false);
+			expect(grid.rows[1].isSelected).toBe(false);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true, false, false);
+			expect(grid.rows[0].isSelected).toBe(false);
+
+			uiGridSelectionService.toggleRowSelection(grid, grid.rows[2], null, true, false, false);
+			expect(grid.rows[2].isSelected).toBe(true);
+		});
+
 		it('should not toggle selected with enableSelection: false', function() {
 			grid.rows[0].enableSelection = false;
 			uiGridSelectionService.toggleRowSelection(grid, grid.rows[0], null, true);
@@ -123,8 +171,10 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 		it('should utilize public apis', function() {
 			grid.api.selection.toggleRowSelection(grid.rows[0].entity);
 			expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(1);
+			expect(uiGridSelectionService.getUnSelectedRows(grid).length).toBe(9);
 			grid.api.selection.clearSelectedRows();
 			expect(uiGridSelectionService.getSelectedRows(grid).length).toBe(0);
+			expect(uiGridSelectionService.getUnSelectedRows(grid).length).toBe(10);
 		});
 	});
 
@@ -431,6 +481,11 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 	});
 
 	describe('getSelectedRows function', function() {
+		it('should retrieve empty array if nothing selected', function() {
+			expect(grid.api.selection.getSelectedRows().length).toBe(0);
+			expect(grid.api.selection.getSelectedGridRows().length).toBe(0);
+		});
+
 		it('should retrieve the selected rows that have a $$hashKey property', function() {
 			grid.rows.forEach(function(row) {
 				row.isSelected = false;
@@ -450,6 +505,56 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			};
 
 			expect(grid.api.selection.getSelectedRows().length).toEqual(2);
+			expect(grid.api.selection.getSelectedGridRows().length).toEqual(3);
+		});
+
+		it('should retrieve correct data', function() {
+			grid.rows[0].isSelected = true;
+			grid.rows[0].entity = {
+				$$hashKey: '1234'
+			};
+
+			expect(grid.api.selection.getSelectedRows()[0].$$hashKey).toEqual('1234');
+			expect(grid.api.selection.getSelectedGridRows()[0].entity).toEqual({
+				$$hashKey: '1234'
+			});
+		});
+	});
+
+	describe('getUnSelectedRows function', function() {
+		it('should retrieve every row if nothing selected', function() {
+			expect(grid.api.selection.getUnSelectedRows().length).toEqual(10);
+			expect(grid.api.selection.getUnSelectedGridRows().length).toEqual(10);
+		});
+
+		it('should retrieve the unselected rows that have a $$hashKey property', function() {
+			grid.rows.forEach(function(row) {
+				row.isSelected = false;
+				row.entity = {
+					$$hashKey: '1234'
+				};
+			});
+
+			grid.rows[0].isSelected = true;
+			grid.rows[1].isSelected = true;
+			grid.rows[2].isSelected = true;
+			grid.rows[2].entity = {};
+			grid.rows[3].entity = {};
+
+			expect(grid.api.selection.getUnSelectedRows().length).toEqual(6);
+			expect(grid.api.selection.getUnSelectedGridRows().length).toEqual(7);
+		});
+
+		it('should retrieve correct data', function() {
+			grid.rows[0].isSelected = false;
+			grid.rows[0].entity = {
+				$$hashKey: '1234'
+			};
+
+			expect(grid.api.selection.getUnSelectedRows()[0].$$hashKey).toEqual('1234');
+			expect(grid.api.selection.getUnSelectedGridRows()[0].entity).toEqual({
+				$$hashKey: '1234'
+			});
 		});
 	});
 
