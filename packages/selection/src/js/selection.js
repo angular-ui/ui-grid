@@ -201,7 +201,7 @@
                  */
                 toggleRowSelection: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null) {
+                  if (row != void 0 && row !== null) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
@@ -215,7 +215,7 @@
                  */
                 selectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && !row.isSelected) {
+                  if (row != void 0 && row !== null && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
@@ -232,7 +232,24 @@
                  */
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
+                  if (row != void 0 && row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name selectRowByKey
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Select the data row
+                 * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+                 * @param {Symbol} key the key to look for
+                 * @param {any} comparator the value that key should have
+                 * @param {Event} evt object if raised from an event
+                 * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
+                */
+                selectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
+                  var row = grid.findRowByKey(isInEntity, key, comparator, lookInRows);
+                  if (row != void 0 && row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
                   }
                 },
@@ -246,7 +263,7 @@
                  */
                 unSelectRow: function (rowEntity, evt) {
                   var row = grid.getRow(rowEntity);
-                  if (row !== null && row.isSelected) {
+                  if (row != void 0 && row !== null && row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, true);
                   }
                 },
@@ -263,7 +280,24 @@
                  */
                 unSelectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
-                  if (row !== null && typeof (row) !== 'undefined' && row.isSelected) {
+                  if (row != void 0 && row !== null && typeof (row) !== 'undefined' &&  row.isSelected) {
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
+                  }
+                },
+                /**
+                 * @ngdoc function
+                 * @name unSelectRowByKey
+                 * @methodOf  ui.grid.selection.api:PublicApi
+                 * @description Select the data row
+                 * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+                 * @param {(string|number)} key the key to look for
+                 * @param {any} comparator the value that key should have
+                 * @param {Event} evt object if raised from an event
+                 * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
+                */
+                unSelectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
+                  var row = grid.findRowByKey(isInEntity, key, comparator, lookInRows);
+                  if (row != void 0 && row !== null && typeof (row) !== 'undefined' &&  row.isSelected) {
                     service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
                   }
                 },

@@ -1106,6 +1106,65 @@ angular.module('ui.grid')
     });
   };
 
+  /**
+   * @ngdoc function
+   * @name getRowsByKey
+   * @methodOf ui.grid.class:Grid
+   * @description returns the GridRows who have an key that is equal to comparator
+   * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+   * @param {(string|number)} key the key to look for
+   * @param {any} comparator the value that key should have
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
+   * looks in grid.rows
+   */
+  Grid.prototype.getRowsByKey = function getRowsByKey(isInEntity, key, comparator, lookInRows) {
+    if ( key == void 0 ) {
+      return null;
+    }
+
+    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    var func = isInEntity ? function (row) {
+      return row.entity != void 0 && row.entity.hasOwnProperty(key) && row.entity[key] === comparator;
+    } : function (row) {
+      return row.hasOwnProperty(key) && row[key] === comparator;
+    }
+
+    return lookInRows.filter(func);
+  };
+
+  /**
+   * @ngdoc function
+   * @name findRowByKey
+   * @methodOf ui.grid.class:Grid
+   * @description returns the first GridRow which has an key that is equal to comparator
+   * @param {boolean} isInEntity if true then key is in entity else it's directly in row
+   * @param {(string|number)} key the key to look for
+   * @param {any} comparator the value that key should have
+   * @param {array} lookInRows [optional] the rows to look in - if not provided then
+   * looks in grid.rows
+   */
+  Grid.prototype.findRowByKey = function findRowByKey(isInEntity, key, comparator, lookInRows) {
+    var result = null;
+    if ( key != void 0 ) {
+      lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+      var func = isInEntity ? function (row) {
+        if ( row.entity != void 0 && row.entity.hasOwnProperty(key) && row.entity[key] === comparator ) {
+          result = row;
+          return false;
+        }
+        return true;
+      } : function (row) {
+        if ( row.hasOwnProperty(key) && row[key] === comparator ) {
+          result = row;
+          return false;
+        }
+        return true;
+      }
+
+      lookInRows.every(func);
+    }
+    return result
+  };
 
   /**
    * @ngdoc function

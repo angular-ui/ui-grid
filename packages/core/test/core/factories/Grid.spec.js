@@ -324,6 +324,64 @@ describe('Grid factory', function() {
 		});
 	});
 
+	describe('getting Rows', function() {
+		it('should get Rows', function() {
+			expect(grid.getRow()).toBe(null);
+			expect(grid.getRow(grid.rows[0].entity)).toBe(grid.rows[0]);
+			expect(grid.getRow(grid.rows[0].entity), [grid.rows[0]]).toBe(grid.rows[0]);
+		});
+
+		it('should get Rows by key', function() {
+			grid.rows[0].entity = {str: 'abc', num: 123, nll: null, multi: true};
+			grid.rows[1].entity = {multi: true};
+			grid.rows[0].str = 'abc';
+			grid.rows[0].num = 123;
+			grid.rows[0].nll = null;
+			grid.rows[0].innerMulti = false;
+			grid.rows[1].innerMulti = false;
+
+			expect(grid.getRowsByKey()).toBe(null);
+			expect(grid.getRowsByKey(true, "test")).toEqual([]);
+			expect(grid.getRowsByKey(true, "str", "abc")[0].entity).toBe(grid.rows[0].entity);
+			expect(grid.getRowsByKey(true, "str", "def")).toEqual([]);
+			expect(grid.getRowsByKey(true, "num", 123)[0].entity).toBe(grid.rows[0].entity);
+			expect(grid.getRowsByKey(true, "nll", null)[0].entity).toBe(grid.rows[0].entity);
+			expect(grid.getRowsByKey(true, "multi", true).length).toBe(2);
+
+			expect(grid.getRowsByKey(false, "test")).toEqual([]);
+			expect(grid.getRowsByKey(false, "str", "abc")).toEqual([grid.rows[0]]);
+			expect(grid.getRowsByKey(false, "str", "def")).toEqual([]);
+			expect(grid.getRowsByKey(false, "num", 123)).toEqual([grid.rows[0]]);
+			expect(grid.getRowsByKey(false, "nll", null)).toEqual([grid.rows[0]]);
+			expect(grid.getRowsByKey(false, "innerMulti", false).length).toBe(2);
+		});
+
+		it('should find first Row by key', function() {
+			grid.rows[0].entity = {str: 'abc', num: 123, nll: null, multi: true};
+			grid.rows[1].entity = {multi: true};
+			grid.rows[0].str = 'abc';
+			grid.rows[0].num = 123;
+			grid.rows[0].nll = null;
+			grid.rows[0].innerMulti = false;
+			grid.rows[1].innerMulti = false;
+
+			expect(grid.findRowByKey()).toBe(null);
+			expect(grid.findRowByKey(true, "test")).toBe(null);
+			expect(grid.findRowByKey(true, "str", "abc").entity).toBe(grid.rows[0].entity);
+			expect(grid.findRowByKey(true, "str", "def")).toBe(null);
+			expect(grid.findRowByKey(true, "num", 123).entity).toBe(grid.rows[0].entity);
+			expect(grid.findRowByKey(true, "nll", null).entity).toBe(grid.rows[0].entity);
+			expect(grid.findRowByKey(true, "multi", true).entity).toBe(grid.rows[0].entity);
+
+			expect(grid.findRowByKey(false, "test")).toBe(null);
+			expect(grid.findRowByKey(false, "str", "abc")).toBe(grid.rows[0]);
+			expect(grid.findRowByKey(false, "str", "def")).toBe(null);
+			expect(grid.findRowByKey(false, "num", 123)).toBe(grid.rows[0]);
+			expect(grid.findRowByKey(false, "nll", null)).toBe(grid.rows[0]);
+			expect(grid.findRowByKey(false, "innerMulti", false).entity).toBe(grid.rows[0].entity);
+		});
+	})
+
 	describe('buildColumns', function() {
 		it('guess correct column types when not specified', function() {
 			var dataRow = {str: 'abc', num: 123, dat: new Date(), bool: true, obj: {}, nll: null, negNum: -1, posNum: +1};

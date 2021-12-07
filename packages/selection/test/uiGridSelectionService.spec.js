@@ -247,6 +247,69 @@ describe('ui.grid.selection uiGridSelectionService', function() {
 			grid.api.selection.selectRow(grid.rows[4].entity);
 			expect(grid.rows[4].isSelected).toBe(false);
 		});
+
+		it('select by key then unselect rows by key in entity, including selecting rows already selected and unselecting rows not selected', function() {
+			grid.rows[4].entity = {str: 'abc'};
+			grid.rows[6].entity = {str: 'def'};
+			grid.api.selection.selectRowByKey(true, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(true);
+
+			grid.api.selection.selectRowByKey(true, "str", "def");
+			expect(grid.rows[4].isSelected).toBe(true);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.selectRowByKey(true, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(true);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(true, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(true, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(true, "str", "def");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(false);
+
+			grid.rows[4].enableSelection = false;
+			grid.api.selection.selectRowByKey(true, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+		});
+
+		it('select by key then unselect rows by key outside entity, including selecting rows already selected and unselecting rows not selected', function() {
+			grid.rows[4].str = 'abc';
+			grid.rows[6].str = 'def';
+
+			grid.api.selection.selectRowByKey(false, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(true);
+
+			grid.api.selection.selectRowByKey(false, "str", "def");
+			expect(grid.rows[4].isSelected).toBe(true);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.selectRowByKey(false, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(true);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(false, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(false, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(true);
+
+			grid.api.selection.unSelectRowByKey(false, "str", "def");
+			expect(grid.rows[4].isSelected).toBe(false);
+			expect(grid.rows[6].isSelected).toBe(false);
+
+			grid.rows[4].enableSelection = false;
+			grid.api.selection.selectRowByKey(false, "str", "abc");
+			expect(grid.rows[4].isSelected).toBe(false);
+		});
 	});
 
 	describe('setSelected function', function() {
