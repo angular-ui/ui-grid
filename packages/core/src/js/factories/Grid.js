@@ -686,11 +686,9 @@ angular.module('ui.grid')
    * @param {string} name column name
    */
   Grid.prototype.getColumn = function getColumn(name) {
-    var columns = this.columns.filter(function (column) {
+    return rowColumnFinder(this.columns, function (column) {
       return column.colDef.name === name;
     });
-
-    return columns.length > 0 ? columns[0] : null;
   };
 
   /**
@@ -701,10 +699,9 @@ angular.module('ui.grid')
    * @param {string} name column.field
    */
   Grid.prototype.getColDef = function getColDef(name) {
-    var colDefs = this.options.columnDefs.filter(function (colDef) {
+    return rowColumnFinder(this.options.columnDefs, function (colDef) {
       return colDef.name === name;
     });
-    return colDefs.length > 0 ? colDefs[0] : null;
   };
 
   /**
@@ -1073,6 +1070,25 @@ angular.module('ui.grid')
     return t;
   };
 
+  var rowColumnFinder = function(array, func) {
+    if (array && array.length) {
+      if (angular.isFunction(array.find)) {
+        return array.find(func) || null;
+      }
+
+      var result = null;
+      array.every(function (entry) {
+        if (func(entry)) {
+          result = entry;
+          return false;
+        }
+        return true;
+      });
+      return result;
+    }
+    return null;
+  }
+
   /**
    * @ngdoc function
    * @name getRow
@@ -1084,13 +1100,10 @@ angular.module('ui.grid')
    */
   Grid.prototype.getRow = function getRow(rowEntity, lookInRows) {
     var self = this;
-
-    lookInRows = typeof(lookInRows) === 'undefined' ? self.rows : lookInRows;
-
-    var rows = lookInRows.filter(function (row) {
+    lookInRows = lookInRows == void 0 ? this.rows : lookInRows;
+    return rowColumnFinder(lookInRows, function (row) {
       return self.options.rowEquality(row.entity, rowEntity);
     });
-    return rows.length > 0 ? rows[0] : null;
   };
 
   /**
