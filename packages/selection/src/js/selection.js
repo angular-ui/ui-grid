@@ -233,7 +233,7 @@
                 selectRowByVisibleIndex: function (rowNum, evt) {
                   var row = grid.renderContainers.body.visibleRowCache[rowNum];
                   if (row != void 0 && row !== null && typeof (row) !== 'undefined' && !row.isSelected) {
-                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false));
+                    service.toggleRowSelection(grid, row, evt, grid.options.multiSelect, grid.options.noUnselect, false);
                   }
                 },
                 /**
