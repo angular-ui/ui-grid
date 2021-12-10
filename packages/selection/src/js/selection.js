@@ -708,7 +708,7 @@
         clearSelectedRows: function (grid, evt) {
           var changedRows = [];
           service.getSelectedRows(grid).forEach(function (row) {
-            if (row.isSelected && row.enableSelection !== false && grid.options.isRowSelectable(row) !== false) {
+            if (row.isSelected && row.enableSelection !== false) {
               row.setSelected(false);
               service.decideRaiseSelectionEvent(grid, row, changedRows, evt);
             }
