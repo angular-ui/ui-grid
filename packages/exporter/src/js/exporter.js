@@ -693,6 +693,30 @@
 
           /**
            * @ngdoc function
+           * @name exporterHeaderFormatCallback
+           * @propertyOf  ui.grid.exporter.api:GridOptions
+           * @description A function to write custom format header to sheet.
+           *
+           * The method is called to provide custom format header.
+           *
+           * @param header header value
+           * @param {Workbook} workbook
+           * @param {Sheet} sheet sheet to insert data
+           * @param {docDefinition} docDefinition docDefinition that will have styles as a object to store formatters
+           * @returns {object} Object header like this { value: 'myVal', metadata: { style: yourstyle.id } }
+           *
+           * @example
+           * <pre>
+           *   gridOptions.exporterHeaderFormatCallback = function (header, workbook, sheet, docDefinition) {
+           *      const headerFormatter = docDefinition.styles['header'];
+           *      return { value: header.value, metadata: {style: headerFormatter.id} };
+           *   }
+           * </pre>
+           */
+          gridOptions.exporterHeaderFormatCallback = gridOptions.exporterHeaderFormatCallback ? gridOptions.exporterHeaderFormatCallback : null;
+
+          /**
+           * @ngdoc function
            * @name exporterAllDataFn
            * @propertyOf  ui.grid.exporter.api:GridOptions
            * @description This promise is needed when exporting all rows,
@@ -1538,13 +1562,12 @@
          * @param {string} separator a string that represents the separator to be used in the csv file
          * @returns {string} csv the formatted excel as a string
          */
-        formatAsExcel: function (exportColumnHeaders, exportData, workbook, sheet, docDefinition) {
+        formatAsExcel: function (grid, exportColumnHeaders, exportData, workbook, sheet, docDefinition) {
           var bareHeaders = exportColumnHeaders.map(function(header) {return { value: header.displayName };});
 
           var sheetData = [];
           var headerData = [];
           for (var i = 0; i < bareHeaders.length; i++) {
-            // TODO - probably need callback to determine header value and header styling
             var exportStyle = 'header';
             switch (exportColumnHeaders[i].align) {
               case 'center':
@@ -1555,7 +1578,14 @@
                 break;
             }
             var metadata = (docDefinition.styles && docDefinition.styles[exportStyle]) ? {style: docDefinition.styles[exportStyle].id} : null;
-            headerData.push({value: bareHeaders[i].value, metadata: metadata});
+            var header = { value: bareHeaders[i].value, metadata: metadata };
+            if (grid.options.exporterHeaderFormatCallback) {
+              var extension = grid.options.exporterHeaderFormatCallback(bareHeaders[i], workbook, sheet, docDefinition);
+              if (extension) {
+                Object.assign(header, extension);
+              }
+            }
+            headerData.push(header);
           }
           sheetData.push(headerData);
 
