@@ -158,7 +158,8 @@ describe('ui.grid.exporter', function() {
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
-          exporterMenuItemOrder: 200
+          exporterMenuItemOrder: 200,
+          exporterHeaderFormatCallback: null
         });
       });
     });
@@ -206,7 +207,8 @@ describe('ui.grid.exporter', function() {
           exporterFieldApplyFilters: false,
           exporterAllDataFn: null,
           exporterSuppressColumns: [],
-          exporterMenuItemOrder: 200
+          exporterMenuItemOrder: 200,
+          exporterHeaderFormatCallback: null
         });
       });
 
@@ -248,7 +250,8 @@ describe('ui.grid.exporter', function() {
           exporterExcelHeader: 'My Header',
           exporterExcelFooter: 'My Footer',
           exporterColumnScaleFactor: 3.5,
-          exporterMenuItemOrder: 75
+          exporterMenuItemOrder: 75,
+          exporterHeaderFormatCallback: callback
         };
         uiGridExporterService.defaultGridOptions(options);
         expect( options ).toEqual({
@@ -287,7 +290,8 @@ describe('ui.grid.exporter', function() {
           exporterExcelFooter: 'My Footer',
           exporterColumnScaleFactor: 3.5,
           exporterMenuItemOrder: 75,
-          exporterAllDataFn: callback
+          exporterAllDataFn: callback,
+          exporterHeaderFormatCallback: callback
         });
       });
 
