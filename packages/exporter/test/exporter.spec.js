@@ -1219,7 +1219,7 @@ describe('ui.grid.exporter', function() {
         exportColumnHeaders[0].align = 'center';
         exportColumnHeaders[1].align = 'right';
 
-        expect(uiGridExporterService.formatAsExcel(exportColumnHeaders, grid.options.data, {}, [], docDefinition)).toEqual([
+        expect(uiGridExporterService.formatAsExcel(grid, exportColumnHeaders, grid.options.data, {}, [], docDefinition)).toEqual([
           [
             { value: 'Col1', metadata: {style: 'center'} },
             { value: 'Col2', metadata: {style: 'right'} },
