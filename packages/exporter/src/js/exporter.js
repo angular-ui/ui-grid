@@ -699,7 +699,7 @@
            *
            * The method is called to provide custom format header.
            *
-           * @param header header value
+           * @param {object} header value
            * @param {Workbook} workbook
            * @param {Sheet} sheet sheet to insert data
            * @param {docDefinition} docDefinition docDefinition that will have styles as a object to store formatters
