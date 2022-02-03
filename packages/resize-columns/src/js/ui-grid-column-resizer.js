@@ -525,7 +525,7 @@
                 var e = angular.element(newElm);
                 e.attr('style', 'float: left');
 
-                var width = gridUtil.elementWidth(e);
+                var width = gridUtil.elementWidth(e) + 2;
 
                 if (menuButton) {
                   var menuButtonWidth = gridUtil.elementWidth(menuButton);
