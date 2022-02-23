@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* **i18n:** complete ru locale ([8d2caee](https://github.com/angular-ui/ui-grid/commit/8d2caeeb7fa0e85d73c5513d39f0c8ff7992f0b7))
+
+
+
+
+
 # [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
 
 **Note:** Version bump only for package @ui-grid/i18n

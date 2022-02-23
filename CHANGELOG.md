@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* clear selection function ([f616137](https://github.com/angular-ui/ui-grid/commit/f61613794aa9f919d091ea60cc27eb85bf70ee74))
+* Find or Select by Row Entity's 'ID' ([7a0a6c6](https://github.com/angular-ui/ui-grid/commit/7a0a6c6f3ed29c3e41f5cfa77b46639d3df7f1ca))
+* exchanged filter() with every() ([583940f](https://github.com/angular-ui/ui-grid/commit/583940ffa30df614b64122dc1f8b9d83103821df))
+* **i18n:** complete ru locale ([8d2caee](https://github.com/angular-ui/ui-grid/commit/8d2caeeb7fa0e85d73c5513d39f0c8ff7992f0b7))
+* **resize-columns:** width gets adjusted so that ellipses aren't shown ([7851ff8](https://github.com/angular-ui/ui-grid/commit/7851ff81eae5b48bf89f4ca88ac66b097240c1ef))
+
+
+
+
+
 # [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
 
 

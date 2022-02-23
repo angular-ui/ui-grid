@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
+
+### Bug Fixes
+
+* Find or Select by Row Entity's 'ID' ([7a0a6c6](https://github.com/angular-ui/ui-grid/commit/7a0a6c6f3ed29c3e41f5cfa77b46639d3df7f1ca))
+* exchanged filter() with every() ([583940f](https://github.com/angular-ui/ui-grid/commit/583940ffa30df614b64122dc1f8b9d83103821df))
+
+
+
+
 # [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
 
 

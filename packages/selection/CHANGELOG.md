@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* clear selection function ([f616137](https://github.com/angular-ui/ui-grid/commit/f61613794aa9f919d091ea60cc27eb85bf70ee74))
+
+
+
+
+
 # [4.11.0](https://github.com/angular-ui/ui-grid/compare/v4.10.3...v4.11.0) (2021-08-12)
 
 **Note:** Version bump only for package @ui-grid/selection
