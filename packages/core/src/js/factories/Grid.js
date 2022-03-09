@@ -1110,7 +1110,9 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name getRowsByKey
    * @methodOf ui.grid.class:Grid
-   * @description returns the GridRows who have an key that is equal to comparator
+   * @description returns all GridRows who have an key that is equal to comparator
+   * so for Example if isInEntity == false then it does this check: row[key] === comparator
+   * if isInEntity == true then it does this check: row.entity[key] === comparator
    * @param {boolean} isInEntity if true then key is in entity else it's directly in row
    * @param {(string|number)} key the key to look for
    * @param {any} comparator the value that key should have
@@ -1136,7 +1138,9 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name findRowByKey
    * @methodOf ui.grid.class:Grid
-   * @description returns the first GridRow which has an key that is equal to comparator
+   * @description returns the first GridRow who has an key that is equal to comparator
+   * so for Example if isInEntity == false then it does this check: row[key] === comparator
+   * if isInEntity == true then it does this check: row.entity[key] === comparator
    * @param {boolean} isInEntity if true then key is in entity else it's directly in row
    * @param {(string|number)} key the key to look for
    * @param {any} comparator the value that key should have
