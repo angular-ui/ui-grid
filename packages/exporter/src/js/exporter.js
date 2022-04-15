@@ -82,6 +82,7 @@
       var service = {
 
         delay: 100,
+        type: null,
 
         initializeGrid: function (grid) {
 
@@ -854,6 +855,7 @@
          */
         csvExport: function (grid, rowTypes, colTypes) {
           var self = this;
+          self.type = 'csv';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
             var exportData = self.getData(grid, rowTypes, colTypes);
@@ -1083,8 +1085,8 @@
                      gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
                      grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ) {
                   var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol ),
-                    extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) },
-                    extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue );
+                    extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue, service.type ) },
+                    extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue, service.type );
 
                   if (extension) {
                     Object.assign(extractedField, extension);
@@ -1290,7 +1292,7 @@
          */
         pdfExport: function (grid, rowTypes, colTypes) {
           var self = this;
-
+          self.type = 'pdf';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
             var exportColumnHeaders = self.getColumnHeaders(grid, colTypes),
               exportData = self.getData(grid, rowTypes, colTypes),
@@ -1635,6 +1637,7 @@
 
         excelExport: function (grid, rowTypes, colTypes) {
           var self = this;
+          self.type = 'excel';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
 
