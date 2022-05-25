@@ -2,7 +2,7 @@ language: node_js
 sudo: false # defaults to sending build to container-based infrastructure on Travis
 
 node_js:
-  - 4
+  - 10
 
 notifications:
   webhooks:
@@ -27,6 +27,9 @@ env:
     - secure: PWz5cYdlrucjbJxUj9WUGo55V8+z/fDST7ihx9uLuhllqaQ+fkdTX5ccn8sv+dp9OPs0ov3Gunv/GIWKB3E6HCsHQJsyZ1Tde3IvyWwz72YeQ5/IZVolX0T1dmX9sLYJxqKjO1/D/Zfj4NkCEjFQmyIB+47tgBTV1OA9h/4TiMk=
     - secure: BUUB8bjAXcUgq4GNYd0q1seAR26o8UJeIqAY1TcuV1p42d1w1mgBKz6oOEonX3NJTMI7bBNaSVYtpgxroesmVk25FMrsy5ynsY3fTAfiHbyd62IstJjtw0AcVWp+l7Z1WBe6XNhpaW8FS7wOi9jEyV/Ez/ffqgAMmMpG6BHzalk=
 
+addons:
+    sauce_connect: true
+
 branches:
   only:
     - master
@@ -36,31 +39,28 @@ branches:
 
 before_install:
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
 
 install:
   - npm config set spin false
 
 before_script:
   - git fetch --tags
-  - chmod +x ./lib/sauce/sauce_connect_setup.sh ./lib/sauce/sauce_connect_block.sh ./travis_build.sh ./travis_print_logs.sh
+  - chmod +x ./lib/build/travis_build.sh ./lib/build/travis_print_logs.sh
   - mkdir -p $LOGS_DIR
-  - ./lib/sauce/sauce_connect_setup.sh
   - npm install --quiet -g grunt-cli karma-cli
   - npm install
   - bower install
   - grunt install
-  - ./lib/sauce/sauce_connect_block.sh
 
 script:
-  - ./travis_build.sh
+  - ./lib/build/travis_build.sh
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && grunt release
 
 after_failure:
-  - ./travis_print_logs.sh
+  - ./lib/build/travis_print_logs.sh
 
 after_script:
   - killall -9 sc
-  - ./travis_print_logs.sh
+  - ./lib/build/travis_print_logs.sh

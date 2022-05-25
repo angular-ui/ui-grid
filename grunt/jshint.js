@@ -2,8 +2,12 @@ module.exports = {
   options: {
     reporter: require('jshint-stylish'),
 
-    curly: true,
-    eqeqeq: true,
+    curly: false,
+    expr: true,
+    asi: true,
+    laxbreak: true,
+    eqeqeq: false,
+    lastsemic: false,
     immed: true,
     latedef: false,
     newcap: true,
@@ -63,6 +67,6 @@ module.exports = {
     src: 'Gruntfile.js'
   },
   src_test: {
-    src: ['src/**/*.js', 'src/features/*/js/**/*.js', 'src/features/*/test/**/*.spec.js', 'test/**/*.spec.js']
+    src: ['packages/*/src/**/*.js', 'packages/*/test/**/*.spec.js', 'test/**/*.spec.js']
   }
 };

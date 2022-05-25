@@ -39,8 +39,8 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li><a href="/docs/#/api"><i class="fa fa-book fa-fw"></i> API</a></li>
-          <li><a href="/docs/#/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
+          <li><a href="/docs/#!/api"><i class="fa fa-book fa-fw"></i> API</a></li>
+          <li><a href="/docs/#!/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
           <li><a href="/customizer/"><i class="fa fa-wrench fa-fw"></i> Customizer</a></li>
         </ul>
         <div class="navbar-header navbar-right">
@@ -83,7 +83,7 @@
             Download <small>( <%= version %> )</small>
           </a>
 
-          <a class="btn btn-success btn-large" href="/docs/#/tutorial" title="Tutorial">
+          <a class="btn btn-success btn-large" href="/docs/#!/tutorial" title="Tutorial">
             <i class="fa fa-book fa-fw"></i>
             Tutorial
           </a>
@@ -146,7 +146,7 @@
           </ul>
           <h4 class="feature-heading">Third Party Features</h4>
           <ul>
-            <li><a href="/docs/#/tutorial/299_third_party_features">List of Third Party Features</a></li>
+            <li><a href="/docs/#!/tutorial/498_third_party_features">List of Third Party Features</a></li>
           </ul>
         </div>
       </div>
@@ -159,9 +159,7 @@
           <div class="grid" ui-grid="gridOptionsSimple"></div>
 
           <h4 class="feature-heading">Complex Example</h4>
-          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
-
-          
+          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns ui-grid-pagination></div>
           <label>Language: </label>
           <select ng-options="language for language in languages" ng-model="currentLanguage" ng-change="changeLanguage()"></select>
         </div>
@@ -188,7 +186,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-animate.js"></script>
   <script src="//ui-grid.info/release/ui-grid-unstable.min.js"></script>
   <script>
-    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns'])
+    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pagination'])
     .run(function($rootScope, uiGridConstants, i18nService) {
       $rootScope.gridOptionsSimple = {
         data: [
@@ -299,6 +297,8 @@
         enableFiltering: true,
         showGridFooter: true,
         showColumnFooter: true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
         columnDefs: [
           { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
           { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false,

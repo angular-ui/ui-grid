@@ -35,8 +35,8 @@ When a field does not pass validation it gets a `invalid` class so you can custo
 
 The feature adds 2 templates to ui-grid:
 
-- `cellTitleValidator` wich adds the error message to the title attribute of the cell.
-- `cellTooltipValidator` wich depends on ui-bootstrap to add a tooltip.
+- `cellTitleValidator` which adds the error message to the title attribute of the cell.
+- `cellTooltipValidator` which depends on ui-bootstrap to add a tooltip.
 
 ## External Factory
 
@@ -46,6 +46,14 @@ api/ui.grid.validate.service:uiGridValidateService#methods_setExternalFactoryFun
 
 Please be advised that external validators should accept the same parameters (or at least an ordered subset) as
 our validators do (`oldValue`, `newValue`, `rowEntity`, `colDef`);
+
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+  <script src="/release/ui-grid.validate.min.js"></script>
+</pre>
 
 @example
 <example module="app">
@@ -99,8 +107,8 @@ our validators do (`oldValue`, `newValue`, `rowEntity`, `colDef`);
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   });

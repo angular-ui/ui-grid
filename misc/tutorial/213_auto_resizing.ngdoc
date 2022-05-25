@@ -10,6 +10,12 @@ To use, include the `'ui.grid.autoResize'` module in your angular app's dependen
 
 <strong>Note:</strong> This works by adding a checker on 250ms interval that sees if the grid element has changed in size. It could potentially affect the performance of your site or application negatively.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.auto-resize.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -36,8 +42,8 @@ To use, include the `'ui.grid.autoResize'` module in your angular app's dependen
       ];
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
       $scope.randomSize = function () {

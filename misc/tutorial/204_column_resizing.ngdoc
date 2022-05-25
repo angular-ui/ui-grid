@@ -54,13 +54,22 @@ $scope.gridOptions = {
 };
 </pre>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.resize-columns.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.moveColumns']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.gridOptions = {
+    app.controller('MainCtrl', function ($scope, $http) {
+      var vm = this;
+
+      vm.gridOptions = {
         enableSorting: true,
         columnDefs: [
           { field: 'name', minWidth: 200, width: 250, enableColumnResizing: false },
@@ -70,20 +79,20 @@ $scope.gridOptions = {
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          vm.gridOptions.data = response.data;
         });
-    }]);
+    });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
+    <div ng-controller="MainCtrl as $ctrl">
       <strong>Drag</strong> a the column separator to resize; <strong>double-click</strong> to size according to rendered column contents.
       <br>
       <br>
       The column will obey any <i>minWidth</i> or <i>maxWidth</i> constraints you give it.
       <br>
       <br>
-      <div ui-grid="gridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns></div>
+      <div ui-grid="$ctrl.gridOptions" class="grid" ui-grid-resize-columns ui-grid-move-columns></div>
     </div>
   </file>
   <file name="main.css">

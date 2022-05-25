@@ -17,6 +17,12 @@ In this example we do both of those things: we create a directive that pops up a
 allows selection of one or more from a list of values (using an embedded ng-grid), and we implement
 a bootstrap dropdown.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -52,7 +58,9 @@ a bootstrap dropdown.
       };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           $scope.gridOptions.data = data;
           $scope.gridOptions.data[0].age = -5;
 

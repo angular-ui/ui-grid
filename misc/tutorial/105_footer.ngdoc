@@ -27,6 +27,11 @@ In the case of grouping the solution is to use the aggregation provided with gro
 <br/>
 You can override the default grid footer template with gridOptions.footerTemplate.  Copy the default ui-grid-footer.html from the source as your starting point.  <i>This is not demonstrated in this tutorial.</i>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -65,7 +70,9 @@ You can override the default grid footer template with gridOptions.footerTemplat
     };
 
     $http.get('/data/500_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         data.forEach( function(row) {
           row.registered = Date.parse(row.registered);
         });

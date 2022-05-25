@@ -17,6 +17,12 @@ were not all fetched in the REST call mentioned above since they exist in other 
 
 This will allow ui-grid to calculate the correct number of pages on the client-side.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.pagination.min.js"></script>
+</pre>
+
 @example
 This shows combined external pagination and sorting.
 <example module="app">
@@ -75,7 +81,9 @@ This shows combined external pagination and sorting.
         }
 
         $http.get(url)
-        .success(function (data) {
+        .then(function (response) {
+          var data = response.data;
+
           $scope.gridOptions.totalItems = 100;
           var firstRow = (paginationOptions.pageNumber - 1) * paginationOptions.pageSize;
           $scope.gridOptions.data = data.slice(firstRow, firstRow + paginationOptions.pageSize);

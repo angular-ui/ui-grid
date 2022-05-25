@@ -2,7 +2,18 @@
 @name Tutorial: 209 Grouping
 @description
 
-<div class="alert alert-warning" role="alert"><strong>Beta</strong> This feature is ready for testing, but it either hasn't seen a lot of use or has some known bugs.</div>
+<h2>Grouping</h2>
+
+<div class="alert alert-warning" role="alert">
+<strong>Beta</strong> This feature is ready for testing, but it either hasn't
+seen a lot of use or has some known bugs.
+</div>
+
+<div class="alert alert-warning" role="alert">
+<strong>Note:</strong> Grouping leverages the sort functionality, allowing a user to change the sort order
+or use external sort functionality and have the resulting list grouped. A column(s) that is marked as being
+grouped is always moved to the high order of the sort priority, as the data must be sorted to permit grouping.
+</div>
 
 The grouping feature allows you to group rows together based on similar
 values in specific columns, providing an effect similar in some ways to an Excel pivot table.
@@ -17,7 +28,7 @@ a number of things have changed as grouping and treeView move to a shared code b
   saved states may not reload cleanly
 - groupLevel is now treeLevel
 - groupingSuppressAggregationText is now handled via customTreeAggregationFinalizerText
-- groupingRowHeaderWidth is now treeRowHeaderWidth
+- groupingRowHeaderWidth is now treeRowHeaderBaseWidth
 - groupingIndent is now treeIndent
 - groupingRowHeaderAlwaysVisible is now treeRowHeaderAlwaysVisible, and default has changed to true
 **_
@@ -78,7 +89,7 @@ Options to watch out for include:
 
 - `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the grouping
   level gets deeper.  Larger values look nicer, but take up more space
-- `treeRowHeaderWidth`: the base width of the grouping row header
+- `treeRowHeaderBaseWidth`: the base width of the grouping row header (default 30)
 - `customTreeAggregationFinalizerFn`: if your column has a cellFilter, the insertion of text (e.g. 'min: xxxx')
    usually breaks the cellFilter.  You can define a custom aggregation finalizer that handles this text differently,
    either applying the filter in code, or skipping the inclusion of the aggregation text.  This can also be used
@@ -96,6 +107,12 @@ Tuning the way aggregations work can be done through defining a columnsProcessor
 priority than the groupingColumnProcessor (so higher than 400), and that looks for grouped or aggregated columns
 and changes things like the treeAggregationFn, or the customTreeAggregationFinalizerFn.  See tutorial 320 for an example.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.tree-base.min.js"></script>
+  <script src="/release/ui-grid.grouping.min.js"></script>
+</pre>
 
 @example
 In this example we group by the state column then the gender column, and we count the names (a proxy for
@@ -131,7 +148,9 @@ function will stop working), and writes them to the console.
       };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for ( var i = 0; i < data.length; i++ ){
             var registeredDate = new Date( data[i].registered );
             data[i].state = data[i].address.state;

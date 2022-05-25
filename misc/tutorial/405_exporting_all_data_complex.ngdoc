@@ -6,7 +6,15 @@ When using built in pagination, the data is fully loaded before export.
 
 For external pagination, use the `exportAllDataPromise` function to load all grid data.  If you get all the
 data (for the purposes of exporting), then it makes sense to turn off external pagination and external sorting,
-as all the data is now present within AngularJS  
+as all the data is now present within AngularJS.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.exporter.min.js"></script>
+  <script src="/release/ui-grid.pagination.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
 
 @example
 This shows combined external pagination and sorting.
@@ -34,10 +42,11 @@ This shows combined external pagination and sorting.
           ],
           exporterAllDataFn: function() {
             return getPage(1, $scope.gridOptions.totalItems, paginationOptions.sort)
-            .then(function() {
+            .then(function(allData) {
               $scope.gridOptions.useExternalPagination = false;
               $scope.gridOptions.useExternalSorting = false;
               getPage = null;
+              return allData;
             });
           },
           onRegisterApi: function(gridApi) {
@@ -76,10 +85,11 @@ This shows combined external pagination and sorting.
 
           var _scope = $scope;
           return $http.get(url)
-          .success(function (data) {
+          .then(function (response) {
             var firstRow = (curPage - 1) * pageSize;
             $scope.gridOptions.totalItems = 100;
-            $scope.gridOptions.data = data.slice(firstRow, firstRow + pageSize)
+            $scope.gridOptions.data = response.data.slice(firstRow, firstRow + pageSize);
+            return response.data.slice(firstRow, firstRow + pageSize);
           });
         };
 

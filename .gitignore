@@ -1,4 +1,4 @@
-c#################
+#################
 ## Vim
 #################
 
@@ -167,6 +167,11 @@ var
 sdist
 develop-eggs
 .installed.cfg
+packages/**/*.css
+packages/**/ui-grid.*.js
+packages/**/LICENSE.md
+packages/**/.npmignore
+packages/**/index.js
 
 # Installer logs
 pip-log.txt
@@ -188,7 +193,7 @@ pip-log.txt
 ## JetBrains
 #################
 .idea
-ng-grid.iml
+*.iml
 
 
 #################
@@ -199,3 +204,4 @@ Sauce-Connect.jar
 docs
 bower_components
 .grunt
+coverage/

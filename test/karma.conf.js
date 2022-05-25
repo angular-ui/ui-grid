@@ -23,11 +23,9 @@ module.exports = function(config) {
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
-      'src/js/core/bootstrap.js',
-      'src/js/**/*.js',
-      'src/features/**/js/**/*.js',
-      'test/unit/**/*.spec.js',
-      'src/features/**/test/**/*.spec.js',
+      'packages/core/src/bootstrap.js',
+      'packages/**/src/js/**/*.js',
+      'packages/**/test/**/*.spec.js',
 
       'dist/release/ui-grid.css',
 
@@ -38,14 +36,14 @@ module.exports = function(config) {
     exclude: [
     ],
 
+    preprocessors: {
+      'packages/**/!(*.spec)+(.js)': ['coverage']
+    },
+
+
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
     reporters: ['dots', 'coverage'],
-
-    preprocessors: {
-      // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
-      'src/**/!(*.spec)+(.js)': ['coverage']
-    },
 
     coverageReporter: {
       type: 'lcov',
@@ -114,13 +112,13 @@ module.exports = function(config) {
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
 
-    // config.transports = ['websocket', 'xhr-polling'];
+    config.transports = ['websocket', 'polling'];
 
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
 
-    config.transports = ['xhr-polling'];
+    // config.transports = ['xhr-polling'];
 
     // Debug logging into a file, that we print out at the end of the build.
     config.loggers.push({

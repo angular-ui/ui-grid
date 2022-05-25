@@ -50,9 +50,16 @@ Options to watch out for include:
 
 - `treeIndent`: the expand buttons are indented by a number of pixels (default 10) as the tree
   level gets deeper.  Larger values look nicer
-- `treeRowHeaderWidth`: the width of the tree row header
+- `treeRowHeaderBaseWidth`: the base width of the tree row header (default 30)
 - `showTreeExpandNoChildren`: defaults to true.  Shows the + even if there are no children, allows
   you to dynamically load children.  If set to false there'll be no + if there are no children
+
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.tree-base.min.js"></script>
+  <script src="/release/ui-grid.tree-view.min.js"></script>
+</pre>
 
 @example
 In this example most of the data is loaded on initial page load.  The nodes under Guerrero Lopez, however,
@@ -92,7 +99,9 @@ are loaded only when that row is expanded.  They have a 2 second delay to simula
       };
 
      $http.get('/data/500_complex.json')
-     .success(function(data) {
+     .then(function(response) {
+       var data = response.data;
+
        for ( var i = 0; i < data.length; i++ ){
          data[i].state = data[i].address.state;
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );

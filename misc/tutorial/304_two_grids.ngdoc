@@ -5,6 +5,13 @@
 This grid example puts two grids on the same page, and demonstrates that they are isolated from
 each other.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -22,8 +29,8 @@ each other.
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
     }]);
@@ -32,8 +39,8 @@ each other.
       $scope.gridOptions = {};
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
 
     }]);

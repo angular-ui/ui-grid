@@ -23,7 +23,7 @@ and `'boolean'` types, for all other fields a simple text editor is provided. (A
 to be enabled the datatype of the variable should also be "Date").
 
 A dropdown editor is also available, through setting the `editableCellTemplate` on the `columnDef` to `'ui-grid/dropdownEditor'`.
-When using a dropdown editor you need to provide an options array through the `editDropDownOptionsArray` property on the `columnDef`.
+When using a dropdown editor you need to provide an options array through the `editDropdownOptionsArray` property on the `columnDef`.
 This array by default should be an array of `{id: xxx, value: xxx}`, although the field tags can be changed through
 using the `editDropdownIdLabel` and `editDropdownValueLabel` options.
 
@@ -82,6 +82,11 @@ $scope.gridOptions.columnDefs = [
 ]
 </pre>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+</pre>
 
 @example
 <example module="app">
@@ -94,10 +99,12 @@ $scope.gridOptions.columnDefs = [
       };
     });
 
-    app.controller('MainCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
-      $scope.gridOptions = {  };
+    app.controller('MainCtrl', function ($scope, $http, $timeout) {
+      var vm = this;
 
-      $scope.storeFile = function( gridRow, gridCol, files ) {
+      vm.gridOptions = {  };
+
+      vm.storeFile = function( gridRow, gridCol, files ) {
         // ignore all but the first file, it can only select one anyway
         // set the filename into this column
         gridRow.entity.filename = files[0].name;
@@ -106,7 +113,7 @@ $scope.gridOptions.columnDefs = [
         var setFile = function(fileContent){
           gridRow.entity.file = fileContent.currentTarget.result;
           // put it on scope so we can display it - you'd probably do something else with it
-          $scope.lastFile = fileContent.currentTarget.result;
+          vm.lastFile = fileContent.currentTarget.result;
           $scope.$apply();
         };
         var reader = new FileReader();
@@ -114,7 +121,7 @@ $scope.gridOptions.columnDefs = [
         reader.readAsText( files[0] );
       };
 
-      $scope.gridOptions.columnDefs = [
+      vm.gridOptions.columnDefs = [
         { name: 'id', enableCellEdit: false, width: '10%' },
         { name: 'name', displayName: 'Name (editable)', width: '20%' },
         { name: 'age', displayName: 'Age' , type: 'number', width: '10%' },
@@ -126,9 +133,9 @@ $scope.gridOptions.columnDefs = [
         { name: 'registered', displayName: 'Registered' , type: 'date', cellFilter: 'date:"yyyy-MM-dd"', width: '20%' },
         { name: 'address', displayName: 'Address', type: 'object', cellFilter: 'address', width: '30%' },
         { name: 'address.city', displayName: 'Address (even rows editable)', width: '20%',
-             cellEditableCondition: function($scope){
-             return $scope.rowRenderIndex%2
-             }
+          cellEditableCondition: function(scope){
+            return scope.rowRenderIndex%2;
+          }
         },
         { name: 'isActive', displayName: 'Active', type: 'boolean', width: '10%' },
         { name: 'pet', displayName: 'Pet', width: '20%', editableCellTemplate: 'ui-grid/dropdownEditor',
@@ -151,22 +158,24 @@ $scope.gridOptions.columnDefs = [
           }
         },
         { name: 'filename', displayName: 'File', width: '20%', editableCellTemplate: 'ui-grid/fileChooserEditor',
-          editFileChooserCallback: $scope.storeFile }
-      ];
+          editFileChooserCallback: vm.storeFile }
+     	];
 
-     $scope.msg = {};
+     	vm.msg = {};
 
-     $scope.gridOptions.onRegisterApi = function(gridApi){
-              //set gridApi on scope
-              $scope.gridApi = gridApi;
-              gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
-                $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-                $scope.$apply();
-              });
-            };
+     	vm.gridOptions.onRegisterApi = function(gridApi) {
+      		//set gridApi on scope
+      		vm.gridApi = gridApi;
+      		gridApi.edit.on.afterCellEdit($scope, function(rowEntity, colDef, newValue, oldValue) {
+      				vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
+      				$scope.$apply();
+        });
+      };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for(i = 0; i < data.length; i++){
             data[i].registered = new Date(data[i].registered);
             data[i].gender = data[i].gender==='male' ? 1 : 2;
@@ -179,9 +188,9 @@ $scope.gridOptions.columnDefs = [
               data[i].foo = {bar: [{baz: 2, options: [{value: 'dog'}, {value: 'cat'}]}]}
             }
           }
-          $scope.gridOptions.data = data;
+          vm.gridOptions.data = data;
         });
-    }])
+    })
 
     .filter('mapGender', function() {
       var genderHash = {
@@ -216,15 +225,15 @@ $scope.gridOptions.columnDefs = [
   });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <strong>Data Length:</strong> {{ gridOptions.data.length | number }}
+    <div ng-controller="MainCtrl as $ctrl">
+      <strong>Data Length:</strong> {{ $ctrl.gridOptions.data.length | number }}
       <br>
-      <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
+      <strong>Last Cell Edited:</strong> {{$ctrl.msg.lastCellEdited}}
       <br>
-      <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+      <div ui-grid="$ctrl.gridOptions" ui-grid-edit class="grid"></div>
       <br>
       <div><strong>Last file uploaded:</strong></div>
-      <div>{{lastFile}}</div>
+      <div>{{$ctrl.lastFile}}</div>
     </div>
   </file>
   <file name="main.css">

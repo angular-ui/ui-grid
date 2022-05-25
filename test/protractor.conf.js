@@ -3,7 +3,7 @@ exports.config = {
   // The address of a running selenium server.
 
   //seleniumAddress: 'http://localhost:4444/wd/hub',
-  seleniumServerJar: '../node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-2.45.0.jar',
+  seleniumServerJar: '../node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-3.13.0.jar',
   seleniumPort: 4444,
 
   specs: ['../.tmp/doc-scenarios/**/*.spec.js', 'e2e/**/*.spec.js'],
@@ -26,17 +26,9 @@ exports.config = {
     showColors: true, // Use colors in the command line report.
 
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 60000,
+    defaultTimeoutInterval: 10000,
 
     // Don't show the stack trace, it's mostly useless
     includeStackTrace: false
-  },
-
-  plugins: [{
-    chromeA11YDevTools: {
-      // Since the site has some serious element contrast issues this is needed.
-      treatWarningsAsFailures: false
-    },
-    package: 'protractor-accessibility-plugin'
-  }]
+  }
 };

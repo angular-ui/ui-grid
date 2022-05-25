@@ -1,22 +1,53 @@
-module.exports = {
-  'uigrid': {
-    // Look for templates in src and in feature template directories
-    src: ['src/templates/**/*.html', 'src/features/*/templates/**/*.html'],
-    dest: '.tmp/template.js',
-    options: {
-      module: 'ui.grid',
-      htmlmin:  { collapseWhitespace: true, collapseBooleanAttributes: true },
-      // Strip .html extension
-      url: function(url) {
-        // Remove the src/templates/ prefix
-        url = url.replace(/^src\/templates\//, '');
+const fs = require('fs');
+const path = require('path');
+const _ = require('lodash');
 
-        // Replace feature prefix with just 'ui-grid'
-        url = url.replace(/^src\/features\/[^\/]+?\/templates/, 'ui-grid');
+const getDirectories = p => fs.readdirSync(p)
+.filter(f => fs.statSync(path.join(p, f)).isDirectory() && fs.existsSync(path.join(p, f, 'src/templates')));
 
-        // Remove the .html extension
-        return url.replace('.html', '');
+const htmlmin = {collapseWhitespace: true, collapseBooleanAttributes: true};
+
+// Strip .html extension
+function getUrl(url) {
+  // Remove the packages/feature/src/templates/ prefix
+    url = url.replace(/^packages\/[^\/]+?\/src\/templates\/ui-grid/, 'ui-grid');
+
+    // Replace feature prefix with just 'ui-grid'
+    url = url.replace(/^packages\/[^\/]+?\/src\/templates/, 'ui-grid');
+
+    // Remove the .html extension
+    return url.replace('.html', '');
+}
+
+function getTemplatesConfig() {
+  let templatesConfig = {
+    uigrid: {
+      // Look for templates in packages directories
+      src: ['packages/*/src/templates/**/*.html'],
+      dest: '.tmp/template.js',
+      options: {
+        module: 'ui.grid',
+        htmlmin,
+        url: getUrl
       }
     }
-  }
-};
+  };
+
+  const packages = getDirectories('packages/');
+
+  packages.forEach((feat) => {
+    templatesConfig[`uigrid-${feat}`] = {
+      src: [`packages/${feat}/src/templates/**/*.html`],
+      dest: `.tmp/template-${feat}.js`,
+      options: {
+        module: feat === 'core' ? 'ui.grid' : `ui.grid.${_.camelCase(feat)}`,
+        htmlmin,
+        url: getUrl
+      }
+    };
+  });
+
+  return templatesConfig;
+}
+
+module.exports = getTemplatesConfig();

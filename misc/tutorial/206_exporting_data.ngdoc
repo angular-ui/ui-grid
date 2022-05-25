@@ -13,6 +13,17 @@ directive on your grid.  If you want to export as PDF you need to have installed
 available through:
 <pre>  bower install pdfmake  </pre>
 
+If you want to export as Excel you need to have installed Excel-Builder,
+available through:
+<pre>  bower install lodash
+  bower install jszip#2.6.1
+  bower install excelbuilder  </pre>
+or
+
+<pre>  npm install lodash
+  npm install jszip@2.6.1
+  npm install excel-builder  </pre>
+
 The options and API for exporter can be found at {@link api/ui.grid.exporter ui.grid.exporter}, and
 
 - {@link api/ui.grid.exporter.api:ColumnDef columnDef}
@@ -39,6 +50,13 @@ You may find that you have problems including pdfMake in your toolchain - it som
 minified.  If you have this problem it is recommended to instead include pdfmake.js and vfs_fonts.js
 as assets (or the equivalent minified versions), and then include them as a script in your application
 rather than as part of a minification of your entire javascript library.
+
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.exporter.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
 
 @example
 In this example we use the native grid menu buttons, and we show both the pdf and csv export options.
@@ -73,14 +91,16 @@ In this example we use the native grid menu buttons, and we show both the pdf an
         exporterPdfPageSize: 'LETTER',
         exporterPdfMaxGridWidth: 500,
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
         onRegisterApi: function(gridApi){
           $scope.gridApi = gridApi;
         }
       };
 
       $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions.data = data;
+      .then(function(response) {
+        $scope.gridOptions.data = response.data;
       });
 
     }]);

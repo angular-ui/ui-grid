@@ -4,6 +4,11 @@
 
 You can reference a property to see if grid is in a scroll event.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -35,8 +40,8 @@ You can reference a property to see if grid is in a scroll event.
               };
 
       $http.get('/data/10000_complex.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>

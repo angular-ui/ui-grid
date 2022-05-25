@@ -38,6 +38,11 @@ The `fastWatch` gridOption watches only the data reference and it's length - in 
 a row in the data, or replaced a column in the columnDefs.  If using fastWatch you should always do deletes and adds separately, never
 a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid creation.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -59,7 +64,9 @@ a swap.  Fastwatch cannot be dynamically toggled - you need to set it upon grid 
       ];
     
       $http.get('/data/10000_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for( var i=0; i<6; i++){
           data = data.concat(data);
         }

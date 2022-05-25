@@ -18,6 +18,12 @@ were not all fetched in the REST call mentioned above since they exist in other 
 
 This will allow ui-grid to calculate the correct number of pages on the client-side.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.pagination.min.js"></script>
+</pre>
+
 @example
 This shows custom pagination.
 <example module="app">
@@ -54,13 +60,17 @@ This shows custom pagination.
       };
 
       $http.get('/data/100_ASC.json')
-      .success(function (data) {
+      .then(function (response) {
+        var data = response.data;
+
         $scope.gridOptions1.data = data;
         $scope.gridOptions1.paginationPageSizes = calculatePageSizes(data);
       });
 
       $http.get('/data/100.json')
-      .success(function (data) {
+      .then(function (response) {
+        var data = response.data;
+
         $scope.grid2data = data;
         $scope.gridOptions2.totalItems = 0;//data.length;
         $scope.gridOptions2.paginationPageSizes = calculatePageSizes(data);

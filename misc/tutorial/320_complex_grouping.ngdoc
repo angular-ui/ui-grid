@@ -10,6 +10,14 @@ one we're on.
 We turn on the ability to select group headers, and write a callback on the selection event to select all
 children of the selected rowHeader.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+  <script src="/release/ui-grid.grouping.min.js"></script>
+  <script src="/release/ui-grid.selection.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -117,7 +125,9 @@ children of the selected rowHeader.
       };
 
       $http.get('/data/500_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for ( var i = 0; i < data.length; i++ ){
           data[i].state = data[i].address.state;
           data[i].gender = data[i].gender === 'male' ? 1: 2;

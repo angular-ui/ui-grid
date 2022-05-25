@@ -15,6 +15,15 @@ you to manually call flushDirtyRows() once the user has made a save request.
 In this example we also use a custom file picker to trigger the import, as well
 as the grid menu.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+  <script src="/release/ui-grid.importer.min.js"></script>
+  <script src="/release/ui-grid.row-edit.min.js"></script>
+</pre>
+
 @example
 In this example we use the rowEdit feature to save the rows as they are created.
 As with the rowEdit tutorial, any records with a gender of 'male' give an error,

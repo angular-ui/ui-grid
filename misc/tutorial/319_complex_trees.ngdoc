@@ -50,13 +50,20 @@ You can provide a custom finalizer function, which can be used to format or othe
 once the leaf nodes under a particular node have been aggregated.  Refer the documentation for `customTreeAggregationFinalizerFn`
 under {@link api/ui.grid.treeBase.api:ColumnDef columnDef}.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.tree-base.min.js"></script>
+  <script src="/release/ui-grid.tree-view.min.js"></script>
+</pre>
+
 @example
 In this example the balance field is averaged, and then displayed in the standard column using a custom cellTemplate
 that shows both the value for that row as well as the aggregated value.
 
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.treeView' ]);
+    var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.treeView']);
 
     app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants ) {
       $scope.gridOptions = {
@@ -87,7 +94,9 @@ that shows both the value for that row as well as the aggregated value.
       };
 
      $http.get('/data/500_complex.json')
-     .success(function(data) {
+     .then(function(response) {
+       var data = response.data;
+
        for ( var i = 0; i < data.length; i++ ){
          data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
        }

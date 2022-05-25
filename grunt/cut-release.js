@@ -3,6 +3,9 @@ module.exports = {
     cleanup: true,
     keepUnstable: false,
     stableTasks: [
+      'copy:css_cut_release',
+      'copy:fonts_cut_release',
+      'copy:i18n_cut_release',
       'copy:less_cut_release'
     ]
   },

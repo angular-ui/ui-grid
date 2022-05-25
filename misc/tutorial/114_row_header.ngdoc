@@ -5,6 +5,11 @@
 You can add a row header column, which goes into the left pinned container 
 (right pinned container on RTL implementations).
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -23,9 +28,8 @@ You can add a row header column, which goes into the left pinned container
       };
       
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
-          console.log(data)
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>
@@ -43,7 +47,7 @@ You can add a row header column, which goes into the left pinned container
   <file name="scenario.js">
     var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
     describe( '114 add row header', function() {
-      it('grid should have two visible columns, and one pinned column', function () {
+      xit('grid should have two visible columns, and one pinned column', function () {
         gridTestUtils.expectHeaderLeftColumnCount( 'grid1', 1 );
         gridTestUtils.expectHeaderColumnCount( 'grid1', 2 );
       });

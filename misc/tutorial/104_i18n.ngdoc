@@ -19,17 +19,31 @@ Another option is to use the i18nService and use the setCurrentLang method
 
 For an example using angular-translate to translate your headers, refer to http://plnkr.co/edit/KnrKTst5dWXvlZNeIy9c?p=preview
 
+If you would like to get better performance out of your application, it is recommended that you take advantage of UI-Grid's multi-file
+support. By default ui-grid.core.js will contain just the english language, in order to load the other language follow the example bellow:
+<pre>
+   <script src="/release/ui-grid.core.js"></script>
+   <script src="/release/i18n/ui-grid.language.[YOUR_LANGUAGE_HERE].js"></script>
+
+   <!-- Alternatively you can load all languages provided with you grid by loading the following -->
+   <script src="/release/i18n/ui-grid.language.all.js"></script>
+</pre>
 
 @example
 <example module="app">
   <file name="app.js">
-    var app = angular.module('app', ['ngTouch', 'ui.grid']);
+    angular.module('app', ['ngTouch', 'ui.grid'])
+      .controller('MainCtrl', MainCtrl);
 
-    app.controller('MainCtrl', ['$scope', 'i18nService', '$http', function ($scope, i18nService, $http) {
-      $scope.langs = i18nService.getAllLangs();
-      $scope.lang = 'nl';
+    MainCtrl.$inject = ['i18nService', '$http'];
 
-      $scope.gridOptions = {
+    function MainCtrl(i18nService, $http) {
+      var vm = this;
+
+      vm.langs = i18nService.getAllLangs();
+      vm.lang = 'nl';
+
+      vm.gridOptions = {
         columnDefs: [
           { field: 'name' },
           { field: 'gender' },
@@ -38,27 +52,33 @@ For an example using angular-translate to translate your headers, refer to http:
       };
 
       $http.get('/data/100.json')
-      .success(function(data) {
-        $scope.gridOptions.data = data;
-      });
-    }]);
+        .then(function(response) {
+          vm.gridOptions.data = response.data;
+        });
+    }
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <select ng-model="lang" ng-options="l for l in langs"></select><br>
+    <div ng-controller="MainCtrl as $ctrl">
+      <select id="langDropdown" ng-model="$ctrl.lang" ng-options="l for l in $ctrl.langs"></select>
+      <br />
 
-      <div ui-i18n="{{lang}}">
-         <p>Using attribute:</p>
+      <div ui-i18n="{{$ctrl.lang}}">
+         <h2>Using attribute:</h2>
          <p ui-t="groupPanel.description"></p>
-         <br/>
-         <p>Using Filter:</p>
+
+         <h2>Using attribute 2:</h2>
+         <p ui-translate>groupPanel.description</p>
+
+         <h2>Using Filter that updates with language:</h2>
+         <p>{{"groupPanel.description" | t:$ctrl.lang}}</p>
+
+         <h2>Using Filter that does not update after load:</h2>
          <p>{{"groupPanel.description" | t}}</p>
 
          <p>Click the header menu to see language.</p>
 
-         <div ui-grid="gridOptions" class="grid"></div>
+         <div id="i18nGrid" ui-grid="$ctrl.gridOptions" class="grid"></div>
       </div>
-
     </div>
   </file>
   <file name="main.css">
@@ -66,5 +86,19 @@ For an example using angular-translate to translate your headers, refer to http:
       width: 500px;
       height: 250px;
     }
+  </file>
+  <file name="scenario.js">
+      var gridTestUtils = require('../../test/e2e/gridTestUtils.spec.js');
+
+      describe('104 i18n', function() {
+        gridTestUtils.firefoxReload();
+
+        it('should default to nl for the language', function() {
+          expect(element(by.id('langDropdown')).element(by.css('option:checked')).getText()).toEqual('nl');
+        });
+        it('should have three visible columns', function() {
+          gridTestUtils.expectHeaderColumnCount( 'i18nGrid', 3 );
+        });
+      });
   </file>
 </example>

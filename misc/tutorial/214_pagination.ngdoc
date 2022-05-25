@@ -14,6 +14,11 @@ Documentation for the pagination feature is provided in the api documentation, i
 If you wanted server based pagination, you could look at {@link 314_external_pagination the external pagination tutorial} or consider
 using {@link 212_infinite_scroll infinite scroll}, which also retrieves data in pages from the server.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.pagination.min.js"></script>
+</pre>
 
 @example
 <example module="app">
@@ -46,9 +51,9 @@ using {@link 212_infinite_scroll infinite scroll}, which also retrieves data in 
       }
 
       $http.get('/data/100.json')
-      .success(function (data) {
-        $scope.gridOptions1.data = data;
-        $scope.gridOptions2.data = data;
+      .then(function (response) {
+        $scope.gridOptions1.data = response.data;
+        $scope.gridOptions2.data = response.data;
       });
     }]);
   </file>

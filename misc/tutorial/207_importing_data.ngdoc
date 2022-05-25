@@ -45,6 +45,12 @@ The importer adds menu items to the grid menu, to use the native UI you need to 
 the grid menu using the gridOption `enableGridMenu`.  You can turn the menu items off by
 setting `importerShowMenu: false`.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.importer.min.js"></script>
+</pre>
+
 @example
 In this example we use the native grid menu to import a file.  You need to provide a file
 from your file system to use the tutorial, you can copy either import.json or import.csv
@@ -59,24 +65,26 @@ illustrates that doing so is not mandatory).
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.importer']);
 
-    app.controller('MainCtrl', ['$scope', '$http', '$interval', function ($scope, $http, $interval) {
+    app.controller('MainCtrl', function ($scope, $http, $interval) {
+      var vm = this;
+
       $scope.data = [];
-      $scope.gridOptions = {
+      vm.gridOptions = {
         enableGridMenu: true,
         data: 'data',
         importerDataAddCallback: function ( grid, newObjects ) {
           $scope.data = $scope.data.concat( newObjects );
         },
         onRegisterApi: function(gridApi){
-          $scope.gridApi = gridApi;
+          vm.gridApi = gridApi;
         }
       };
-    }]);
+    });
   </file>
 
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <div ui-grid="gridOptions" ui-grid-importer class="grid"></div>
+    <div ng-controller="MainCtrl as $ctrl">
+      <div ui-grid="$ctrl.gridOptions" ui-grid-importer class="grid"></div>
     </div>
   </file>
 

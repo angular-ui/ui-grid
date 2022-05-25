@@ -10,8 +10,8 @@ Prerequisites:
 <ul>
  <li>Include angular-aria (Angular 1.3.0+).
   <pre>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
-      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.js"></script>
       <link rel="styleSheet" href="release/ui-grid-unstable.css"/>
       <script src="/release/ui-grid-unstable.js"></script>
   </pre>
@@ -60,8 +60,15 @@ Simply use the <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keys to naviga
 <h2>Visualize Accessibility</h2>
 You can visualize the accessibility roles that have been applied to the grid using this simple little javascript tool: {@link http://khan.github.io/tota11y/}
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.pagination.min.js"></script>
+</pre>
+
 @example
-<example module="app" deps="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular-aria.js">
+<example module="app" deps="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.js">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ngAria', 'ui.grid', 'ui.grid.pagination', 'ui.grid.cellNav']);
 
@@ -147,10 +154,10 @@ You can visualize the accessibility roles that have been applied to the grid usi
       angular.extend($scope.paginationGridOptions, $scope.virtualGridOptions);
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          data.forEach(setGender);
-          $scope.virtualGridOptions.data = data;
-          $scope.paginationGridOptions.data = data;
+        .then(function(response) {
+          response.data.forEach(setGender);
+          $scope.virtualGridOptions.data = response.data;
+          $scope.paginationGridOptions.data = response.data;
         });
     }])
     .filter('mapGender', function() {
@@ -218,10 +225,10 @@ You can visualize the accessibility roles that have been applied to the grid usi
       // Reload the page before each test if on Firefox. Chrome does it automatically.
       gridTestUtils.firefoxReload();
 
-      var expectToBeFocused = function(element){
-        return expect(element.getInnerHtml()).
-          toBe(browser.driver.switchTo().activeElement().getInnerHtml());
-      };
+      function expectToBeFocused(element){
+        return expect(gridTestUtils.getInnerHtml(element)).
+          toBe(gridTestUtils.getInnerHtml(browser.driver.switchTo().activeElement()));
+      }
 
       describe('first grid on page, no virtual data.', function(){
         describe('when column menu clicked', function(){

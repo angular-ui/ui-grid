@@ -5,6 +5,13 @@
 For the basics of editing refer {@link tutorial/201_editable 201 editable}, this tutorial provides an example
 of combining cellNav and edit to give a more spreadsheet-like experience.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -52,7 +59,9 @@ of combining cellNav and edit to give a more spreadsheet-like experience.
             };
 
       $http.get('/data/500_complex.json')
-        .success(function(data) {
+        .then(function(response) {
+          var data = response.data;
+
           for(i = 0; i < data.length; i++){
             data[i].registered = new Date(data[i].registered);
             data[i].gender = data[i].gender==='male' ? 1 : 2;

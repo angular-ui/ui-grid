@@ -31,6 +31,11 @@ data that won't be displayable within the grid row (e.g. long description fields
 
 Tooltips respect the cellFilter, so if you define a cellFilter it will also be used in the tooltip.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
+
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid']);
@@ -59,12 +64,12 @@ Tooltips respect the cellFilter, so if you define a cellFilter it will also be u
       };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          data.forEach( function setGender( row, index ){
-            row.gender = row.gender==='male' ? '1' : '2';
+        .then(function(response) {
+          response.data.forEach( function setGender( row, index ){
+            row.gender = row.gender === 'male' ? '1' : '2';
           });
 
-          $scope.gridOptions.data = data;
+          $scope.gridOptions.data = response.data;
         });
     }])
     .filter('mapGender', function() {

@@ -39,31 +39,37 @@ In order to fix this you <strong>must</strong> give the grid something to work w
 
 It's all up to you. And if you know a better way then please submit it in an issue or a pull request. There's always room for improvement and innovation.
 
+For better performance with the following example, you can choose to load the ui-grid.core.js file instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+</pre>
 
 @example
 <example module="app">
   <file name="app.js">
     var app = angular.module('app', ['ngTouch', 'ui.grid']);
 
-    app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-      $scope.hideGrid = true;
+    app.controller('MainCtrl', function ($http) {
+      var vm = this;
 
-      $scope.gridOptions = {  };
+      vm.hideGrid = true;
+
+      vm.gridOptions = {  };
 
       $http.get('/data/100.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          vm.gridOptions.data = response.data;
         });
-    }]);
+    });
   </file>
   <file name="index.html">
-    <div ng-controller="MainCtrl">
-      <button type="button" class="btn btn-success" ng-click="hideGrid = !hideGrid">
-        {{ hideGrid && 'Show' || 'Hide' }} Grid
+    <div ng-controller="MainCtrl as $ctrl">
+      <button type="button" class="btn btn-success" ng-click="$ctrl.hideGrid = !$ctrl.hideGrid">
+        {{ $ctrl.hideGrid && 'Show' || 'Hide' }} Grid
       </button>
 
-      <div class="well" ng-hide="hideGrid">
-        <div ui-grid="gridOptions" class="grid"></div>
+      <div class="well" ng-hide="$ctrl.hideGrid">
+        <div ui-grid="$ctrl.gridOptions" class="grid"></div>
       </div>
     </div>
   </file>

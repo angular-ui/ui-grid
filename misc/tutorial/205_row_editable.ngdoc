@@ -54,6 +54,13 @@ Methods and properties are provided to operate with this regime:
 - `saveRow( rowEntity )`: event called when a row is ready for saving
 - `rowEditWaitInterval`: grid option that controls how long a wait will be before a save is triggered (in ms)
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.cellnav.min.js"></script>
+  <script src="/release/ui-grid.edit.min.js"></script>
+  <script src="/release/ui-grid.row-edit.min.js"></script>
+</pre>
 
 @example
 In this example rows are saved 2 seconds after moving off, and the save is faked using a timeout of 3 seconds, so
@@ -109,7 +116,9 @@ each save will take 3 seconds to complete.  Any row saved with a gender of "male
       };
 
       $http.get('/data/500_complex.json')
-      .success(function(data) {
+      .then(function(response) {
+        var data = response.data;
+
         for(i = 0; i < data.length; i++){
           data[i].registered = new Date(data[i].registered);
         }

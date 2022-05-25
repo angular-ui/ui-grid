@@ -4,6 +4,15 @@
 
 <div class="alert alert-success" role="alert"><strong>Stable</strong> This feature is stable. There should no longer be breaking api changes without a deprecation warning.</div>
 
+For better performance with the following example, you can choose to load the ui-grid.core.js and specific feature files instead:
+<pre>
+  <script src="/release/ui-grid.core.min.js"></script>
+  <script src="/release/ui-grid.auto-resize.min.js"></script>
+  <script src="/release/ui-grid.empty-base-layer.min.js"></script>
+  <script src="/release/ui-grid.move-columns.min.js"></script>
+  <script src="/release/ui-grid.pinning.min.js"></script>
+</pre>
+
 @example
 <example module="app">
   <file name="app.js">
@@ -29,8 +38,8 @@
       };
 
       $http.get('/data/5.json')
-        .success(function(data) {
-          $scope.gridOptions.data = data;
+        .then(function(response) {
+          $scope.gridOptions.data = response.data;
         });
     }]);
   </file>
