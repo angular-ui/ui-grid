@@ -5,7 +5,7 @@
 Thanks for considering contributions to the ui-grid project. This doc will give you a jump start on the development standards we use.
 
 # Running Dev Server
-Grunt task dev will run jshint, compile less, run fontella, run unit tests, run protractor tests, and start a local
+Grunt task dev will run eslint, compile less, run fontella, run unit tests, run protractor tests, and start a local
 webserver on port 9003.  A watch is started to rerun all the tasks if any source file changes.
 
 <br>
@@ -396,7 +396,7 @@ Deployment to http://ui-grid.info/ is done automatically when pushed to ui-grid 
    function (uiGridCellNavService, $log){
    instead of
    function(uiGridCellNavService,$log){
-4. jshint rules are enforced.  run 'grunt dev --no-e2e' to see if your code passes (the --no-e2e switch turns off end-to-end testing, which can making development slow. You should still run e2e tests before you push commits!)
+4. eslint rules are enforced.  run 'grunt dev --no-e2e' to see if your code passes (the --no-e2e switch turns off end-to-end testing, which can making development slow. You should still run e2e tests before you push commits!)
 5. Module names should follow Angular's camelcase format, e.g. "resizeColumns", not "resize-columns".
 
 # CSS

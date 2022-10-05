@@ -5,8 +5,8 @@ module.exports = function( grunt, options ){
     // list of files to watch, and tasks to run if those files change
 
     gruntfile: {
-      files: ['<%= jshint.gruntfile.src %>', 'grunt/*.js'],
-      tasks: ['jshint:gruntfile', 'uidocs-generator']
+      files: ['packages/*/src/**/*.js', 'packages/*/test/**/*.spec.js', 'test/**/*.spec.js', 'grunt/*.js'],
+      tasks: ['shell:lint', 'uidocs-generator']
     },
 
     ngtemplates: {
@@ -17,7 +17,7 @@ module.exports = function( grunt, options ){
 
     rebuild: {
       files: util.testFiles.unit,
-      tasks: ['jshint:src_test', 'jscs', 'karmangular:run', 'concat', 'uglify', 'uidocs-generator'],
+      tasks: ['shell:lint', 'karmangular:run', 'concat', 'uglify', 'uidocs-generator'],
     },
 
     protractor: {

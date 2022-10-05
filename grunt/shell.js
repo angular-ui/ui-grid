@@ -15,6 +15,9 @@ module.exports = function() {
         async: true
       }
     },
+    lint: {
+      command: 'npm run lint'
+    },
     'protractor-install': {
       command: 'node ' + webdriverManagerPath + ' update'
     },
