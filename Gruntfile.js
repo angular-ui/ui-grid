@@ -23,7 +23,6 @@ module.exports = function(grunt) {
         ngtemplates: 'grunt-angular-templates',
         changelog: 'grunt-conventional-changelog',
         shell: 'grunt-shell-spawn',
-        jscs: 'grunt-jscs',
         protractor: 'grunt-protractor-runner',
         'stable-version': './lib/grunt/plugins.js',
         'current-version': './lib/grunt/plugins.js',
