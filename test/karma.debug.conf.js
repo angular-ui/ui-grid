@@ -27,18 +27,19 @@ module.exports = function(config) {
       'packages/**/src/js/**/*.js',
       'packages/**/test/**/*.spec.js',
 
-      'dist/release/ui-grid.css',
+      'dist/release/css/ui-grid.css',
 
       '.tmp/template.js' // templates
     ],
 
     // list of files to exclude
     exclude: [
+      'packages/**/src/js/**/index.js'
     ],
 
     preprocessors: {
       'packages/**/!(*.spec)+(.js)': ['coverage']
-    }
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'

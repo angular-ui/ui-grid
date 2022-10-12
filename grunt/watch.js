@@ -6,18 +6,18 @@ module.exports = function( grunt, options ){
 
     gruntfile: {
       files: ['packages/*/src/**/*.js', 'packages/*/test/**/*.spec.js', 'test/**/*.spec.js', 'grunt/*.js'],
-      tasks: ['shell:lint', 'uidocs-generator']
+      tasks: ['shell:lint', 'shell:build', 'uidocs-generator']
     },
 
     ngtemplates: {
       // files: ['packages/*/src/templates/**/*.html'],
       files: '<%= ngtemplates.uigrid.src %>',
-      tasks: ['ngtemplates']
+      tasks: ['ngtemplates', 'shell:build']
     },
 
     rebuild: {
       files: util.testFiles.unit,
-      tasks: ['shell:lint', 'karmangular:run', 'concat', 'uglify', 'uidocs-generator'],
+      tasks: ['shell:lint', 'karmangular:run', 'shell:build', 'uidocs-generator'],
     },
 
     protractor: {
@@ -27,7 +27,7 @@ module.exports = function( grunt, options ){
 
     less: {
       files: 'src/**/*.less',
-      tasks: ['less', 'uidocs-generator', 'concat:customizer_less']
+      tasks: ['shell:less', 'uidocs-generator', 'concat:customizer_less']
     },
 
     docs: {

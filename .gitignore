@@ -171,7 +171,7 @@ packages/**/*.css
 packages/**/ui-grid.*.js
 packages/**/LICENSE.md
 packages/**/.npmignore
-packages/**/index.js
+packages/*/index.js
 
 # Installer logs
 pip-log.txt
