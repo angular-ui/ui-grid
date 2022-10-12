@@ -6,17 +6,16 @@ module.exports = function (grunt, options) {
     // register before and after test tasks so we don't have to change cli
     // options on the CI server
     'before-test': [
-      'clean', 'shell:lint', 'ngtemplates', 'less', 'copy:font_dist','copy:packages_dist'
-    ], // Have to run less so CSS files are present
+      'clean', 'shell:lint', 'ngtemplates'
+    ],
     'after-test': ['build'],
     'default': ['before-test', 'test:single', 'after-test'],
 
     // Build with no testing
     'build': [
-      'ngtemplates', 'concat', 'uglify', 'less', 'uidocs-generator', 'copy:font_dist', 'copy:packages_dist',
+      'shell:build', 'uidocs-generator',
       'copy:site', 'copy:less_customizer',
     ],
-    'build:less_dist': ['copy:less_dist', 'replace:less_dist'],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],
@@ -54,10 +53,10 @@ module.exports = function (grunt, options) {
   var currentTag = semver.clean( util.getCurrentTag() );
 
   if (currentTag) {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
+    baseTasks['release'] = ['clean', 'build', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release'];
+    baseTasks['release'] = ['clean', 'build', 'cut-release'];
   }
 
   return baseTasks;

@@ -3,6 +3,13 @@
   "version": "4.11.1",
   "description": "This module enables ui-grid users to change the position of columns",
   "main": "index.js",
+  "scripts": {
+    "build": "webpack && npm run post-build",
+    "cp-css": "cp -R dist/*.css ../../dist/release/css",
+    "cp-less": "cp -R less/ ../../dist/release/less",
+    "cp-js": "cp -R dist/*.js ../../dist/release/",
+    "post-build": "npm run cp-css && npm run cp-less && npm run cp-js"
+  },
   "dependencies": {
     "@ui-grid/core": "^4.11.1",
     "angular": ">=1.4.0 1.8.x"

@@ -27,13 +27,14 @@ module.exports = function(config) {
       'packages/**/src/js/**/*.js',
       'packages/**/test/**/*.spec.js',
 
-      'dist/release/ui-grid.css',
+      'dist/release/css/ui-grid.css',
 
       '.tmp/template.js' // templates
     ],
 
     // list of files to exclude
     exclude: [
+      'packages/**/src/js/**/index.js'
     ],
 
     preprocessors: {

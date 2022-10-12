@@ -3,6 +3,17 @@
   "version": "4.11.1",
   "description": "A data grid for Angular",
   "main": "index.js",
+  "scripts": {
+    "build": "webpack && npm run less && npm run post-build",
+    "cp-css": "cp -R dist/*.css ../../dist/release/css",
+    "cp-fonts": "cp -R fonts/ ../../dist/release/fonts",
+    "cp-less": "cp -R less/ ../../dist/release/less",
+    "cp-js": "cp -R dist/*.js ../../dist/release/",
+    "less": "npm run less-main && npm run less-min",
+    "less-main": "lessc -rp=\"../\" ./less/main.less dist/ui-grid.core.css",
+    "less-min": "lessc -rp=\"../\" --compress -x ./less/main.less dist/ui-grid.core.min.css",
+    "post-build": "npm run cp-css && npm run cp-fonts && npm run cp-less && npm run cp-js"
+  },
   "dependencies": {
     "angular": ">=1.4.0 1.8.x"
   },

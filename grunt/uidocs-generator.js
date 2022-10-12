@@ -8,11 +8,11 @@ module.exports = {
       versions: {
         stable: [
           { src: '/release/<%= pkg.name %>.js', type: 'script' },
-          { src: '/release/<%= pkg.name %>.css', type: 'css' }
+          { src: '/release/css/<%= pkg.name %>.css', type: 'css' }
         ],
         unstable: [
           { src: '/release/<%= pkg.name %>-unstable.js', type: 'script' },
-          { src: '/release/<%= pkg.name %>-unstable.css', type: 'css' }
+          { src: '/release/css/<%= pkg.name %>-unstable.css', type: 'css' }
         ]
       }
     },
