@@ -4,11 +4,7 @@
   "description": "This module provides cell editing capability to ui.grid",
   "main": "index.js",
   "scripts": {
-    "build": "webpack && npm run post-build",
-    "cp-css": "cp -R dist/*.css ../../dist/release/css",
-    "cp-less": "cp -R less/ ../../dist/release/less",
-    "cp-js": "cp -R dist/*.js ../../dist/release/",
-    "post-build": "npm run cp-css && npm run cp-less && npm run cp-js"
+    "build": "webpack"
   },
   "dependencies": {
     "@ui-grid/core": "^4.11.1",

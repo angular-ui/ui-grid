@@ -3,6 +3,8 @@ const path = require('path');
 const {bannerLoader, terser} = require('./lib/webpack/webpack.utils.js');
 
 const pkg = require('./package.json');
+const include = path.resolve(__dirname, 'packages');
+const pathname = path.resolve(__dirname, 'dist/release');
 
 module.exports = {
   mode: 'production',
@@ -14,14 +16,14 @@ module.exports = {
     rules: [
       {
         test: /\.html$/i,
-        include: path.resolve(__dirname, 'packages'),
+        include,
         loader: 'text-loader'
       }
     ]
   },
   output: {
     pathinfo: false,
-    path: path.resolve(__dirname, 'dist/release'),
+    path: pathname,
     filename: '[name].js'
   },
   optimization: {
