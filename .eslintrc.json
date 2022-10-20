@@ -62,7 +62,7 @@
       "unix"
     ],
     "new-cap": [
-      2,
+      1,
       {
         "newIsCap": false
       }
