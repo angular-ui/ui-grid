@@ -103,14 +103,14 @@
       "always"
     ],
     "space-before-function-paren": [
-      2,
+      1,
       {
         "anonymous": "ignore",
         "named": "never"
       }
     ],
     "spaced-comment": [
-      2,
+      1,
       "always"
     ],
     "space-infix-ops": 1,
