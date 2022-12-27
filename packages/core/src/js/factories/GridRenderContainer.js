@@ -601,12 +601,12 @@ angular.module('ui.grid')
       // Skip hidden columns
       if (!column.visible) { return; }
 
-      if (pinRightColumn) {
-        availableWidth += self.grid.scrollbarWidth;
-      }
-
       if (!pinRightColumn && column.colDef.pinnedRight) {
         pinRightColumn = true;
+      }
+
+      if (pinRightColumn) {
+        availableWidth += self.grid.scrollbarWidth;
       }
 
       if (angular.isNumber(column.width)) {
