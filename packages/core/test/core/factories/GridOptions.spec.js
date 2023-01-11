@@ -56,6 +56,7 @@ describe('GridOptions factory', function () {
         gridMenuTemplate: 'ui-grid/uiGridMenu',
         menuButtonTemplate: 'ui-grid/ui-grid-menu-button',
         menuItemTemplate: 'ui-grid/uiGridMenuItem',
+        disableGridMenuHideOnScroll: false,
         appScopeProvider: null
       });
     });
@@ -107,6 +108,7 @@ describe('GridOptions factory', function () {
         menuButtonTemplate: 'testMenuButton',
         menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
+        disableGridMenuHideOnScroll: true,
         appScopeProvider : 'anotherRef'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -155,6 +157,7 @@ describe('GridOptions factory', function () {
         menuButtonTemplate: 'testMenuButton',
         menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
+        disableGridMenuHideOnScroll: true,
         appScopeProvider : 'anotherRef'
       });
     });
@@ -205,6 +208,7 @@ describe('GridOptions factory', function () {
         gridMenuTemplate: 'testGridMenu',
         menuButtonTemplate: 'testMenuButton',
         menuItemTemplate: 'testMenuItem',
+        disableGridMenuHideOnScroll: false,
         extraOption: 'testExtraOption'
       };
       expect( GridOptions.initialize(options) ).toEqual({
@@ -253,6 +257,7 @@ describe('GridOptions factory', function () {
         menuButtonTemplate: 'testMenuButton',
         menuItemTemplate: 'testMenuItem',
         extraOption: 'testExtraOption',
+        disableGridMenuHideOnScroll: false,
         appScopeProvider : null
       });
     });

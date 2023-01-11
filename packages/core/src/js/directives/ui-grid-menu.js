@@ -154,16 +154,20 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     // *** Auto hide when click elsewhere ******
       var applyHideMenu = function(event) {
         if ($scope.shown) {
-          if ($scope.col && $scope.col.filterContainer === 'columnMenu') {
-            var elm = document.querySelector('.ui-grid-column-menu').querySelector('[ui-grid-filter]');
-            if (elm && elm.contains(event.target)) {
-              return false;
-            }
-          }
+          var disableGridMenuHideOnScroll = uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options ? uiGridCtrl.grid.options.disableGridMenuHideOnScroll : null;
 
-          $scope.$apply(function () {
-            $scope.hideMenu();
-          });
+          if (event.type !== 'scroll' || !disableGridMenuHideOnScroll) {
+            if ($scope.col && $scope.col.filterContainer === 'columnMenu') {
+              var elm = document.querySelector('.ui-grid-column-menu').querySelector('[ui-grid-filter]');
+              if (elm && elm.contains(event.target)) {
+                return false;
+              }
+            }
+
+            $scope.$apply(function () {
+              $scope.hideMenu();
+            });
+          }
         }
       };
 
