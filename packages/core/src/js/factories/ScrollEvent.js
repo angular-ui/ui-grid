@@ -56,6 +56,7 @@
         self.verticalScrollLength = -9999999;
         self.horizontalScrollLength = -999999;
 
+        self.type = 'scroll';
 
         /**
          *  @ngdoc function

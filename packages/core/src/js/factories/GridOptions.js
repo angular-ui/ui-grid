@@ -553,6 +553,14 @@ angular.module('ui.grid')
       */
       baseOptions.gridMenuTemplate = baseOptions.gridMenuTemplate || 'ui-grid/uiGridMenu';
 
+      /**
+       * @ngdoc string
+       * @name disableGridMenuHideOnScroll
+       * @propertyOf ui.grid.class:GridOptions
+       * @description 'false' by default. When provided, this setting disables Grid Menu Hide On Scroll
+       */
+      baseOptions.disableGridMenuHideOnScroll = baseOptions.disableGridMenuHideOnScroll || false;
+
             /**
        * @ngdoc string
        * @name menuButtonTemplate
