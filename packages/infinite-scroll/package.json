@@ -1,13 +1,13 @@
 {
   "name": "@ui-grid/infinite-scroll",
-  "version": "4.11.1",
+  "version": "4.12.0",
   "description": "This module provides infinite scroll functionality to ui-grid",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
-    "@ui-grid/core": "^4.11.1",
+    "@ui-grid/core": "^4.12.0",
     "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {

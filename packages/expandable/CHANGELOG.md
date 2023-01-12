@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/angular-ui/ui-grid/compare/v4.11.1...v4.12.0) (2023-01-12)
+
+**Note:** Version bump only for package @ui-grid/expandable
+
+
+
+
+
 ## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
 
 **Note:** Version bump only for package @ui-grid/expandable

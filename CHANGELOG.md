@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.12.0](https://github.com/angular-ui/ui-grid/compare/v4.11.1...v4.12.0) (2023-01-12)
+
+
+### Bug Fixes
+
+* **pinning:** blank space between pinnedRight column and the last unpinned column ([7687192](https://github.com/angular-ui/ui-grid/commit/7687192afa6b67f013c8a559a60dc9c3f78e4efb)), closes [#4949](https://github.com/angular-ui/ui-grid/issues/4949) [#6284](https://github.com/angular-ui/ui-grid/issues/6284)
+
+
+### Features
+
+* **exporter:** add export type in format method ([#7223](https://github.com/angular-ui/ui-grid/issues/7223)) ([4c36808](https://github.com/angular-ui/ui-grid/commit/4c36808e26c1ece5b48237523934e7dd5d2d2242))
+* 🎸 option to disable GridMenu close on scrolling ([6d3f006](https://github.com/angular-ui/ui-grid/commit/6d3f0065f6635179b4a3ccca5d8f0ac274bd3755))
+
+
+
+
 ## [4.11.1](https://github.com/angular-ui/ui-grid/compare/v4.11.0...v4.11.1) (2022-02-23)
 
 

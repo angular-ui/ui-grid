@@ -1,13 +1,13 @@
 {
   "name": "@ui-grid/tree-base",
-  "version": "4.11.1",
+  "version": "4.12.0",
   "description": "This ui-grid module provides a tree view of the data, with nodes and leaves",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
-    "@ui-grid/core": "^4.11.1",
+    "@ui-grid/core": "^4.12.0",
     "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {
