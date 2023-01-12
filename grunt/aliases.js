@@ -53,10 +53,10 @@ module.exports = function (grunt, options) {
   var currentTag = semver.clean( util.getCurrentTag() );
 
   if (currentTag) {
-    baseTasks['release'] = ['clean', 'build', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
+    baseTasks['release'] = ['cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'build', 'cut-release'];
+    baseTasks['release'] = ['cut-release'];
   }
 
   return baseTasks;

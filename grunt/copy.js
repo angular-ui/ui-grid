@@ -17,7 +17,7 @@ module.exports = function ( grunt ) {
 
     packages.forEach(function(feat) {
       let featModuleName = '.' + _.camelCase(feat);
-      let featMainPath = `./js/${package.name}.${feat}`;
+      let featMainPath = `./dist/${package.name}.${feat}`;
 
       switch(feat) {
         case 'cellnav':
@@ -185,7 +185,7 @@ module.exports = function ( grunt ) {
           expand: true,
           flatten: true,
           cwd: 'packages',
-          src: '*/js/*.js',
+          src: '*/dist/*.js',
           dest: '<%= dist %>/release',
           filter: function(filepath) {
             return !filepath.includes('packages/i18n')
@@ -195,7 +195,7 @@ module.exports = function ( grunt ) {
           expand: true,
           flatten: true,
           cwd: 'packages',
-          src: '*/js/*.js',
+          src: '*/i18n/dist/*.js',
           dest: '<%= dist %>/release/i18n',
           filter: 'isFile'
         },
@@ -203,7 +203,7 @@ module.exports = function ( grunt ) {
           expand: true,
           flatten: true,
           cwd: 'packages',
-          src: '*/css/*.css',
+          src: '*/dist/*.css',
           dest: '<%= dist %>/release/css',
           filter: 'isFile'
         }
