@@ -79,25 +79,25 @@ module.exports = function ( grunt ) {
       files: [
         {
           expand: true,
-          cwd: 'packages/core/font',
+          cwd: 'packages/core/fonts',
           src: '**/*.eot',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/font',
+          cwd: 'packages/core/fonts',
           src: '**/*.svg',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/font',
+          cwd: 'packages/core/fonts',
           src: '**/*.ttf',
           dest: '<%= dist %>/release/fonts'
         },
         {
           expand: true,
-          cwd: 'packages/core/font',
+          cwd: 'packages/core/fonts',
           src: '**/*.woff',
           dest: '<%= dist %>/release/fonts'
         }
