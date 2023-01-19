@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.1](https://github.com/angular-ui/ui-grid/compare/v4.12.0...v4.12.1) (2023-01-19)
+
+
+### Bug Fixes
+
+* **core:** ensure ui-grid loads on site ([b215403](https://github.com/angular-ui/ui-grid/commit/b2154039f6fe8b027bc9a8a4a7e5fd5a16904188)), closes [#7277](https://github.com/angular-ui/ui-grid/issues/7277)
+
+
+
+
+
 # [4.12.0](https://github.com/angular-ui/ui-grid/compare/v4.11.1...v4.12.0) (2023-01-12)
 
 **Note:** Version bump only for package @ui-grid/save-state
