@@ -16,7 +16,7 @@ module.exports = function() {
       }
     },
     build: {
-      command: 'npm run build-dx'
+      command: 'npm run build'
     },
     lint: {
       command: 'npm run lint'
