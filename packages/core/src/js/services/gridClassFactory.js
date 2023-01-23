@@ -112,12 +112,13 @@
                   }
 
                   if ( filterType ) {
-                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
+                    template = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
                       return col[filterType] ? "|" + col[filterType] : "";
                     });
-                  } else {
-                    col[templateType] = template;
                   }
+                  return gridUtil.postProcessTemplate(template).then(function(template) {
+                    col[templateType] = template;
+                  });
                 },
                 function () {
                   throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
