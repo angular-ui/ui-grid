@@ -15,9 +15,6 @@ module.exports = function() {
         async: true
       }
     },
-    build: {
-      command: 'npm run build'
-    },
     lint: {
       command: 'npm run lint'
     },
