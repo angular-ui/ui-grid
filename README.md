@@ -117,7 +117,7 @@ By default `grunt dev` will start several karma background watchers that will ru
 
     > grunt dev --angular=1.5.11,1.6.7
 
-You can also use the `--browsers` specify what browsers to test with (PhantomJS is the default).
+You can also use the `--browsers` specify what browsers to test with (ChromeHeadless is the default).
 
     > grunt dev --browsers=Chrome
 
@@ -143,7 +143,7 @@ The `karmangular` task runs tests serially against multiple browsers (it is used
     # Run tests against all available versions of Angular on Chrome
     > grunt karmangular --browsers=Chrome
 
-    # Run tests with a couple versions of Angular against the default PhantomJS browser
+    # Run tests with a couple versions of Angular against the default ChromeHeadless browser
     > grunt karmangular --angular=1.5.11,1.6.7
 
 ## SauceLabs
