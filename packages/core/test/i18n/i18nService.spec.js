@@ -4,7 +4,7 @@ describe('i18nService', function () {
   beforeEach(function() {
     $log = jasmine.createSpyObj('$log', ['warn']);
     module('ui.grid', function($provide) {
-      $provide.value('$log', $log)
+      $provide.value('$log', $log);
     });
     inject(function (_i18nConstants_, _i18nService_) {
       i18nConstants = _i18nConstants_;
