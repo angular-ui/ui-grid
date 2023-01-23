@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.2](https://github.com/angular-ui/ui-grid/compare/v4.12.1...v4.12.2) (2023-01-23)
+
+
+### Bug Fixes
+
+* **core:** support custom interpolation symbols on defaultColumnBuilder ([7630fd3](https://github.com/angular-ui/ui-grid/commit/7630fd3f4c7abc0792ccc1d3e57d59de80ec59dd)), closes [#6963](https://github.com/angular-ui/ui-grid/issues/6963)
+
+
+
+
+
 ## [4.12.1](https://github.com/angular-ui/ui-grid/compare/v4.12.0...v4.12.1) (2023-01-19)
 
 

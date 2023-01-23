@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.2](https://github.com/angular-ui/ui-grid/compare/v4.12.1...v4.12.2) (2023-01-23)
+
+**Note:** Version bump only for package @ui-grid/cell-nav
+
+
+
+
+
 ## [4.12.1](https://github.com/angular-ui/ui-grid/compare/v4.12.0...v4.12.1) (2023-01-19)
 
 

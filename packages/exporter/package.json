@@ -1,13 +1,13 @@
 {
   "name": "@ui-grid/exporter",
-  "version": "4.12.0",
+  "version": "4.12.2",
   "description": "This module provides the ability to export data from ui-grid",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
-    "@ui-grid/core": "^4.12.0",
+    "@ui-grid/core": "^4.12.2",
     "angular": ">=1.4.0 1.8.x",
     "csv-js": "~1.0.0",
     "excel-builder": "~2.0.2",
