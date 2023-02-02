@@ -66,7 +66,7 @@
     "grunt-contrib-concat": "^2.1.0",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-jasmine": "^2.1.0",
+    "grunt-contrib-jasmine": "^4.0.0",
     "grunt-contrib-less": "^3.0.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
