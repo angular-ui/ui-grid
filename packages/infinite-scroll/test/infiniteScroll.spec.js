@@ -345,6 +345,45 @@
           expect(grid.api.infiniteScroll.raise.needLoadMoreData).not.toHaveBeenCalled();
         });
       });
+      describe('cellNav and loadData', function() {
+        var arrayOf50 = [];
+        var VisibleRowCount = 50;
+        var lastRowIndex = 49;
+        beforeEach(function() {
+          grid.infiniteScroll = undefined;
+          uiGridInfiniteScrollService.initializeGrid(grid, $scope);
+          spyOn(grid, 'getVisibleRowCount').and.returnValue(VisibleRowCount);
+          spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreData');
+          spyOn(grid.api.infiniteScroll.raise, 'needLoadMoreDataTop');
+          for ( var i = 0; i < VisibleRowCount; i++ ) {
+            arrayOf50.push(i);
+          }
+          grid.cellNav = {
+            lastRowCol: {
+              row: {
+                index: 0
+              }
+            }
+          };
+          grid.renderContainers = { body: { visibleRowCache: arrayOf50}};
+        });
+        afterEach(function() {
+          grid.api.infiniteScroll.raise.needLoadMoreData.calls.reset();
+          grid.api.infiniteScroll.raise.needLoadMoreDataTop.calls.reset();
+        });
+        it('scroll down and last row is currently selected', function() {
+          grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+          grid.infiniteScroll.scrollDown = true;
+          grid.cellNav.lastRowCol.row.index = lastRowIndex;
+
+          uiGridInfiniteScrollService.loadData(grid);
+
+          expect(grid.infiniteScroll.previousVisibleRows).toEqual(grid.getVisibleRowCount());
+          expect(grid.api.infiniteScroll.raise.needLoadMoreData).not.toHaveBeenCalled();
+          expect(grid.infiniteScroll.direction).toEqual(uiGridConstants.scrollDirection.DOWN);
+        });
+      });
+
       describe('handleScroll', function() {
         describe('when the source is the even "ui.grid.adjustInfiniteScrollPosition"', function() {
           beforeEach(function() {
