@@ -333,11 +333,14 @@
         grid.infiniteScroll.direction = grid.scrollDirection;
         delete grid.infiniteScroll.prevScrollTop;
 
-        if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp ) {
+        if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp) {
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreDataTop();
         }
-        else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown ) {
+        else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown) {
+          if (grid.cellNav && grid.cellNav.lastRowCol && grid.cellNav.lastRowCol.row.index === grid.infiniteScroll.previousVisibleRows - 1) {
+            return;
+          }
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreData();
         }
