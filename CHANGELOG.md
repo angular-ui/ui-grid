@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.3](https://github.com/angular-ui/ui-grid/compare/v4.12.2...v4.12.3) (2023-08-01)
+
+
+### Bug Fixes
+
+* 🐛 added unit testing for lastRowCol in cellNav and loadData ([3061ab2](https://github.com/angular-ui/ui-grid/commit/3061ab2c0cde6bd4a4c0c2d83352bed136895f76))
+* 🐛 don't call needLoadMoreData on last row with cellNav ([5200747](https://github.com/angular-ui/ui-grid/commit/52007476ccd76061d90e30b2eba7dc1978ff2aec))
+
+
+
+
+
 ## [4.12.2](https://github.com/angular-ui/ui-grid/compare/v4.12.1...v4.12.2) (2023-01-23)
 
 
