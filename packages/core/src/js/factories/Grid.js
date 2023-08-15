@@ -1235,6 +1235,9 @@ angular.module('ui.grid')
       if ( oldRow ) {
         newRow = oldRow;
         newRow.entity = newEntity;
+        if (newRow.index !== i) {
+          newRow.index = i;
+        }
       }
 
       // if we didn't find the row, it must be new, so create it
