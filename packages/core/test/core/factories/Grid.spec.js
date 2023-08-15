@@ -731,6 +731,18 @@ describe('Grid factory', function() {
 			expect(grid.rows[1].entity.str).toBe('xyz');
 			expect(grid.rows[2].entity.str).toBe('bac');
 		});
+
+		it('should delete and insert new in the middle', function() {
+			dataRows.splice(2, 0, {str: 'wwe'});
+			grid.modifyRows(dataRows);
+
+			expect(grid.getRow).not.toHaveBeenCalled();
+			expect(grid.rows.length).toBe(4);
+			expect(grid.rows[0].index).toBe(0);
+			expect(grid.rows[2].entity.str).toBe('wwe');
+      expect(grid.rows[3].entity.str).toBe('bac');
+			expect(grid.rows[3].index).toBe(3);
+		});
 	});
 
 	describe('binding', function() {
