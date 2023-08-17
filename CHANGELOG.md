@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.4](https://github.com/angular-ui/ui-grid/compare/v4.12.3...v4.12.4) (2023-08-17)
+
+
+### Bug Fixes
+
+* 🐛 update the index accordingly when modifying existing rows ([945d4f8](https://github.com/angular-ui/ui-grid/commit/945d4f81461601d5e4d57c89bb2d3431d2511354))
+
+
+
+
+
 ## [4.12.3](https://github.com/angular-ui/ui-grid/compare/v4.12.2...v4.12.3) (2023-08-01)
 
 

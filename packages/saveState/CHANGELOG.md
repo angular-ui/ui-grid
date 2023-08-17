@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.4](https://github.com/angular-ui/ui-grid/compare/v4.12.3...v4.12.4) (2023-08-17)
+
+**Note:** Version bump only for package @ui-grid/save-state
+
+
+
+
+
 ## [4.12.2](https://github.com/angular-ui/ui-grid/compare/v4.12.1...v4.12.2) (2023-01-23)
 
 **Note:** Version bump only for package @ui-grid/save-state
