@@ -423,11 +423,11 @@ Run these grunt tasks. Look at the grunt-bump module for how to specify a major/
 Make sure not to include a preceding 'v' in the version name. It will be done automatically by the `bump` task.
     
     # Optionally set the version manually: grunt bump-only --setversion=3.0.1-rc.1
+    npm run bump
     grunt bump-only
-    grunt changelog
     grunt bump-commit
 
-Then push the changes to origin/master and Travis will take care of the rest!
+Then push the changes to origin/master and Github actions will take care of the rest!
 
     git push origin master --tags
 
