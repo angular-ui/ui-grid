@@ -10,7 +10,7 @@
     "less-min": "lessc -rp=\"../\" --compress -x ./less/main.less dist/ui-grid.core.min.css"
   },
   "dependencies": {
-    "angular": ">=1.4.0 1.8.x"
+    "angular": ">=1.4.0"
   },
   "publishConfig": {
     "access": "public"
