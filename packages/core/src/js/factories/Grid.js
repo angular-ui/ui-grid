@@ -2440,7 +2440,7 @@ angular.module('ui.grid')
       if (gridRow !== null) {
         // This is the index of the row we want to scroll to, within the list of rows that can be visible
         var seekRowIndex = visRowCache.indexOf(gridRow);
-
+        
         // Total vertical scroll length of the grid
         var scrollLength = (self.renderContainers.body.getCanvasHeight() - self.renderContainers.body.getViewportHeight());
 
@@ -2472,13 +2472,15 @@ angular.module('ui.grid')
           scrollEvent.y = getScrollY(scrollPixels, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
         }
         // Otherwise if the scroll position we need to see the row is MORE than the bottom boundary, i.e. obscured below the bottom of the self...
-        else if (pixelsToSeeRow > Math.ceil(bottomBound)) {
+        // add the height of one row since scrollPixels points to the top pixel of the row
+        else if ((pixelsToSeeRow + self.options.rowHeight) > Math.ceil(bottomBound)) {
           // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
-          //   to get the full position we need
-          scrollPixels = pixelsToSeeRow - bottomBound + self.renderContainers.body.prevScrollTop;
+          // plus the height of one row since scrollPixels points to the top pixel of the row
+          // to get the full position we need 
+          scrollPixels = (pixelsToSeeRow + self.options.rowHeight) - bottomBound + self.renderContainers.body.prevScrollTop;
 
-          // Scroll to full position plus the height of one row since scrollPixels points to the top pixel of the row
-          scrollEvent.y = getScrollY(scrollPixels + self.options.rowHeight, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
+          // Scroll to full position
+          scrollEvent.y = getScrollY(scrollPixels, scrollLength, self.renderContainers.body.prevScrolltopPercentage);
         }
       }
 
