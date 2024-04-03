@@ -2476,7 +2476,7 @@ angular.module('ui.grid')
         else if ((pixelsToSeeRow + self.options.rowHeight) > Math.ceil(bottomBound)) {
           // Get the different between the bottom boundary and the required scroll position and add it to the current scroll position
           // plus the height of one row since scrollPixels points to the top pixel of the row
-          // to get the full position we need 
+          // to get the full position we need
           scrollPixels = (pixelsToSeeRow + self.options.rowHeight) - bottomBound + self.renderContainers.body.prevScrollTop;
 
           // Scroll to full position
