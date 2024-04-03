@@ -2440,7 +2440,7 @@ angular.module('ui.grid')
       if (gridRow !== null) {
         // This is the index of the row we want to scroll to, within the list of rows that can be visible
         var seekRowIndex = visRowCache.indexOf(gridRow);
-        
+
         // Total vertical scroll length of the grid
         var scrollLength = (self.renderContainers.body.getCanvasHeight() - self.renderContainers.body.getViewportHeight());
 
