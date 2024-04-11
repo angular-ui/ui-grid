@@ -1,15 +1,15 @@
 {
   "name": "@ui-grid/row-edit",
-  "version": "4.12.4",
+  "version": "4.12.5",
   "description": "This ui-grid module extends the edit feature to provide tracking and saving of rows of data",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
-    "@ui-grid/cell-nav": "^4.12.4",
-    "@ui-grid/core": "^4.12.4",
-    "@ui-grid/edit": "^4.12.4",
+    "@ui-grid/cell-nav": "^4.12.5",
+    "@ui-grid/core": "^4.12.5",
+    "@ui-grid/edit": "^4.12.5",
     "angular": ">=1.4.0 1.8.x"
   },
   "publishConfig": {

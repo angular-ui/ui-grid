@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.5](https://github.com/angular-ui/ui-grid/compare/v4.12.4...v4.12.5) (2024-04-11)
+
+
+### Bug Fixes
+
+* **core:** make scrollToIfNecessary bottom scroll work with bottom pixel of the row. ([c8405a7](https://github.com/angular-ui/ui-grid/commit/c8405a704ad1f0546c290b572dd5b4899e25635f))
+
+
+
+
+
 ## [4.12.4](https://github.com/angular-ui/ui-grid/compare/v4.12.3...v4.12.4) (2023-08-17)
 
 

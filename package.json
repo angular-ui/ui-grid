@@ -1,6 +1,6 @@
 {
   "name": "ui-grid",
-  "version": "4.12.4",
+  "version": "4.12.5",
   "description": "A data grid for Angular",
   "directories": {
     "test": "test"
@@ -16,6 +16,7 @@
     "less-main": "lessc -rp=\"../\" ./lib/less/main.less dist/release/css/ui-grid.css",
     "less-min": "lessc -rp=\"../\" --compress -x ./lib/less/main.less dist/release/css/ui-grid.min.css",
     "bump": "lerna version --conventional-commits --no-push --no-git-tag-version",
+    "bump-commit": "grunt bump",
     "changed": "lerna changed",
     "clean": "lerna clean && grunt clean",
     "commit": "git-cz",
