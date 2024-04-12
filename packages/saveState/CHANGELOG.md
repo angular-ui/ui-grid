@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.7](https://github.com/angular-ui/ui-grid/compare/v4.12.6...v4.12.7) (2024-04-12)
+
+
+### Bug Fixes
+
+* **core:** remove upper limit for AngularJs ([5517031](https://github.com/angular-ui/ui-grid/commit/5517031a433630dc3f2f70df444e265d6f1af520))
+
+
+
+
+
 ## [4.12.6](https://github.com/angular-ui/ui-grid/compare/v4.12.5...v4.12.6) (2024-04-12)
 
 **Note:** Version bump only for package @ui-grid/save-state

@@ -1,13 +1,13 @@
 {
   "name": "@ui-grid/pinning",
-  "version": "4.12.5",
+  "version": "4.12.7",
   "description": "This module enables the user to pun columns in ui-grid",
   "main": "index.js",
   "scripts": {
     "build": "webpack"
   },
   "dependencies": {
-    "@ui-grid/core": "^4.12.5",
+    "@ui-grid/core": "^4.12.7",
     "angular": ">=1.4.0"
   },
   "publishConfig": {
