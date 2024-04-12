@@ -33,8 +33,8 @@
   });
 
 
-  module.factory('uiGridCellNavFactory', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', 'GridRowColumn', '$q',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, GridRowColumn, $q) {
+  module.factory('uiGridCellNavFactory', ['uiGridCellNavConstants', 'GridRowColumn',
+    function (uiGridCellNavConstants, GridRowColumn) {
       /**
        *  @ngdoc object
        *  @name ui.grid.cellNav.object:CellNav
@@ -262,8 +262,8 @@
    *  @description Services for cell navigation features. If you don't like the key maps we use,
    *  or the direction cells navigation, override with a service decorator (see angular docs)
    */
-  module.service('uiGridCellNavService', ['gridUtil', 'uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory', 'GridRowColumn', 'ScrollEvent',
-    function (gridUtil, uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav, GridRowColumn, ScrollEvent) {
+  module.service('uiGridCellNavService', ['uiGridConstants', 'uiGridCellNavConstants', '$q', 'uiGridCellNavFactory',
+    function (uiGridConstants, uiGridCellNavConstants, $q, UiGridCellNav) {
 
       var service = {
 
@@ -622,8 +622,8 @@
    </file>
    </example>
    */
-  module.directive('uiGridCellnav', ['gridUtil', 'uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$timeout', '$compile', 'i18nService',
-    function (gridUtil, uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $timeout, $compile, i18nService) {
+  module.directive('uiGridCellnav', ['uiGridCellNavService', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn', '$compile', 'i18nService',
+    function (uiGridCellNavService, uiGridCellNavConstants, uiGridConstants, GridRowColumn, $compile, i18nService) {
       return {
         replace: true,
         priority: -150,
@@ -861,8 +861,8 @@
       };
     }]);
 
-  module.directive('uiGridRenderContainer', ['$timeout', '$document', 'gridUtil', 'uiGridConstants', 'uiGridCellNavService', '$compile','uiGridCellNavConstants',
-    function ($timeout, $document, gridUtil, uiGridConstants, uiGridCellNavService, $compile, uiGridCellNavConstants) {
+  module.directive('uiGridRenderContainer', ['$timeout', 'gridUtil', 'uiGridCellNavService', '$compile','uiGridCellNavConstants',
+    function ($timeout, gridUtil, uiGridCellNavService, $compile, uiGridCellNavConstants) {
       return {
         replace: true,
         priority: -99999, // this needs to run very last
@@ -1046,8 +1046,8 @@
    *  @restrict A
    *  @description Stacks on top of ui.grid.uiGridCell to provide cell navigation
    */
-  module.directive('uiGridCell', ['$timeout', '$document', 'uiGridCellNavService', 'gridUtil', 'uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn',
-    function ($timeout, $document, uiGridCellNavService, gridUtil, uiGridCellNavConstants, uiGridConstants, GridRowColumn) {
+  module.directive('uiGridCell', ['uiGridCellNavConstants', 'uiGridConstants', 'GridRowColumn',
+    function (uiGridCellNavConstants, uiGridConstants, GridRowColumn) {
       return {
         priority: -150, // run after default uiGridCell directive and ui.grid.edit uiGridCell
         restrict: 'A',
