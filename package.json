@@ -108,6 +108,8 @@
     "shelljs": "^0.8.2",
     "text-loader": "^0.0.1",
     "time-grunt": "^1.4.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
     "validate-commit-message": "^3.0.1",
     "webdriver-manager": "^12.1.7",
     "webpack": "^5.74.0",
