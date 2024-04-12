@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.12.6](https://github.com/angular-ui/ui-grid/compare/v4.12.5...v4.12.6) (2024-04-12)
+
+
+### Bug Fixes
+
+* **cellnav:** remove unused inputs ([9f0ddb2](https://github.com/angular-ui/ui-grid/commit/9f0ddb2bac06582ad29be74a1b5bf6a5b2483bb3))
+
+
+
+
+
 ## [4.12.5](https://github.com/angular-ui/ui-grid/compare/v4.12.4...v4.12.5) (2024-04-11)
 
 
