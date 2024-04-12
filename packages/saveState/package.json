@@ -12,7 +12,7 @@
     "@ui-grid/grouping": "^4.12.5",
     "@ui-grid/selection": "^4.12.5",
     "@ui-grid/tree-view": "^4.12.5",
-    "angular": ">=1.4.0 1.8.x"
+    "angular": ">=1.4.0"
   },
   "publishConfig": {
     "access": "public"
@@ -41,5 +41,5 @@
   ],
   "author": "UI Grid Team",
   "license": "MIT",
-  "gitHead": "5cfa8bf46e8eb464b40e3d045064d4b74a77cbf2"
+  "gitHead": "e6c9afa987b32eb6056fce29c7ff342a11a21499"
 }
