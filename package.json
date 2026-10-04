@@ -46,7 +46,7 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/platform-server": "^22.1.4",
-    "@angular/router": "^22.1.0",
+    "@angular/router": "^22.2.0",
     "@ornery/ui-grid-core": "file:projects/ui-grid-core",
     "@ornery/ui-grid-react": "file:projects/ui-grid-react",
     "@ornery/ui-grid-vanilla": "file:projects/ui-grid-vanilla",
