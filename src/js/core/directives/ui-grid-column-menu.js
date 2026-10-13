@@ -215,8 +215,9 @@ function ( i18nService, uiGridConstants, gridUtil ) {
       var positionData = {};
       var rect = $columnElement[0].getBoundingClientRect();
 
-      positionData.left = rect.left;
-      positionData.top = rect.top;
+      // The menu is appended to <body>, so convert the viewport-relative rect to document coordinates
+      positionData.left = rect.left + window.scrollX;
+      positionData.top = rect.top + window.scrollY;
       positionData.parentLeft = $columnElement[0].offsetParent.offsetLeft;
 
       // Get the grid scrollLeft
@@ -280,8 +281,23 @@ function ( i18nService, uiGridConstants, gridUtil ) {
         left = 66 + myWidth;
       }
 
+      var top = positionData.top + positionData.height;
+
+      // If the menu doesn't fit below the column header but does fit above it, place it above
+      var menuMid = $elm[0].querySelector('.ui-grid-menu-mid');
+
+      if (menuMid) {
+        var menuHeight = menuMid.offsetHeight,
+          viewportTop = window.scrollY,
+          viewportBottom = viewportTop + window.innerHeight;
+
+        if (top + menuHeight > viewportBottom && positionData.top - menuHeight >= viewportTop) {
+          top = positionData.top - menuHeight;
+        }
+      }
+
       $elm.css('left', left + 'px');
-      $elm.css('top', (positionData.top + positionData.height) + 'px');
+      $elm.css('top', top + 'px');
     }
   };
   return service;
