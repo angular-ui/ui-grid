@@ -10,7 +10,7 @@ on:
       version:
         description: Public version to publish
         required: true
-        default: 0.1.0
+        default: 5.0.2
 
 jobs:
   publish:

@@ -13,7 +13,7 @@ on:
       version:
         description: Public version to publish
         required: true
-        default: 5.0.1
+        default: 5.0.2
 
 jobs:
   resolve-release:
@@ -221,6 +221,88 @@ jobs:
             echo "@ornery/ui-grid-vanilla@$VERSION already published, skipping"
           else
             npm publish ./projects/ui-grid-vanilla --access public --registry=https://registry.npmjs.org
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-solid:
+    needs: [resolve-release, publish-core, publish-vanilla]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.resolve-release.outputs.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26.4.0
+          registry-url: https://registry.npmjs.org
+          scope: '@ornery'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            projects/ui-grid-solid/package-lock.json
+
+      - name: Install repository dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Solid adapter dependencies
+        run: npm ci --prefix projects/ui-grid-solid
+
+      - name: Verify core and vanilla versions are published
+        run: |
+          VERSION="${{ needs.resolve-release.outputs.version }}"
+          for PACKAGE in @ornery/ui-grid-core @ornery/ui-grid-vanilla; do
+            for attempt in $(seq 1 20); do
+              if npm view "$PACKAGE@$VERSION" version >/dev/null 2>&1; then
+                echo "Found $PACKAGE@$VERSION on npm"
+                break
+              fi
+
+              if [ "$attempt" -eq 20 ]; then
+                echo "$PACKAGE@$VERSION was not available on npm in time" >&2
+                exit 1
+              fi
+
+              echo "Waiting for $PACKAGE@$VERSION to appear on npm (attempt $attempt/20)"
+              sleep 15
+            done
+          done
+
+      - name: Synchronize release versions
+        run: npm run version:sync -- "${{ needs.resolve-release.outputs.version }}"
+
+      - name: Build the Solid package
+        run: npm run build:solid
+
+      - name: Test the Solid package
+        run: npm run test:solid
+
+      - name: Verify publish manifest
+        env:
+          VERSION: ${{ needs.resolve-release.outputs.version }}
+        run: |
+          node - <<'NODE'
+          const pkg = require('./projects/ui-grid-solid/package.json');
+          if (pkg.version !== process.env.VERSION) {
+            throw new Error(`Expected Solid package version ${process.env.VERSION}, got ${pkg.version}`);
+          }
+          for (const name of ['@ornery/ui-grid-core', '@ornery/ui-grid-vanilla']) {
+            if (pkg.peerDependencies?.[name] !== process.env.VERSION) {
+              throw new Error(`Expected ${name} peer version ${process.env.VERSION}`);
+            }
+          }
+          NODE
+
+      - name: Publish Solid to npm
+        run: |
+          VERSION="${{ needs.resolve-release.outputs.version }}"
+          if npm view "@ornery/ui-grid-solid@$VERSION" version >/dev/null 2>&1; then
+            echo "@ornery/ui-grid-solid@$VERSION already published, skipping"
+          else
+            npm publish ./projects/ui-grid-solid --access public --registry=https://registry.npmjs.org
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

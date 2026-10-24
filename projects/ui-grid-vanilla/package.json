@@ -1,6 +1,6 @@
 {
   "name": "@ornery/ui-grid-vanilla",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Vanilla DOM wrapper for the Rust/WASM-backed @ornery/ui-grid-core custom element",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -26,17 +26,17 @@
     "./browser/ui-grid-element.js": "./dist/browser/ui-grid-element.js"
   },
   "dependencies": {
-    "@ornery/ui-grid-core": "5.0.1"
+    "@ornery/ui-grid-core": "5.0.2"
   },
   "devDependencies": {
     "@ornery/ui-grid-core": "file:../ui-grid-core",
-    "happy-dom": "^20.10.6",
+    "happy-dom": "^21.0.4",
     "jsdom": "^29.1.1",
     "sass": "^1.101.0",
     "tsup": "^8.5.1",
     "typescript": "~6.0.3",
-    "vite": "^8.1.2",
-    "vitest": "^4.1.9"
+    "vite": "^8.3.4",
+    "vitest": "^4.1.12"
   },
   "scripts": {
     "start": "SASS_PATH=node_modules vite serve",

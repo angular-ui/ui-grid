@@ -1,6 +1,6 @@
 {
   "name": "@ornery/ui-grid-core",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Framework-neutral UI Grid core runtime, models, styling, and WASM bridge",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -30,7 +30,7 @@
     "sass": "^1.101.0",
     "tsup": "^8.5.1",
     "typescript": "~6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.12"
   },
   "scripts": {
     "generate-css": "node generate-core-css.mjs",
