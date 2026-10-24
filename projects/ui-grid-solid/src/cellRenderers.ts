@@ -1,4 +1,4 @@
-import { createErrorBoundary, createSignal, runWithOwner, untrack, type Owner } from 'solid-js';
+import { createComponent, createSignal, Errored, runWithOwner, untrack, type Owner } from 'solid-js';
 import { render, type JSX } from '@solidjs/web';
 import { getCellValue, type GridCellTemplateContext, type GridOptions, type UiGridApi } from '@ornery/ui-grid-core';
 import type { FrameworkCellSlot, FrameworkSlotDelta, UiGridStandaloneElement } from '@ornery/ui-grid-vanilla';
@@ -60,19 +60,19 @@ export function createCellRendererBridge(
           get column() { return context().column; },
           get rowIndex() { return context().rowIndex; },
         };
-        const rendered = createErrorBoundary(
-          () => renderer(props),
-          (error, reset) => {
+        const rendered = createComponent(Errored, {
+          get children() { return renderer(props); },
+          fallback: (error, reset) => {
             failed = true;
             resetBoundary = () => {
               resetBoundary = undefined;
               reset();
             };
             queueMicrotask(() => untrack(() => reportRendererError(error())));
-            return undefined;
+            return null;
           },
-        );
-        return rendered();
+        });
+        return rendered;
       }, wrapper));
       entries.set(slot.slotName, { slot, wrapper, renderer, isFailed: () => failed, update, dispose });
     } catch (error) {

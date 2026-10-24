@@ -1,4 +1,4 @@
-import { createErrorBoundary, createSignal, runWithOwner, untrack, type Owner } from 'solid-js';
+import { createComponent, createSignal, Errored, runWithOwner, untrack, type Owner } from 'solid-js';
 import { render, type JSX } from '@solidjs/web';
 import { getCellValue, type GridCellTemplateContext, type GridOptions, type GridRecord, type UiGridApi } from '@ornery/ui-grid-core';
 import type { UiGridStandaloneElement } from '@ornery/ui-grid-vanilla';
@@ -112,14 +112,14 @@ export function createCellEditorBridge(
           commit() { api?.edit.endCellEdit(); },
           cancel() { api?.edit.cancelCellEdit(); },
         };
-        return createErrorBoundary(
-          () => renderer(props),
-          (error) => {
+        return createComponent(Errored, {
+          get children() { return renderer(props); },
+          fallback: (error) => {
             failed = true;
             queueMicrotask(() => untrack(() => reportRendererError(error())));
-            return undefined;
+            return null;
           },
-        )();
+        });
       }, wrapper));
       entry = { row, columnName, wrapper, nativeInput, renderer, isFailed: () => failed, update, dispose };
       queueMicrotask(() => wrapper.querySelector<HTMLElement>('input,select,textarea,[tabindex]')?.focus());

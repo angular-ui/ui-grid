@@ -1,4 +1,4 @@
-import { createErrorBoundary, createSignal, runWithOwner, untrack, type Owner } from 'solid-js';
+import { createComponent, createSignal, Errored, runWithOwner, untrack, type Owner } from 'solid-js';
 import { render, type JSX } from '@solidjs/web';
 import type {
   GridExpandableTemplateContext,
@@ -60,15 +60,15 @@ export function createDetailRendererBridge(
           get expanded() { return context().expanded; },
           get rowIndex() { return context().rowIndex; },
         };
-        const rendered = createErrorBoundary(
-          () => mountedRenderer(props),
-          (error) => {
+        const rendered = createComponent(Errored, {
+          get children() { return mountedRenderer(props); },
+          fallback: (error) => {
             failed = true;
             queueMicrotask(() => untrack(() => reportRendererError(error())));
-            return undefined;
+            return null;
           },
-        );
-        return rendered();
+        });
+        return rendered;
       }, wrapper));
       entries.set(slot.slotName, {
         slot,
