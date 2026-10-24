@@ -1,6 +1,7 @@
 import {
-  createErrorBoundary,
+  createComponent,
   createSignal,
+  Errored,
   runWithOwner,
   untrack,
   type Owner,
@@ -85,15 +86,15 @@ export function createHeaderRendererBridge(
           get value() { return context().value; },
           get column() { return context().column; },
         };
-        const rendered = createErrorBoundary(
-          () => renderer(props),
-          (error) => {
+        const rendered = createComponent(Errored, {
+          get children() { return renderer(props); },
+          fallback: (error) => {
             failed = true;
             queueMicrotask(() => untrack(() => reportRendererError(error())));
-            return undefined;
+            return null;
           },
-        );
-        return rendered();
+        });
+        return rendered;
       }, wrapper));
       entries.set(slot.slotName, {
         slot,
