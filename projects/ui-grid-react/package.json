@@ -1,6 +1,6 @@
 {
   "name": "@ornery/ui-grid-react",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "React wrapper for @ornery/ui-grid-core",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -21,8 +21,8 @@
     "./styles": "./dist/ui-grid.css"
   },
   "peerDependencies": {
-    "@ornery/ui-grid-core": "5.0.1",
-    "@ornery/ui-grid-vanilla": "5.0.1",
+    "@ornery/ui-grid-core": "5.0.2",
+    "@ornery/ui-grid-vanilla": "5.0.2",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
@@ -39,8 +39,8 @@
     "react-dom": "^19.2.7",
     "tsup": "^8.5.1",
     "typescript": "~6.0.3",
-    "vite": "^8.1.2",
-    "vitest": "^4.1.9"
+    "vite": "^8.3.4",
+    "vitest": "^4.1.12"
   },
   "scripts": {
     "start": "vite serve demo --config demo/vite.config.ts",
